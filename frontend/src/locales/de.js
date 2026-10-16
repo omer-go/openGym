@@ -2322,4 +2322,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Jede Dehnung wird gestoppt: Stoppuhr starten, stoppen, wenn du fertig bist',
   'Start stopwatch': 'Stoppuhr starten',
   'Stop': 'Stopp',
+  'Choose what to train, then start.': 'Wähle, was du trainierst, dann starte.',
+  'Muscle groups': 'Muskelgruppen',
+  'Also add': 'Zusätzlich',
+  'Timed with the stopwatch': 'Mit der Stoppuhr gemessen',
+  'Two, for what you train': 'Zwei, für das, was du trainierst',
+  'Sets and rest': 'Sätze und Pause',
+  'Rest between sets': 'Pause zwischen Sätzen',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'Tippe im Training auf den Namen einer Übung, um Gewicht, Sätze und Pause einzustellen.',
+  'Tick at least one muscle group.': 'Wähle mindestens eine Muskelgruppe.',
 }

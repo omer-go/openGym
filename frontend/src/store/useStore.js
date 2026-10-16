@@ -113,6 +113,9 @@ export const DEF = {
   // list, the default. beginWorkout copies the value onto s.active, so the header ⋮ menu can
   // override it for the running session without touching this saved default.
   workoutView: 'list',
+  // What each one-tap workout's setup sheet last started with, by day type (lib/generate.js
+  // genDefaults: count, groups, cardio, stretch, sets, reps, restSec, warmupSets, lastToFailure).
+  genSetup: {},
   // List and Compact fold a finished exercise into one line (Settings → Workout; #241). The
   // workout's Layout menu can flip it for the running session (s.active.collapseCompleted).
   collapseCompleted: false,

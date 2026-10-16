@@ -653,7 +653,12 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     {!dense && !thumb && <Media ex={ex} key={entry.id} compact={compact} minimizable />}
     <div className="row between exhd" style={{ marginBottom: 6 }}>
       {thumb && <WorkoutThumb ex={ex} onExpand={() => update(s => { s.gifSize = 'full' })} />}
-      <div style={{ flex: 1, minWidth: 0, fontSize: (compact || dense) ? 17 : 20, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.2 }} className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</div>
+      {/* The name opens the exercise's own settings (sets, reps, weight, rest), the same sheet
+          that set it up when it was added; the workout as a whole is set up before it starts. */}
+      {onProgressionSettings
+        ? <button type="button" className={'exttl ' + exerciseNameClass(ex)} style={{ fontSize: (compact || dense) ? 17 : 20 }}
+          aria-label={t('Exercise settings') + ': ' + exerciseNameFor(ex)} onClick={onProgressionSettings}>{exerciseNameFor(ex)}</button>
+        : <div style={{ flex: 1, minWidth: 0, fontSize: (compact || dense) ? 17 : 20, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.2 }} className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</div>}
       <div className="row" style={{ gap: 2, flex: 'none' }}>
         {entry.note && <button className="iconbtn" aria-label={t('Note')} title={t('Note')} style={{ color: 'var(--acc)' }}
           onClick={() => exerciseNoteSheet(entryIdx)}><Icon name="note" /></button>}
@@ -704,7 +709,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     </div>}
     {entry.note && <div className="exnote">{entry.note}</div>}
     {/* Why a one-tap workout picked it: the muscle, and how long since it was trained. */}
-    {entry.gen && <div className="gen-why">{genReason(entry.gen.m, entry.gen.d, S.active.d || todayISO())}</div>}
+    {entry.gen?.m && <div className="gen-why">{genReason(entry.gen.m, entry.gen.d, S.active.d || todayISO())}</div>}
     {planLine}
     {refLine}
     {guidance && onProgressionSettings && <button type="button" className={'progline' + (plan.kind === 'deload' ? ' warn' : '')}
@@ -1545,14 +1550,18 @@ function ActiveWorkout() {
         // kept in place (done warm-ups first, then done work sets, then the fresh remainder).
         // Without a prescription only in a routine kept out of progression: an exercise kept out
         // by hand keeps its prescription, so its Undo leaves the numbers it should count at.
-        const built = buildPlannedEntry(sessionHistory(s), full, activeRoutine, { noProg: builtOutOfProgression(activeEntry, activeRoutine) })
+        // An exercise built with no plan (a freestyle add, a one-tap workout) has no prescription
+        // to apply: what you typed is what you lift.
+        const freestyle = !activeRoutine && !activeEntry.plan
+        const built = buildPlannedEntry(sessionHistory(s), full, activeRoutine, { noProg: freestyle || builtOutOfProgression(activeEntry, activeRoutine) })
         const fresh = built.sets
         const doneWarm = activeEntry.sets.filter(x => x.done && isWarmupRow(x))
         const doneWork = activeEntry.sets.filter(x => x.done && !isWarmupRow(x))
         const freshWarm = fresh.filter(isWarmupRow)
         const freshWork = fresh.filter(x => !isWarmupRow(x))
         activeEntry.target = built.target
-        activeEntry.plan = built.plan
+        // Stays plan-less, so the next edit is taken as typed too.
+        activeEntry.plan = freestyle ? null : built.plan
         activeEntry.planned = built.planned
         if (built.carried) activeEntry.carried = true
         else delete activeEntry.carried

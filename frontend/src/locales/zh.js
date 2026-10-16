@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': '每个拉伸都计时：开始秒表，完成后停止',
   'Start stopwatch': '开始秒表',
   'Stop': '停止',
+  'Choose what to train, then start.': '选择要练的部位，然后开始。',
+  'Muscle groups': '肌群',
+  'Also add': '另外添加',
+  'Timed with the stopwatch': '用秒表计时',
+  'Two, for what you train': '两个，针对你练的部位',
+  'Sets and rest': '组数和休息',
+  'Rest between sets': '组间休息',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': '在训练中，点一下动作名称即可设置重量、组数和休息。',
+  'Tick at least one muscle group.': '请至少勾选一个肌群。',
 }

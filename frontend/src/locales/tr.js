@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Her esneme süreyle yapılır: kronometreyi başlat, bitince durdur',
   'Start stopwatch': 'Kronometreyi başlat',
   'Stop': 'Durdur',
+  'Choose what to train, then start.': 'Ne çalışacağını seç, sonra başla.',
+  'Muscle groups': 'Kas grupları',
+  'Also add': 'Ayrıca ekle',
+  'Timed with the stopwatch': 'Kronometreyle ölçülür',
+  'Two, for what you train': 'İki tane, çalıştıkların için',
+  'Sets and rest': 'Setler ve dinlenme',
+  'Rest between sets': 'Setler arası dinlenme',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'Antrenmanda bir egzersizin adına dokunarak ağırlığını, setlerini ve dinlenmesini ayarla.',
+  'Tick at least one muscle group.': 'En az bir kas grubu seç.',
 }

@@ -2295,4 +2295,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': '每個伸展都計時：開始碼錶，完成後停止',
   'Start stopwatch': '開始碼錶',
   'Stop': '停止',
+  'Choose what to train, then start.': '選擇要練的部位，然後開始。',
+  'Muscle groups': '肌群',
+  'Also add': '另外加入',
+  'Timed with the stopwatch': '用碼錶計時',
+  'Two, for what you train': '兩個，針對你練的部位',
+  'Sets and rest': '組數與休息',
+  'Rest between sets': '組間休息',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': '在訓練中，點一下動作名稱即可設定重量、組數與休息。',
+  'Tick at least one muscle group.': '請至少勾選一個肌群。',
 }

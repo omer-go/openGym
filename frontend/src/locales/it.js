@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Ogni allungamento è cronometrato: avvia il cronometro e fermalo quando hai finito',
   'Start stopwatch': 'Avvia cronometro',
   'Stop': 'Ferma',
+  'Choose what to train, then start.': 'Scegli cosa allenare, poi inizia.',
+  'Muscle groups': 'Gruppi muscolari',
+  'Also add': 'Aggiungi anche',
+  'Timed with the stopwatch': 'Cronometrato',
+  'Two, for what you train': 'Due, per ciò che alleni',
+  'Sets and rest': 'Serie e recupero',
+  'Rest between sets': 'Recupero tra le serie',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'Durante l’allenamento, tocca il nome di un esercizio per impostarne peso, serie e recupero.',
+  'Tick at least one muscle group.': 'Seleziona almeno un gruppo muscolare.',
 }

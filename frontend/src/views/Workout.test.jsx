@@ -1169,6 +1169,27 @@ describe('progression settings rebuild the rows like a session start', () => {
   })
 })
 
+// The exercise's name opens its settings. A plan-less entry (a freestyle add, a one-tap workout)
+// takes what was typed in them: no prescription moves the weight, and it stays plan-less.
+describe('tapping an exercise name', () => {
+  const history = [{
+    d: '2026-08-27',
+    entries: [{ id: 'plain-bench', target: { sets: 2, reps: 5, weight: 60 }, sets: [{ w: 60, r: 5, done: true }, { w: 60, r: 5, done: true }] }],
+  }]
+  it('opens the exercise settings and applies the typed numbers to a plan-less entry', async () => {
+    await mount([exercise('plain-bench', [true, false], { plan: null })], 0, { workouts: history })
+    const title = container.querySelector('.exttl')
+    expect(title).toBeTruthy()
+    await act(async () => { title.dispatchEvent(new dom.Event('click', { bubbles: true })) })
+    const save = mocks.exConfigSheet.mock.calls.at(-1)[2]
+    await act(async () => { save({ mode: 'reps', sets: 3, reps: 8, weight: 50 }) })
+    const e = mocks.S.active.entries[0]
+    expect(e.sets.map(x => [x.w, x.r, !!x.done])).toEqual([[60, 5, true], [50, 8, false], [50, 8, false]])
+    expect(e.target).toMatchObject({ sets: 3, reps: 8, weight: 50 })
+    expect(e.plan).toBe(null)
+  })
+})
+
 // The settings sheet edits the plan, so it opens at the plan's sets and reps, not at today's
 // prescription. Opened at today's numbers, a save that changed nothing stamped a double
 // progression's raised session, or a bodyweight climb, as the plan: "Plan changed", the raise

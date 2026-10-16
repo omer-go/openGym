@@ -1463,6 +1463,15 @@ export const PT_BR_OVERRIDES = {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Cada alongamento é cronometrado: inicie o cronômetro e pare quando terminar',
   'Start stopwatch': 'Iniciar cronômetro',
   'Stop': 'Parar',
+  'Choose what to train, then start.': 'Escolha o que treinar e comece.',
+  'Muscle groups': 'Grupos musculares',
+  'Also add': 'Adicionar também',
+  'Timed with the stopwatch': 'Cronometrado',
+  'Two, for what you train': 'Dois, para o que você treina',
+  'Sets and rest': 'Séries e descanso',
+  'Rest between sets': 'Descanso entre séries',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'No treino, toque no nome de um exercício para definir peso, séries e descanso.',
+  'Tick at least one muscle group.': 'Marque pelo menos um grupo muscular.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

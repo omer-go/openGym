@@ -49,7 +49,8 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, GEN_NAME } from './lib/generate.js'
+import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
+import { ADD_GROUPS } from './lib/add-exercise.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
@@ -2857,19 +2858,21 @@ export function repeatWorkout(w, close) {
 }
 
 // A one-tap workout (lib/generate.js): Full body, Push, Pull or Legs, built from the muscles
-// trained least lately. A freestyle session underneath — `gen` only remembers what it was built
-// as, so the workout can offer Shuffle until the first set is ticked.
+// trained least lately. Its tile opens the setup first (GenSetup). A freestyle session
+// underneath — `gen` only remembers what it was built as and from, so the workout can offer
+// Shuffle until the first set is ticked.
 export function startGenerated(type) {
   if (S().active) { toast(t('Finish the current workout first.')); return }
-  const entries = generatedEntries(S(), generateWorkout(S(), type))
-  if (!entries.length) { toast(t('Nothing fits your equipment for that one.')); return }
+  ui().openSheet(close => <GenSetup type={type} close={close} />)
+}
+function beginGenerated(type, entries, gen) {
   const go = bw => {
     if (S().active) { toast(t('Finish the current workout first.')); return }
     update(s => {
       s.active = {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
         name: t(GEN_NAME[type]), bw: bw || null, cur: 0, entries,
-        gen: { type, shift: 0 },
+        gen: { type, ...gen },
         workoutView: s.workoutView || 'list',
       }
     })
@@ -2879,13 +2882,97 @@ export function startGenerated(type) {
   if (S().weighIn === false) { go(null); return }
   bwSheet({ required: true, onDone: go })
 }
+
+// The setup before a one-tap workout: which muscle groups it covers, how many exercises, cardio
+// and stretches on top, and the sets, reps, rest and warm-ups every lift takes. The list previews
+// the session these build. One exercise's own numbers (its weight above all) are set in the
+// workout, from its name, in the sheet a freestyle add opens. The choices are kept per day type
+// (S.genSetup) for next time.
+function GenSetup({ type, close }) {
+  const st = useStore(s => s.S)
+  const [setup, setSetup] = useState(() => ({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
+  const [shift, setShift] = useState(0)
+  const set = patch => setSetup(x => ({ ...x, ...patch }))
+  const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift }),
+    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch])
+  const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
+  const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
+  const check = (on, label, onClick, sub) => <button key={label} type="button" role="checkbox" aria-checked={on}
+    className={'gs-chk' + (on ? ' on' : '')} onClick={onClick}>
+    <span className={'chk' + (on ? ' on' : '')}><Icon name="check" /></span>
+    <span className="gs-l"><b>{label}</b>{sub && <small>{sub}</small>}</span>
+  </button>
+  const start = () => {
+    update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: setup } })
+    close()
+    beginGenerated(type, entries, { shift, setup })
+  }
+  return <>
+    <div className="row between" style={{ alignItems: 'flex-start' }}>
+      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small">{t('Choose what to train, then start.')}</div></div>
+      <Button size="sm" variant="plain" onClick={() => { setSetup(genDefaults(type)); setShift(0) }}>{t('Reset')}</Button>
+    </div>
+    <h4 className="sec">{t('Muscle groups')}</h4>
+    <div className="gs-grid">{ADD_GROUPS.map(g => check(setup.groups.includes(g.id), t(g.n), () => toggleGroup(g.id)))}</div>
+    <h4 className="sec">{t('Also add')}</h4>
+    <div className="gs-grid">
+      {check(setup.cardio, t('Cardio'), () => set({ cardio: !setup.cardio }), t('Timed with the stopwatch'))}
+      {check(setup.stretch, t('Stretching'), () => set({ stretch: !setup.stretch }), t('Two, for what you train'))}
+    </div>
+    <h4 className="sec">{t('Sets and rest')}</h4>
+    <div className="row cfgrow" style={{ marginBottom: 12 }}>
+      <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
+      <Stepper label={t('Sets')} value={setup.sets} step={1} min={1} max={10} decimal={false} onChange={v => set({ sets: v })} />
+      <Stepper label={t('Reps')} value={setup.reps} step={1} min={1} max={50} decimal={false} onChange={v => set({ reps: v })} />
+    </div>
+    <div className="row cfgrow" style={{ marginBottom: 12 }}>
+      <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
+    </div>
+    <div className="sect-b" style={{ marginBottom: 6 }}>
+      <Row icon="timer" iconTint="var(--orange)" title={t('Rest between sets')} accessory="chevron"
+        value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', fmtRest(st.restSec))}
+        onClick={() => durationSheet({
+          title: t('Rest between sets'), value: setup.restSec > 0 ? setup.restSec : 0, max: REST_MAX,
+          off: t('Default ({0})', fmtRest(st.restSec)),
+          footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
+          onDone: v => set({ restSec: v }),
+        })} />
+      <Row icon="gauge" iconTint="var(--purple)" title={t('Last set to failure')}
+        subtitle={setup.lastToFailure ? t('The last set goes until nothing is left, and counts as all-out effort unless you rate it.') : t('Plan the final set as an all-out one.')}>
+        <Switch checked={setup.lastToFailure === true} onChange={v => set({ lastToFailure: v })} />
+      </Row>
+    </div>
+    <div className="row between" style={{ marginTop: 18 }}>
+      <h4 className="sec" style={{ margin: 0 }}>{t('Exercises')}</h4>
+      <Button size="sm" variant="tinted" icon="shuffle" disabled={!picks.length} onClick={() => setShift(n => n + 1)}>{t('Shuffle')}</Button>
+    </div>
+    <div className="muted small" style={{ margin: '4px 0 8px' }}>{entries.length ? t('In the workout, tap an exercise’s name to set its weight, sets and rest.') : t('Tick at least one muscle group.')}</div>
+    <div className="list">{entries.map((e, i) => {
+      const ex = exOr(e.id), pick = picks[i]
+      const cfg = { ...e.target, id: e.id }
+      const work = e.sets.filter(x => !isWarmupRow(x))
+      const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
+      const timed = modeOf(cfg) === 'time'
+      const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
+        : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
+      return <div key={e.id} className="item">
+        <Thumb ex={ex} />
+        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+        {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
+      </div>
+    })}</div>
+    <div style={{ height: 14 }} />
+    <Button variant="primary" disabled={!entries.length} onClick={start}>{t('Start workout')}</Button>
+  </>
+}
 // Shuffle: the same day type one step further down each muscle's list. Only before anything is
 // logged — the workout hides the button after the first ticked set.
 export function shuffleGenerated() {
   const A = S().active
   if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
   const shift = (A.gen.shift || 0) + 1
-  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { shift }))
+  const setup = A.gen.setup || null
+  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift }), setup)
   if (!entries.length) return
   useUI.getState().stopRest()
   update(s => { s.active.entries = entries; s.active.cur = 0; s.active.gen = { ...s.active.gen, shift } })

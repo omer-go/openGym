@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'हर स्ट्रेच का समय नापा जाता है: स्टॉपवॉच शुरू करें, खत्म होने पर रोकें',
   'Start stopwatch': 'स्टॉपवॉच शुरू करें',
   'Stop': 'रोकें',
+  'Choose what to train, then start.': 'चुनें कि क्या ट्रेन करना है, फिर शुरू करें।',
+  'Muscle groups': 'मांसपेशी समूह',
+  'Also add': 'यह भी जोड़ें',
+  'Timed with the stopwatch': 'स्टॉपवॉच से मापा गया',
+  'Two, for what you train': 'दो, जो आप ट्रेन करते हैं उसके लिए',
+  'Sets and rest': 'सेट और आराम',
+  'Rest between sets': 'सेट के बीच आराम',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'वर्कआउट में, किसी एक्सरसाइज़ के नाम पर टैप करके उसका वज़न, सेट और आराम सेट करें।',
+  'Tick at least one muscle group.': 'कम से कम एक मांसपेशी समूह चुनें।',
 }

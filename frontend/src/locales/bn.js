@@ -2381,4 +2381,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'প্রতিটি স্ট্রেচ সময় ধরে হয়: স্টপওয়াচ চালু করুন, শেষ হলে থামান',
   'Start stopwatch': 'স্টপওয়াচ চালু করুন',
   'Stop': 'থামান',
+  'Choose what to train, then start.': 'কী ট্রেন করবেন বেছে নিন, তারপর শুরু করুন।',
+  'Muscle groups': 'পেশি গ্রুপ',
+  'Also add': 'এটাও যোগ করুন',
+  'Timed with the stopwatch': 'স্টপওয়াচে মাপা',
+  'Two, for what you train': 'দুটি, আপনি যা ট্রেন করেন তার জন্য',
+  'Sets and rest': 'সেট ও বিশ্রাম',
+  'Rest between sets': 'সেটের মাঝে বিশ্রাম',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'ওয়ার্কআউটে, ব্যায়ামের নামে ট্যাপ করে তার ওজন, সেট ও বিশ্রাম ঠিক করুন।',
+  'Tick at least one muscle group.': 'অন্তত একটি পেশি গ্রুপ বেছে নিন।',
 }

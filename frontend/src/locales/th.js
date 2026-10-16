@@ -2313,4 +2313,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'การยืดแต่ละท่าจับเวลา: เริ่มนาฬิกาจับเวลา แล้วหยุดเมื่อเสร็จ',
   'Start stopwatch': 'เริ่มจับเวลา',
   'Stop': 'หยุด',
+  'Choose what to train, then start.': 'เลือกสิ่งที่จะฝึก แล้วเริ่มเลย',
+  'Muscle groups': 'กลุ่มกล้ามเนื้อ',
+  'Also add': 'เพิ่มด้วย',
+  'Timed with the stopwatch': 'จับเวลาด้วยนาฬิกาจับเวลา',
+  'Two, for what you train': 'สองท่า สำหรับส่วนที่คุณฝึก',
+  'Sets and rest': 'เซ็ตและการพัก',
+  'Rest between sets': 'พักระหว่างเซ็ต',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'ระหว่างการออกกำลังกาย แตะชื่อท่าเพื่อตั้งน้ำหนัก เซ็ต และเวลาพัก',
+  'Tick at least one muscle group.': 'เลือกกลุ่มกล้ามเนื้ออย่างน้อยหนึ่งกลุ่ม',
 }

@@ -1902,6 +1902,15 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gen-tile{padding:11px 12px;border-radius:var(--r);background:var(--surface-2);cursor:pointer;min-width:0;transition:background var(--fast)}
 .gen-tile:active{background:var(--surface-3)}
 .gen-tile .tt{font-weight:600;font-size:15px;letter-spacing:-.01em}
+/* one-tap workout setup (sheets.jsx GenSetup) */
+.gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gs-chk{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r);background:var(--surface-2);text-align:left;min-width:0;color:var(--label)}
+.gs-chk .chk{width:24px;height:24px}
+.gs-chk .chk .icn{font-size:13px}
+.gs-chk .chk::before{display:none}
+.gs-l{display:flex;flex-direction:column;min-width:0}
+.gs-l b{font-weight:500;font-size:14.5px}
+.gs-l small{color:var(--label-2);font-size:12px;line-height:1.25}
 .gen-tile .ss{color:var(--label-2);font-size:12.5px;margin-top:6px;line-height:1.3}
 .gen-first{color:var(--acc);font-size:12px;font-weight:500;margin-top:6px;line-height:1.3}
 .gen-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:10px;border-radius:var(--r);background:var(--acc-soft)}
@@ -2218,3 +2227,6 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ax-last b{font-size:14px;font-weight:600;color:var(--label);font-variant-numeric:tabular-nums}
 .ax-new{font-size:12px;color:var(--acc);font-weight:600}
 .ax-more{display:block;width:100%;padding:10px;color:var(--acc);font-size:14px;font-weight:500}
+/* The exercise name in the workout card opens its settings: looks like the title, acts like a button. */
+.exttl{flex:1;min-width:0;font-weight:600;letter-spacing:-.02em;line-height:1.2;text-align:start;background:none;border:0;padding:0;margin:0;color:inherit;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.exttl:active{opacity:.6}

@@ -2305,4 +2305,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Minden nyújtás időre megy: indítsd a stoppert, és állítsd le, ha végeztél',
   'Start stopwatch': 'Stopper indítása',
   'Stop': 'Leállítás',
+  'Choose what to train, then start.': 'Válaszd ki, mit edzel, aztán kezdd.',
+  'Muscle groups': 'Izomcsoportok',
+  'Also add': 'Hozzáadás még',
+  'Timed with the stopwatch': 'Stopperrel mérve',
+  'Two, for what you train': 'Kettő, ahhoz, amit edzel',
+  'Sets and rest': 'Sorozatok és pihenő',
+  'Rest between sets': 'Pihenő a sorozatok között',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'Az edzés közben koppints egy gyakorlat nevére a súly, a sorozatok és a pihenő beállításához.',
+  'Tick at least one muscle group.': 'Jelölj be legalább egy izomcsoportot.',
 }

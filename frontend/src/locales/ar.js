@@ -2357,4 +2357,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'كل إطالة تُقاس بالوقت: شغّل ساعة الإيقاف وأوقفها عند الانتهاء',
   'Start stopwatch': 'تشغيل ساعة الإيقاف',
   'Stop': 'إيقاف',
+  'Choose what to train, then start.': 'اختر ما ستتمرن عليه، ثم ابدأ.',
+  'Muscle groups': 'مجموعات العضلات',
+  'Also add': 'أضف أيضًا',
+  'Timed with the stopwatch': 'بساعة الإيقاف',
+  'Two, for what you train': 'اثنتان، لما تتمرن عليه',
+  'Sets and rest': 'المجموعات والراحة',
+  'Rest between sets': 'الراحة بين المجموعات',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'في التمرين، اضغط على اسم التمرين لضبط وزنه ومجموعاته وراحته.',
+  'Tick at least one muscle group.': 'اختر مجموعة عضلية واحدة على الأقل.',
 }

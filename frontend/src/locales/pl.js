@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Każde rozciąganie jest mierzone: włącz stoper i zatrzymaj go, gdy skończysz',
   'Start stopwatch': 'Włącz stoper',
   'Stop': 'Zatrzymaj',
+  'Choose what to train, then start.': 'Wybierz, co trenujesz, i zacznij.',
+  'Muscle groups': 'Grupy mięśniowe',
+  'Also add': 'Dodaj też',
+  'Timed with the stopwatch': 'Mierzone stoperem',
+  'Two, for what you train': 'Dwa, na to, co trenujesz',
+  'Sets and rest': 'Serie i przerwa',
+  'Rest between sets': 'Przerwa między seriami',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'W treningu dotknij nazwy ćwiczenia, aby ustawić jego ciężar, serie i przerwę.',
+  'Tick at least one muscle group.': 'Zaznacz co najmniej jedną grupę mięśni.',
 }

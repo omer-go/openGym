@@ -21,12 +21,14 @@ export const genReason = (muscle, last, today = todayISO()) => t(MUSCLE_NAME[mus
   + (last ? t('last trained {0}', fmtDaysAgo(last, today)) : t('not trained yet'))
 
 // One-tap workouts (lib/generate.js): four tiles, each a session built from the muscles you have
-// trained least lately. Each tile says which muscle it would open on, so the choice is informed.
+// trained least lately. Each tile says which muscle it would open on, so the choice is informed,
+// and opens the setup sheet (sheets.jsx GenSetup) before the workout starts.
 export default function GenerateCard() {
   const S = useStore(s => s.S)
-  const firsts = useMemo(() => Object.fromEntries(TILES.map(({ type }) => [type, generateWorkout(S, type)[0] || null])),
-    // The picks only move with what was logged, the equipment in use and the exercises there are.
-    [S.workouts, S.equipFilterOn, S.activeEquipId, S.equipProfiles, S.customEx])
+  const firsts = useMemo(() => Object.fromEntries(TILES.map(({ type }) => [type, generateWorkout(S, type, S.genSetup?.[type])[0] || null])),
+    // The picks only move with what was logged, the equipment in use, the exercises there are and
+    // the setup each tile last started with.
+    [S.workouts, S.equipFilterOn, S.activeEquipId, S.equipProfiles, S.customEx, S.genSetup])
   return <div className="card">
     <h2 style={{ marginBottom: 2 }}>{t('One-tap workout')}</h2>
     <div className="muted small" style={{ marginBottom: 10 }}>{t('Built from the muscles you have trained least lately.')}</div>

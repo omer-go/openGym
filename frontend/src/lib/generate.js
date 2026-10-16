@@ -10,7 +10,13 @@
 // variety rotates; after them a short list of staple lifts, so a muscle you have never trained
 // opens on a bench press, not on whichever of 300 catalogue rows sorts first. `shift` walks each
 // muscle's list one further: Shuffle in the workout is a shift + 1.
+//
+// The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
+// which muscle groups it covers, add a run and stretches, and set the sets, reps, rest and
+// starting weight of every exercise; generatedEntries builds the session from it.
 import { EXIDX, isCardio } from './exercises.js'
+import { ADD_GROUPS } from './add-exercise.js'
+import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { exAvailable } from './equipment.js'
@@ -43,6 +49,7 @@ export const STAPLES = {
   calves: ['0605', '1372', '0594', '0417', '0088'],
   abs: ['0175', '0472', '0274', '0463', '0276', '3449'],
   trapezius: ['0406', '0095', '0220', '0604'],
+  forearm: ['1412', '1411', '1415', '2917', '4163'],
 }
 
 // A muscle counts as trained by an exercise that works it at least this hard: every primary, not
@@ -92,48 +99,149 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
   return [...logged, ...staples]
 }
 
+/** How many exercises a `type` session has unless the setup says otherwise. */
+export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
+
+// The muscle groups the setup offers are the Add exercise groups (ADD_GROUPS). A group a day
+// type does not cover gets one slot of its own when ticked: its first muscle. add-exercise.js
+// imports this file too, so ADD_GROUPS is only read inside functions, never at load.
+const groupMuscles = groups => new Set(ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m))
+/** The group ids a `type` session covers by default: every group one of its slots trains. */
+export const genGroupsOf = type => {
+  const slugs = new Set((GEN_TYPES[type] || []).flatMap(([spec]) => spec.split('|')))
+  return ADD_GROUPS.filter(g => g.m.some(m => slugs.has(m))).map(g => g.id)
+}
+
+/** What the setup sheet opens on for `type`, before anything is changed. */
+export const genDefaults = type => ({
+  count: genCount(type), groups: genGroupsOf(type), cardio: false, stretch: false,
+  sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
+})
+export const MAX_GEN_COUNT = 15
+
+/**
+ * The slots of a `type` session over the ticked `groups`: [{ options, n }]. A choice slot keeps
+ * only its ticked muscles, a slot with none left goes, and a ticked group no slot covers is added.
+ */
+export function genSlots(type, groups) {
+  const base = (GEN_TYPES[type] || []).map(([spec, n]) => ({ options: spec.split('|'), n }))
+  if (!groups) return base
+  const on = groupMuscles(groups)
+  const slots = base.map(s => ({ ...s, options: s.options.filter(m => on.has(m)) })).filter(s => s.options.length)
+  const covered = new Set(slots.flatMap(s => s.options))
+  for (const g of ADD_GROUPS) {
+    if (groups.includes(g.id) && !g.m.some(m => covered.has(m))) slots.push({ options: [g.m[0]], n: 1 })
+  }
+  return slots
+}
+
+// The muscle each pick goes to, `count` long: every slot's first exercise before any slot's
+// second, the stalest slot first — so a shorter session drops the muscles trained most lately,
+// and a longer one goes round the slots again. At the type's own count it is exactly its slots.
+function slotSequence(slots, count) {
+  const seq = []
+  if (!slots.length) return seq
+  const most = Math.max(...slots.map(s => s.n))
+  for (let r = 0; seq.length < count; r++) {
+    for (const s of slots) if ((r < most ? s.n > r : true) && seq.length < count) seq.push(s.slug)
+  }
+  return seq
+}
+
+// Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
+// then the staples of each cardio area.
+function cardioCandidates(S, index) {
+  const usable = ex => ex && isCardio(ex) && exAvailable(S, ex)
+  const logged = Object.entries(index.exercises).filter(([id]) => usable(EXIDX[id]))
+    .sort(([, x], [, y]) => staler(y.d, x.d)).map(([id]) => id)
+  const staples = ACTIVITY_GROUPS[0].areas.flatMap(a => a.staples).filter(id => usable(EXIDX[id]) && !logged.includes(id))
+  return [...logged, ...staples]
+}
+// Stretches for what the session trains first, then the rest; logged ones before the staples.
+function stretchCandidates(S, index, slugs) {
+  const usable = ex => ex && isStretch(ex) && exAvailable(S, ex)
+  const logged = Object.entries(index.exercises).filter(([id]) => usable(EXIDX[id]))
+    .sort(([, x], [, y]) => staler(y.d, x.d)).map(([id]) => id)
+  const staples = ACTIVITY_GROUPS[1].areas.flatMap(a => a.staples).filter(id => usable(EXIDX[id]) && !logged.includes(id))
+  const hits = id => Object.entries(musclesOf(EXIDX[id])).some(([m, w]) => w >= TRAINED_AT && slugs.has(m))
+  const all = [...logged, ...staples]
+  return [...all.filter(hits), ...all.filter(id => !hits(id))]
+}
+export const GEN_STRETCHES = 2
+
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], stalest muscle first. `last` is
  * the ISO day that muscle was last trained, null when never. A slot with nothing to offer
  * (an equipment profile that rules every candidate out) is left out.
+ * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
+ * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }.
  */
-export function generateWorkout(S, type, { shift = 0 } = {}) {
-  const slots = GEN_TYPES[type]
-  if (!slots) return []
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false } = {}) {
+  if (!GEN_TYPES[type]) return []
   const index = trainingIndex(S)
   const lastOf = slug => index.muscles[slug] || null
+  // Each slot goes to its stalest muscle; the slots then run stalest first.
+  const slots = genSlots(type, groups)
+    .map(s => ({ ...s, slug: s.options.slice().sort((a, b) => staler(lastOf(a), lastOf(b)))[0] }))
+    .sort((a, b) => staler(lastOf(a.slug), lastOf(b.slug)))
+  const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const lists = {}, used = {}, taken = new Set(), picks = []
-  for (const [spec, count] of slots) {
-    const options = spec.split('|')
-    const slug = options.slice().sort((a, b) => staler(lastOf(a), lastOf(b)))[0]
+  for (const slug of slotSequence(slots, n)) {
     const list = lists[slug] || (lists[slug] = candidatesFor(S, slug, index))
-    for (let k = 0; k < count && list.length; k++) {
-      for (let tries = 0; tries < list.length; tries++) {
-        const id = list[(shift + (used[slug] || 0) + tries) % list.length]
-        if (taken.has(id)) continue
-        used[slug] = (used[slug] || 0) + tries + 1
-        taken.add(id)
-        picks.push({ id, muscle: slug, last: lastOf(slug) })
-        break
-      }
+    for (let tries = 0; tries < list.length; tries++) {
+      const id = list[(shift + (used[slug] || 0) + tries) % list.length]
+      if (taken.has(id)) continue
+      used[slug] = (used[slug] || 0) + tries + 1
+      taken.add(id)
+      picks.push({ id, muscle: slug, last: lastOf(slug) })
+      break
     }
   }
   // Array#sort is stable: a slot's own order holds within one muscle.
-  return picks.sort((a, b) => staler(a.last, b.last))
+  picks.sort((a, b) => staler(a.last, b.last))
+  const pickFrom = (list, k, kind) => {
+    for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
+  }
+  if (cardio) pickFrom(cardioCandidates(S, index), 1, 'cardio')
+  if (stretch) pickFrom(stretchCandidates(S, index, new Set(picks.map(p => p.muscle))), GEN_STRETCHES, 'stretch')
+  return picks
+}
+
+/**
+ * The target of one lift in a session built from `setup` (genDefaults): the setup's sets, reps,
+ * rest and warm-ups on the exercise's own kind of set (a plank keeps its seconds). The weight is
+ * last time's; an exercise's own numbers are set from its name in the workout once it starts.
+ */
+export function genConfig(S, id, setup) {
+  const base = freestyleConfig(S, { id, ...defaultConfig(id) })
+  const def = defaultConfig(id, modeOf({ ...base, id }))
+  const keep = {}
+  for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) keep[k] = base[k]
+  const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(setup.sets) || def.sets) }
+  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(setup.reps) || def.reps)
+  if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
+  if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
+  if (setup.lastToFailure) cfg.lastToFailure = true
+  return cfg
 }
 
 /**
  * Session entries for `picks`, built the way a freestyle exercise added mid-workout is
  * (Workout.jsx): last time's target and loads, in the exercise's dumbbell meaning today.
+ * With a `setup` the lifts take its target instead (genConfig) and open at it, the weight
+ * falling back to last time's when none was typed. Cardio and stretches are always built
+ * the freestyle way: the stopwatch measures them.
  * `gen` says why it was picked; the finish path keeps only what was logged, so it never
  * reaches the saved workout.
  */
-export function generatedEntries(S, picks) {
-  return picks.map(({ id, muscle, last }) => {
-    const cfg = freestyleConfig(S, { id, ...defaultConfig(id) })
+export function generatedEntries(S, picks, setup = null) {
+  return picks.map(({ id, muscle, last, kind }) => {
+    const planned = setup && !kind
+    const cfg = planned ? genConfig(S, id, setup) : freestyleConfig(S, { id, ...defaultConfig(id) })
     const full = { ...cfg, id }
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
-    const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))
-    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: { m: muscle, d: last } }
+    const opts = planned ? { step, useTarget: true } : { step, preferLast: true }
+    const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, opts), full, dropGrid(S, full))
+    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last } }
   })
 }

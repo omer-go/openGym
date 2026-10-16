@@ -2299,4 +2299,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': 'Кожна розтяжка йде за часом: запустіть секундомір і зупиніть, коли закінчите',
   'Start stopwatch': 'Запустити секундомір',
   'Stop': 'Стоп',
+  'Choose what to train, then start.': 'Оберіть, що тренувати, і почніть.',
+  'Muscle groups': 'Групи м’язів',
+  'Also add': 'Додати ще',
+  'Timed with the stopwatch': 'З секундоміром',
+  'Two, for what you train': 'Дві, для того, що ви тренуєте',
+  'Sets and rest': 'Підходи й відпочинок',
+  'Rest between sets': 'Відпочинок між підходами',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'Під час тренування торкніться назви вправи, щоб задати вагу, підходи й відпочинок.',
+  'Tick at least one muscle group.': 'Позначте хоча б одну групу м’язів.',
 }

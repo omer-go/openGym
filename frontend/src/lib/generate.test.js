@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genSlots } from './generate.js'
+import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 
@@ -109,5 +110,83 @@ describe('generatedEntries', () => {
   it('a never-logged exercise opens at the default three sets', () => {
     const [entry] = generatedEntries(state(), [{ id: SQUAT, muscle: 'quadriceps', last: null }])
     expect(entry.sets.filter(s => !isWarmupRow(s))).toHaveLength(3)
+  })
+})
+
+describe('workout setup', () => {
+  it('opens on the type’s own count and groups', () => {
+    expect(genDefaults('push')).toMatchObject({ count: 6, groups: ['chest', 'shoulders', 'triceps'], sets: 3, reps: 10 })
+    expect(genDefaults('full').groups).not.toContain('forearms')
+    expect(genDefaults('full').count).toBe(genCount('full'))
+  })
+  it('the defaults build exactly the session without a setup', () => {
+    for (const type of Object.keys(GEN_TYPES)) {
+      const { count, groups } = genDefaults(type)
+      expect(generateWorkout(state(), type, { count, groups })).toEqual(generateWorkout(state(), type))
+    }
+  })
+  it('a shorter session keeps one exercise per muscle before any second', () => {
+    const picks = generateWorkout(state(), 'push', { count: 3 })
+    expect(picks.map(p => p.muscle).sort()).toEqual(['chest', 'deltoids', 'triceps'])
+  })
+  it('a longer session goes round the muscles again', () => {
+    const picks = generateWorkout(state(), 'push', { count: 9 })
+    expect(picks).toHaveLength(9)
+    expect(new Set(picks.map(p => p.id)).size).toBe(9)
+    expect(picks.filter(p => p.muscle === 'chest')).toHaveLength(3)
+  })
+  it('unticked groups are left out and ticked ones the type lacks are added', () => {
+    const picks = generateWorkout(state(), 'full', { count: 7, groups: ['chest', 'back', 'forearms'] })
+    const muscles = new Set(picks.map(p => p.muscle))
+    expect([...muscles].sort()).toEqual(['chest', 'forearm', 'upper-back'])
+    expect(picks).toHaveLength(7)
+  })
+  it('a choice slot keeps only its ticked muscle', () => {
+    const slots = genSlots('full', ['hamstrings', 'triceps'])
+    expect(slots.map(s => s.options)).toEqual([['hamstring'], ['triceps']])
+  })
+  it('no groups ticked means no lifts', () => {
+    expect(generateWorkout(state(), 'full', { groups: [] })).toEqual([])
+  })
+  it('adds a run and two stretches after the lifts', () => {
+    const picks = generateWorkout(state(), 'legs', { cardio: true, stretch: true })
+    expect(picks.slice(-3).map(p => p.kind)).toEqual(['cardio', 'stretch', 'stretch'])
+    expect(EXIDX[picks.at(-3).id].cat).toBe('cardio')
+    expect(picks.slice(-2).every(p => EXIDX[p.id].cat === 'stretching')).toBe(true)
+    // the leg day's stretches are for the legs
+    expect(picks.slice(-2).every(p => /legs/.test(EXIDX[p.id].bp))).toBe(true)
+  })
+  it('the run is the one you logged last', () => {
+    const st = state({ workouts: [session('2026-09-01', ['2197'], [{ min: 20, speed: 9, done: true }])] })
+    expect(generateWorkout(st, 'push', { cardio: true }).at(-1).id).toBe('2197')
+  })
+})
+
+describe('generatedEntries with a setup', () => {
+  const setup = { ...genDefaults('push'), sets: 4, reps: 8, restSec: 120, warmupSets: 1 }
+  it('every lift takes the setup’s sets, reps, rest and warm-ups', () => {
+    const [e] = generatedEntries(state(), [{ id: BENCH, muscle: 'chest', last: null }], setup)
+    expect(e.target).toMatchObject({ sets: 4, reps: 8, restSec: 120, warmupSets: 1, mode: 'reps' })
+    const work = e.sets.filter(s => !isWarmupRow(s))
+    expect(work).toHaveLength(4)
+    expect(work.every(s => s.r === 8)).toBe(true)
+    expect(e.sets.filter(isWarmupRow)).toHaveLength(1)
+  })
+  it('opens at last time’s weight, on the setup’s reps', () => {
+    const st = state({ workouts: [session('2026-09-01', [BENCH], [row({ w: 70, r: 5 })])] })
+    const pick = [{ id: BENCH, muscle: 'chest', last: '2026-09-01' }]
+    expect(generatedEntries(st, pick, setup)[0].sets.filter(s => !isWarmupRow(s)).map(s => [s.w, s.r])).toEqual([[70, 8], [70, 8], [70, 8], [70, 8]])
+  })
+  it('a hold keeps its seconds and takes the sets', () => {
+    const [e] = generatedEntries(state(), [{ id: '0463', muscle: 'abs', last: null }], setup)
+    expect(e.target.mode).toBe(modeOf({ id: '0463' }))
+    if (e.target.mode === 'time') expect(e.target.reps).toBeUndefined()
+    expect(e.sets.filter(s => !isWarmupRow(s))).toHaveLength(4)
+  })
+  it('cardio and stretches are built the freestyle way', () => {
+    const [run, str] = generatedEntries(state(), [{ id: '0685', kind: 'cardio' }, { id: '1511', kind: 'stretch' }], setup)
+    expect(run.sets).toHaveLength(1)
+    expect(run.gen).toEqual({ k: 'cardio' })
+    expect(str.target).toMatchObject({ mode: 'time', sets: 2 })
   })
 })

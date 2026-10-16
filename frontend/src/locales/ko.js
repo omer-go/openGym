@@ -2302,4 +2302,13 @@ export default {
   'Each stretch is timed: start the stopwatch, stop it when you are done': '스트레칭은 시간으로 기록해요: 스톱워치를 켜고 끝나면 멈추세요',
   'Start stopwatch': '스톱워치 시작',
   'Stop': '멈추기',
+  'Choose what to train, then start.': '훈련할 부위를 고르고 시작하세요.',
+  'Muscle groups': '근육 그룹',
+  'Also add': '추가로',
+  'Timed with the stopwatch': '스톱워치로 측정',
+  'Two, for what you train': '두 가지, 훈련하는 부위용',
+  'Sets and rest': '세트와 휴식',
+  'Rest between sets': '세트 간 휴식',
+  'In the workout, tap an exercise’s name to set its weight, sets and rest.': '운동 중에 운동 이름을 탭해 무게, 세트, 휴식을 설정하세요.',
+  'Tick at least one muscle group.': '근육 그룹을 하나 이상 선택하세요.',
 }
