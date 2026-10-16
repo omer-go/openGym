@@ -26,7 +26,7 @@ import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
-import { startFlow, exercisePicker, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet } from '../sheets.jsx'
+import { startFlow, exercisePicker, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, shuffleGenerated } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
 import { effortColor } from '../lib/effort.js'
 import Elapsed from '../components/Elapsed.jsx'
@@ -45,6 +45,7 @@ import { canMoveActiveWorkoutUnit, moveActiveWorkoutUnit, canMoveActiveWorkoutEn
 import { nextOpenSet, workoutKeyAction } from '../lib/workout-keys.js'
 import { MUSCLE_NAME } from '../lib/muscles.js'
 import FocusView from './FocusView.jsx'
+import GenerateCard, { genReason } from '../components/GenerateCard.jsx'
 import { withMeaning, historyAs, dbLoadFor, entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
@@ -78,6 +79,7 @@ function StartChooser() {
         <div className="grow"><div className="tt">{r.name}</div><div className="ss">{exCount(r.ex.length)}</div></div>
         <span className="tag acc">{t('Start')}</span></div>)}</div></>}
     <div style={{ height: 14 }} />
+    <GenerateCard />
     <Button icon="shuffle" onClick={() => startFlow([])}>{t('Freestyle workout (pick as you go)')}</Button>
     {!S.routines.length && <><div style={{ height: 10 }} /><Button variant="primary" onClick={() => nav('/plan')}>{t('Build a plan first')}</Button></>}
   </div>
@@ -677,6 +679,8 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       {t('From {0}:', fmtDate(pinnedNote.d, true))} {pinnedNote.note}
     </div>}
     {entry.note && <div className="exnote">{entry.note}</div>}
+    {/* Why a one-tap workout picked it: the muscle, and how long since it was trained. */}
+    {entry.gen && <div className="gen-why">{genReason(entry.gen.m, entry.gen.d, S.active.d || todayISO())}</div>}
     {planLine}
     {refLine}
     {guidance && onProgressionSettings && <button type="button" className={'progline' + (plan.kind === 'deload' ? ' warn' : '')}
@@ -1927,6 +1931,14 @@ function ActiveWorkout() {
     </div>
     {editing && <p className="muted small">{t('Editing a saved workout. Date and duration stay unchanged.')}</p>}
     {A.backfill && <div className="muted small" style={{ marginBottom: 8 }}>{t('Logging a past workout, so no rest timers.')}</div>}
+    {/* A one-tap workout (lib/generate.js) can be rebuilt until its first set is ticked. */}
+    {A.gen && !done && <div className="gen-bar">
+      <div className="grow">
+        <div className="tt">{t('{0} · {1} exercises', A.name, A.entries.length)}</div>
+        <div className="ss">{t('Least-trained muscles first. Swap any exercise, or shuffle them all.')}</div>
+      </div>
+      <Button size="sm" variant="tinted" icon="shuffle" onClick={shuffleGenerated}>{t('Shuffle')}</Button>
+    </div>}
 
     {A.entries.length ? (listMode ? (
       <div className="workout-list" data-testid="workout-list" ref={listRef}>

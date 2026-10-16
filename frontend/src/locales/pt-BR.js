@@ -1403,6 +1403,24 @@ export const PT_BR_OVERRIDES = {
   'Gentle, for headphones or a quiet room.': 'Suave, para fones de ouvido ou um lugar silencioso.',
   'Fewer than two workouts in this period. Pick a longer one.': 'Menos de dois treinos neste período. Escolha um mais longo.',
   'Releases are checked on GitHub. The download is verified against its checksum before the installer opens.': 'As versões são verificadas no GitHub. O download é conferido pela soma de verificação antes de abrir o instalador.',
+  // --- one-tap workouts ---
+  'Full body': 'Corpo inteiro',
+  'Push day': 'Dia de empurrar',
+  'Pull day': 'Dia de puxar',
+  'Leg day': 'Dia de pernas',
+  'One-tap workout': 'Treino em um toque',
+  'Built from the muscles you have trained least lately.': 'Montado com os músculos que você menos treinou ultimamente.',
+  'Every major muscle': 'Todos os músculos principais',
+  'Chest, shoulders, triceps': 'Peito, ombros, tríceps',
+  'Back, traps, biceps': 'Costas, trapézio, bíceps',
+  'Quads, hamstrings, glutes, calves': 'Quadríceps, posteriores, glúteos, panturrilhas',
+  'Starts with {0}': 'Começa com {0}',
+  'last trained {0}': 'treinado pela última vez {0}',
+  'not trained yet': 'ainda não treinado',
+  '{0} · {1} exercises': '{0} · {1} exercícios',
+  'Least-trained muscles first. Swap any exercise, or shuffle them all.': 'Primeiro os músculos menos treinados. Troque qualquer exercício ou embaralhe todos.',
+  'Shuffle': 'Embaralhar',
+  'Nothing fits your equipment for that one.': 'Nada combina com seu equipamento para esse.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

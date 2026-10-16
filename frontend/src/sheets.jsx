@@ -47,6 +47,7 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
+import { generateWorkout, generatedEntries, GEN_NAME } from './lib/generate.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
@@ -2817,6 +2818,41 @@ export function repeatWorkout(w, close) {
   if (st.weighIn === false) { go(null); return }
   if (close) close()
   bwSheet({ required: true, onDone: go })
+}
+
+// A one-tap workout (lib/generate.js): Full body, Push, Pull or Legs, built from the muscles
+// trained least lately. A freestyle session underneath — `gen` only remembers what it was built
+// as, so the workout can offer Shuffle until the first set is ticked.
+export function startGenerated(type) {
+  if (S().active) { toast(t('Finish the current workout first.')); return }
+  const entries = generatedEntries(S(), generateWorkout(S(), type))
+  if (!entries.length) { toast(t('Nothing fits your equipment for that one.')); return }
+  const go = bw => {
+    if (S().active) { toast(t('Finish the current workout first.')); return }
+    update(s => {
+      s.active = {
+        id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
+        name: t(GEN_NAME[type]), bw: bw || null, cur: 0, entries,
+        gen: { type, shift: 0 },
+        workoutView: s.workoutView || 'cards',
+      }
+    })
+    useUI.getState().stopRest()
+    navToWorkout()
+  }
+  if (S().weighIn === false) { go(null); return }
+  bwSheet({ required: true, onDone: go })
+}
+// Shuffle: the same day type one step further down each muscle's list. Only before anything is
+// logged — the workout hides the button after the first ticked set.
+export function shuffleGenerated() {
+  const A = S().active
+  if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
+  const shift = (A.gen.shift || 0) + 1
+  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { shift }))
+  if (!entries.length) return
+  useUI.getState().stopRest()
+  update(s => { s.active.entries = entries; s.active.cur = 0; s.active.gen = { ...s.active.gen, shift } })
 }
 
 /* ============================ log a past workout ============================ */

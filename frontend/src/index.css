@@ -1880,6 +1880,19 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   .wl-unit{padding:10px 8px 2px}
 }
 
+/* --- one-tap workouts (components/GenerateCard.jsx, lib/generate.js) --- */
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gen-tile{padding:11px 12px;border-radius:var(--r);background:var(--surface-2);cursor:pointer;min-width:0;transition:background var(--fast)}
+.gen-tile:active{background:var(--surface-3)}
+.gen-tile .tt{font-weight:600;font-size:15px;letter-spacing:-.01em}
+.gen-tile .ss{color:var(--label-2);font-size:12.5px;margin-top:6px;line-height:1.3}
+.gen-first{color:var(--acc);font-size:12px;font-weight:500;margin-top:6px;line-height:1.3}
+.gen-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:10px;border-radius:var(--r);background:var(--acc-soft)}
+.gen-bar .grow{min-width:0}
+.gen-bar .tt{font-weight:600;font-size:15px}
+.gen-bar .ss{color:var(--label-2);font-size:12.5px;margin-top:2px;line-height:1.3}
+.gen-why{color:var(--acc);font-size:13px;font-weight:500;margin-bottom:6px}
+
 /* --- home: today's session row --- */
 .today-row{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
