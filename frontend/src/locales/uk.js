@@ -2285,4 +2285,18 @@ export default {
   'Swap for a similar exercise': 'Замінити схожою вправою',
   'Swapped to {0}': 'Замінено на {0}',
   'Choose': 'Вибрати',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Кардіо та розтяжка',
+  'Stretching': 'Розтяжка',
+  'Running': 'Біг',
+  'Walking': 'Ходьба',
+  'Bike & machines': 'Велосипед і тренажери',
+  'Legs & hips': 'Ноги й таз',
+  'Back & core': 'Спина й кор',
+  'Last {0}': 'Востаннє {0}',
+  'Not done yet': 'Ще не було',
+  'Start a stopwatch on the set, stop it when you are done': 'Запустіть секундомір на підході й зупиніть, коли закінчите',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Кожна розтяжка йде за часом: запустіть секундомір і зупиніть, коли закінчите',
+  'Start stopwatch': 'Запустити секундомір',
+  'Stop': 'Стоп',
 }

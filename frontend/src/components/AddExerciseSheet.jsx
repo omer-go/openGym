@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../store/useStore.js'
-import { ADD_GROUPS, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet } from '../lib/add-exercise.js'
+import { ADD_GROUPS, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet, activityLast } from '../lib/add-exercise.js'
+import { ACTIVITY_GROUPS, activityGroup, activityOf } from '../lib/activities.js'
 import { MUSCLE_NAME } from '../lib/muscles.js'
 import { EXIDX } from '../lib/exercises.js'
 import { primaryMuscleOf } from '../lib/strength-exercises.js'
@@ -18,6 +19,9 @@ import { Button, Segmented } from './ui.jsx'
 // Grouping and ranking live in lib/add-exercise.js.
 // A swap opens it with a `title` and `like`, the exercise being replaced: it then starts on that
 // exercise's group and area, Back still leading to every group.
+// Cardio and Stretching sit below the muscle groups (lib/activities.js): their areas are kinds of
+// cardio and parts of the body, with an icon where a muscle group has its avatar, and no
+// this-week dots, since nobody needs to run every muscle.
 
 const PER_AREA = 5       // rows an area shows before its "Show all"
 const PAGE = 40          // rows a single list shows before "Show more"
@@ -41,6 +45,8 @@ const Legend = () => <div className="ax-legend">
 // Where a swap away from `id` starts: its primary muscle's group, narrowed to that muscle when
 // the group has more than one.
 function startOf(id) {
+  const act = id && activityOf(EXIDX[id])
+  if (act) return act
   const g = id && groupOfMuscle(primaryMuscleOf(EXIDX[id])?.slug)
   if (!g) return { group: null, area: '' }
   return { group: g.id, area: g.m.length > 1 ? primaryMuscleOf(EXIDX[id]).slug : '' }
@@ -56,6 +62,7 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
   const [sort, setSort] = useState('suggested')  // 'suggested' | 'recent' | 'az'
   const [more, setMore] = useState({})           // area -> rows shown, past the default
   const status = useMemo(() => muscleStatus(S), [S.workouts, S.active, S.weekStart])
+  const actLast = useMemo(() => activityLast(S), [S.workouts])
   const suggested = useMemo(() => suggestedGroups(status), [status])
   const openGroup = (id, slug = '') => { setGroup(id); setArea(slug); setMore({}) }
 
@@ -66,6 +73,10 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
         <span className="ax-dots">{g.m.map(m => <Dot key={m} st={status[m].st} />)}</span>
         {suggested.includes(g.id) && <span className="ax-badge">{t('Suggested')}</span>}
       </span></span>
+    </button>
+    const actTile = g => <button key={g.id} className="ax-gt" onClick={() => openGroup(g.id)}>
+      <span className="ava ax-ico"><Icon name={g.icon} /></span>
+      <span className="ax-m"><b>{t(g.n)}</b><span className="ax-st"><span className="muted small">{actLast[g.id] ? t('Last {0}', fmtDaysAgo(actLast[g.id])) : t('Not done yet')}</span></span></span>
     </button>
     // The map shades this week the way the dots do: in the workout strongest, trained this week lighter.
     const load = Object.fromEntries(Object.entries(status).map(([m, s]) => [m, s.st === 'td' ? 2 : s.st === 'wk' ? 1 : 0]))
@@ -83,11 +94,16 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
           <h4 className="sec">{t('Lower body')}</h4>
           <div className="ax-gts">{ADD_GROUPS.filter(g => g.low).map(tile)}</div>
         </>}
+      <h4 className="sec">{t('Cardio & stretching')}</h4>
+      <div className="ax-gts">{ACTIVITY_GROUPS.map(actTile)}</div>
       <Legend />
     </>
   }
 
-  const g = ADD_GROUPS.find(x => x.id === group)
+  const act = activityGroup(group)
+  const g = act ? { ...act, m: act.areas.map(a => a.id) } : ADD_GROUPS.find(x => x.id === group)
+  const areaOf = m => act?.areas.find(a => a.id === m)
+  const areaName = m => (act ? t(areaOf(m).n) : t(MUSCLE_NAME[m]))
   const { sections, hidden } = groupExercises(S, group, { sort, area, status })
   const single = !!area || sort === 'recent'
   const row = ex => {
@@ -95,9 +111,10 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
     return <div key={ex.id} className="item" {...tappable(() => onPick(ex))}>
       <Thumb ex={ex} />
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
-        <div className="ss capitalize">{sort === 'recent' && g.m.length > 1 ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{t(ex.eq)}</div></div>
-      <div className="ax-last">{last
-        ? <><b>{last.w > 0 ? `${fmtNum(last.w)} ${S.unit} × ${last.r ?? '–'}` : `× ${last.r ?? '–'}`}</b><span>{fmtDaysAgo(last.d)}</span></>
+        <div className="ss capitalize">{sort === 'recent' && g.m.length > 1 && !act ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{act?.id === 'stretching' ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) : t(ex.eq)}</div></div>
+      <div className="ax-last">{last && act
+        ? <span>{fmtDaysAgo(last.d)}</span>
+        : last ? <><b>{last.w > 0 ? `${fmtNum(last.w)} ${S.unit} × ${last.r ?? '–'}` : `× ${last.r ?? '–'}`}</b><span>{fmtDaysAgo(last.d)}</span></>
         : <span className="ax-new">{t('New')}</span>}</div>
       {/* Same as the search picker's "+": adds at once with last time's (or the default) sets. */}
       <button className="iconbtn chev" aria-label={t('Add “{0}”', exerciseNameFor(ex))} style={{ padding: 8, margin: -8 }}
@@ -115,13 +132,15 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
   return <>
     <div className="row" style={{ gap: 8, alignItems: 'flex-start', marginBottom: 12 }}>
       <button className="iconbtn" aria-label={t('Back to muscle groups')} onClick={() => setGroup(null)}><Icon name="chevronLeft" /></button>
-      <div className="grow">{title && <div className="muted small">{title}</div>}<h3>{t(g.n)}</h3>{g.m.length > 1 && <div className="muted small">{t('Tap an area to see only its exercises')}</div>}</div>
+      <div className="grow">{title && <div className="muted small">{title}</div>}<h3>{t(g.n)}</h3>{g.m.length > 1 && <div className="muted small">{act?.id === 'cardio' ? t('Start a stopwatch on the set, stop it when you are done') : act ? t('Each stretch is timed: start the stopwatch, stop it when you are done') : t('Tap an area to see only its exercises')}</div>}</div>
     </div>
     {g.m.length > 1 && <div className="ax-subs" role="group">
       {['', ...g.m].map(m => <button key={m || 'all'} className={'ax-sub' + (area === m ? ' on' : '')} aria-pressed={area === m}
         onClick={() => { setArea(m); setMore({}) }}>
-        <span className="ax-aw"><Ava slugs={m ? [m] : g.m} body={body} className="lg" />{m && <Dot st={status[m].st} />}</span>
-        <span className="ax-sl">{m ? t(MUSCLE_NAME[m]) : t('All')}</span>
+        {act
+          ? <span className="ax-aw"><span className="ava lg ax-ico"><Icon name={m ? areaOf(m).icon : act.icon} /></span></span>
+          : <span className="ax-aw"><Ava slugs={m ? [m] : g.m} body={body} className="lg" />{m && <Dot st={status[m].st} />}</span>}
+        <span className="ax-sl">{m ? areaName(m) : t('All')}</span>
       </button>)}
     </div>}
     <Segmented options={[{ value: 'suggested', label: t('Suggested') }, { value: 'recent', label: t('Recent') }, { value: 'az', label: t('A to Z') }]}
@@ -129,9 +148,9 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
     {sections.length === 0 && <div className="empty">{sort === 'recent' ? t('Nothing logged here yet. Try Suggested or A to Z.') : t('Nothing left here.')}</div>}
     {sections.map((x, k) => x.m
       ? <div key={x.m} className="ax-area">
-        <div className="ax-ahd"><Ava slugs={[x.m]} body={body} className="xs" />
-          <span className="grow"><b>{t(MUSCLE_NAME[x.m])}</b><small>{areaLine(x)}</small></span>
-          {sort === 'suggested' && k === 0 && !x.st && <span className="ax-badge">{t('Do next')}</span>}
+        <div className="ax-ahd">{act ? <span className="ava xs ax-ico"><Icon name={areaOf(x.m).icon} /></span> : <Ava slugs={[x.m]} body={body} className="xs" />}
+          <span className="grow"><b>{areaName(x.m)}</b><small>{act ? (x.last ? t('Last {0}', fmtDaysAgo(x.last)) : t('Not done yet')) : areaLine(x)}</small></span>
+          {!act && sort === 'suggested' && k === 0 && !x.st && <span className="ax-badge">{t('Do next')}</span>}
         </div>
         {list(x.m, x.list)}
       </div>

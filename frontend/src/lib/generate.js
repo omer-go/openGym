@@ -82,7 +82,8 @@ const staler = (a, b) => (staleKey(a) < staleKey(b) ? -1 : staleKey(a) > staleKe
 
 /** The exercises a slot on `slug` may use, in the order they are offered. */
 export function candidatesFor(S, slug, index = trainingIndex(S)) {
-  const usable = ex => ex && !isCardio(ex) && exAvailable(S, ex)
+  // A stretch is filed under the muscle it lengthens; it is no strength slot's lift.
+  const usable = ex => ex && !isCardio(ex) && ex.cat !== 'stretching' && exAvailable(S, ex)
   const logged = Object.entries(index.exercises)
     .filter(([id]) => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug)
     .sort(([a, x], [b, y]) => staler(x.d, y.d) || y.n - x.n || (a < b ? -1 : 1))

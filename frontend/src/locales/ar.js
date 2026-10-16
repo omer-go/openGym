@@ -2343,4 +2343,18 @@ export default {
   'Swap for a similar exercise': 'استبدال بتمرين مشابه',
   'Swapped to {0}': 'تم الاستبدال بـ {0}',
   'Choose': 'اختيار',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'كارديو وإطالة',
+  'Stretching': 'إطالة',
+  'Running': 'جري',
+  'Walking': 'مشي',
+  'Bike & machines': 'دراجة وأجهزة',
+  'Legs & hips': 'الساقان والورك',
+  'Back & core': 'الظهر والجذع',
+  'Last {0}': 'آخر مرة {0}',
+  'Not done yet': 'لم يتم بعد',
+  'Start a stopwatch on the set, stop it when you are done': 'شغّل ساعة الإيقاف على المجموعة وأوقفها عند الانتهاء',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'كل إطالة تُقاس بالوقت: شغّل ساعة الإيقاف وأوقفها عند الانتهاء',
+  'Start stopwatch': 'تشغيل ساعة الإيقاف',
+  'Stop': 'إيقاف',
 }

@@ -2299,4 +2299,18 @@ export default {
   'Swap for a similar exercise': 'สลับเป็นท่าที่คล้ายกัน',
   'Swapped to {0}': 'สลับเป็น {0} แล้ว',
   'Choose': 'เลือก',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'คาร์ดิโอและยืดเหยียด',
+  'Stretching': 'ยืดเหยียด',
+  'Running': 'วิ่ง',
+  'Walking': 'เดิน',
+  'Bike & machines': 'จักรยานและเครื่อง',
+  'Legs & hips': 'ขาและสะโพก',
+  'Back & core': 'หลังและแกนกลาง',
+  'Last {0}': 'ล่าสุด {0}',
+  'Not done yet': 'ยังไม่ได้ทำ',
+  'Start a stopwatch on the set, stop it when you are done': 'เริ่มนาฬิกาจับเวลาที่เซต แล้วหยุดเมื่อเสร็จ',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'การยืดแต่ละท่าจับเวลา: เริ่มนาฬิกาจับเวลา แล้วหยุดเมื่อเสร็จ',
+  'Start stopwatch': 'เริ่มจับเวลา',
+  'Stop': 'หยุด',
 }

@@ -35,8 +35,8 @@ function unmount() {
 }
 afterEach(() => { if (root) unmount() })
 
-// The speed column is the second stepper of the set row, after the minutes.
-const speedCell = () => container.querySelector('.setrow').querySelectorAll('.stp')[1]
+// The speed column, after the minutes (a Start button until the set is done).
+const speedCell = () => container.querySelector('.setrow .stp.r:not(.inc)')
 const shown = () => speedCell().querySelector('input').value
 const header = () => container.querySelector('.sethead .r-sp').textContent
 const stored = () => useStore.getState().S.active.entries[0].sets[0].speed

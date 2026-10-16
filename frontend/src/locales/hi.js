@@ -2288,4 +2288,18 @@ export default {
   'Swap for a similar exercise': 'मिलती-जुलती एक्सरसाइज़ से बदलें',
   'Swapped to {0}': '{0} से बदला गया',
   'Choose': 'चुनें',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'कार्डियो और स्ट्रेचिंग',
+  'Stretching': 'स्ट्रेचिंग',
+  'Running': 'दौड़ना',
+  'Walking': 'चलना',
+  'Bike & machines': 'साइकिल और मशीनें',
+  'Legs & hips': 'पैर और कूल्हे',
+  'Back & core': 'पीठ और कोर',
+  'Last {0}': 'पिछली बार {0}',
+  'Not done yet': 'अभी नहीं किया',
+  'Start a stopwatch on the set, stop it when you are done': 'सेट पर स्टॉपवॉच शुरू करें, खत्म होने पर रोकें',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'हर स्ट्रेच का समय नापा जाता है: स्टॉपवॉच शुरू करें, खत्म होने पर रोकें',
+  'Start stopwatch': 'स्टॉपवॉच शुरू करें',
+  'Stop': 'रोकें',
 }

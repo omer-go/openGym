@@ -2288,4 +2288,18 @@ export default {
   'Swap for a similar exercise': 'Sostituisci con un esercizio simile',
   'Swapped to {0}': 'Sostituito con {0}',
   'Choose': 'Scegli',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Cardio e stretching',
+  'Stretching': 'Stretching',
+  'Running': 'Corsa',
+  'Walking': 'Camminata',
+  'Bike & machines': 'Bici e macchine',
+  'Legs & hips': 'Gambe e anche',
+  'Back & core': 'Schiena e core',
+  'Last {0}': 'Ultima volta {0}',
+  'Not done yet': 'Non ancora fatto',
+  'Start a stopwatch on the set, stop it when you are done': 'Avvia il cronometro sulla serie e fermalo quando hai finito',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Ogni allungamento è cronometrato: avvia il cronometro e fermalo quando hai finito',
+  'Start stopwatch': 'Avvia cronometro',
+  'Stop': 'Ferma',
 }

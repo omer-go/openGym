@@ -2288,4 +2288,18 @@ export default {
   'Swap for a similar exercise': 'Benzer bir egzersizle değiştir',
   'Swapped to {0}': '{0} ile değiştirildi',
   'Choose': 'Seç',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Kardiyo ve esneme',
+  'Stretching': 'Esneme',
+  'Running': 'Koşu',
+  'Walking': 'Yürüyüş',
+  'Bike & machines': 'Bisiklet ve makineler',
+  'Legs & hips': 'Bacak ve kalça',
+  'Back & core': 'Sırt ve core',
+  'Last {0}': 'Son: {0}',
+  'Not done yet': 'Henüz yapılmadı',
+  'Start a stopwatch on the set, stop it when you are done': 'Sette kronometreyi başlat, bitince durdur',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Her esneme süreyle yapılır: kronometreyi başlat, bitince durdur',
+  'Start stopwatch': 'Kronometreyi başlat',
+  'Stop': 'Durdur',
 }

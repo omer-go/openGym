@@ -2288,4 +2288,18 @@ export default {
   'Swap for a similar exercise': '비슷한 운동으로 바꾸기',
   'Swapped to {0}': '{0}(으)로 바꿨어요',
   'Choose': '고르기',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': '유산소 & 스트레칭',
+  'Stretching': '스트레칭',
+  'Running': '달리기',
+  'Walking': '걷기',
+  'Bike & machines': '자전거 & 머신',
+  'Legs & hips': '다리 & 엉덩이',
+  'Back & core': '등 & 코어',
+  'Last {0}': '마지막 {0}',
+  'Not done yet': '아직 안 함',
+  'Start a stopwatch on the set, stop it when you are done': '세트에서 스톱워치를 켜고, 끝나면 멈추세요',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': '스트레칭은 시간으로 기록해요: 스톱워치를 켜고 끝나면 멈추세요',
+  'Start stopwatch': '스톱워치 시작',
+  'Stop': '멈추기',
 }

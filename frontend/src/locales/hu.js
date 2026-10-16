@@ -2291,4 +2291,18 @@ export default {
   'Swap for a similar exercise': 'Csere egy hasonló gyakorlatra',
   'Swapped to {0}': 'Lecserélve erre: {0}',
   'Choose': 'Választás',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Kardió és nyújtás',
+  'Stretching': 'Nyújtás',
+  'Running': 'Futás',
+  'Walking': 'Gyaloglás',
+  'Bike & machines': 'Bicikli és gépek',
+  'Legs & hips': 'Láb és csípő',
+  'Back & core': 'Hát és törzs',
+  'Last {0}': 'Legutóbb {0}',
+  'Not done yet': 'Még nem',
+  'Start a stopwatch on the set, stop it when you are done': 'Indítsd a stoppert a sorozatnál, és állítsd le, ha végeztél',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Minden nyújtás időre megy: indítsd a stoppert, és állítsd le, ha végeztél',
+  'Start stopwatch': 'Stopper indítása',
+  'Stop': 'Leállítás',
 }

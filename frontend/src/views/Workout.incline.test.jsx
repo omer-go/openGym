@@ -36,7 +36,8 @@ function unmount() {
 }
 afterEach(() => { if (root) unmount() })
 
-const cells = () => container.querySelector('.setrow').querySelectorAll('.stp')
+// The minutes are a Start button (the stopwatch) until the set is done, then a stepper.
+const cells = () => container.querySelector('.setrow').querySelectorAll('.stp, .watchgo')
 const inclineCell = () => container.querySelector('.setrow .stp.inc')
 const stored = () => useStore.getState().S.active.entries[0].sets[0]
 const heads = () => [...container.querySelectorAll('.sethead span')].map(s => s.textContent).filter(Boolean)
@@ -51,6 +52,7 @@ describe('the incline column', () => {
   it('sits after the speed on a treadmill, steps in half percents and stores on the set', () => {
     mount(TREADMILL, [{ min: 20, speed: 5, done: false }])
     expect(cells()).toHaveLength(3)
+    expect(cells()[0].className).toBe('watchgo')
     expect(heads()).toEqual(['Duration (min)', 'Speed (km/h)', 'Incline (%)'])
     // No grade logged yet: the field is empty, not a 0 nobody typed.
     expect(inclineCell().querySelector('input').value).toBe('')

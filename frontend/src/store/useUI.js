@@ -10,6 +10,7 @@ import { armRestAlert, bindNativeRest, disarmRestAlert, holdRestAlert, toneNativ
 import { useStore } from './useStore.js'
 import { REST_MAX } from '../lib/duration.js'
 import { accentValue } from '../lib/accent.js'
+import { logElapsed } from '../lib/activities.js'
 
 // Fire-and-forget: lets the server push a "rest over" alert if this tab gets suspended
 // before the local timer completes. No-ops for guests / offline. The device id keeps the
@@ -95,6 +96,10 @@ let workInt = null
 let workTick = null
 let workDone = null
 const MAX_WORK_OVERTIME_SEC = 15 * 60
+// A stopwatch (cardio, a stretch) counts up until you stop it; one left running all day is
+// stopped here, at what a long run plausibly is.
+export const MAX_STOPWATCH_SEC = 6 * 60 * 60
+const watchSec = (wk, now = Date.now()) => Math.max(0, Math.round((now - wk.endsAt) / 1000))
 
 // The hold's countdown tick, from a start or from a restore after a reload.
 const runWork = (set, get) => {
@@ -102,6 +107,12 @@ const runWork = (set, get) => {
   workTick = () => {
     const wk = get().work
     if (!wk) return
+    if (wk.up) {
+      const sec = Math.min(MAX_STOPWATCH_SEC, watchSec(wk))
+      if (sec >= MAX_STOPWATCH_SEC) { get().finishWorkEarly(); return }
+      if (sec !== wk.left) set({ work: { ...wk, left: sec } })
+      return
+    }
     const left = Math.max(wk.overtime ? -MAX_WORK_OVERTIME_SEC : 0, Math.round((wk.endsAt - Date.now()) / 1000))
     const seenLive = !document.hidden && pageHiddenAt === null
     if (!document.hidden) pageHiddenAt = null
@@ -146,8 +157,8 @@ const ownerDone = wk => !wk?.owner ? null : (elapsed, { abandoned = false } = {}
   const { idx, i } = wk.owner
   useStore.getState().update(s => {
     const st = s.active.entries[idx].sets[i]
-    st.sec = elapsed
-    if (abandoned) { if (st.planSec == null) st.planSec = wk.total; return }
+    logElapsed(st, elapsed, wk.mode)
+    if (abandoned) { if (st.planSec == null && !wk.up) st.planSec = wk.total; return }
     delete st.planSec
     if (st.sides) return   // a per-side row is ticked side by side, on the workout screen
     st.done = true
@@ -391,10 +402,20 @@ export const useUI = create((set, get) => ({
      when a rest displaced the hold (abandonWork).
      `owner` ({ idx, i, id }: the active entry and set being held) lets a hold outlive a reload or
      the app being killed (restoreWork below). onDone is a closure and cannot be kept, so the owner
-     says where the time goes, and the workout screen binds its handler again (bindWork). */
-  startWork(sec, label, onDone, owner = null) {
+     says where the time goes, and the workout screen binds its handler again (bindWork).
+     `up`: a stopwatch instead (cardio, a stretch): no target, it counts up from 0 until Stop, and
+     `left` is the seconds so far. `endsAt` is then when it started (total 0), so everything that
+     reads the start as endsAt − total keeps working. `mode` is the set's ('cardio' logs minutes). */
+  startWork(sec, label, onDone, owner = null, { up = false, mode } = {}) {
     get().abandonWork()   // a hold this one replaces keeps what it held, same as a rest replacing one
     get().stopRest()
+    if (up) {
+      workDone = onDone
+      pageHiddenAt = document.hidden ? Date.now() : null
+      set({ work: { up: true, left: 0, total: 0, endsAt: Date.now(), label, ...(mode ? { mode } : {}), ...(owner ? { owner } : {}) } })
+      runWork(set, get)
+      return
+    }
     const total = Math.max(1, Math.round(sec) || 1)
     const endsAt = Date.now() + total * 1000
     workDone = onDone
@@ -414,7 +435,7 @@ export const useUI = create((set, get) => ({
     const wk = get().work
     if (!wk) return
     const startedAt = wk.endsAt - wk.total * 1000
-    const elapsed = Math.max(1, Math.min(wk.total + (wk.overtime ? MAX_WORK_OVERTIME_SEC : 0), Math.round((Date.now() - startedAt) / 1000)))
+    const elapsed = wk.up ? Math.max(1, Math.min(MAX_STOPWATCH_SEC, watchSec(wk))) : Math.max(1, Math.min(wk.total + (wk.overtime ? MAX_WORK_OVERTIME_SEC : 0), Math.round((Date.now() - startedAt) / 1000)))
     const done = workDone || ownerDone(wk)
     vibrate(30)
     get().stopWork()
@@ -429,7 +450,7 @@ export const useUI = create((set, get) => ({
   abandonWork() {
     const wk = get().work
     if (!wk) { get().stopWork(); return }
-    const elapsed = wk.total - wk.left
+    const elapsed = wk.up ? watchSec(wk) : wk.total - wk.left
     const done = workDone || ownerDone(wk)
     get().stopWork()
     // Under two seconds there is nothing to keep: that is a play button tapped by accident, or
@@ -501,7 +522,7 @@ const saveWork = wk => {
   if (!ls) return
   try {
     if (!wk?.owner) ls.removeItem(WORK_KEY)
-    else ls.setItem(WORK_KEY, JSON.stringify({ endsAt: wk.endsAt, total: wk.total, label: wk.label || '', overtime: !!wk.overtime, alerted: !!wk.alerted, owner: wk.owner }))
+    else ls.setItem(WORK_KEY, JSON.stringify({ endsAt: wk.endsAt, total: wk.total, label: wk.label || '', overtime: !!wk.overtime, alerted: !!wk.alerted, owner: wk.owner, ...(wk.up ? { up: true } : {}), ...(wk.mode ? { mode: wk.mode } : {}) }))
   } catch { /* the hold just does not outlive a reload */ }
 }
 export function restoreWork(now = Date.now()) {
@@ -511,6 +532,15 @@ export function restoreWork(now = Date.now()) {
   if (!saved || useUI.getState().work) return false
   const total = Math.round(Number(saved.total))
   const drop = () => { try { ls.removeItem(WORK_KEY) } catch { /* nothing to drop */ } return false }
+  // A stopwatch simply carries on: the time it counts is since its start, reload or not.
+  if (saved.up) {
+    if (!(saved.endsAt > 0) || !ownerSet(saved.owner)) return drop()
+    const wk = { up: true, total: 0, endsAt: saved.endsAt, label: saved.label || '', ...(saved.mode ? { mode: saved.mode } : {}), owner: saved.owner }
+    pageHiddenAt = typeof document !== 'undefined' && document.hidden ? now : null
+    useUI.setState({ work: { ...wk, left: Math.min(MAX_STOPWATCH_SEC, watchSec(wk, now)) } })
+    runWork(useUI.setState, useUI.getState)
+    return true
+  }
   if (!(total > 0) || !(saved.endsAt > 0) || !ownerSet(saved.owner)) return drop()
   const wk = { left: total, total, endsAt: saved.endsAt, label: saved.label || '', overtime: !!saved.overtime, ...(saved.alerted ? { alerted: true } : {}), owner: saved.owner }
   const left = Math.round((saved.endsAt - now) / 1000)

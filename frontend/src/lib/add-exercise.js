@@ -14,6 +14,7 @@ import { lastEntryFor } from './history.js'
 import { trainingIndex, candidatesFor } from './generate.js'
 import { todayISO, weekKey, weekStartOf } from './format.js'
 import { exerciseNameFor } from './i18n-core.js'
+import { ACTIVITY_GROUPS, activityGroup, isStretch } from './activities.js'
 
 // English names are i18n keys where shown. `low` puts a group under Lower body.
 export const ADD_GROUPS = [
@@ -98,13 +99,14 @@ export function suggestedGroups(status, today = todayISO(), n = 2) {
 }
 
 // The usable exercises each muscle is the primary of, built once per custom-exercise list.
+// Cardio and stretches have groups of their own (ACTIVITY_GROUPS), so they are not listed here.
 let INDEX = null
 function byPrimary(S) {
   const key = S?.customEx || null
   if (INDEX && INDEX.key === key) return INDEX.map
   const map = {}
   for (const ex of allExercises(S || {})) {
-    if (isCardio(ex)) continue
+    if (isCardio(ex) || isStretch(ex)) continue
     const slug = primaryMuscleOf(ex)?.slug
     if (slug) (map[slug] || (map[slug] = [])).push(ex)
   }
@@ -134,6 +136,7 @@ const byName = (a, b) => exerciseNameFor(a).localeCompare(exerciseNameFor(b))
  * equipment profile rules out. `area` narrows to one muscle.
  */
 export function groupExercises(S, groupId, { sort = 'suggested', area = '', status = muscleStatus(S) } = {}) {
+  if (activityGroup(groupId)) return activityExercises(S, groupId, { sort, area })
   const g = ADD_GROUPS.find(x => x.id === groupId)
   if (!g) return { sections: [], hidden: 0 }
   const map = byPrimary(S)
@@ -165,5 +168,60 @@ export function groupExercises(S, groupId, { sort = 'suggested', area = '', stat
     // Array#sort is stable: equal areas keep the group's own order.
     sections = sections.sort((a, b) => STATUS_RANK[a.st] - STATUS_RANK[b.st] || (a.last || '').localeCompare(b.last || ''))
   }
+  return { sections, hidden }
+}
+
+/**
+ * When you last did anything in each activity group and area: { cardio: iso, 'cardio:running':
+ * iso, … }, absent when never.
+ */
+export function activityLast(S) {
+  const { exercises } = trainingIndex(S)
+  const out = {}
+  const later = (k, d) => { if (!out[k] || out[k] < d) out[k] = d }
+  for (const [id, x] of Object.entries(exercises)) {
+    const ex = EXIDX[id] || (S?.customEx || []).find(e => e.id === id)
+    for (const g of ACTIVITY_GROUPS) {
+      const a = ex && g.of(ex)
+      if (a) { later(g.id, x.d); later(g.id + ':' + a, x.d) }
+    }
+  }
+  return out
+}
+
+/**
+ * groupExercises for Cardio and Stretching: the same sorts and sections, an area being one of the
+ * group's own (Running, Legs & hips…) rather than a muscle. Suggested puts what you have done most
+ * recently first (a runner wants the run), then the area's staples, then the rest by name.
+ * A section's `last` is when you last did anything in its area.
+ */
+function activityExercises(S, groupId, { sort, area }) {
+  const g = activityGroup(groupId)
+  const inWorkout = new Set((S?.active?.entries || []).map(e => e.id))
+  const { exercises } = trainingIndex(S)
+  const last = activityLast(S)
+  let hidden = 0
+  const byArea = {}
+  for (const ex of allExercises(S || {})) {
+    const a = g.of(ex)
+    if (!a || (area && a !== area) || !exAvailable(S, ex)) continue
+    if (inWorkout.has(ex.id)) { hidden++; continue }
+    (byArea[a] || (byArea[a] = [])).push(ex)
+  }
+  const recentFirst = (a, b) => (exercises[b.id].d > exercises[a.id].d ? 1 : exercises[b.id].d < exercises[a.id].d ? -1 : byName(a, b))
+  if (sort === 'recent') {
+    const list = Object.values(byArea).flat().filter(ex => exercises[ex.id]).sort(recentFirst)
+    return { sections: list.length ? [{ m: null, list }] : [], hidden }
+  }
+  const sections = g.areas.filter(a => byArea[a.id]).map(a => {
+    const list = byArea[a.id]
+    if (sort === 'az') list.sort(byName)
+    else {
+      const staple = id => { const i = a.staples.indexOf(id); return i < 0 ? Infinity : i }
+      list.sort((x, y) => (exercises[x.id] && exercises[y.id] ? recentFirst(x, y)
+        : exercises[x.id] ? -1 : exercises[y.id] ? 1 : staple(x.id) - staple(y.id) || byName(x, y)))
+    }
+    return { m: a.id, act: true, last: last[groupId + ':' + a.id] || null, list }
+  })
   return { sections, hidden }
 }

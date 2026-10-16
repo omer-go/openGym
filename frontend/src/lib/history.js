@@ -3,7 +3,7 @@ import { syncSupersetMeta } from './superset-meta.js'
 import { todayISO, isoOf, weekKey, weekStartOf, fmtNum } from './format.js'
 import { fmtSpeed } from './speed.js'
 import { hasIncline, inclineFrom } from './incline.js'
-import { isCardio, isBodyweightEq, isAssisted, betterWeight } from './exercises.js'
+import { EXIDX, isCardio, isBodyweightEq, isAssisted, betterWeight } from './exercises.js'
 import { barWeightFor } from './bar.js'
 import { phaseForSet, modeForSet, modeForEntry, isWarmupRow, isFailureSet, isDropSet, isRestPauseSet, normalizeMode, completedVolumeOf, hasCompletedWork, nextDropWeight, splitBurstReps, makeSideSet, isSideSet, syncSideAggregate, WEIGHT_ORIGIN_MANUAL, dropsOf, clustersOf } from './workout-model.js'
 import { backoffAt, backoffStepOf, backoffWeights } from './backoff.js'
@@ -91,6 +91,9 @@ export function fmtSec(sec) {
   return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0')
 }
 
+// A cardio row's minutes: whole ones as typed ("20"), a stopwatch's exact time as m:ss ("1:29").
+export const fmtMin = min => (Number.isInteger(Number(min) || 0) ? String(Number(min) || 0) : fmtSec(Number(min) * 60))
+
 // How hard a set felt, if the profile logs it at all. Two scales for the same thing, kept in
 // their own fields: RIR counts the reps still in the tank, RPE reads the same effort off a
 // 10-point scale from the top (RPE 8 ≈ RIR 2). A set logged on one scale is never silently
@@ -151,7 +154,7 @@ export function setLabel(id, s, cfg, speedUnit) {
   // to the volume those same sets still count. A set with reps and nothing cardio was a rep set.
   if (!EXPLICIT_MODES.has(cfg?.mode) && mode !== 'reps' && s.r > 0 && !(s.min > 0 || s.speed > 0 || s.sec > 0)) mode = 'reps'
   // A treadmill grade rides along when the set has one (lib/incline.js); a flat set reads as it did.
-  if (mode === 'cardio') return `${s.min || 0} min @ ${fmtSpeed(s.speed || 0, speedUnit)}` + (hasIncline(s) ? ' · ' + t('{0}% incline', fmtNum(Number(s.incline))) : '')
+  if (mode === 'cardio') return `${fmtMin(s.min)} min @ ${fmtSpeed(s.speed || 0, speedUnit)}` + (hasIncline(s) ? ' · ' + t('{0}% incline', fmtNum(Number(s.incline))) : '')
   // A set taken to failure carries its "F" behind the numbers, the mark lifting logs use for it;
   // the history, the text export and the set menu all read it from here.
   const fail = isFailureSet(s) ? ' ' + t('F') : ''
@@ -205,7 +208,10 @@ export function setLabel(id, s, cfg, speedUnit) {
   return oneSide(s) + fail + effortTail(s)
 }
 // Default config for a freshly added exercise.
+// A stretch is held for time, not counted (lib/activities.js times it with a stopwatch): two
+// 30-second holds.
 export function defaultConfig(id, mode) {
+  if (!mode && EXIDX[id]?.cat === 'stretching') return { sets: 2, sec: 30, weight: 0, mode: 'time', bodyweight: true }
   const m = mode || modeOf({ id })
   if (m === 'cardio') return { sets: 1, min: 20, speed: 8 }
   // Written only when it is true, so a barbell config is byte-for-byte what it was before

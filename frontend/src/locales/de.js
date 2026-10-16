@@ -2308,4 +2308,18 @@ export default {
   'Swap for a similar exercise': 'Gegen eine ähnliche Übung tauschen',
   'Swapped to {0}': 'Getauscht gegen {0}',
   'Choose': 'Auswählen',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Cardio & Dehnen',
+  'Stretching': 'Dehnen',
+  'Running': 'Laufen',
+  'Walking': 'Gehen',
+  'Bike & machines': 'Rad & Geräte',
+  'Legs & hips': 'Beine & Hüfte',
+  'Back & core': 'Rücken & Rumpf',
+  'Last {0}': 'Zuletzt {0}',
+  'Not done yet': 'Noch nicht gemacht',
+  'Start a stopwatch on the set, stop it when you are done': 'Starte die Stoppuhr am Satz und stoppe sie, wenn du fertig bist',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Jede Dehnung wird gestoppt: Stoppuhr starten, stoppen, wenn du fertig bist',
+  'Start stopwatch': 'Stoppuhr starten',
+  'Stop': 'Stopp',
 }

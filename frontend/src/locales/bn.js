@@ -2367,4 +2367,18 @@ export default {
   'Swap for a similar exercise': 'একই ধরনের ব্যায়ামে বদলান',
   'Swapped to {0}': '{0}-এ বদলানো হয়েছে',
   'Choose': 'বেছে নিন',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'কার্ডিও ও স্ট্রেচিং',
+  'Stretching': 'স্ট্রেচিং',
+  'Running': 'দৌড়',
+  'Walking': 'হাঁটা',
+  'Bike & machines': 'সাইকেল ও মেশিন',
+  'Legs & hips': 'পা ও নিতম্ব',
+  'Back & core': 'পিঠ ও কোর',
+  'Last {0}': 'শেষবার {0}',
+  'Not done yet': 'এখনও করা হয়নি',
+  'Start a stopwatch on the set, stop it when you are done': 'সেটে স্টপওয়াচ চালু করুন, শেষ হলে থামান',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'প্রতিটি স্ট্রেচ সময় ধরে হয়: স্টপওয়াচ চালু করুন, শেষ হলে থামান',
+  'Start stopwatch': 'স্টপওয়াচ চালু করুন',
+  'Stop': 'থামান',
 }

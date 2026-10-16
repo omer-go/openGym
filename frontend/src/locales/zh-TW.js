@@ -2281,4 +2281,18 @@ export default {
   'Swap for a similar exercise': '換成類似的動作',
   'Swapped to {0}': '已換成 {0}',
   'Choose': '選擇',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': '有氧和伸展',
+  'Stretching': '伸展',
+  'Running': '跑步',
+  'Walking': '步行',
+  'Bike & machines': '單車和器材',
+  'Legs & hips': '腿和髖',
+  'Back & core': '背部和核心',
+  'Last {0}': '上次 {0}',
+  'Not done yet': '還沒做過',
+  'Start a stopwatch on the set, stop it when you are done': '在這一組開始碼錶，完成後停止',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': '每個伸展都計時：開始碼錶，完成後停止',
+  'Start stopwatch': '開始碼錶',
+  'Stop': '停止',
 }

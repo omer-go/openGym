@@ -91,16 +91,20 @@ export default function RestTimer() {
   if (!on) return null
   const pct = Math.max(0, Math.min(100, (on.left / on.total) * 100))
 
+  // A stopwatch (cardio, a stretch) has no target to fill a bar towards: it counts up from 0 and
+  // its Stop logs what it shows.
   if (work) return (
-    <div id="timer" className="working">
-      <div className="bar" aria-hidden="true"><i style={{ width: pct + '%' }} /></div>
+    <div id="timer" className={'working' + (work.up ? ' up' : '')}>
+      <div className="bar" aria-hidden="true"><i style={{ width: (work.up ? 100 : pct) + '%' }} /></div>
       <div className="tclock">
-        <span className="t">{work.left <= 0 && work.overtime ? '+' + clock(-work.left) : clock(work.left)}</span>
+        <span className="t">{work.up ? clock(work.left) : work.left <= 0 && work.overtime ? '+' + clock(-work.left) : clock(work.left)}</span>
         {work.label && <span className="lbl">{work.label}</span>}
       </div>
       <div className="acts">
         <Button size="sm" onClick={stopWork}>{t('Cancel')}</Button>
-        <Button size="sm" variant="primary" icon="check" onClick={finishWorkEarly}>{t('Done')}</Button>
+        {work.up
+          ? <Button size="sm" variant="primary" icon="stopwatch" onClick={finishWorkEarly}>{t('Stop')}</Button>
+          : <Button size="sm" variant="primary" icon="check" onClick={finishWorkEarly}>{t('Done')}</Button>}
       </div>
     </div>
   )

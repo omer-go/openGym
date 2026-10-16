@@ -1449,6 +1449,20 @@ export const PT_BR_OVERRIDES = {
   'Swap for a similar exercise': 'Trocar por um exercício parecido',
   'Swapped to {0}': 'Trocado por {0}',
   'Choose': 'Escolher',
+  // --- cardio & stretching, stopwatch ---
+  'Cardio & stretching': 'Cardio e alongamentos',
+  'Stretching': 'Alongamentos',
+  'Running': 'Corrida',
+  'Walking': 'Caminhada',
+  'Bike & machines': 'Bike e máquinas',
+  'Legs & hips': 'Pernas e quadril',
+  'Back & core': 'Costas e core',
+  'Last {0}': 'Última vez {0}',
+  'Not done yet': 'Ainda não feito',
+  'Start a stopwatch on the set, stop it when you are done': 'Inicie o cronômetro na série e pare quando terminar',
+  'Each stretch is timed: start the stopwatch, stop it when you are done': 'Cada alongamento é cronometrado: inicie o cronômetro e pare quando terminar',
+  'Start stopwatch': 'Iniciar cronômetro',
+  'Stop': 'Parar',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

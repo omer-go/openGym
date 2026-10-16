@@ -13,6 +13,7 @@ import { exAvailable } from './equipment.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { candidatesFor } from './generate.js'
 import { sameMuscleFirst } from './similar-exercises.js'
+import { activityOf, activityGroup, isStretch } from './activities.js'
 
 // The slot's own exercise and the alternatives it rotates through.
 export const SWAP_CYCLE = 8
@@ -22,10 +23,21 @@ export function swapCycle(S, fromId) {
   const all = allExercises(S || {})
   const from = EXIDX[fromId] || all.find(e => e.id === fromId)
   if (!from) return [fromId]
-  const usable = ex => ex && !isCardio(ex) && exAvailable(S, ex)
-  const slug = primaryMuscleOf(from)?.slug
   const ids = [fromId]
   const add = id => { if (!ids.includes(id)) ids.push(id) }
+  // A run swaps for another run, a stretch for another stretch of the same muscle, a lift for
+  // another lift: the area's staples first, then what shares the target muscle.
+  const act = activityOf(from)
+  if (act) {
+    const g = activityGroup(act.group)
+    const area = all.filter(ex => g.of(ex) === act.area && exAvailable(S, ex))
+    g.areas.find(a => a.id === act.area).staples.filter(id => area.some(ex => ex.id === id)).forEach(add)
+    area.filter(ex => ex.tg === from.tg).forEach(ex => add(ex.id))
+    area.forEach(ex => add(ex.id))
+    return ids.slice(0, SWAP_CYCLE)
+  }
+  const usable = ex => ex && !isCardio(ex) && !isStretch(ex) && exAvailable(S, ex)
+  const slug = primaryMuscleOf(from)?.slug
   if (slug) candidatesFor(S, slug).forEach(add)
   for (const ex of sameMuscleFirst(all, from)) if (usable(ex)) add(ex.id)
   return ids.slice(0, SWAP_CYCLE)

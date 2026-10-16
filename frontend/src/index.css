@@ -808,6 +808,8 @@ body.chips-dragging *{cursor:inherit}
   height:100%;min-height:40px;cursor:text;
 }
 .stp .num::-webkit-inner-spin-button{display:none}
+/* a value shown rather than typed (a timed run's m:ss) sits where the field's text would */
+.stp span.num{display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;cursor:default}
 .stp.invalid{box-shadow:inset 0 0 0 1px var(--red)}
 
 /* --- slider --- */
@@ -1132,6 +1134,10 @@ body.chips-dragging *{cursor:inherit}
 .setrow.eff3 .effcell-stp>button[aria-label="Decrease"],
 .setrow.eff3 .effcell-stp>button[aria-label="Increase"]{width:22px}
 .setrow.eff3 .effcell-stp .val{font-size:14px}
+/* three columns plus the play / stopwatch button (a cardio row: duration, speed, incline) is one
+   button wider than a 375 px phone has room for, so its gaps and the steppers' -/+ give way */
+.setrow.eff3.go,.sethead.eff3.go{gap:4px}
+.setrow.eff3.go .stp,.sethead.eff3.go .w-sp,.sethead.eff3.go .r-sp{--btn-floor:12px}
 /* effort quick picker sheet: colour-coded preset buttons, hardest (purple) first */
 /* effort picker: the ⋯-menu list with the value in the icon square, tinted per band; the
    exact-value row carries the same stepper as the logged cell in the set row. */
@@ -1385,6 +1391,17 @@ body.chips-dragging *{cursor:inherit}
 }
 .setrow .setgo:disabled{opacity:.3;cursor:default}
 .setrow .setgo:not(:disabled):active{background:var(--surface-3)}
+/* a stopwatch set (cardio, a stretch): Start takes the length's cell, and counts in it once started */
+.setrow .watchgo{
+  flex:1.4;min-width:0;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:color-mix(in srgb,var(--acc) 16%,var(--surface-2));color:var(--acc);
+  font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;
+  transition:background var(--fast),opacity var(--fast);
+}
+.setrow .watchgo.on{background:var(--acc);color:var(--on-acc,#000)}
+.setrow .watchgo:disabled{opacity:.35;cursor:default}
+.setrow .watchgo:not(:disabled):active{background:color-mix(in srgb,var(--acc) 26%,var(--surface-2))}
 /* exercise-config sheet: three steppers side by side on narrow phones */
 .cfgrow{gap:8px}
 .cfgrow>div{flex:1;min-width:0}
@@ -2159,6 +2176,12 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ava svg{width:100%;height:100%;display:block}
 .ava.lg{width:62px;height:62px}
 .ava.xs{width:30px;height:30px}
+/* Cardio and stretching have an icon where a muscle group has its avatar. */
+.ax-ico{display:grid;place-items:center;color:var(--acc);font-size:24px}
+.ava.lg.ax-ico{font-size:28px}
+.ava.xs.ax-ico{font-size:15px}
+.ax-ico svg{width:1em;height:1em}
+#timer.working.up .bar i{opacity:.35}
 .ax-gts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ax-gt{
   display:flex;align-items:center;gap:10px;min-height:74px;padding:10px;text-align:start;
