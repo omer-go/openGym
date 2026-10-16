@@ -14,7 +14,7 @@ import { t } from '../lib/i18n.js'
 let CACHE = null                                  // shared across every mounted map
 let PENDING = null
 
-function useBodyPaths() {
+export function useBodyPaths() {
   const [paths, setPaths] = useState(CACHE)
   useEffect(() => {
     if (CACHE) return
@@ -80,4 +80,23 @@ export function BodyMapLegend() {
     {t('Less')} <div className="hm-c l0" /><div className="hm-c l1" /><div className="hm-c l2" />
     <div className="hm-c l3" /><div className="hm-c l4" /> {t('More')}
   </div>
+}
+
+/**
+ * <MuscleAvatar body="male" view="back" on={['upper-back']} vb="…" /> — a round crop of one side
+ * of the body with `on` lit in the accent: the Add exercise sheet's group and area pictures
+ * (lib/add-exercise.js avatarOf). Decorative; the name beside it says what it is.
+ */
+export function MuscleAvatar({ body = 'male', view, on = [], vb, className = '' }) {
+  const paths = useBodyPaths()
+  const g = paths && (paths[body] || paths.male)[view]
+  return (
+    <span className={'ava ' + className} aria-hidden="true">
+      {g && <svg viewBox={vb}>
+        {INERT.map(slug => (g.p[slug] || []).map((d, i) => <path key={slug + i} className="bm-sil" d={d} />))}
+        {MUSCLES.map(slug => (g.p[slug] || []).map((d, i) =>
+          <path key={slug + i} className={'bm-m' + (on.includes(slug) ? ' l4' : '')} d={d} />))}
+      </svg>}
+    </span>
+  )
 }

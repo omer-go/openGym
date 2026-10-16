@@ -1,7 +1,7 @@
 # Workout view — cards / list / compact / focus
 
 The active workout screen (`frontend/src/views/Workout.jsx`) has four layouts, chosen by
-`S.workoutView` (`'cards' | 'list' | 'compact' | 'focus'`, default `'cards'`). All four use the
+`S.workoutView` (`'cards' | 'list' | 'compact' | 'focus'`, default `'list'`). All four use the
 same active session and completion pipeline.
 
 | Value | What you see |
@@ -19,8 +19,9 @@ high-water protection, and superset progression remain shared with every other l
 Everything `compact` hides is still on the ⋯ menu (note, details, history, bar weight,
 progression settings) or is display-only.
 
-Unknown / absent values read as `cards`, so a profile written before the setting existed is
-unchanged.
+An absent value takes the store default (`list`), so a profile written before the setting
+existed opens on the list; an unknown value still renders as `cards`. A profile that saved
+`cards` keeps it.
 
 Orthogonal to all four: **Settings → During a workout → Workout controls** (`S.wc`) decides
 whether Move / Swap / Remove, the pair buttons, the drop/burst shortcuts and the `+/-`

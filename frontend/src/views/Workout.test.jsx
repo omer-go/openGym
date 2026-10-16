@@ -26,12 +26,13 @@ const mocks = vi.hoisted(() => {
     stopWork: null,
     confirmSheet: vi.fn(),
     workoutCompleteSheet: vi.fn(),
-    exercisePicker: vi.fn(),
+    addExerciseSheet: vi.fn(),
     exConfigSheet: vi.fn(),
     toast: vi.fn(),
     scrollCalls: [],
     headerHeight: 0,
     swapActiveWorkoutExercise: vi.fn(),
+    quickSwapActiveWorkoutExercise: vi.fn(),
     menuSheet: vi.fn(),
     effortPickerSheet: vi.fn(),
     exerciseHistorySheet: vi.fn(),
@@ -84,7 +85,7 @@ vi.mock('../store/useUI.js', () => {
 vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav }))
 vi.mock('../sheets.jsx', () => ({
   startFlow: vi.fn(),
-  exercisePicker: mocks.exercisePicker,
+  addExerciseSheet: mocks.addExerciseSheet,
   exConfigSheet: mocks.exConfigSheet,
   exerciseDetailSheet: vi.fn(),
   finishWorkout: vi.fn(),
@@ -93,6 +94,7 @@ vi.mock('../sheets.jsx', () => ({
   workoutCompleteSheet: mocks.workoutCompleteSheet,
   confirmSheet: mocks.confirmSheet,
   swapActiveWorkoutExercise: mocks.swapActiveWorkoutExercise,
+  quickSwapActiveWorkoutExercise: mocks.quickSwapActiveWorkoutExercise,
   menuSheet: mocks.menuSheet,
   barWeightSheet: vi.fn(),
   // Both note sheets belong here even though the tests never open one: Workout.jsx reads
@@ -227,7 +229,7 @@ async function addExerciseThroughSheets(ex = { id: 'added-exercise' }, cfg = { m
   expect(addButton).toBeTruthy()
   await act(async () => { addButton.dispatchEvent(new dom.Event('click', { bubbles: true })) })
 
-  const pickerCall = mocks.exercisePicker.mock.calls.at(-1)
+  const pickerCall = mocks.addExerciseSheet.mock.calls.at(-1)
   expect(pickerCall?.[0]).toEqual(expect.any(Function))
   await act(async () => { pickerCall[0](ex) })
 
@@ -2723,10 +2725,20 @@ describe('workout controls: the more menu and the set menu', () => {
   it('shows one More button per exercise and no legacy button rows by default', async () => {
     await mount([exercise('plain-bench', [false]), exercise('plain-row', [false])])
     expect(container.querySelector('button[aria-label="More"]')).toBeTruthy()
-    for (const label of ['Move up', 'Swap exercise']) expect(container.querySelector(`button[aria-label="${label}"]`)).toBeNull()
+    expect(container.querySelector('button[aria-label="Move up"]')).toBeNull()
     expect([...container.querySelectorAll('button')].some(b => b.textContent.trim() === 'Remove exercise')).toBe(false)
     expect([...container.querySelectorAll('button')].some(b => b.textContent.trim() === '+ Drop')).toBe(false)
     expect([...container.querySelectorAll('button')].some(b => b.textContent.trim() === 'Add set')).toBe(true)
+  })
+
+  it('swaps an exercise for a similar one in one tap from the button in its header, beside More', async () => {
+    await mount([exercise('plain-bench', [false]), exercise('plain-row', [false])], 0)
+    const swap = container.querySelector('.exhd button[aria-label="Swap for a similar exercise"]')
+    expect(swap).toBeTruthy()
+    await act(async () => { swap.dispatchEvent(new dom.Event('click', { bubbles: true })) })
+    expect(mocks.quickSwapActiveWorkoutExercise).toHaveBeenCalledWith(0)
+    // no picker: that is the More menu's Swap exercise
+    expect(mocks.swapActiveWorkoutExercise).not.toHaveBeenCalled()
   })
 
   it('routes swap, move, remove, warm-up and details through the More menu of that exercise', async () => {
@@ -3381,7 +3393,7 @@ describe('the workout screen chrome (v1.3.11)', () => {
     await mount([exercise('plain-bench', [false])])
     await click(container.querySelector('button[aria-label="Workout options"]'))
     item('Add exercise').onClick()
-    expect(mocks.exercisePicker).toHaveBeenCalledOnce()
+    expect(mocks.addExerciseSheet).toHaveBeenCalledOnce()
   })
 
   it('groups the exercise menu: today, look it up, settings, order, and Remove on its own', async () => {

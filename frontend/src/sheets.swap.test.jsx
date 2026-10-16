@@ -2,7 +2,8 @@
 import { LANGS, DERIVED_LOCALES } from './lib/i18n-core.js'
 import { act } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { swapActiveWorkoutExercise } from './sheets.jsx'
+import { swapActiveWorkoutExercise, quickSwapActiveWorkoutExercise } from './sheets.jsx'
+import { swapCycle } from './lib/quick-swap.js'
 import { EXDB } from './lib/exercises.js'
 import { DEF, useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
@@ -133,5 +134,26 @@ describe('swap wording', () => {
     const configSheet = useUI.getState().sheets.at(-1)
     const configView = configSheet.render(configSheet.close)
     expect(configView.props.saveLabel).toBe('Use in this workout')
+  })
+})
+
+describe('one-tap swap', () => {
+  it('trades the entry for the next similar exercise in place, and the toast offers the picker', () => {
+    const cycle = swapCycle(useStore.getState().S, ids[1])
+    quickSwapActiveWorkoutExercise(2)
+
+    const active = useStore.getState().S.active
+    expect(useUI.getState().sheets).toHaveLength(0)
+    expect(active.entries).toHaveLength(3)
+    expect(active.entries[2]).toMatchObject({ id: cycle[1], swapOf: ids[1] })
+    expect(active.entries[2].sets.length).toBeGreaterThan(0)
+
+    // a second tap goes one further down the same list
+    quickSwapActiveWorkoutExercise(2)
+    expect(useStore.getState().S.active.entries[2]).toMatchObject({ id: cycle[2], swapOf: ids[1] })
+
+    expect(useUI.getState().toastAction.label).toBe('Choose')
+    act(() => useUI.getState().runToastAction())
+    expect(useUI.getState().sheets.at(-1).render(() => {}).props.title).toBe('Swap exercise')
   })
 })

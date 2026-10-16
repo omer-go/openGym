@@ -41,10 +41,10 @@ describe('workout view is snapshot onto the active session', () => {
     expect(useStore.getState().S.active.workoutView).toBe('focus')
   })
 
-  it('beginWorkout falls back to cards when the default is unset', () => {
+  it('beginWorkout falls back to the list when the default is unset', () => {
     useStore.setState(s => { const S = { ...s.S }; delete S.workoutView; return { S } })
     act(() => beginWorkout(null, null))
-    expect(useStore.getState().S.active.workoutView).toBe('cards')
+    expect(useStore.getState().S.active.workoutView).toBe('list')
   })
 
   it('later changes to the default leave the running session alone', () => {

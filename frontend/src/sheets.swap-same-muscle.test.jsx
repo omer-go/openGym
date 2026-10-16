@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
-// #473: a swap opens on what trains the same muscle. Mid-workout (Swap exercise) and in the
-// routine editor (Replace exercise) the picker starts on the exercises sharing the swapped one's
-// target muscle, same equipment first, and "All" is one tap back to the whole list.
+// #473: a swap opens on what trains the same muscle. Mid-workout (Swap exercise) it is the Add
+// exercise sheet opened on the swapped one's group, and its Search the picker below; in the routine
+// editor (Replace exercise) the picker. The picker starts on the exercises sharing the swapped
+// one's target muscle, same equipment first, and "All" is one tap back to the whole list.
 import React, { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRoot } from 'react-dom/client'
@@ -57,7 +58,7 @@ describe('sameMuscleFirst', () => {
 })
 
 describe('swap picker opens on the same muscle', () => {
-  it('mid-workout: Swap exercise starts on the target muscle, same equipment first, All goes back', () => {
+  it('mid-workout: Swap exercise opens on its muscle group, and Search on the target muscle, same equipment first, All goes back', () => {
     expect(CABLE_TRI).toBeTruthy()
     const S = structuredClone(DEF)
     S.active = {
@@ -66,6 +67,12 @@ describe('swap picker opens on the same muscle', () => {
     }
     useStore.setState({ S, user: null })
     swapActiveWorkoutExercise(0)
+    // The muscle-group sheet, on the triceps; its Search is the picker
+    const groups = renderTop()
+    expect(groups.querySelector('h3').textContent).toBe('Triceps')
+    expect(groups.textContent).toContain('Swap exercise')
+    expect([...groups.querySelectorAll('.item .tt')].map(x => x.textContent)).not.toContain(CABLE_TRI.n)
+    act(() => [...groups.querySelectorAll('button')].find(b => b.textContent === 'Search all exercises').click())
     const host = renderTop()
 
     const chip = sameChip(host)

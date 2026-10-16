@@ -2148,3 +2148,50 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 [dir="rtl"] *{letter-spacing:0}
 .exfix-link{display:inline-flex;align-items:center;gap:5px;margin:14px 0 4px;color:var(--label-3);text-decoration:none}
 .list .similar-label{margin:16px 2px 6px;grid-column:1/-1}
+
+/* ============ Add exercise: muscle groups, then a group's exercises (AddExerciseSheet) ============ */
+/* A round crop of the body with the group or area lit (MuscleAvatar). --bm-base as on the map. */
+.ava{
+  --bm-base:color-mix(in srgb,var(--label) 11%,var(--surface));
+  flex:none;width:48px;height:48px;border-radius:50%;overflow:hidden;display:block;
+  background:var(--surface-2);
+}
+.ava svg{width:100%;height:100%;display:block}
+.ava.lg{width:62px;height:62px}
+.ava.xs{width:30px;height:30px}
+.ax-gts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ax-gt{
+  display:flex;align-items:center;gap:10px;min-height:74px;padding:10px;text-align:start;
+  background:var(--surface);border-radius:var(--r-lg);color:var(--label);
+}
+.ax-gt:active{opacity:.6}
+.ax-m{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ax-m b{font-size:15px;font-weight:600;line-height:1.2}
+.ax-st{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ax-dots{display:inline-flex;gap:4px}
+.ax-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--label-3)}
+.ax-dot.wk{box-shadow:none;background:var(--acc-line)}
+.ax-dot.td{box-shadow:none;background:var(--acc)}
+.ax-badge{
+  font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--acc);background:var(--acc-soft);padding:2px 6px;border-radius:6px;white-space:nowrap;
+}
+.ax-legend{display:flex;justify-content:center;gap:16px;margin:16px 0 4px;font-size:12px;color:var(--label-2)}
+.ax-legend span{display:inline-flex;align-items:center;gap:6px}
+.ax-subs{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px;scrollbar-width:none}
+.ax-subs::-webkit-scrollbar{display:none}
+.ax-sub{flex:none;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--label-2);font-size:12.5px}
+.ax-sub.on{color:var(--label);font-weight:600}
+.ax-sub.on .ava{box-shadow:0 0 0 2px var(--bg-el),0 0 0 4px var(--acc)}
+.ax-aw{position:relative;padding:3px}
+.ax-aw .ax-dot{position:absolute;inset-inline-end:3px;bottom:3px;width:12px;height:12px;border:2px solid var(--bg-el);box-sizing:content-box}
+.ax-aw .ax-dot:not(.wk):not(.td){background:var(--surface-2)}
+.ax-sl{text-align:center;line-height:1.2}
+.ax-area{margin-top:16px}
+.ax-ahd{display:flex;align-items:center;gap:10px;margin:0 2px 8px}
+.ax-ahd b{display:block;font-size:15px;font-weight:600}
+.ax-ahd small{display:block;font-size:12.5px;color:var(--label-2)}
+.ax-last{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:12px;color:var(--label-2);white-space:nowrap;margin-inline-end:4px}
+.ax-last b{font-size:14px;font-weight:600;color:var(--label);font-variant-numeric:tabular-nums}
+.ax-new{font-size:12px;color:var(--acc);font-weight:600}
+.ax-more{display:block;width:100%;padding:10px;color:var(--acc);font-size:14px;font-weight:500}

@@ -2,7 +2,8 @@ import { useUI } from '../store/useUI.js'
 import Icon from './Icon.jsx'
 
 // The one toast. Mostly text; with an action (the Undo after a set is removed) it carries a button
-// at its end, stays longer and holds still while a finger or the mouse rests on it.
+// at its end, stays longer and holds still while a finger or the mouse rests on it. The action's
+// icon is Undo's unless the toast names another (a one-tap swap's Choose).
 export default function Toast() {
   const msg = useUI(s => s.toastMsg)
   const action = useUI(s => s.toastAction)
@@ -14,7 +15,7 @@ export default function Toast() {
     onPointerUp={live ? (e => { if (e.pointerType !== 'mouse') resumeToast() }) : undefined}>
     <span className="toast-msg">{msg}</span>
     {live && <button type="button" className="toast-act" key={action.id} onClick={runToastAction}>
-      <Icon name="undo" />{action.label}
+      <Icon name={action.icon || 'undo'} />{action.label}
     </button>}
   </div>
 }

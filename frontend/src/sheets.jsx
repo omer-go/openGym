@@ -26,9 +26,11 @@ import Icon from './components/Icon.jsx'
 import { Button, Slider, Switch, Segmented, SelectRow, Row, TextField, NumberField, MultiSelectRow } from './components/ui.jsx'
 import { glyphOf, GLYPH_GROUPS, DEFAULT_GLYPH } from './lib/glyphs.js'
 import BodyMap from './components/BodyMap.jsx'
+import AddExerciseSheet from './components/AddExerciseSheet.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
+import { nextSwap } from './lib/quick-swap.js'
 import { exerciseMuscleSnapshot, loadOfWorkouts, MUSCLES, MUSCLE_NAME, muscleWeightsOf, normalizeMuscleGroups, hasExplicitMuscleMetadata, inMuscleOrder } from './lib/muscles.js'
 import { parseImport, mergeImport } from './lib/import-csv.js'
 import { importHevyData, HevyApiError, HEVY_DEV_SETTINGS, mergeHevyRoutines } from './lib/import-hevy.js'
@@ -1405,85 +1407,119 @@ function ExercisePicker({ onPick, title, close, like }) {
 // `like` is the exercise a swap or a replace is away from: the picker then opens on the ones that
 // train the same muscle, same equipment first (#473).
 export const exercisePicker = (onPick, { title, like } = {}) => ui().openSheet(close => <ExercisePicker onPick={onPick} title={title} like={like} close={close} />)
+// The workout's Add exercise, and its Swap's choice: muscle groups, then the exercises of one
+// (components/AddExerciseSheet). Its Search swaps it for the picker above, so a pick from there
+// does not land back on it. `title` and `like` are a swap's, as the picker's are; the handle's
+// close() closes whichever of the two is open.
+export function addExerciseSheet(onPick, { title, like } = {}) {
+  let open = ui().openSheet(close => <AddExerciseSheet onPick={onPick} title={title} like={like}
+    onSearch={() => { close(); open = exercisePicker(onPick, { title, like }) }} />)
+  return { close: () => open.close() }
+}
 
 /** Start a safe swap for one exact active-workout occurrence. */
 export function swapActiveWorkoutExercise(index) {
   const active = S().active
   if (!active?.entries?.[index]) return
 
-  // The "+" on a picker row commits with the default config, exactly as it does in the add
-  // flows; tapping the row still opens the config sheet first.
+  // The same screen as the workout's Add exercise, opened on the replaced exercise's muscle. The
+  // "+" on a row commits with the default config, exactly as it does in the add flows; tapping
+  // the row still opens the config sheet first.
   // Worded for the session, not the routine: a swap changes today's workout only.
-  const picker = exercisePicker((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
+  const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
   function swapTo(ex, cfg) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
-    // the workout. (The add flow deliberately leaves it open.)
+    // the workout. (The add flow deliberately leaves it open.) A pick by hand starts a new
+    // one-tap cycle from what was picked (swapOf cleared).
     picker.close()
-    const full = { ...cfg, id: ex.id }
-    const st = S()
-    const current = st.active?.entries?.[index]
-    if (!current) return
-    // A swap is an in-place substitution — routine identity is unchanged, so the replacement
-    // keeps the slot's own `rid` and reads its prescription from that routine (not a
-    // session-wide one). A slot with no `rid` is freestyle.
-    const slotRoutine = current.rid ? st.routines.find(r => r.id === current.rid) : null
-    const freestyle = !slotRoutine
-    // Same rows the add flow builds: last time's loads and, in a planned session, the
-    // prescription — swapping barbell for dumbbell bench must not start you at an empty bar.
-    // Built from what came before the session's day when it is logged into the past (sessionHistory).
-    const step = modeOf(full) === 'reps' ? weightIncrement(full, st.unit) : defaultIncrement(ex.id, st.unit)
-    const past = sessionHistory(st)
-    // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
-    // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
-    const built = freestyle
-      ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, preferLast: true }), full, dropGrid(st, full)) }
-      : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
-    const replacement = {
-      id: ex.id,
-      ...built,
-      ...(current.rid ? { rid: current.rid } : {}),
-      // A slot kept out of progression stays out once swapped. Replaced in place the entry keeps
-      // it anyway; inserted beside logged sets, the replacement would otherwise count as a
-      // regular session of the new exercise. Only a deload or rehab slot is built without a
-      // prescription (above): one kept out by hand keeps the marker and its Undo on the card,
-      // and an Undo must leave numbers that are right to count.
-      ...(current.noProg === true ? { noProg: true } : {}),
-    }
-
-    const apply = options => {
-      // A timed callback closes over entry/set indexes. Invalidate it, and the current rest,
-      // before the selected occurrence can be replaced or a new entry shifts those indexes.
-      ui().stopWork()
-      ui().stopRest()
-      update(state => { swapActiveExercise(state.active, index, replacement, options) }, true)
-    }
-    const logged = (current.sets || []).some(set => set.done === true)
-    if (!logged) { apply(); return }
-
-    if (current.sg) {
-      ui().openSheet(close => <>
-        <h3>{t('Swap exercise?')}</h3>
-        <div className="muted small" style={{ marginBottom: 12 }}>
-          {t('Logged sets stay with the original exercise. Choose where the replacement belongs.')}
-        </div>
-        <Button variant="primary" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'keep' }) }}>
-          {t('Keep replacement in this group')}
-        </Button>
-        <div style={{ height: 8 }} />
-        <Button variant="ghost" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'detach' }) }}>
-          {t('Insert after this group')}
-        </Button>
-      </>)
-      return
-    }
-
-    confirmSheet({
-      title: t('Swap exercise?'),
-      message: t('Logged sets stay with the original exercise. The replacement will be inserted afterward.'),
-      confirmText: t('Continue'),
-      onConfirm: () => apply({ loggedConfirmed: true })
-    })
+    swapEntryTo(index, ex, cfg, { swapOf: undefined })
   }
+}
+
+/**
+ * The header's one-tap Swap: the entry becomes the next similar exercise (lib/quick-swap.js) with
+ * its default sets, no picker. The toast offers the picker for when the rotation is not it.
+ */
+export function quickSwapActiveWorkoutExercise(index) {
+  const next = nextSwap(S(), index)
+  if (!next) { swapActiveWorkoutExercise(index); return }
+  const ex = EXIDX[next.id] || allExercises(S()).find(e => e.id === next.id)
+  if (!ex) return
+  swapEntryTo(index, ex, defaultConfig(ex.id), { swapOf: next.swapOf || undefined }, at =>
+    ui().toast(t('Swapped to {0}', exerciseNameText(ex)), { action: t('Choose'), icon: 'magnifier', onAction: () => swapActiveWorkoutExercise(at) }))
+}
+
+// Replace the active entry at `index` with `ex` set up as `cfg`, the way the add flow builds an
+// entry; `extra` is laid over the replacement. Logged sets are kept: the replacement then goes in
+// after them, once confirmed. `done(at)` gets the index the replacement landed at.
+function swapEntryTo(index, ex, cfg, extra = {}, done) {
+  const full = { ...cfg, id: ex.id }
+  const st = S()
+  const current = st.active?.entries?.[index]
+  if (!current) return
+  // A swap is an in-place substitution — routine identity is unchanged, so the replacement
+  // keeps the slot's own `rid` and reads its prescription from that routine (not a
+  // session-wide one). A slot with no `rid` is freestyle.
+  const slotRoutine = current.rid ? st.routines.find(r => r.id === current.rid) : null
+  const freestyle = !slotRoutine
+  // Same rows the add flow builds: last time's loads and, in a planned session, the
+  // prescription — swapping barbell for dumbbell bench must not start you at an empty bar.
+  // Built from what came before the session's day when it is logged into the past (sessionHistory).
+  const step = modeOf(full) === 'reps' ? weightIncrement(full, st.unit) : defaultIncrement(ex.id, st.unit)
+  const past = sessionHistory(st)
+  // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
+  // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
+  const built = freestyle
+    ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, preferLast: true }), full, dropGrid(st, full)) }
+    : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
+  const replacement = {
+    id: ex.id,
+    ...built,
+    ...(current.rid ? { rid: current.rid } : {}),
+    // A slot kept out of progression stays out once swapped. Replaced in place the entry keeps
+    // it anyway; inserted beside logged sets, the replacement would otherwise count as a
+    // regular session of the new exercise. Only a deload or rehab slot is built without a
+    // prescription (above): one kept out by hand keeps the marker and its Undo on the card,
+    // and an Undo must leave numbers that are right to count.
+    ...(current.noProg === true ? { noProg: true } : {}),
+    ...extra,
+  }
+
+  const apply = options => {
+    // A timed callback closes over entry/set indexes. Invalidate it, and the current rest,
+    // before the selected occurrence can be replaced or a new entry shifts those indexes.
+    ui().stopWork()
+    ui().stopRest()
+    let res = null
+    update(state => { res = swapActiveExercise(state.active, index, replacement, options) }, true)
+    if (res && !res.needsConfirmation) done?.(res.index)
+  }
+  const logged = (current.sets || []).some(set => set.done === true)
+  if (!logged) { apply(); return }
+
+  if (current.sg) {
+    ui().openSheet(close => <>
+      <h3>{t('Swap exercise?')}</h3>
+      <div className="muted small" style={{ marginBottom: 12 }}>
+        {t('Logged sets stay with the original exercise. Choose where the replacement belongs.')}
+      </div>
+      <Button variant="primary" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'keep' }) }}>
+        {t('Keep replacement in this group')}
+      </Button>
+      <div style={{ height: 8 }} />
+      <Button variant="ghost" onClick={() => { close(); apply({ loggedConfirmed: true, groupDisposition: 'detach' }) }}>
+        {t('Insert after this group')}
+      </Button>
+    </>)
+    return
+  }
+
+  confirmSheet({
+    title: t('Swap exercise?'),
+    message: t('Logged sets stay with the original exercise. The replacement will be inserted afterward.'),
+    confirmText: t('Continue'),
+    onConfirm: () => apply({ loggedConfirmed: true })
+  })
 }
 
 /* ============================ equipment profiles ============================ */
@@ -2787,7 +2823,7 @@ export function beginWorkout(routineIds, bw) {
       bw: bw || null, cur: 0, entries,
       // Snapshot the layout at start so the header ⋮ can change it for this session only —
       // changing the saved default (Settings → Workout view) mid-session leaves it alone.
-      workoutView: st.workoutView || 'cards',
+      workoutView: st.workoutView || 'list',
     }
   })
   useUI.getState().stopRest()
@@ -2808,7 +2844,7 @@ export function repeatWorkout(w, close) {
       s.active = {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
         name: w.name || t('Freestyle'), bw: bw || null, cur: 0, entries,
-        workoutView: s.workoutView || 'cards',
+        workoutView: s.workoutView || 'list',
       }
     })
     useUI.getState().stopRest()
@@ -2834,7 +2870,7 @@ export function startGenerated(type) {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
         name: t(GEN_NAME[type]), bw: bw || null, cur: 0, entries,
         gen: { type, shift: 0 },
-        workoutView: s.workoutView || 'cards',
+        workoutView: s.workoutView || 'list',
       }
     })
     useUI.getState().stopRest()
@@ -2953,7 +2989,7 @@ function beginBackfill({ iso, time, durationMin, routineIds, replaceId }) {
       bw: null, cur: 0, entries,
       backfill: { durationMin, replaceId: replaceId || null },
       // Same layout snapshot as a live session (see beginWorkout).
-      workoutView: st.workoutView || 'cards',
+      workoutView: st.workoutView || 'list',
     }
   })
   useUI.getState().stopRest()
