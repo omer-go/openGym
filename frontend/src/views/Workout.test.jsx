@@ -2401,14 +2401,15 @@ describe('workout view header menu', () => {
     expect(item(layout, 'Cards').on).toBe(false)
   })
 
-  it('writes the layout pick onto s.active without touching the global default', async () => {
+  it('writes the layout pick onto s.active and saves it for the next workout', async () => {
     await mount([exercise('plain-bench', [false])], 0, { workoutView: 'cards', active: { workoutView: 'cards', routineIds: [] } })
 
     const layout = await openLayout(await openMenu())
     await act(async () => { item(layout, 'Compact').onClick() })
 
     expect(mocks.S.active.workoutView).toBe('compact')
-    expect(mocks.S.workoutView).toBe('cards')
+    expect(mocks.S.workoutView).toBe('compact')
+    expect(mocks.S.workoutViewSet).toBe(true)
   })
 
   it('toggles completed exercises for the running list session and can show them again', async () => {

@@ -27,6 +27,7 @@ import { DEFAULT_TEMPLATE_ID } from '../lib/structuralBalanceTemplates.js'
 
 import { WC_DEFAULT } from '../lib/workout-controls.js'
 import { sanitizeAccent } from '../lib/accent.js'
+import { listByDefault } from '../lib/workout-view.js'
 
 const KEY = 'gym_state_v1'
 // Where the saved copy stands with the server: the revision it descends from, and its own `_ts`
@@ -1993,3 +1994,12 @@ export const lbOnly = s => {
 }
 // Not under the test runner: the sync suites drive kg copies through boot on purpose.
 if (import.meta.env?.MODE !== 'test') useStore.subscribe(lbOnly)
+
+// List is the workout layout by default: a profile still on the old cards default moves to the
+// list once booted, and a layout picked after that is kept (lib/workout-view.js).
+export const listView = s => {
+  if (s.ready && s.S && !s.S.workoutViewSet) {
+    queueMicrotask(() => { const st = useStore.getState(); if (!st.S.workoutViewSet) st.update(listByDefault) })
+  }
+}
+if (import.meta.env?.MODE !== 'test') useStore.subscribe(listView)

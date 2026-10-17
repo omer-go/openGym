@@ -72,6 +72,7 @@ import { workoutCardModel, layoutWorkoutCard, drawWorkoutCard, viewAspect, CARD_
 import { copyText } from './lib/clipboard.js'
 import { queueRemaining, pinState } from './lib/queue.js'
 import { DAY_NOTE_TAGS, DAY_NOTE_LABEL, DAY_NOTE_ICON, dayNoteOf, dayNoteLine, canNoteDay, withDayNote } from './lib/day-notes.js'
+import { savedWorkoutView } from './lib/workout-view.js'
 
 const S = () => useStore.getState().S
 const update = (...a) => useStore.getState().update(...a)
@@ -2896,7 +2897,7 @@ export function beginWorkout(routineIds, bw) {
       bw: bw || null, cur: 0, entries,
       // Snapshot the layout at start so the header ⋮ can change it for this session only —
       // changing the saved default (Settings → Workout view) mid-session leaves it alone.
-      workoutView: st.workoutView || 'list',
+      workoutView: savedWorkoutView(st),
     }
   })
   useUI.getState().stopRest()
@@ -2917,7 +2918,7 @@ export function repeatWorkout(w, close) {
       s.active = {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
         name: w.name || t('Freestyle'), bw: bw || null, cur: 0, entries,
-        workoutView: s.workoutView || 'list',
+        workoutView: savedWorkoutView(s),
       }
     })
     useUI.getState().stopRest()
@@ -2945,7 +2946,7 @@ function beginGenerated(type, entries, gen) {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
         name: t(GEN_NAME[type]), bw: bw || null, cur: 0, entries,
         gen: { type, ...gen },
-        workoutView: s.workoutView || 'list',
+        workoutView: savedWorkoutView(s),
       }
     })
     useUI.getState().stopRest()
@@ -3148,7 +3149,7 @@ function beginBackfill({ iso, time, durationMin, routineIds, replaceId }) {
       bw: null, cur: 0, entries,
       backfill: { durationMin, replaceId: replaceId || null },
       // Same layout snapshot as a live session (see beginWorkout).
-      workoutView: st.workoutView || 'list',
+      workoutView: savedWorkoutView(st),
     }
   })
   useUI.getState().stopRest()

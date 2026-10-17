@@ -43,6 +43,7 @@ import { passwordOn, PasswordRow, openPasswordSignIn, openPasswordRegister } fro
 import { usePasskeys, PasskeysRow, DeviceLinkRow, openDeviceLinkRedeem } from '../components/Passkeys.jsx'
 import { Section, Row, SelectRow, Switch, Segmented, Button, TextField, SearchField } from '../components/ui.jsx'
 import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './settings-pages.js'
+import { pickWorkoutView } from '../lib/workout-view.js'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -382,7 +383,7 @@ export default function Settings({ page = null, find = null, via = null }) {
   }
   const mode = scheduleModeOf(S)
   const layout = ['list', 'compact', 'focus'].includes(S.workoutView) ? S.workoutView : 'cards'
-  const layoutLabel = { cards: t('Cards'), list: t('List'), compact: t('Compact') }[layout]
+  const layoutLabel = { cards: t('Cards'), list: t('List'), compact: t('Compact'), focus: t('Focus') }[layout]
   const activeProfile = (S.equipProfiles || []).find(p => p.id === S.activeEquipId)
   const themeLabel = { dark: t('Dark'), light: t('Light'), system: t('System') }[S.theme || 'dark'] || t('Dark')
   // The value a root row shows, so most questions are answered without opening the page.
@@ -453,12 +454,13 @@ export default function Settings({ page = null, find = null, via = null }) {
             { value: 'best', label: t('Best set'), subtitle: t('Your heaviest set of the exercise, from any workout.') },
           ]} />
         {/* One exercise at a time (cards with Prev/Next), the whole session stacked as a
-            scrollable list, or that list stripped to just names and set rows (compact). Legacy or
-            unknown values read as cards. The workout's ⋯ menu can override it for one session. */}
+            scrollable list (the default), or that list stripped to just names and set rows (compact).
+            Legacy or unknown values read as cards. The workout's ⋯ menu saves its choice here too
+            (lib/workout-view.js). */}
         <Row icon="layout" iconTint="var(--blue)" title={t('Layout')}>
           <Segmented className="seg-inline"
             options={[{ value: 'cards', label: t('Cards') }, { value: 'list', label: t('List') }, { value: 'compact', label: t('Compact') }, { value: 'focus', label: t('Focus') }]}
-            value={layout} onChange={v => update(s => { s.workoutView = v })} />
+            value={layout} onChange={v => update(s => pickWorkoutView(s, v))} />
         </Row>
         {/* The saved side of the Layout menu's "Collapse completed exercises" (#241): on here, every
             session starts with it, and the menu still flips it for one session. Setting it here

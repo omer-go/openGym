@@ -48,6 +48,7 @@ import { MUSCLE_NAME } from '../lib/muscles.js'
 import FocusView from './FocusView.jsx'
 import GenerateCard, { genReason } from '../components/GenerateCard.jsx'
 import { withMeaning, historyAs, dbLoadFor, entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
+import { pickWorkoutView } from '../lib/workout-view.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -1371,10 +1372,9 @@ function ActiveWorkout() {
     s.active.cur = firstIdx
     if (!workoutControls(s).exerciseButtons && (s.workoutView || 'cards') === 'cards') s.active.workoutView = 'cards'
   })
-  // The header ⋮ re-lays-out the running session without touching the saved default
-  // (Settings → During a workout → Workout view). It writes s.active.workoutView, which the
-  // render above prefers over S.workoutView.
-  const setWorkoutView = v => update(s => { if (s.active) s.active.workoutView = v })
+  // The header ⋮ re-lays-out the running session and saves the choice, so the next workout opens
+  // the same way (the same value as Settings → During a workout → Layout).
+  const setWorkoutView = v => update(s => pickWorkoutView(s, v))
   const LAYOUT_LABEL = {
     cards: t('Cards'),
     list: t('List'),
@@ -1464,8 +1464,6 @@ function ActiveWorkout() {
   })
   // The header ⋯, in groups: the settings you change at the gym first (their own sheet, the same
   // values as Settings), then what to add, what to change about this workout, and Discard last.
-  // Layout here stays this session's own (s.active.workoutView); the settings sheet's Layout is
-  // the saved one.
   const openViewMenu = () => menuSheet({
     sections: [
       { items: [
