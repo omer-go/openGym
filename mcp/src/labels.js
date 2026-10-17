@@ -19,7 +19,7 @@ export function exLine(cfg, unit) {
   const mode = modeOf(cfg)
   const n = cfg.sets || 1
   const load = cfg.weight ? ' · ' + fmtNum(cfg.weight) + ' ' + unit : ''
-  if (mode === 'cardio') return `${n} × ${cfg.min || 20} min @ ${fmtNum(cfg.speed || 8)} km/h`
+  if (mode === 'cardio') return `${n} × ${cfg.min || 20} min @ ${fmtNum(cfg.speed || 5)} mph`
   if (mode === 'time') return `${n} × ${fmtSec(cfg.sec || 45)}${load}`
   // Pyramid sets read as their per-set targets, the way the app shows them ("12 · 8 · 6 · Max · 12").
   if (isPyramid(cfg)) return pyramidLabel(cfg.pyramid)

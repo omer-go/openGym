@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
-// A cardio exercise's settings in mph (Discord "miles per hour"): the speed stepper reads and
-// steps in the profile's unit, and the routine keeps km/h.
+// A cardio exercise's settings in mph, the only unit: the speed stepper reads, steps and saves mph.
 import React, { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRoot } from 'react-dom/client'
@@ -33,22 +32,19 @@ beforeEach(() => {
 afterEach(() => { act(() => { mounted.splice(0).forEach(root => root.unmount()) }) })
 
 describe('cardio settings speed', () => {
-  it('reads and steps in mph for a profile in pounds, and saves km/h', () => {
-    const { speed, save, onSave } = open({ unit: 'lb' }, { sets: 1, min: 20, speed: 8 })
+  it('reads, steps and saves mph', () => {
+    const { speed, save, onSave } = open({ unit: 'lb' }, { sets: 1, min: 20, speed: 5 })
     expect(speed.querySelector('.stp-l').textContent).toBe('Speed (mph)')
-    expect(speed.querySelector('input').value).toBe('4.97')
+    expect(speed.querySelector('input').value).toBe('5')
     act(() => speed.querySelector('button[aria-label="Increase"]').click())
-    expect(speed.querySelector('input').value).toBe('5.47')
+    expect(speed.querySelector('input').value).toBe('5.5')
     act(() => save.click())
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ min: 20, speed: 8.8 }))
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ min: 20, speed: 5.5 }))
   })
 
-  it('is unchanged in km/h', () => {
-    const { speed, save, onSave } = open({ unit: 'kg' }, { sets: 1, min: 20, speed: 8 })
-    expect(speed.querySelector('.stp-l').textContent).toBe('Speed (km/h)')
+  it('is mph even for an old kg profile', () => {
+    const { speed } = open({ unit: 'kg', speedUnit: 'kmh' }, { sets: 1, min: 20, speed: 8 })
+    expect(speed.querySelector('.stp-l').textContent).toBe('Speed (mph)')
     expect(speed.querySelector('input').value).toBe('8')
-    act(() => speed.querySelector('button[aria-label="Increase"]').click())
-    act(() => save.click())
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ speed: 8.5 }))
   })
 })

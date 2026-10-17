@@ -533,7 +533,7 @@ describe('get_workout', () => {
     // 90 sec → 1 min 30 sec → mm:ss label is "1:30" (fmtSec in history.js)
     expect(w.entries[1].sets[0].label).toBe('1:30')             // 90 s in mm:ss, no weight
     expect(w.entries[2].sets[0].label).toBe('1:30 · 20')        // weighted plank
-    expect(w.entries[3].sets[0].label).toBe('20 min @ 8 km/h')   // cardio
+    expect(w.entries[3].sets[0].label).toBe('20 min @ 8 mph')   // cardio
   })
 
   test('a set taken to failure says so, in its label and as a flag', () => {
@@ -563,7 +563,7 @@ describe('get_workout', () => {
     }]
     const w = call('get_workout', { date: '2026-07-25' })
     expect(w.entries[0].mode).toBe('cardio')
-    expect(w.entries[0].sets[0].label).toBe('20 min @ 8 km/h')
+    expect(w.entries[0].sets[0].label).toBe('20 min @ 8 mph')
   })
 })
 

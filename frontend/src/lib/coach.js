@@ -427,7 +427,7 @@ const CHANGE_APPLY = {
     const a = c.after || {}
     // A drawing's id the Coach may have picked up names the exercise it draws.
     const e = { id: canonicalExId(a.id), sets: a.sets || 3, mode: a.mode || 'reps' }
-    if (e.mode === 'cardio') { e.min = a.min || 20; e.speed = a.speed || 8 }
+    if (e.mode === 'cardio') { e.min = a.min || 20; e.speed = a.speed || 5 }
     else if (e.mode === 'time') e.sec = a.sec || 45
     else e.reps = a.reps || 10
     if (a.weight > 0) e.weight = a.weight

@@ -29,6 +29,8 @@ const save = host => act(() => [...host.querySelectorAll('button')].find(b => b.
 
 describe('exercise settings: last set to failure', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     bindUI(useUI)
     useUI.setState({ sheets: [] })

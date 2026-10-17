@@ -85,7 +85,7 @@ const gainedWorkoutMedia = (prev, next) => {
   return workoutMediaHashes(next).some(h => !had.has(h))
 }
 export const DEF = {
-  unit: 'kg', restSec: 90, restPauseSec: 15, sound: true, soundOnSilent: false, vibrateOnSilent: false, timerFlash: false, timedSetOvertime: false, keepAwake: true, lang: 'en',
+  unit: 'lb', restSec: 90, restPauseSec: 15, sound: true, soundOnSilent: false, vibrateOnSilent: false, timerFlash: false, timedSetOvertime: false, keepAwake: true, lang: 'en',
   theme: 'dark', accent: 'lime', body: 'male', targetW: null,
   bodyweight: [], routines: [], week: {}, dayPlan: {},
   // A note per day off (#261): { [iso]: { tag, text, _ts } } (lib/day-notes.js). A noted day is
@@ -1984,3 +1984,12 @@ export const useStore = create((set, get) => {
 })
 
 export { hasData }
+
+// Weights are lb, the only unit, and nothing is converted. A profile still labelled kg — from
+// before, a backup, or a pull from a copy that is — is relabelled lb once booted, its numbers as
+// they are; the relabel is stamped (convert: false) so a merge relabels kg copies the same way.
+export const lbOnly = s => {
+  if (s.ready && (s.S?.unit || 'kg') !== 'lb') queueMicrotask(() => useStore.getState().setUnit('lb', { convert: false }))
+}
+// Not under the test runner: the sync suites drive kg copies through boot on purpose.
+if (import.meta.env?.MODE !== 'test') useStore.subscribe(lbOnly)

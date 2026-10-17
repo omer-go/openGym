@@ -49,7 +49,7 @@ globalThis.__APP_VERSION__ ??= 'test'
 let host, root
 beforeEach(() => {
   mocks.S = {
-    unit: 'kg', restSec: 90, restPauseSec: 15, sound: true, vibrate: true, effort: 'none', gifSize: 'full', lang: 'en',
+    unit: 'lb', restSec: 90, restPauseSec: 15, sound: true, vibrate: true, effort: 'none', gifSize: 'full', lang: 'en',
     workouts: [], routines: [], exWeights: {}, equipProfiles: [{ id: 'p1', name: 'Home', equipment: [] }], activeEquipId: 'p1',
     reminder: { on: false, time: '17:30' },
   }
@@ -93,7 +93,7 @@ describe('the root', () => {
     expect(rowTitled('Workout').querySelector('.lrow-v').textContent).toBe('1:30 rest · Cards')
     expect(rowTitled('Timer alerts').querySelector('.lrow-v').textContent).toBe('Sound · Vibrate')
     expect(rowTitled('Plan & schedule').querySelector('.lrow-v').textContent).toMatch(/^Fixed Week · Mon/)
-    expect(rowTitled('Units & language').querySelector('.lrow-v').textContent).toBe('kg · English')
+    expect(rowTitled('Units & language').querySelector('.lrow-v').textContent).toBe('lb · mph · English')
     expect(rowTitled('Equipment').querySelector('.lrow-v').textContent).toBe('Everything')
     expect(rowTitled('About & updates').querySelector('.lrow-v').textContent).toMatch(/^v\d|^vtest/)
   })
@@ -373,7 +373,7 @@ describe('searchSettings', () => {
   it('matches titles, synonyms and pages, ignoring case and accents', () => {
     expect(searchSettings('Vibrate', guestWeb, tr).map(h => h.title)).toEqual(['Vibrate'])
     expect(searchSettings('buzz', guestWeb, tr).map(h => h.title)).toEqual(['Vibrate'])
-    expect(searchSettings('pounds', guestWeb, tr).map(h => h.title)).toEqual(['Weight unit'])
+    expect(searchSettings('pounds', guestWeb, tr)).toEqual([])
     expect(searchSettings('dark mode', guestWeb, tr).map(h => h.title)).toEqual(['Theme'])
     expect(searchSettings('gif', guestWeb, tr).map(h => h.title)).toEqual(['Exercise animations'])
     expect(searchSettings('RÉST TIMER', guestWeb, tr)[0].title).toBe('Rest timer')

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-// Cardio speed in mph (Discord "miles per hour"): the set row shows, steps and takes typing in
-// the profile's speed unit, and what it stores is always km/h.
+// Cardio speed is mph, the only unit: the set row shows, steps and takes typing in mph, and
+// stores exactly that.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { MemoryRouter } from 'react-router-dom'
@@ -17,7 +17,7 @@ let root, container
 
 function mount(settings = {}) {
   if (root) unmount()
-  const S = { ...JSON.parse(JSON.stringify(DEF)), ...settings }
+  const S = { ...JSON.parse(JSON.stringify(DEF)), unit: 'lb', ...settings }
   S.active = {
     id: 'speed-test', d: '2026-09-23', start: Date.now(), routineId: null, name: 'Cardio', bw: null, cur: 0,
     entries: [{ id: BIKE, target: { sets: 1, min: 20, speed: 8 }, sets: [{ min: 20, speed: 8, done: false }] }],
@@ -50,37 +50,21 @@ function type(value) {
 }
 
 describe('cardio speed in the set row', () => {
-  it('reads, steps and takes typing in mph for a profile in pounds, and stores km/h', () => {
-    mount({ unit: 'lb' })
-    expect(header()).toBe('Speed (mph)')
-    expect(shown()).toBe('4.97')   // 8 km/h
-    // A tap is half a mile an hour, not half a kilometre.
-    tap('Increase')
-    expect(stored()).toBe(8.8)
-    expect(shown()).toBe('5.47')
-    type('6')
-    expect(stored()).toBe(9.66)
-    type('6.5')
-    expect(stored()).toBe(10.46)
-    expect(shown()).toBe('6.5')
-  })
-
-  it('follows a chosen speed unit over the weight unit', () => {
-    mount({ unit: 'kg', speedUnit: 'mph' })
-    expect(header()).toBe('Speed (mph)')
-    mount({ unit: 'lb', speedUnit: 'kmh' })
-    expect(header()).toBe('Speed (km/h)')
-    expect(shown()).toBe('8')
-  })
-
-  it('leaves a km/h profile exactly as it was', () => {
+  it('reads, steps and takes typing in mph, and stores it as typed', () => {
     mount()
-    expect(header()).toBe('Speed (km/h)')
+    expect(header()).toBe('Speed (mph)')
     expect(shown()).toBe('8')
     tap('Increase')
     expect(stored()).toBe(8.5)
-    type('10.25')
-    expect(stored()).toBe(10.25)
+    type('6.25')
+    expect(stored()).toBe(6.25)
+    expect(shown()).toBe('6.25')
+  })
+
+  it('is mph even for a profile that once chose km/h', () => {
+    mount({ unit: 'kg', speedUnit: 'kmh' })
+    expect(header()).toBe('Speed (mph)')
+    expect(shown()).toBe('8')
   })
 })
 
@@ -88,10 +72,10 @@ describe('cardio speed in the set row', () => {
 // it holds the last time or the best set (#173).
 describe('the reference line in mph', () => {
   const past = { id: 'w0', d: '2026-09-20', start: Date.now() - 3 * 86400000, end: Date.now() - 3 * 86400000 + 1800000, name: 'Cardio',
-    entries: [{ id: BIKE, target: { mode: 'cardio', sets: 1, min: 20, speed: 16.09344 }, sets: [{ min: 20, speed: 16.09344, done: true }] }] }
+    entries: [{ id: BIKE, target: { mode: 'cardio', sets: 1, min: 20, speed: 10 }, sets: [{ min: 20, speed: 10, done: true }] }] }
   const refText = () => container.querySelector('.refline')?.textContent || ''
 
-  it('shows last time and the best set in mph for a profile in pounds', () => {
+  it('shows last time and the best set in mph', () => {
     mount({ unit: 'lb', workouts: [past] })
     expect(refText()).toContain('20 min @ 10 mph')
     mount({ unit: 'lb', workouts: [past], logRef: 'best' })

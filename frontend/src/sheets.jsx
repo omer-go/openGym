@@ -1,5 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from './store/useStore.js'
+import WeightPicker, { fmtPick } from './components/WeightPicker.jsx'
+import { quickPicks, lastTop, REP_CHIPS } from './lib/weight-pick.js'
 import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
@@ -1427,13 +1429,13 @@ export function swapActiveWorkoutExercise(index) {
   // "+" on a row commits with the default config, exactly as it does in the add flows; tapping
   // the row still opens the config sheet first.
   // Worded for the session, not the routine: a swap changes today's workout only.
-  const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
-  function swapTo(ex, cfg) {
+  const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
+  function swapTo(ex, cfg, typed = false) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
     // the workout. (The add flow deliberately leaves it open.) A pick by hand starts a new
     // one-tap cycle from what was picked (swapOf cleared).
     picker.close()
-    swapEntryTo(index, ex, cfg, { swapOf: undefined })
+    swapEntryTo(index, ex, cfg, { swapOf: undefined }, undefined, typed)
   }
 }
 
@@ -1453,7 +1455,8 @@ export function quickSwapActiveWorkoutExercise(index) {
 // Replace the active entry at `index` with `ex` set up as `cfg`, the way the add flow builds an
 // entry; `extra` is laid over the replacement. Logged sets are kept: the replacement then goes in
 // after them, once confirmed. `done(at)` gets the index the replacement landed at.
-function swapEntryTo(index, ex, cfg, extra = {}, done) {
+// `typed`: the numbers come from the settings sheet, so a freestyle slot opens at them.
+function swapEntryTo(index, ex, cfg, extra = {}, done, typed = false) {
   const full = { ...cfg, id: ex.id }
   const st = S()
   const current = st.active?.entries?.[index]
@@ -1471,7 +1474,7 @@ function swapEntryTo(index, ex, cfg, extra = {}, done) {
   // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
   // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
   const built = freestyle
-    ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, preferLast: true }), full, dropGrid(st, full)) }
+    ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, ...(typed ? { useTarget: true } : { preferLast: true }) }), full, dropGrid(st, full)) }
     : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
   const replacement = {
     id: ex.id,
@@ -1681,6 +1684,7 @@ const intensifierToSave = x => (x.type === 'dropset'
     ? { ...x, totalReps: Math.max(1, Math.round(x.totalReps) || 0), restSec: Math.max(5, Number(x.restSec) || 0) }
     : x)
 
+export const MORE_KEY = 'gym_cfg_more'
 function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel }) {
   const st = useStore(s => s.S)
   const cardio = isCardio(ex.id)
@@ -1717,7 +1721,25 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       ? { ...next, ...normalizeRepRange(next.reps, next.repsMin, isPerSide(next) ? 2 : 1) }
       : next
   })
-  const save = () => {
+  // The weight picker (lib/weight-pick.js): its quick cards read last time in the dumbbell
+  // meaning this slot uses, and from this routine's own last session first, as the rows will.
+  const picker = !cardio && mode === 'reps' && !pyramid
+  // "More settings" stays the way you left it, per device: closed for most people, and open
+  // for whoever tunes rules and warm-ups every time.
+  const [more, setMoreState] = useState(() => { try { return localStorage.getItem(MORE_KEY) === '1' } catch { return false } })
+  const setMore = f => setMoreState(m => {
+    const v = f(m)
+    try { localStorage.setItem(MORE_KEY, v ? '1' : '0') } catch { /* private mode */ }
+    return v
+  })
+  // c.dbLoad is the only part of the config the lookup reads.
+  const last = useMemo(() => (picker && !bw ? lastEntryFor(historyAs(st, ex.id, dbLoadFor(st, { ...c, id: ex.id })), ex.id, routine?.id) : null),
+    [picker, bw, st, ex.id, routine?.id, c.dbLoad])
+  const top = lastTop(last)
+  const quick = picker && !bw ? quickPicks({ ex, last, reps: c.reps, unit: st.unit }) : null
+  // A tap on a card is the whole job: those numbers, saved.
+  const save = (pick = null) => saveWith(pick ? { ...c, weight: pick.w, reps: pick.reps } : c)
+  const saveWith = c => {
     if (progressionStepInvalid) return
     close()
     const sets = Math.max(1, Math.round(c.sets) || (cardio ? 1 : 3))
@@ -1760,7 +1782,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     const withMeant = dbLoad ? { dbLoad } : {}
     // "Last set to failure": written only when on, so a plan that never asked keeps its shape.
     const withFailure = c.lastToFailure === true ? { lastToFailure: true } : {}
-    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8), ...withNote, ...withRest })
+    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 5), ...withNote, ...withRest })
     else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...(perSide ? { side: true } : {}), ...prog, ...withNote, ...withWarmups, ...withRest, ...withMeant, ...withFailure })
     else {
       // A unilateral target is stored even: the split has to divide, and a typed 15 would
@@ -1798,31 +1820,63 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       onSave(out)
     }
   }
+  const label = saveLabel || (existing ? t('Save') : t('Add to routine'))
+  const setCount = Math.max(1, Math.round(c.sets) || 1)
+  const restPause = c.intensifier?.type === 'restpause'
+  // What saving gives you, on the button: "3 × 135 lb × 8".
+  const summary = !picker || restPause ? null
+    : !bw && c.weight > 0 ? `${setCount} × ${fmtPick(c.weight, c.reps, st.unit)}` : `${setCount} × ${c.reps}`
+  const setChips = [1, 2, 3, 4, 5, 6].concat(c.sets > 6 ? [c.sets] : [])
+  const repChipsBw = REP_CHIPS.concat(REP_CHIPS.includes(c.reps) || !(c.reps > 0) ? [] : [c.reps]).sort((x, y) => x - y)
+  const setReps = r => setC(x => {
+    const next = { ...x, reps: r }
+    return ranged ? { ...next, ...normalizeRepRange(r, x.repsMin, perSide ? 2 : 1) } : next
+  })
+  // What is set under "More settings", so a closed section still says it is not empty.
+  const moreBits = [
+    c.warmupSets > 0 && `${t('Warm-up sets')}: ${c.warmupSets}`,
+    c.restSec > 0 && t('{0} rest', fmtRest(c.restSec)),
+    perSide && t('Per side'),
+    c.lastToFailure && t('Last set to failure'),
+    pyramid && t('Pyramid sets'),
+    c.intensifier?.type === 'dropset' && t('Drop-set'),
+    restPause && t('Rest-pause'),
+    c.note && t('Note'),
+  ].filter(Boolean)
+  const moreOpen = more || progressionStepInvalid
   return <>
-    <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
-    <Media ex={ex} />
-    {/* The same tags the exercise detail sheet shows, secondaries included: choosing what goes
-        into a plan is exactly when "what else does this hit" matters, and until now that was
-        only visible from the Exercises tab, after the fact. Custom exercises and the newer
-        metadata name muscles by the map's ids ("forearm", "gluteal"), which only MUSCLE_NAME
-        turns into a translatable label. */}
-    <div className="row" style={{ gap: 6, flexWrap: 'wrap', margin: '10px 0 14px' }}>
-      {cardio && <span className="tag acc"><Icon name="figureRun" />{t('Cardio')}</span>}
-      <span className="tag">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span><span className="tag">{t(ex.eq)}</span>
-      {!cardio && (ex.secondaries?.length ? ex.secondaries : smOf(ex)).filter(trainedBy(ex)).slice(0, 3)
-        .map((s, i) => <span key={i} className="tag dim">{t(MUSCLE_NAME[s] || s)}</span>)}
+    {/* Like the Add exercise list: the exercise on one line, the numbers right under it. The
+        animation, tags and description are one tap away under "More settings". */}
+    <div className="cfg-head">
+      <Thumb ex={ex} />
+      <div className="grow">
+        <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
+        <div className="ss">{[t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp), t(ex.eq), top && t('last {0}', fmtPick(top.w, top.reps, st.unit))].filter(Boolean).join(' · ')}</div>
+      </div>
     </div>
-    {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
-    {!cardio && <div style={{ marginBottom: 14 }}>
-      <Segmented className="seg-range" value={mode} onChange={setMode}
-        options={[{ value: 'reps', label: t('Reps') }, { value: 'time', label: t('Time') }]} />
+    {picker && !bw && <WeightPicker ex={ex} unit={st.unit} weight={c.weight} reps={c.reps}
+      onWeight={w => setC(x => ({ ...x, weight: w }))} onReps={setReps} repStep={perSide ? 2 : 1}
+      quick={quick} onQuick={save} anchor={top ? top.w : quick?.next.w} last={top?.w || 0} />}
+    {picker && bw && <div className="wpick">
+      <div className="wlabel">{t('Reps')}</div>
+      <div className="rgrid" role="group" aria-label={t('Reps')} style={{ '--n': repChipsBw.length }}>
+        {repChipsBw.map(r => <button type="button" key={r} className={'chip' + (r === c.reps ? ' on' : '')} aria-pressed={r === c.reps}
+          disabled={perSide && r % 2 !== 0} onClick={() => setReps(r)}>{r}</button>)}
+      </div>
     </div>}
-    <div className="row cfgrow" style={{ marginBottom: mode === 'time' ? 8 : 18 }}>
+    {picker && !restPause && <>
+      <div className="wlabel" style={{ marginBottom: 8 }}>{triple ? t('Sets from') : t('Sets')}</div>
+      <div className="sgrid" role="group" aria-label={t('Sets')} style={{ '--n': setChips.length }}>
+        {setChips.map(n => <button type="button" key={n} className={'chip' + (n === c.sets ? ' on' : '')} aria-pressed={n === c.sets}
+          onClick={() => setC(x => ({ ...x, sets: n }))}>{n}</button>)}
+      </div>
+    </>}
+    {!picker && !pyramid && <div className="row cfgrow" style={{ marginBottom: mode === 'time' ? 8 : 18 }}>
       {cardio ? <>
         <Stepper label={t('Intervals')} value={c.sets} step={1} decimal={false} onChange={v => setC(x => ({ ...x, sets: v }))} />
         <Stepper label={t('Minutes')} value={c.min} step={1} decimal={false} onChange={v => setC(x => ({ ...x, min: v }))} />
-        {/* Typed and stepped in the profile's unit, kept in km/h (lib/speed.js). */}
-        <Stepper label={speedUnit === 'mph' ? t('Speed (mph)') : t('Speed (km/h)')} value={toSpeed(c.speed, speedUnit)} step={0.5}
+        {/* In mph, the only unit, stored as typed (lib/speed.js). */}
+        <Stepper label={t('Speed (mph)')} value={toSpeed(c.speed, speedUnit)} step={0.5}
           onChange={v => setC(x => ({ ...x, speed: fromSpeed(v, speedUnit) }))} />
       </> : mode === 'time' ? <>
         <Stepper label={t('Sets')} value={c.sets} step={1} decimal={false} onChange={v => setC(x => ({ ...x, sets: v }))} />
@@ -1830,20 +1884,11 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         {/* A bodyweight hold's load is the "Added" row below — showing both put two fields on
             one value. */}
         {!bw && <Stepper label={t('Weight ({0})', st.unit)} value={c.weight} step={2.5} onChange={v => setC(x => ({ ...x, weight: v }))} />}
-      </> : <>
-        {/* Rest-pause always trains as exactly two rows — a warm-up at this rep count, then one
-            rest-pause work set — so "Sets" has nothing left to mean and only invites a mismatch. */}
-        {c.intensifier?.type !== 'restpause' && !pyramid &&
-          <Stepper label={triple ? t('Sets from') : t('Sets')} value={c.sets} step={1} decimal={false} onChange={v => setC(x => ({ ...x, sets: v }))} />}
-        {!ranged && !pyramid && <Stepper label={t('Reps')} value={c.reps} step={perSide ? 2 : 1} decimal={false} onChange={v => setC(x => ({ ...x, reps: v }))} />}
-        {/* On bodyweight work the weight stepper is the click #32 is about, so it is not here
-            until there is a belt to describe — see the added-weight row below. */}
-        {!bw && !pyramid && <Stepper label={t('Weight ({0})', st.unit)} value={c.weight} step={2.5} onChange={v => setC(x => ({ ...x, weight: v }))} />}
-      </>}
-    </div>
+      </> : null}
+    </div>}
     {/* Pyramid sets: a row per set, each with its own reps or Max, rest and weight. A set left
         at 0 weight starts from that same set last time (buildSets). */}
-    {pyramid && <div style={{ marginTop: -10, marginBottom: 18 }}>
+    {pyramid && <div style={{ marginBottom: 18 }}>
       {/* Presets replace the list (and its rests and weights) in one tap; the sheet is not saved
           until Save. */}
       <div className="chips" style={{ marginBottom: 10 }}>
@@ -1889,8 +1934,33 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       <div className="small dim" style={{ marginTop: 8 }}>{t('A set left at 0 rest uses the exercise’s rest.')}</div>
       {!bw && <div className="small dim" style={{ marginTop: 4 }}>{t('A set left at 0 weight starts from that set’s weight last time.')}</div>}
     </div>}
-    {c.intensifier?.type === 'restpause' && <div className="small dim" style={{ marginTop: -10, marginBottom: 18 }}>
+    {restPause && <div className="small dim" style={{ marginTop: -6, marginBottom: 18 }}>
       {t('Rest-pause always trains as one warm-up set at this rep count, then one rest-pause work set. "Sets" isn’t used here.')}
+    </div>}
+    <button type="button" className="cfg-more" aria-expanded={moreOpen} onClick={() => setMore(m => !m)}>
+      <div className="grow">
+        <b>{t('More settings')}</b>
+        <small>{moreBits.length ? moreBits.join(' · ') : t('Rest, warm-ups, progression, how-to and more')}</small>
+      </div>
+      <Icon name="chevronRight" />
+    </button>
+    {moreOpen && <>
+    <Media ex={ex} />
+    {/* The same tags the exercise detail sheet shows, secondaries included: choosing what goes
+        into a plan is exactly when "what else does this hit" matters, and until now that was
+        only visible from the Exercises tab, after the fact. Custom exercises and the newer
+        metadata name muscles by the map's ids ("forearm", "gluteal"), which only MUSCLE_NAME
+        turns into a translatable label. */}
+    <div className="row" style={{ gap: 6, flexWrap: 'wrap', margin: '10px 0 14px' }}>
+      {cardio && <span className="tag acc"><Icon name="figureRun" />{t('Cardio')}</span>}
+      <span className="tag">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span><span className="tag">{t(ex.eq)}</span>
+      {!cardio && (ex.secondaries?.length ? ex.secondaries : smOf(ex)).filter(trainedBy(ex)).slice(0, 3)
+        .map((s, i) => <span key={i} className="tag dim">{t(MUSCLE_NAME[s] || s)}</span>)}
+    </div>
+    {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
+    {!cardio && <div style={{ marginBottom: 14 }}>
+      <Segmented className="seg-range" value={mode} onChange={setMode}
+        options={[{ value: 'reps', label: t('Reps') }, { value: 'time', label: t('Time') }]} />
     </div>}
     {/* Planned warm-ups: the session used to start at the work weight and you added every
         warm-up by hand, every time. Rest-pause is excluded because it builds its own warm-up
@@ -2048,7 +2118,9 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     {/* What saving does, when it is neither of the two usual things: the routine editor's
         Replace (#110) seeds this sheet with the slot it replaces, and saving puts the exercise
         into that slot. */}
-    <Button variant="primary" disabled={progressionStepInvalid} onClick={save}>{saveLabel || (existing ? t('Save') : t('Add to routine'))}</Button>
+    </>}
+    {/* The summary is drawn by CSS (data-sum), so the button still reads as what it does. */}
+    <Button variant="primary" className={summary ? 'with-sum' : ''} data-sum={summary || undefined} disabled={progressionStepInvalid} onClick={() => save()}>{label}</Button>
     {isCustomEx(ex) && <><div style={{ height: 8 }} /><Button icon="pencil" onClick={() => { close(); customExSheet(ex) }}>{t('Edit or delete this exercise')}</Button></>}
     {/* The routine editor's counterpart to a workout's Swap (#110): another exercise in this
         slot, with the slot's sets, reps, weight, rule and note kept (lib/routines.js). What was

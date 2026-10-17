@@ -36,6 +36,8 @@ const save = host => [...host.querySelectorAll('button')].find(b => b.textConten
 
 describe('exercise settings: typing into a field with a minimum', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     useUI.setState({ sheets: [] })
     useStore.setState(s => ({ S: { ...s.S, unit: 'kg' } }))
@@ -95,6 +97,8 @@ describe('exercise settings: typing into a field with a minimum', () => {
 // the same value, under a Bodyweight row that said to "just log the reps".
 describe('exercise settings: a timed bodyweight hold', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     useUI.setState({ sheets: [] })
     useStore.setState(s => ({ S: { ...s.S, unit: 'kg' } }))

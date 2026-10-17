@@ -2230,3 +2230,49 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* The exercise name in the workout card opens its settings: looks like the title, acts like a button. */
 .exttl{flex:1;min-width:0;font-weight:600;letter-spacing:-.02em;line-height:1.2;text-align:start;background:none;border:0;padding:0;margin:0;color:inherit;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .exttl:active{opacity:.6}
+
+/* Exercise settings: the few-taps weight picker (components/WeightPicker.jsx) */
+.cfg-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cfg-head .grow{min-width:0;flex:1}
+.cfg-head h3{margin:0}
+.cfg-head .ss{color:var(--label-2);font-size:13px;margin-top:2px;line-height:1.3}
+.wpick{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.wpick .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qk{background:var(--surface-2);border-radius:14px;padding:12px;text-align:start;display:flex;flex-direction:column;gap:2px;border:1.5px solid transparent;min-height:84px;color:var(--label);min-width:0}
+.qk.sug{border-color:var(--acc);background:var(--acc-soft)}
+.qk.solo{grid-column:1/-1}
+.qk small{font-size:12px;color:var(--label-2);font-weight:600}
+.qk.sug small{color:var(--acc)}
+.qk b{font-size:21px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;font-weight:700}
+.qk b em{font-style:normal;font-size:14px;color:var(--label-2);font-weight:600}
+.qk span{font-size:12.5px;color:var(--label-2)}
+.qk:active{opacity:.7}
+.wpick .or{display:flex;align-items:center;gap:10px;color:var(--label-2);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.wpick .or::before,.wpick .or::after{content:"";flex:1;height:1px;background:var(--sep,var(--surface-2))}
+.wstep{display:flex;align-items:center;gap:10px}
+.wstep .readout{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.wstep .stp{width:56px;height:56px;border-radius:50%;background:var(--surface-2);color:var(--label);font-size:26px;font-weight:500;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.wstep .stp small{display:block;font-size:10.5px;color:var(--label-2);font-weight:600;margin-top:1px}
+.wstep .stp:disabled{opacity:.35}
+.wstep .v{font-size:46px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.wstep .v small{font-size:18px;font-weight:600;color:var(--label-2);margin-inline-start:4px;letter-spacing:0}
+.wstep .v .auto{font-size:30px;color:var(--label-2)}
+.wgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.wgrid .chip,.rgrid .chip,.sgrid .chip{min-width:0;padding:0;min-height:44px;font-size:16px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+.wgrid .chip.lt{background:var(--acc-soft);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.wgrid .chip.on,.rgrid .chip.on,.sgrid .chip.on{background:var(--acc);color:var(--on-acc);box-shadow:none}
+.rgrid .chip:disabled{opacity:.3}
+.wshift{display:flex;justify-content:space-between;margin-top:-4px}
+.wshift .link{font-size:14px;color:var(--acc);padding:4px 0}
+.wshift .link:disabled{opacity:.35}
+.wlabel{font-size:13px;font-weight:600;color:var(--label-2);margin-bottom:-4px}
+.rgrid{display:grid;grid-template-columns:repeat(var(--n,7),minmax(0,1fr));gap:6px}
+.sgrid{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:6px;margin-bottom:18px}
+.cfg-more{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border-radius:var(--r);background:var(--surface-2);color:var(--label);text-align:start;margin-bottom:14px}
+.cfg-more .grow{flex:1;min-width:0}
+.cfg-more b{font-weight:600;font-size:15px;display:block}
+.cfg-more small{color:var(--label-2);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cfg-more .icn{transition:transform var(--fast)}
+.cfg-more[aria-expanded="true"] .icn{transform:rotate(90deg)}
+.btn.with-sum{flex-direction:column;gap:1px;padding:10px 18px}
+.btn.with-sum::after{content:attr(data-sum);font-size:13.5px;font-weight:500;opacity:.85;font-variant-numeric:tabular-nums}

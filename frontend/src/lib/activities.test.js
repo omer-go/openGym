@@ -53,7 +53,7 @@ describe('stopwatch', () => {
     expect(fmtMin(cardioMinutes(89))).toBe('1:29')
     expect(fmtMin(cardioMinutes(20))).toBe('0:20')
     expect(fmtMin(25)).toBe('25')
-    expect(setLabel('0685', logElapsed({ min: 20, speed: 8 }, 25 * 60 + 10, 'cardio'))).toBe('25:10 min @ 8 km/h')
+    expect(setLabel('0685', logElapsed({ min: 20, speed: 8 }, 25 * 60 + 10, 'cardio'))).toBe('25:10 min @ 8 mph')
     expect(logElapsed({ min: 20, speed: 8 }, 25 * 60 + 10, 'cardio')).toEqual({ min: 25.1667, speed: 8 })
     expect(logElapsed({ sec: 30 }, 42, 'time')).toEqual({ sec: 42 })
   })

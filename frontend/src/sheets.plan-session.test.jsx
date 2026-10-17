@@ -18,7 +18,7 @@ const rowsOf = rid => S().active.entries.filter(e => e.rid === rid && e.id === B
   .map(e => e.sets.filter(s => !isWarmupRow(s)).map(s => `${s.w}x${s.r}`))[0]
 
 function install(routines, extra = {}) {
-  const st = clone(DEF)
+  const st = { ...clone(DEF), unit: 'kg' }
   Object.assign(st, { routines, week: { 1: ['A'] }, active: null, workouts: [], weighIn: false }, extra)
   useStore.setState({ S: st, user: null })
 }

@@ -40,6 +40,8 @@ const pickRule = (host, name) => {
 
 describe('exercise settings: triple progression', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     bindUI(useUI)
     useUI.setState({ sheets: [] })
@@ -53,7 +55,9 @@ describe('exercise settings: triple progression', () => {
     const host = open({}, onSave)
     expect(pickRule(host, 'Triple progression')).toContain('Triple progression')
     expect(host.textContent).toContain('then a set is added')
-    expect(labels(host)).toEqual(expect.arrayContaining(['Sets from', 'Reps from', 'Reps up to', 'Sets up to']))
+    expect(labels(host)).toEqual(expect.arrayContaining(['Reps from', 'Reps up to', 'Sets up to']))
+    // The starting sets are the sheet's set chips, labelled for the rule.
+    expect([...host.querySelectorAll('.wlabel')].map(l => l.textContent)).toContain('Sets from')
     expect(labels(host)).not.toContain('Reps')
     // Room for two more sets to begin with, the usual 3 to 5.
     expect(stepperValue(host, 'Sets up to')).toBe('5')

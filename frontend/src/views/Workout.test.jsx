@@ -1817,7 +1817,7 @@ describe('workout focus view', () => {
     })], 0, { active: { workoutView: 'focus' } })
 
     expect(container.textContent).toContain('Duration (min)')
-    expect(container.textContent).toContain('Speed (km/h)')
+    expect(container.textContent).toContain('Speed (mph)')
     expect(container.querySelectorAll('button[aria-label="Increase reps"]').length).toBe(0)
     await click(container.querySelector('button[aria-label="Increase duration"]'))
     await click(container.querySelector('button[aria-label="Increase speed"]'))

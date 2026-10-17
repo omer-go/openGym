@@ -125,8 +125,7 @@ describe('Focus workout view', () => {
   })
 })
 
-// The speed stepper follows the profile's speed unit like the set row does (lib/speed.js): shown,
-// stepped and typed in mph, stored in km/h. It used to say km/h whatever the setting.
+// The speed stepper is mph like the set row (lib/speed.js): shown, stepped, typed and stored in mph.
 describe('Focus view cardio speed', () => {
   const BIKE = '2138'   // stationary bike, cardio
   const bike = () => ({ id: BIKE, target: { sets: 1, min: 20, speed: 8 }, sets: [{ min: 20, speed: 8, done: false }] })
@@ -140,24 +139,18 @@ describe('Focus view cardio speed', () => {
     })
   }
 
-  it('reads, steps and takes typing in mph for a profile in pounds, and stores km/h', () => {
+  it('reads, steps and takes typing in mph, and stores it as typed', () => {
     mount(bike())
     expect(cell().querySelector('.stp-l').textContent).toBe('Speed (mph)')
-    expect(cell().querySelector('input').value).toBe('4.97')   // 8 km/h
-    act(() => container.querySelector('button[aria-label="Increase speed"]').click())
-    expect(stored()).toBe(8.8)
-    type('6')
-    expect(stored()).toBe(9.66)
-  })
-
-  it('follows a chosen unit over the weight unit, and leaves km/h as it was', () => {
-    mount(bike(), { unit: 'kg', speedUnit: 'mph' })
-    expect(cell().querySelector('.stp-l').textContent).toBe('Speed (mph)')
-    act(() => root.unmount()); container.remove()
-    mount(bike(), { speedUnit: 'kmh' })
-    expect(cell().querySelector('.stp-l').textContent).toBe('Speed (km/h)')
     expect(cell().querySelector('input').value).toBe('8')
     act(() => container.querySelector('button[aria-label="Increase speed"]').click())
     expect(stored()).toBe(8.5)
+    type('6')
+    expect(stored()).toBe(6)
+  })
+
+  it('is mph even for a profile that once chose km/h', () => {
+    mount(bike(), { unit: 'kg', speedUnit: 'kmh' })
+    expect(cell().querySelector('.stp-l').textContent).toBe('Speed (mph)')
   })
 })

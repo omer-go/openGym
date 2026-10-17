@@ -31,6 +31,8 @@ const open = (cfg, onSave) => {
 
 describe('exercise settings: back-off sets', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     useUI.setState({ sheets: [] })
     useStore.setState(s => ({ S: { ...s.S, unit: 'kg' } }))

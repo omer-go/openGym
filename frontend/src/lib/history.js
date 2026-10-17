@@ -139,7 +139,7 @@ const effortTail = s => {
 
 // One-line summary of a logged set. `cfg` carries the mode when the caller has it (a routine
 // entry or a workout entry); passing an id alone keeps the old body-part behaviour.
-// `speedUnit` is the profile's (lib/speed.js speedUnitOf); without one a cardio set reads km/h.
+// `speedUnit` is kept for callers; a cardio set always reads mph (lib/speed.js).
 const EXPLICIT_MODES = new Set(['reps', 'time', 'cardio'])
 export function setLabel(id, s, cfg, speedUnit) {
   // The id is the caller's when the config does not carry one: a freestyle target is built
@@ -150,7 +150,7 @@ export function setLabel(id, s, cfg, speedUnit) {
   // it was — seconds for a timed set, minutes for cardio — so those are not read back as "0 reps".
   if (!cfg && !(s.r > 0)) { if (s.min > 0 || s.speed > 0) mode = 'cardio'; else if (s.sec > 0) mode = 'time' }
   // A target with no mode of its own takes it from the exercise, and an exercise can change: a
-  // custom one moved to Cardio after months of rep sets read them all as "0 min @ 0 km/h", next
+  // custom one moved to Cardio after months of rep sets read them all as "0 min @ 0 mph", next
   // to the volume those same sets still count. A set with reps and nothing cardio was a rep set.
   if (!EXPLICIT_MODES.has(cfg?.mode) && mode !== 'reps' && s.r > 0 && !(s.min > 0 || s.speed > 0 || s.sec > 0)) mode = 'reps'
   // A treadmill grade rides along when the set has one (lib/incline.js); a flat set reads as it did.
@@ -213,7 +213,7 @@ export function setLabel(id, s, cfg, speedUnit) {
 export function defaultConfig(id, mode) {
   if (!mode && EXIDX[id]?.cat === 'stretching') return { sets: 2, sec: 30, weight: 0, mode: 'time', bodyweight: true }
   const m = mode || modeOf({ id })
-  if (m === 'cardio') return { sets: 1, min: 20, speed: 8 }
+  if (m === 'cardio') return { sets: 1, min: 20, speed: 5 }
   // Written only when it is true, so a barbell config is byte-for-byte what it was before
   // the flag existed and a plan file gains nothing it does not need.
   const bw = isBodyweightEq(id) ? { bodyweight: true } : {}
@@ -249,7 +249,7 @@ export function exLine(cfg, unit, speedUnit) {
   const load = !cfg.weight ? ''
     : backoff ? ' · ' + (isBw(cfg) ? '+' : '') + backoffWeights(cfg.weight, n, backoff).map(fmtNum).join(' → ') + ' ' + unit
       : ' · ' + (isBw(cfg) ? '+' : '') + fmtNum(cfg.weight) + ' ' + unit
-  if (mode === 'cardio') return `${n} × ${cfg.min || 20} min @ ${fmtSpeed(cfg.speed || 8, speedUnit)}`
+  if (mode === 'cardio') return `${n} × ${cfg.min || 20} min @ ${fmtSpeed(cfg.speed || 5, speedUnit)}`
   // A timed hold has no rep count to spell a split out of ("8/side" below) — "per side" says it
   // happens twice, once each side (buildWorkSets), rather than trying to divide a duration.
   if (mode === 'time') return `${setsRepsOf(cfg)}${load}${isPerSide(cfg) ? ' · ' + t('per side') : ''}`
@@ -580,7 +580,7 @@ function buildWorkSets(S, cfg, options = {}) {
   if (mode === 'cardio') {
     for (let i = 0; i < n; i++) {
       const prev = prevAt(i)
-      sets.push({ min: prev ? prev.min : (cfg.min || 20), speed: prev ? prev.speed : (cfg.speed || 8), ...inclineFrom(prev), done: false })
+      sets.push({ min: prev ? prev.min : (cfg.min || 20), speed: prev ? prev.speed : (cfg.speed || 5), ...inclineFrom(prev), done: false })
     }
     return sets
   }
@@ -1029,7 +1029,7 @@ export function insertWarmupRow(rows, mode, target, step = 2.5, floor = 0) {
   const warm = mode === 'cardio'
     ? {
       min: prev ? prev.min : (work ? work.min : (target.min || 20)),
-      speed: prev ? prev.speed : (work ? work.speed : (target.speed || 8)),
+      speed: prev ? prev.speed : (work ? work.speed : (target.speed || 5)),
       ...inclineFrom(prev || work),
       done: false, phase: 'warmup', warmup: true,
     }

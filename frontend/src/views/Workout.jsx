@@ -87,7 +87,7 @@ function StartChooser() {
 }
 
 
-// A set-row column's number as it is shown. Most columns show what is stored; one with a `view`
+// (cardio speed) passes it through lib/speed.js, which is mph as stored.
 // (cardio speed, stored in km/h) converts it for the screen.
 const viewOf = (col, value) => (col.view && value != null && value !== '' ? col.view(value) : value)
 
@@ -291,10 +291,10 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   const col1 = cardio ? { f: 'min', step: 1, dec: false, hd: t('Duration (min)'), ...(watch ? { text: fmtMin } : {}) }
     : timed ? { f: 'sec', step: 5, dec: false, hd: t('Seconds') }
       : loadCol
-  // Speed is stored in km/h and shown in the profile's unit (lib/speed.js): `view` turns the
-  // stored number into the one on screen, `store` the one typed or stepped back into km/h.
+  // Speed is mph, stored as shown (lib/speed.js): `view` and `store` pass it through
+  // unchanged.
   const speedUnit = speedUnitOf(S)
-  const col2 = cardio ? { f: 'speed', step: 0.5, dec: true, hd: speedUnit === 'mph' ? t('Speed (mph)') : t('Speed (km/h)'),
+  const col2 = cardio ? { f: 'speed', step: 0.5, dec: true, hd: t('Speed (mph)'),
     view: v => toSpeed(v, speedUnit), store: v => fromSpeed(v, speedUnit) }
     : timed ? (watch ? null : loadCol) : repCol
   // Effort (RIR or RPE, whichever the profile logs) only makes sense for weighted rep sets,
@@ -321,7 +321,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     const fresh = useStore.getState().S.active?.entries[entryIdx]?.sets[i]
     const cur = fresh ? fresh[col.f] : s[col.f]
     if (mode === 'reps' && col.f === 'w') return onField(i, col.f, stepLoad(cur, col.step, dir))
-    // The step is in the unit on screen: +0.5 mph, not +0.5 km/h shown as +0.31.
+    // The step is in the unit on screen: +0.5 mph.
     const next = Math.max(0, Math.round(((viewOf(col, cur) || 0) + dir * col.step) * 100) / 100)
     onField(i, col.f, col.store ? col.store(next) : next)
   }
@@ -1180,7 +1180,7 @@ function ActiveWorkout() {
   const addSet = idx => mutEntry(idx, e => {
     const l = e.sets[e.sets.length - 1]
     const m = modeOf({ ...(e.target || {}), id: e.id })
-    if (m === 'cardio') e.sets.push({ min: l ? l.min : (e.target.min || 20), speed: l ? l.speed : (e.target.speed || 8), ...inclineFrom(l), done: false })
+    if (m === 'cardio') e.sets.push({ min: l ? l.min : (e.target.min || 20), speed: l ? l.speed : (e.target.speed || 5), ...inclineFrom(l), done: false })
     else if (m === 'time') {
       const sec = l ? l.sec : (e.target.sec || 45)
       const w = l ? (l.w || 0) : (e.target.weight || 0)
@@ -1424,7 +1424,9 @@ function ActiveWorkout() {
     // sheet and carry its completed rows forward. A planned session uses its configured
     // target when progression is off, while progression-enabled sessions keep their path.
     const seed = freestyle ? freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) }) : null
-    const commit = cfg => {
+    // `typed`: the settings sheet's numbers, picked on purpose, so the rows open at them rather
+    // than at last time's (a weight left on Auto still reads last time, buildSets useTarget).
+    const commit = (cfg, typed = false) => {
       if (focusMode) focusPointerEpoch.current++
       update(s => {
         const full = { ...cfg, id: ex.id }
@@ -1436,7 +1438,7 @@ function ActiveWorkout() {
         // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
         const built = freestyle
           ? { target: withMeaning(s, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(s, full)), full, {
-            step: modeOf(full) === 'reps' ? (ownedWeightsFor(s, full) || weightIncrement(full, s.unit)) : defaultIncrement(ex.id, s.unit), preferLast: true,
+            step: modeOf(full) === 'reps' ? (ownedWeightsFor(s, full) || weightIncrement(full, s.unit)) : defaultIncrement(ex.id, s.unit), ...(typed ? { useTarget: true } : { preferLast: true }),
           }), full, dropGrid(s, full)) }
           : buildPlannedEntry(past, full, routine, { noProg })
         const insertAt = insertionIndexAfterCurrentUnit(supersetUnits(s.active.entries), s.active.cur, s.active.entries.length)
@@ -1452,7 +1454,7 @@ function ActiveWorkout() {
     // who wants to set sets/reps first.
     if (quick) { commit(seed || defaultConfig(ex.id)); useUI.getState().toast(t('“{0}” added to {1}', exerciseNameText(ex), routine ? routine.name : t('Freestyle'))) }
     // The confirm names what it changes: this workout, never the routine behind it.
-    else exConfigSheet(ex, null, commit, null, routine, seed, null, t('Add to this workout'))
+    else exConfigSheet(ex, null, cfg => commit(cfg, true), null, routine, seed, null, t('Add to this workout'))
   })
   // Ending the session without saving it. The ⋯ menu's last item since the header's ✕ became the
   // ⌄ that only leaves the screen (v1.3.11).

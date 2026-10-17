@@ -18,7 +18,7 @@ let root, container
 
 function mount(id, sets, more = {}) {
   if (root) unmount()
-  const S = JSON.parse(JSON.stringify(DEF))
+  const S = { ...JSON.parse(JSON.stringify(DEF)), unit: 'kg' }
   S.active = {
     id: 'incline-test', d: '2026-10-09', start: Date.now(), routineId: null, name: 'Cardio', bw: null, cur: 0, ...more,
     entries: [{ id, target: { sets: 1, min: 20, speed: 5 }, sets }],
@@ -53,7 +53,7 @@ describe('the incline column', () => {
     mount(TREADMILL, [{ min: 20, speed: 5, done: false }])
     expect(cells()).toHaveLength(3)
     expect(cells()[0].className).toBe('watchgo')
-    expect(heads()).toEqual(['Duration (min)', 'Speed (km/h)', 'Incline (%)'])
+    expect(heads()).toEqual(['Duration (min)', 'Speed (mph)', 'Incline (%)'])
     // No grade logged yet: the field is empty, not a 0 nobody typed.
     expect(inclineCell().querySelector('input').value).toBe('')
     expect('incline' in stored()).toBe(false)

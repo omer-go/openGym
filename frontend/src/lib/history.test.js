@@ -59,33 +59,33 @@ describe('fmtSec', () => {
 describe('setLabel', () => {
   it('describes each mode in its own terms', () => {
     expect(setLabel(LIFT, { w: 60, r: 10 })).toBe('60×10')
-    expect(setLabel(CARDIO, { min: 20, speed: 9 })).toBe('20 min @ 9 km/h')
+    expect(setLabel(CARDIO, { min: 20, speed: 9 })).toBe('20 min @ 9 mph')
     expect(setLabel(LIFT, { sec: 45, w: 0 }, { mode: 'time' })).toBe('0:45')
     expect(setLabel(LIFT, { sec: 90, w: 20 }, { mode: 'time' })).toBe('1:30 · 20')
   })
 
   it('reads a legacy set with no config exactly as before', () => {
     expect(setLabel(LIFT, { w: 0, r: 0 })).toBe('0×0')
-    expect(setLabel(CARDIO, {})).toBe('0 min @ 0 km/h')
+    expect(setLabel(CARDIO, {})).toBe('0 min @ 0 mph')
   })
 
   // A target built without an id (a freestyle one) and without a mode used to fall back to reps,
   // so a run read "0×0": the id the caller passes decides the mode then, as it does with no target.
   it('reads a cardio set by the exercise id when its target carries neither id nor mode', () => {
-    expect(setLabel(CARDIO, { min: 20, speed: 9 }, { sets: 1, min: 20, speed: 8 })).toBe('20 min @ 9 km/h')
+    expect(setLabel(CARDIO, { min: 20, speed: 9 }, { sets: 1, min: 20, speed: 8 })).toBe('20 min @ 9 mph')
     // a target that says otherwise still wins
     expect(setLabel(CARDIO, { sec: 45, w: 0 }, { mode: 'time' })).toBe('0:45')
   })
 
   // QA 1.3.11: a custom exercise moved to Cardio after months of rep sets read its history as
-  // "0 min @ 0 km/h" next to the volume those sets still count. A target with no mode of its own
+  // "0 min @ 0 mph" next to the volume those sets still count. A target with no mode of its own
   // follows the set's fields; one that names a mode still decides.
   it('reads a rep set as reps when its exercise has become cardio since', () => {
     expect(setLabel(CARDIO, { w: 50, r: 10 }, { sets: 3, reps: 10, weight: 50, bodyweight: false })).toBe('50×10')
     // no target at all: the catalogue's cardio entry is body weight, so the load reads as added
     expect(setLabel(CARDIO, { w: 50, r: 10 })).toBe('+50 × 10')
-    expect(setLabel(CARDIO, { min: 20, speed: 9, r: 0 }, { sets: 1 })).toBe('20 min @ 9 km/h')
-    expect(setLabel(CARDIO, { w: 50, r: 10 }, { mode: 'cardio' })).toBe('0 min @ 0 km/h')
+    expect(setLabel(CARDIO, { min: 20, speed: 9, r: 0 }, { sets: 1 })).toBe('20 min @ 9 mph')
+    expect(setLabel(CARDIO, { w: 50, r: 10 }, { mode: 'cardio' })).toBe('0 min @ 0 mph')
   })
 
   it('appends RIR when present, including a valid 0', () => {
@@ -318,7 +318,7 @@ describe('logging effort across a session', () => {
   it('never attaches effort to a mode that has no place for it', () => {
     // cardio and timed sets have no third stepper, and their labels ignore the field even
     // if an import or an old file put one there
-    expect(setLabel(CARDIO, { min: 20, speed: 9, rpe: 8 })).toBe('20 min @ 9 km/h')
+    expect(setLabel(CARDIO, { min: 20, speed: 9, rpe: 8 })).toBe('20 min @ 9 mph')
     expect(setLabel(LIFT, { sec: 45, rir: 2 }, { id: LIFT, mode: 'time' })).toBe('0:45')
   })
 })
@@ -326,7 +326,7 @@ describe('logging effort across a session', () => {
 describe('defaultConfig', () => {
   it('gives each mode a sensible starting point', () => {
     expect(defaultConfig(LIFT)).toEqual({ sets: 3, reps: 10, weight: 0, mode: 'reps' })
-    expect(defaultConfig(CARDIO)).toEqual({ sets: 1, min: 20, speed: 8 })
+    expect(defaultConfig(CARDIO)).toEqual({ sets: 1, min: 20, speed: 5 })
     expect(defaultConfig(LIFT, 'time')).toEqual({ sets: 3, sec: 45, weight: 0, mode: 'time' })
   })
   it('seeds the bodyweight flag from the catalogue, and only when it is true', () => {
@@ -404,7 +404,7 @@ describe('exLine', () => {
     expect(exLine({ id: LIFT, sets: 3, reps: 10, weight: 60 }, 'kg')).toBe('3 × 10 · 60 kg')
     expect(exLine({ id: LIFT, sets: 3, sec: 45, mode: 'time' }, 'kg')).toBe('3 × 0:45')
     expect(exLine({ id: LIFT, sets: 2, sec: 90, weight: 20, mode: 'time' }, 'kg')).toBe('2 × 1:30 · 20 kg')
-    expect(exLine({ id: CARDIO, sets: 1, min: 20, speed: 8 }, 'kg')).toBe('1 × 20 min @ 8 km/h')
+    expect(exLine({ id: CARDIO, sets: 1, min: 20, speed: 8 }, 'kg')).toBe('1 × 20 min @ 8 mph')
   })
   it('reads a double-progression range as the range, not as its top', () => {
     // "Reps from 10, up to 15" used to read "2 × 15" in the plan and then open at 10.
@@ -1579,7 +1579,7 @@ describe('per-side volume and legacy timed sets (QA round 2026-09-12)', () => {
   })
   it('reads a timed or cardio set saved without a target from the set itself', () => {
     expect(setLabel('0001', { sec: 45, done: true })).toBe('0:45')
-    expect(setLabel('0001', { min: 20, speed: 8, done: true })).toBe('20 min @ 8 km/h')
+    expect(setLabel('0001', { min: 20, speed: 8, done: true })).toBe('20 min @ 8 mph')
     expect(setLabel('0025', { w: 60, r: 10, done: true })).toBe('60×10')
   })
 })

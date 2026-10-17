@@ -99,7 +99,7 @@ describe('adoptProfile — sign-in takes the server profile', () => {
     const S = useStore.getState().S
     expect(S.workouts).toEqual([])
     expect(S.routines).toEqual([])
-    expect(S.active).toEqual({ id: 'running' })   // the in-progress session stays with the device
+    expect(S.active).toMatchObject({ id: 'running' })   // the in-progress session stays with the device
     expect(sync().rev).toBe(0)
     expect(r).toEqual({ adopted: true, added: false })
   })

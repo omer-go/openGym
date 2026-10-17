@@ -480,7 +480,7 @@ export default function Stats() {
       desc: snapshot.desc || entry?.desc || '',
     }
   }
-  // Cardio is charted and ranked in the profile's speed unit; the sets keep km/h (lib/speed.js).
+  // Cardio is charted and ranked in mph, as stored (lib/speed.js).
   const speedUnit = speedUnitOf(S)
   const currentOf = id => {
     for (let i = workouts.length - 1; i >= 0; i--) {

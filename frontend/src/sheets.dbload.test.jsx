@@ -28,6 +28,8 @@ const button = (host, text) => [...host.querySelectorAll('button')].find(b => b.
 
 describe('weight means', () => {
   beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
     globalThis.IS_REACT_ACT_ENVIRONMENT = true
     useUI.setState({ sheets: [], toasts: [] })
     useStore.setState({ S: { ...JSON.parse(JSON.stringify(DEF)), unit: 'kg' }, user: null })

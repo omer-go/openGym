@@ -39,7 +39,7 @@ let sheetRoot
 let sheetContainer
 
 function renderWorkout(entries, { withRoutines = routines, withHistory = history } = {}) {
-  const S = clone(DEF)
+  const S = { ...clone(DEF), unit: 'kg' }
   S.routines = clone(withRoutines)
   S.workouts = clone(withHistory)
   S.active = { id: 'noprog-test', d: '2026-09-23', start: Date.now(), routineIds: ['main'], routineId: 'main', name: 'Main', bw: null, cur: 0, entries }
@@ -158,7 +158,7 @@ describe('don’t count this session for progression', () => {
       ],
     }]
     const start = () => {
-      const S = { ...clone(DEF), routines: clone(planned), workouts: clone(logged) }
+      const S = { ...clone(DEF), unit: 'kg', routines: clone(planned), workouts: clone(logged) }
       const [bench] = buildSessionEntries(S, planned[0]).map(e => ({ ...e, rid: 'main' }))
       renderWorkout([bench], { withRoutines: planned, withHistory: logged })
       expect(active().entries[0].sets.map(set => set.w)).toEqual([102.5])
@@ -206,7 +206,7 @@ describe('don’t count this session for progression', () => {
       // The mark stays on the slot, with its Undo on the card.
       expect(row.noProg).toBe(true)
       // 70 × 8 last time, and a row goes up in 5s: 75, the way the routine's own start builds it.
-      const S0 = { ...clone(DEF), routines: clone(planned), workouts: clone(logged) }
+      const S0 = { ...clone(DEF), unit: 'kg', routines: clone(planned), workouts: clone(logged) }
       expect(buildSessionEntries(S0, planned[0])[1].sets.map(set => set.w)).toEqual([75])
       expect(row.sets.map(set => set.w)).toEqual([75])
       expect(row.plan.kind).not.toBe('off')

@@ -3,7 +3,6 @@ import { useNavigate, useParams, useLocation, Navigate } from 'react-router-dom'
 import { useStore, DEF, hasData } from '../store/useStore.js'
 import { healthStatus, loadHealth, enableHealth, disableHealth, openHealthConnect, onHealthChange } from '../lib/health-sync.js'
 import { workoutControls } from '../lib/workout-controls.js'
-import { speedUnitOf } from '../lib/speed.js'
 import { formulaOf, FORMULA_NAMES } from '../lib/onerm.js'
 import { copyText } from '../lib/clipboard.js'
 import { useUI } from '../store/useUI.js'
@@ -95,7 +94,7 @@ export default function Settings({ page = null, find = null, via = null }) {
   const passkeys = usePasskeys(!!user && !MOBILE && !DEMO && (page === 'account'))
   const [credsV, setCredsV] = useState(0)
   const credsChanged = () => { passkeys.load(); setCredsV(v => v + 1) }
-  const { update, importConflict, importBackup, setUnit, resetEverything: resetAll, setUser, pullState, pushState, resetDemo } = useStore()
+  const { update, importConflict, importBackup, resetEverything: resetAll, setUser, pullState, pushState, resetDemo } = useStore()
   const toast = useUI(s => s.toast)
   const fileRef = useRef(null)
   const importRef = useRef(null)
@@ -106,21 +105,6 @@ export default function Settings({ page = null, find = null, via = null }) {
   // not this app's to switch off or overwrite. The Scheduling row goes read-only for it.
   const liveQ = queueOf(S)
   const externalQ = !!liveQ && (!S.rotation || liveQ.rotationId !== S.rotation.id)
-
-  // Two honest choices on a unit switch (issue #22): convert the numbers, or keep them and only
-  // change the label — the old behaviour, still right for someone who logged in lb all along
-  // under a kg label. Closing the sheet leaves the unit as it was.
-  const switchUnit = v => {
-    if (v === S.unit) return
-    menuSheet({
-      title: t('Convert to {0}?', v),
-      subtitle: t('Every stored weight (logged sets, working weights, routine targets, body weight, bar weights) is in {0}. Convert the numbers, or keep them and only change the label?', S.unit),
-      items: [
-        { icon: 'calculator', label: t('Convert the numbers'), onClick: () => setUnit(v) },
-        { icon: 'pencil', label: t('Keep the numbers, change the label'), onClick: () => setUnit(v, { convert: false }) },
-      ],
-    })
-  }
 
   // Fixed Week or Rotation. A live queue always wins (scheduleModeOf, lib/rotation.js) — a queue
   // written by a planner switches the app to Rotation on its own — but choosing Rotation with
@@ -407,7 +391,7 @@ export default function Settings({ page = null, find = null, via = null }) {
     alerts: () => [S.sound ? t('Sound') : null, canVibrate && S.vibrate !== false ? t('Vibrate') : null, S.timerFlash ? t('Flash') : null].filter(Boolean).join(' · ') || t('Silent'),
     reminders: () => (S.reminder?.on ? (S.reminder.time || DEF.reminder?.time || '') : t('Off')),
     plan: () => (mode === 'rotation' ? t('Rotation') : t('Fixed Week')) + ' · ' + shortWeekday(weekStartOf(S) === SUNDAY ? 0 : 1),
-    units: () => (S.unit || 'kg') + ' · ' + (LANGS[lang] || lang),
+    units: () => 'lb · mph · ' + (LANGS[lang] || lang),
     equipment: () => (S.equipFilterOn && activeProfile ? activeProfile.name : t('Everything')),
     look: () => themeLabel + ' · ' + accentLabel(S),
     coach: () => (coachLocal?.mode === 'server' ? t('Your server') : coachLocal?.mode === 'byok' ? t('Your API key') : t('Off')),
@@ -667,12 +651,7 @@ export default function Settings({ page = null, find = null, via = null }) {
           </Row>
         </>}
       </Section>
-      <Section footer={t('Switching the unit offers to convert every stored weight.')}>
-        <Row icon="scale" iconTint="var(--teal)" title={t('Weight unit')}>
-          <Segmented className="seg-inline"
-            options={[{ value: 'kg', label: 'kg' }, { value: 'lb', label: 'lb' }]}
-            value={S.unit} onChange={v => switchUnit(v)} />
-        </Row>
+      <Section>
         {/* Display only: one decimal reads fine for plate-loadable numbers, two for anyone whose
             per-side figure lands on .25 or .75, or who loads microplates (issue #139). Nothing is
             stored or rounded differently; lib/format.js fmtNum just prints what is already there. */}
@@ -680,14 +659,6 @@ export default function Settings({ page = null, find = null, via = null }) {
           <Segmented className="seg-inline"
             options={[{ value: 1, label: t('0.5') }, { value: 2, label: t('0.25') }]}
             value={S.wdec === 2 ? 2 : 1} onChange={v => update(s => { s.wdec = v })} />
-        </Row>
-        {/* Cardio speed (Discord "miles per hour"). Unlike the weight unit this converts nothing:
-            speeds stay stored in km/h and only what is shown and typed follows it (lib/speed.js).
-            Until chosen it follows the weight unit, so a profile in pounds already reads mph. */}
-        <Row icon="figureRun" iconTint="var(--teal)" title={t('Speed unit')}>
-          <Segmented className="seg-inline"
-            options={[{ value: 'kmh', label: 'km/h' }, { value: 'mph', label: 'mph' }]}
-            value={speedUnitOf(S)} onChange={v => update(s => { s.speedUnit = v })} />
         </Row>
         {/* Which formula turns a set into an estimated 1RM (Discord, #155): the exercise page,
             the 1RM chart and records all follow it. Formula names are people, not words. */}

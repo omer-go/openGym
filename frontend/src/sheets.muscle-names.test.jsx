@@ -51,6 +51,8 @@ function seed(ex) {
 }
 
 beforeEach(() => {
+    // These are about the settings under "More settings", which stays open once opened.
+    localStorage.setItem('gym_cfg_more', '1')
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
   useUI.setState({ sheets: [], toastMsg: '' })
   useStore.setState({ S: structuredClone(DEF), user: null })

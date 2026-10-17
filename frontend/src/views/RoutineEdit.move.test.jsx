@@ -34,7 +34,7 @@ let root
 let container
 
 function setRoutine(ex) {
-  const S = clone(DEF)
+  const S = { ...clone(DEF), unit: 'kg' }
   S.routines = [{ id: 'r1', name: 'Move test', emoji: 'dumbbell', ex }]
   S.customEx = ['c1', 'c2', 'c3', 'c4'].map(custom)
   useStore.setState({ S, user: null })

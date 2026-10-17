@@ -326,14 +326,14 @@ const esc = str => String(str == null ? '' : str)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 // One exercise's scheme, e.g. "3 × 8–12 · 60 kg · drop-set 1× −20%", "3 × 0:45" or
-// "2 × 20 min @ 8 km/h" — the speed in the profile's unit (lib/speed.js), like the weight. The
+// "2 × 20 min @ 5 mph" — the speed in the profile's unit (lib/speed.js), like the weight. The
 // reps half is exLine's, so a double-progression range prints as the range it is ("8–12", not
 // the top alone) and a per-side split reads "8/side" exactly as the routine editor shows it.
 function scheme(e, unit, speedUnit) {
   const sets = e.sets || 1
   const mode = modeOf(e)
   if (mode === 'cardio') {
-    const body = `${e.min || 20} min @ ${fmtSpeed(e.speed || 8, speedUnit)}`
+    const body = `${e.min || 20} min @ ${fmtSpeed(e.speed || 5, speedUnit)}`
     return sets > 1 ? `${sets} × ${body}` : body
   }
   const line = exLine({ ...e, reps: e.reps ?? 10 }, unit, speedUnit)

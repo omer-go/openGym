@@ -35,7 +35,7 @@ function tapInTopSheet(text) {
 }
 
 function install(extra = {}) {
-  const st = clone(DEF)
+  const st = { ...clone(DEF), unit: 'kg' }
   Object.assign(st, {
     routines: [
       { id: 'A', name: 'Push', emoji: 'dumbbell', ex: [{ id: BENCH, sets: 2, reps: 10, weight: 50, mode: 'reps' }] },

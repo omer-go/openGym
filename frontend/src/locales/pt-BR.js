@@ -1472,6 +1472,23 @@ export const PT_BR_OVERRIDES = {
   'Rest between sets': 'Descanso entre séries',
   'In the workout, tap an exercise’s name to set its weight, sets and rest.': 'No treino, toque no nome de um exercício para definir peso, séries e descanso.',
   'Tick at least one muscle group.': 'Marque pelo menos um grupo muscular.',
+  'Auto': 'Auto',
+  'First time: a light start': 'Primeira vez: um começo leve',
+  'Heavier': 'Mais pesado',
+  'Lighter': 'Mais leve',
+  'More settings': 'Mais configurações',
+  'One more rep than last time': 'Uma repetição a mais que da última vez',
+  'Rest, warm-ups, progression, how-to and more': 'Descanso, aquecimento, progressão, execução e mais',
+  'Same as last': 'Igual à última',
+  'Starts from last time': 'Começa da última vez',
+  'Suggested start': 'Início sugerido',
+  'Tap a weight': 'Toque em um peso',
+  'Weight': 'Peso',
+  'You hit {0} reps last time': 'Você fez {0} repetições da última vez',
+  'last {0}': 'última {0}',
+  'or set your own': 'ou escolha o seu',
+  '{0} {1} heavier': '{0} {1} a mais',
+  '{0} {1} lighter': '{0} {1} a menos',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
