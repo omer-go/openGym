@@ -4,17 +4,19 @@ import { isoOf, uid } from './format.js'
 import { starterRoutines } from './starter.js'
 import { modeOf } from './history.js'
 import { emptyMeasurement } from './measurements.js'
+import { pickStep } from './weight-pick.js'
 
-// Starting weight and weekly increment per exercise of the starter plan (kg).
+// Starting weight and weekly increment per exercise of the starter plan (lb). Every logged
+// weight lands on the equipment's own step (weight-pick.js pickStep: 5 lb, 10 lb on machines).
 // Chest dips are body-weight only here, so they log reps at 0 added weight.
 const PROG = {
-  '0025': [60, 1.25], '0047': [45, 1], '0426': [20, 0.5], '0334': [10, 0.25], '0241': [25, 0.75], '0251': [0, 0],
-  '2330': [50, 1.25], '0027': [50, 1], '1323': [45, 1], '0031': [30, 0.5], '0313': [12, 0.3],
-  '0043': [70, 1.5], '0085': [60, 1.25], '0739': [120, 3], '0585': [45, 1], '0586': [40, 1], '0605': [60, 1.5]
+  '0025': [135, 2.5], '0047': [100, 2], '0426': [45, 1], '0334': [20, 0.5], '0241': [55, 1.5], '0251': [0, 0],
+  '2330': [110, 2.5], '0027': [110, 2], '1323': [100, 2], '0031': [65, 1], '0313': [25, 0.6],
+  '0043': [155, 3], '0085': [135, 2.5], '0739': [265, 6], '0585': [100, 2], '0586': [90, 2], '0605': [135, 3]
 }
 const WEEKS = 12                       // how much history to fabricate
-const BW_FROM = 82.4, BW_TO = 78.3     // body-weight trend across those weeks
-const TARGET_W = 77
+const BW_FROM = 181.5, BW_TO = 172.5   // body-weight trend across those weeks (lb)
+const TARGET_W = 170
 
 // --- Effort -----------------------------------------------------------------------------
 // The demo has to show the effort stats, not just the volume ones, so the history carries
@@ -89,7 +91,7 @@ export function buildDemoState() {
 
     // weigh-ins: Monday and Thursday mornings
     if (day.getDay() === 1 || day.getDay() === 4) {
-      const w = BW_FROM + (BW_TO - BW_FROM) * p + (rnd() - 0.5) * 0.7
+      const w = BW_FROM + (BW_TO - BW_FROM) * p + (rnd() - 0.5) * 1.5
       bodyweight.push({ d: iso, w: Math.round(w * 10) / 10, t: at(day, 7, 30) })
     }
 
@@ -125,8 +127,8 @@ export function buildDemoState() {
     const rir0 = weekTarget(blockWk)
     const scale = blockWk < RPE_UNTIL ? 'rpe' : 'rir'
     const entries = routine.ex.map((cfg, exIdx) => {
-      const [base, inc] = PROG[cfg.id] || [20, 0.5]
-      const step = base >= 40 ? 2.5 : 1.25
+      const [base, inc] = PROG[cfg.id] || [45, 1]
+      const step = pickStep(cfg.id, 'lb')
       // The deload pulls the weight back too — effort dropping on its own would look like the
       // same session suddenly got easy.
       const back = blockWk === DELOAD_WEEK ? 0.88 : 1

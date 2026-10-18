@@ -2,6 +2,7 @@
 // exercise the stats it is there to show off — including the effort card, which renders as
 // dashes on a history that is rated too thinly or not at all.
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
+import { pickStep } from './weight-pick.js'
 import { buildDemoState } from './demoSeed.js'
 import {
   effortSummary, effortWeeks, effortHistogram, hasEffort, displayScale, avgRir,
@@ -115,10 +116,10 @@ describe('demo seed — effort', () => {
 // on the frontend side of the boundary, where the seed actually lives.
 describe('demo seed — the training stream is a fixture', () => {
   const TODAY = '2026-07-27'                 // Monday, matching the mcp suite's pinned clock
-  // Not copied off a run: 18412.5 is the sum of w×r over the twenty completed sets of the newest
-  // session, and 78.3 is BW_TO, the end of the body-weight trend. Same two values mcp asserts.
-  const NEWEST = { d: '2026-07-24', name: 'Leg Day', vol: 18412.5 }
-  const LATEST_BW = { d: TODAY, w: 78.3 }
+  // Not copied off a run: 40175 is the sum of w×r over the twenty completed sets of the newest
+  // session, and 172.5 is BW_TO, the end of the body-weight trend (lb). Same two values mcp asserts.
+  const NEWEST = { d: '2026-07-24', name: 'Leg Day', vol: 40175 }
+  const LATEST_BW = { d: TODAY, w: 172.5 }
   let D = null
 
   beforeAll(() => {
@@ -152,5 +153,17 @@ describe('demo seed — the training stream is a fixture', () => {
     const waist = D.measurements.map(m => m.waist)
     expect(waist.every(v => v > 60 && v < 130)).toBe(true)
     expect(waist.at(0) - waist.at(-1)).toBeGreaterThan(3)
+  })
+})
+
+// The demo is in lb, and every logged weight sits on its equipment's step (5 lb, 10 lb on
+// machines), so progression from it keeps clean plate jumps.
+describe('demo seed — lb on the plate steps', () => {
+  it('logs every weight on its equipment step', () => {
+    const D = buildDemoState()
+    const off = D.workouts.flatMap(w => w.entries.flatMap(e =>
+      e.sets.filter(s => s.w % pickStep(e.id, 'lb') !== 0).map(s => `${e.id} ${s.w}`)))
+    expect(off).toEqual([])
+    expect(Object.values(D.exWeights).every(x => x.w % 5 === 0)).toBe(true)
   })
 })

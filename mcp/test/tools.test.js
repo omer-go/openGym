@@ -12,14 +12,14 @@ import { bestSetOf } from '../../frontend/src/lib/onerm.js'
 // Re-stated here so the assertions stand alone without reaching into lib internals to learn
 // the demo state's exact values.
 const FAKE_TODAY_ISO = '2026-07-27'                         // Monday — Push Day is scheduled
-const GOAL_WEIGHT = 77
-// Re-pinned against the v1.2.4 seed, which moved when the demo learned about bodyweight work
-// and effort. Hand-checked rather than copied off a failing run: 18412.5 is the sum of w×r
-// over the twenty completed sets, and 1.3 is 78.3 − 77.
-const NEWEST_WORKOUT = { date: '2026-07-24', name: 'Leg Day', volume: 18412.5, bw: 78.4, sets_done: 20, sets_total: 20, duration: '1h 11m' }
-const LATEST_BW = { date: '2026-07-27', weight: 78.3, delta: 1.3 }
+const GOAL_WEIGHT = 170
+// Re-pinned against the lb seed (every weight on its equipment's step). Hand-checked rather than
+// copied off a failing run: 40175 is the sum of w×r over the twenty completed sets
+// (190×32 + 165×29 + 330×34 + 120×36 + 110×34 + 170×59), and 2.5 is 172.5 − 170.
+const NEWEST_WORKOUT = { date: '2026-07-24', name: 'Leg Day', volume: 40175, bw: 172.8, sets_done: 20, sets_total: 20, duration: '1h 11m' }
+const LATEST_BW = { date: '2026-07-27', weight: 172.5, delta: 2.5 }
 const LEG_PRESS_ID = '0739'                                 // sled 45° leg press in the demo data
-const LEG_PRESS_BEST = { w: 152.5, r: 12, epley: 213.5, brzycki: 219.6 }
+const LEG_PRESS_BEST = { w: 330, r: 12, epley: 462, brzycki: 475.2 }
 
 const byName = Object.fromEntries(TOOLS.map(t => [t.name, t.handler]))
 
