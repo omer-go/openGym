@@ -1517,6 +1517,9 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
   /* A tall sheet stops short of the status bar / Dynamic Island: every cap carries the top
      safe-area inset, which the layout viewport does not (viewport-fit=cover). */
   max-height:90vh;max-height:min(90vh,calc(100dvh - var(--sat) - 8px - var(--native-kb,0px)));
+  /* Every sheet stands at the same full height, whatever it holds, so sheets opened one over
+     another line up instead of stepping. */
+  height:90vh;height:min(90vh,calc(100dvh - var(--sat) - 8px - var(--native-kb,0px)));
   overflow-y:auto;scroll-padding-bottom:calc(20px + var(--sab));
   animation:sheetup .34s var(--ease);
   overscroll-behavior:contain;touch-action:pan-y;will-change:transform;
@@ -1526,6 +1529,7 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
   /* with the keyboard up the sheet is capped by the visual viewport — which still starts
      under the notch, hence the inset here too */
   max-height:min(90vh,calc(100dvh - var(--sat) - 8px - var(--native-kb,0px)),calc(var(--picker-visual-height,100vh) - var(--sat) - 8px));
+  height:min(90vh,calc(100dvh - var(--sat) - 8px - var(--native-kb,0px)),calc(var(--picker-visual-height,100vh) - var(--sat) - 8px));
 }
 /* Android 15: the window is not resized for the soft keyboard, the app passes the height it
    covers as --native-kb instead (MainActivity.keyboardScript, lib/native-keyboard.js). Every
