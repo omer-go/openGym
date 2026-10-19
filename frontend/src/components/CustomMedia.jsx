@@ -94,16 +94,19 @@ const reducedMotion = () => {
 
 // A still that will not load gets the same neutral tile as an exercise without media, like the
 // catalogue's thumbs (#281). While a poster is on its way the tile shows too, so a row never jumps.
-export function CustomThumb({ ex }) {
+// `mc`: the muscle group colour Thumb (Media.jsx) rings it in.
+export function CustomThumb({ ex, mc }) {
   const m = mediaOf(ex)
   const link = m ? null : cleanUrl(ex?.url)
   const poster = useMediaUrl(m?.poster || null)
   const [broken, setBroken] = useState(null)
+  const mg = mc ? ' mg' : ''
+  const style = mc ? { '--mc': mc } : undefined
   if (poster.url && broken !== poster.url) {
-    return <img className="thumb" loading="lazy" decoding="async" draggable={false} src={poster.url} alt="" onError={() => setBroken(poster.url)} />
+    return <img className={'thumb' + mg} style={style} loading="lazy" decoding="async" draggable={false} src={poster.url} alt="" onError={() => setBroken(poster.url)} />
   }
   const icon = m?.kind === 'video' || (link && linkKind(link) === 'video') ? 'play' : link ? 'link' : 'dumbbell'
-  return <div className="thumb thumb-x"><Icon name={icon} /></div>
+  return <div className={'thumb thumb-x' + mg} style={style}><Icon name={icon} /></div>
 }
 
 /* ------------------------------------------------------------------ links ---------------- */

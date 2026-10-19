@@ -49,6 +49,7 @@ import FocusView from './FocusView.jsx'
 import GenerateCard, { genReason } from '../components/GenerateCard.jsx'
 import { withMeaning, historyAs, dbLoadFor, entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 import { pickWorkoutView } from '../lib/workout-view.js'
+import { exerciseColor, mcStyle } from '../lib/muscle-colors.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -187,6 +188,9 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   })
   const ex = exOr(entry.id)
   const thumb = !dense && S.gifSize === 'mini' && hasWorkoutMedia(ex)
+  // The exercise's muscle group colour (lib/muscle-colors.js): a bar by its name (the thumbnail
+  // carries it when there is one) and its muscle tag, so a workout's exercises tell apart.
+  const mc = exerciseColor(ex)
   const mode = modeOf({ ...(entry.target || {}), id: entry.id })
   const cardio = mode === 'cardio'
   const timed = mode === 'time'
@@ -654,6 +658,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     {!dense && !thumb && <Media ex={ex} key={entry.id} compact={compact} minimizable />}
     <div className="row between exhd" style={{ marginBottom: 6 }}>
       {thumb && <WorkoutThumb ex={ex} onExpand={() => update(s => { s.gifSize = 'full' })} />}
+      {!thumb && mc && <i className="mg-bar" style={mcStyle(mc)} aria-hidden="true" />}
       {/* The name opens the exercise's own settings (sets, reps, weight, rest), the same sheet
           that set it up when it was added; the workout as a whole is set up before it starts. */}
       {onProgressionSettings
@@ -694,7 +699,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
           chip — which halved the combined total for display — is gone: the split is no longer
           derived, it is what you enter. The tag only flags that this is per-side. */}
       {!cardio && isPerSide(cfg) && <span className="tag acc nocap"><Icon name="sides" />{t('Per side')}</span>}
-      {(ex.tg || ex.bp) && <span className="tag">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span>}
+      {(ex.tg || ex.bp) && <span className={'tag' + (mc ? ' mg' : '')} style={mcStyle(mc)}>{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span>}
       {ex.eq && <span className="tag">{t(ex.eq)}</span>}
       {best > 0 && <span className="tag nocap">{t('Best:')} {fmtNum(best)} {S.unit}</span>}
     </div>

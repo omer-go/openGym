@@ -5,6 +5,7 @@ import { ACTIVITY_GROUPS, activityGroup, activityOf } from '../lib/activities.js
 import { MUSCLE_NAME } from '../lib/muscles.js'
 import { EXIDX } from '../lib/exercises.js'
 import { primaryMuscleOf } from '../lib/strength-exercises.js'
+import { groupColor, mcStyle } from '../lib/muscle-colors.js'
 import { fmtNum, fmtDaysAgo } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
@@ -68,14 +69,15 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
   const openGroup = (id, slug = '') => { setGroup(id); setArea(slug); setMore({}) }
 
   if (!group) {
-    const tile = g => <button key={g.id} className="ax-gt" onClick={() => openGroup(g.id)}>
+    // Each group in its colour (lib/muscle-colors.js): the one its exercises carry in the workout.
+    const tile = g => <button key={g.id} className="ax-gt mg" style={mcStyle(groupColor(g.id))} onClick={() => openGroup(g.id)}>
       <Ava slugs={g.m} body={body} />
       <span className="ax-m"><b>{t(g.n)}</b><span className="ax-st">
         <span className="ax-dots">{g.m.map(m => <Dot key={m} st={status[m].st} />)}</span>
         {suggested.includes(g.id) && <span className="ax-badge">{t('Suggested')}</span>}
       </span></span>
     </button>
-    const actTile = g => <button key={g.id} className="ax-gt" onClick={() => openGroup(g.id)}>
+    const actTile = g => <button key={g.id} className="ax-gt mg" style={mcStyle(groupColor(g.id))} onClick={() => openGroup(g.id)}>
       <span className="ava ax-ico"><Icon name={g.icon} /></span>
       <span className="ax-m"><b>{t(g.n)}</b><span className="ax-st"><span className="muted small">{actLast[g.id] ? t('Last {0}', fmtDaysAgo(actLast[g.id])) : t('Not done yet')}</span></span></span>
     </button>
@@ -130,7 +132,8 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
         {single ? t('Show more') : t('Show all {0}', fmtNum(xs.length))}</button>}
     </>
   }
-  return <>
+  // The group's colour reaches its pictures and rows; display: contents leaves the layout alone.
+  return <div className="mg" style={{ display: 'contents', ...mcStyle(groupColor(group)) }}>
     <div className="row" style={{ gap: 8, alignItems: 'flex-start', marginBottom: 12 }}>
       <button className="iconbtn" aria-label={t('Back to muscle groups')} onClick={() => setGroup(null)}><Icon name="chevronLeft" /></button>
       <div className="grow">{title && <div className="muted small">{title}</div>}<h3>{t(g.n)}</h3>{g.m.length > 1 && <div className="muted small">{act?.id === 'cardio' ? t('Start a stopwatch on the set, stop it when you are done') : act ? t('Each stretch is timed: start the stopwatch, stop it when you are done') : t('Tap an area to see only its exercises')}</div>}</div>
@@ -159,5 +162,5 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
     {hidden > 0 && <div className="small dim" style={{ margin: '10px 2px 0' }}>{t('Already in this workout: {0}', hidden)}</div>}
     <div style={{ height: 12 }} />
     <Button variant="ghost" icon="magnifier" onClick={onSearch}>{t('Search all exercises')}</Button>
-  </>
+  </div>
 }

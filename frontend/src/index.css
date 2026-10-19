@@ -40,6 +40,11 @@
   --blue:#0a84ff; --green:#30d158; --red:#ff453a; --orange:#ff9f0a;
   --yellow:#ffd60a; --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f;
   --purple:#bf5af2; --mint:#63e6e2; --brown:#ac8e68; --grey:#8e8e93;
+  /* Muscle groups (lib/muscle-colors.js): one hue each, so a workout's exercises tell apart. */
+  --mg-chest:var(--red); --mg-back:var(--blue); --mg-shoulders:var(--orange);
+  --mg-biceps:var(--purple); --mg-triceps:var(--pink); --mg-forearms:var(--mint);
+  --mg-abs:var(--yellow); --mg-quads:var(--green); --mg-hamstrings:var(--teal);
+  --mg-glutes:var(--indigo); --mg-calves:var(--brown); --mg-cardio:#a3e048; --mg-stretching:#98a2b3;
 
   /* accent (per-account, synced) */
   --acc:  var(--green);
@@ -87,6 +92,7 @@
   --blue:#007aff; --green:#34c759; --red:#ff3b30; --orange:#ff9500;
   --yellow:#ffcc00; --teal:#30b0c7; --indigo:#5856d6; --pink:#ff2d55;
   --purple:#af52de; --mint:#00c7be; --brown:#a2845e; --grey:#8e8e93;
+  --mg-cardio:#65a30d; --mg-stretching:#64748b;
   --acc-2:#248a3d;
   --on-acc:#ffffff;
 }
@@ -520,6 +526,8 @@ h4.sec{
 }
 .routine-list.is-reordering,.routine-list.is-reordering *{cursor:grabbing}
 .thumb{width:50px;height:50px;border-radius:9px;object-fit:cover;background:#fff;flex:none}
+/* An exercise's muscle group (lib/muscle-colors.js) rings its picture, wherever it is listed. */
+.thumb.mg{outline:2.5px solid var(--mc);outline-offset:-2.5px}
 /* exercise pictures are decoration inside tappable rows/cards: no save-image callout on
    a long press and no drag ghost when a scroll starts on the picture */
 .thumb,.exmedia img,.exmedia video{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
@@ -541,6 +549,7 @@ h4.sec{
   font-weight:500;text-transform:capitalize;
 }
 .tag.acc{background:var(--acc-soft);color:var(--acc)}
+.tag.mg{background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 80%,var(--label))}
 /* Left / Right on a per-side row: one width for both (#322). The two hidden words share the
    visible one's grid cell, so the pill is as wide as the longer word. */
 .tag.sidepill{display:inline-grid;justify-items:center;flex:none}
@@ -884,6 +893,8 @@ body.chips-dragging *{cursor:inherit}
   background:rgba(0,0,0,.55);color:#fff;--icon-stroke:2.4;
 }
 .exhd{align-items:center}
+/* The workout's exercise cards: a bar in the exercise's muscle group colour by its name. */
+.mg-bar{flex:none;align-self:stretch;width:4px;min-height:20px;border-radius:2px;background:var(--mc);margin-inline-end:-4px}
 .wprog{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-bottom:16px}
 .wprog i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width var(--med) var(--ease)}
 .exmedia{position:relative;border-radius:var(--r-lg);overflow:hidden;background:#fff;margin-bottom:12px}
@@ -1664,6 +1675,7 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 .mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .mchip{font-size:12px;padding:4px 9px;border-radius:99px;background:var(--surface-2);color:var(--label-2)}
 .mchip.miss{background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange)}
+.mchip.mg{background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 80%,var(--label))}
 
 /* --- stat tiles --- */
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
@@ -1853,6 +1865,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--sep);
 }
 .wchip .icn{width:12px;height:12px}
+.wchip.mg::after{content:'';position:absolute;bottom:3px;left:50%;width:12px;height:3px;border-radius:2px;background:var(--mcs);transform:translateX(-50%)}
 .wchip.partial{background:linear-gradient(to top,color-mix(in srgb,var(--orange) 45%,var(--surface)) 50%,var(--surface) 50%);box-shadow:inset 0 0 0 1.5px var(--orange);color:var(--label)}
 .wchip.done{background:color-mix(in srgb,var(--green) 70%,var(--surface));box-shadow:none;color:var(--label)}
 .wchip.cur{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--acc);color:var(--label)}
@@ -1882,7 +1895,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   background:var(--surface);color:var(--label);font-size:14.5px;font-weight:500;
   box-shadow:inset 0 0 0 1.5px transparent;transition:box-shadow .15s,background .15s;
 }
-.gs-pill.on{background:color-mix(in srgb,var(--acc) 18%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--acc)}
+.gs-pill.on{background:color-mix(in srgb,var(--mc,var(--acc)) 18%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--mc,var(--acc))}
 .gs-pill:active{opacity:.6}
 .gs-pill .ava{width:32px;height:32px}
 .gs-pill .ax-ico{font-size:17px}
@@ -2129,7 +2142,11 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ava.lg{width:62px;height:62px}
 .ava.xs{width:30px;height:30px}
 /* Cardio and stretching have an icon where a muscle group has its avatar. */
-.ax-ico{display:grid;place-items:center;color:var(--acc);font-size:24px}
+.ax-ico{display:grid;place-items:center;color:var(--mc,var(--acc));font-size:24px}
+/* Under a muscle group's colour (--mc, lib/muscle-colors.js), its picture is lit in that colour
+   on a tint of it. */
+.ava .bm-m.l4{fill:var(--mc,var(--acc))}
+.mg .ava,.ava.mg{background:color-mix(in srgb,var(--mc) 16%,var(--surface-2))}
 .ava.lg.ax-ico{font-size:28px}
 .ava.xs.ax-ico{font-size:15px}
 .ax-ico svg{width:1em;height:1em}
@@ -2157,7 +2174,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ax-subs::-webkit-scrollbar{display:none}
 .ax-sub{flex:none;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--label-2);font-size:12.5px}
 .ax-sub.on{color:var(--label);font-weight:600}
-.ax-sub.on .ava{box-shadow:0 0 0 2px var(--bg-el),0 0 0 4px var(--acc)}
+.ax-sub.on .ava{box-shadow:0 0 0 2px var(--bg-el),0 0 0 4px var(--mc,var(--acc))}
 .ax-aw{position:relative;padding:3px}
 .ax-aw .ax-dot{position:absolute;inset-inline-end:3px;bottom:3px;width:12px;height:12px;border:2px solid var(--bg-el);box-sizing:content-box}
 .ax-aw .ax-dot:not(.wk):not(.td){background:var(--surface-2)}

@@ -52,6 +52,7 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
+import { groupColor, exerciseColor, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
@@ -1954,7 +1955,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         turns into a translatable label. */}
     <div className="row" style={{ gap: 6, flexWrap: 'wrap', margin: '10px 0 14px' }}>
       {cardio && <span className="tag acc"><Icon name="figureRun" />{t('Cardio')}</span>}
-      <span className="tag">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span><span className="tag">{t(ex.eq)}</span>
+      <span className={'tag' + (exerciseColor(ex) ? ' mg' : '')} style={mcStyle(exerciseColor(ex))}>{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span><span className="tag">{t(ex.eq)}</span>
       {!cardio && (ex.secondaries?.length ? ex.secondaries : smOf(ex)).filter(trainedBy(ex)).slice(0, 3)
         .map((s, i) => <span key={i} className="tag dim">{t(MUSCLE_NAME[s] || s)}</span>)}
     </div>
@@ -2944,10 +2945,10 @@ function GenSetup({ type, close }) {
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
   // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's
-  // name, lit when the workout covers it.
+  // name, lit in the group's colour (lib/muscle-colors.js) when the workout covers it.
   const body = st.body === 'female' ? 'female' : 'male'
   const check = (key, on, pic, label, onClick) => <button key={key} type="button" role="checkbox" aria-checked={on}
-    className={'gs-pill' + (on ? ' on' : '')} onClick={onClick}>{pic}<span>{label}</span></button>
+    className={'gs-pill mg' + (on ? ' on' : '')} style={mcStyle(groupColor(key === 'stretch' ? 'stretching' : key))} onClick={onClick}>{pic}<span>{label}</span></button>
   const groupTile = g => check(g.id, setup.groups.includes(g.id), <Ava slugs={g.m} body={body} />, t(g.n), () => toggleGroup(g.id))
   const actIcon = id => <span className="ava ax-ico"><Icon name={ACTIVITY_GROUPS.find(a => a.id === id).icon} /></span>
   const start = () => {

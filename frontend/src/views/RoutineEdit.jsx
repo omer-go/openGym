@@ -24,6 +24,7 @@ import { speedUnitOf } from '../lib/speed.js'
 import { POLICIES_FOR, POLICY_NAME, POLICY_DESC } from '../lib/progression.js'
 import BodyMap from '../components/BodyMap.jsx'
 import { loadOfRoutine, rankOf, MUSCLE_NAME } from '../lib/muscles.js'
+import { muscleColor, mcStyle } from '../lib/muscle-colors.js'
 
 export const ROUTINE_LONG_PRESS_MS = 380
 export const ROUTINE_DRAG_SLOP = 8
@@ -576,7 +577,7 @@ export default function RoutineEdit() {
         <h2>{t('What this session hits')}</h2>
         <BodyMap load={load} body={S.body} />
         <div className="mchips">
-          {worked.slice(0, 6).map(m => <span key={m} className="mchip">{t(MUSCLE_NAME[m])}</span>)}
+          {worked.slice(0, 6).map(m => <span key={m} className={'mchip' + (muscleColor(m) ? ' mg' : '')} style={mcStyle(muscleColor(m))}>{t(MUSCLE_NAME[m])}</span>)}
         </div>
       </div>
     })()}

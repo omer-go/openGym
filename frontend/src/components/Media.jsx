@@ -5,6 +5,7 @@ import { useStore } from '../store/useStore.js'
 import { t, exerciseNameFor } from '../lib/i18n.js'
 import Icon from './Icon.jsx'
 import CustomMedia, { CustomThumb } from './CustomMedia.jsx'
+import { exerciseColor, mcStyle } from '../lib/muscle-colors.js'
 
 // An exercise's picture, wherever one shows. A custom exercise goes to CustomMedia.jsx — its own
 // photo, GIF, video or link, from the local media store — and never through imgSrc/gifSrc, which
@@ -131,13 +132,16 @@ export function autoplayMuted(el) {
 // CDN hiccup) gets the same neutral tile as an exercise without media, instead of the browser's
 // broken-image glyph in a list of them (#281). The failure is remembered per image, so a list
 // that re-renders does not ask again; a new exercise in the same slot tries its own.
+// Ringed in the exercise's muscle group colour (lib/muscle-colors.js).
 export function Thumb(p) {
-  return isCustomEx(p.ex) ? <CustomThumb {...p} /> : <BuiltinThumb {...p} />
+  const mc = exerciseColor(p.ex)
+  return isCustomEx(p.ex) ? <CustomThumb {...p} mc={mc} /> : <BuiltinThumb {...p} mc={mc} />
 }
-function BuiltinThumb({ ex }) {
+function BuiltinThumb({ ex, mc }) {
   const body = useStore(s => figureOf(s.S))
   const src = ex.img ? imgSrc(ex, body) : null
   const [broken, setBroken] = useState(null)
-  if (!src || broken === src) return <div className="thumb thumb-x"><Icon name="dumbbell" /></div>
-  return <img className="thumb" loading="lazy" decoding="async" draggable={false} src={src} alt="" onError={() => setBroken(src)} />
+  const mg = mc ? ' mg' : ''
+  if (!src || broken === src) return <div className={'thumb thumb-x' + mg} style={mcStyle(mc)}><Icon name="dumbbell" /></div>
+  return <img className={'thumb' + mg} style={mcStyle(mc)} loading="lazy" decoding="async" draggable={false} src={src} alt="" onError={() => setBroken(src)} />
 }
