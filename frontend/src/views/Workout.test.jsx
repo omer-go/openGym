@@ -227,6 +227,8 @@ async function addExerciseThroughSheets(ex = { id: 'added-exercise' }, cfg = { m
   const addButton = [...container.querySelectorAll('button')]
     .find(button => button.textContent.trim() === 'Add exercise')
   expect(addButton).toBeTruthy()
+  const picker = { close: vi.fn() }
+  mocks.addExerciseSheet.mockReturnValueOnce(picker)
   await act(async () => { addButton.dispatchEvent(new dom.Event('click', { bubbles: true })) })
 
   const pickerCall = mocks.addExerciseSheet.mock.calls.at(-1)
@@ -235,7 +237,10 @@ async function addExerciseThroughSheets(ex = { id: 'added-exercise' }, cfg = { m
 
   const configCall = mocks.exConfigSheet.mock.calls.at(-1)
   expect(configCall?.[2]).toEqual(expect.any(Function))
+  expect(picker.close).not.toHaveBeenCalled()
   await act(async () => { configCall[2](cfg) })
+  // One pick, then back to the session.
+  expect(picker.close).toHaveBeenCalledOnce()
 }
 
 // The list's scroll-to-current waits for the next frame. linkedom has no requestAnimationFrame,

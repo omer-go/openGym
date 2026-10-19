@@ -215,7 +215,6 @@ export default {
   'Exercise {0} / {1}': 'Egzersiz {0} / {1}',
   'Superset · do these back-to-back, rest when done': 'Süperset · art arda yap, sonunda dinlen',
   'Freestyle workout. Add your first exercise and off you go.': 'Serbest antrenman. İlk egzersizini ekle ve başla.',
-  'Finish workout early · {0} exercises': 'Erken bitir · {0} egzersiz',
   'Rest’s over. Next set!': 'Dinlenme bitti. Sıradaki set!',
   'Hi {0}': 'Selam {0}',
   'This week': 'Bu hafta',

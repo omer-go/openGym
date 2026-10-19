@@ -176,7 +176,8 @@ button,.chip,.tile,.item,.wday,.cal-d,.swatch,.hm-c,.lrow,.seg button,.stp butto
 }
 /* Android 15 with the keyboard up: room to scroll the last field on a page above the keys.
    The tab bar stays where it is, under the keyboard, rather than riding up on it. */
-:root[data-native-kb] #app,:root[data-native-kb] body.resting #app,:root[data-native-kb] body.no-tabbar.resting #app{padding-bottom:calc(88px + var(--native-kb))}
+:root[data-native-kb] #app,:root[data-native-kb] body.no-tabbar.has-wfoot #app,:root[data-native-kb] body.no-tabbar.has-wfoot.resting #app,:root[data-native-kb] body.resting #app,:root[data-native-kb] body.no-tabbar.resting #app{padding-bottom:calc(88px + var(--native-kb))}
+:root[data-native-kb] .wfoot{display:none}
 /* Keep the last workout controls clear of the mobile overlays without adding a second
    screenful of blank scroll space. The stacked rest timer needs the larger reserve. */
 body.resting #app{padding-bottom:calc(166px + var(--sab))}
@@ -184,6 +185,21 @@ body.resting #app{padding-bottom:calc(166px + var(--sab))}
 body.no-tabbar #app{padding-bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
 .workout-end-spacer{height:0}
+/* The workout's pinned Add exercise footer (Workout.jsx): the page keeps room for it, and the
+   docked rest bar sits on top of it rather than over it. */
+:root{--wfoot:70px}
+.wfoot{
+  position:fixed;inset-inline-start:0;inset-inline-end:0;bottom:0;z-index:50;
+  padding:10px 16px calc(10px + var(--sab));
+  background:color-mix(in srgb,var(--bg-el) 94%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
+  border-top:var(--hair) solid var(--sep-op);
+}
+.wfoot>.btn{display:flex;max-width:640px;margin:0 auto}
+body.no-tabbar.has-wfoot #app{padding-bottom:calc(var(--wfoot) + 24px + var(--sab))}
+body.no-tabbar.has-wfoot.resting #app{padding-bottom:calc(var(--wfoot) + 96px + var(--sab))}
+body.no-tabbar.has-wfoot #toast{bottom:calc(var(--wfoot) + 12px + var(--sab))}
+body.no-tabbar.has-wfoot.resting #toast{bottom:calc(var(--wfoot) + 88px + var(--sab))}
 @keyframes viewfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 #app.vfade{animation:viewfade var(--med) var(--ease)}
 
@@ -1444,6 +1460,7 @@ body.no-tabbar #timer{
   box-shadow:0 -10px 30px -14px rgba(0,0,0,.55);
 }
 body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10px 30px -14px rgba(0,0,0,.55)}
+body.no-tabbar.has-wfoot #timer{bottom:calc(var(--wfoot) + var(--sab));padding-bottom:10px}
 @media (max-width:399px){
   #timer .acts{gap:4px}
   #timer .acts .adj{padding-inline:6px;gap:1px}
@@ -1984,6 +2001,9 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   .center{width:340px}
   #timer{left:50%;right:auto;margin-left:-260px;width:520px;bottom:112px}
   body.no-tabbar #timer{left:50%;right:auto;bottom:16px;border-radius:var(--r-xl);padding-bottom:10px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5)}
+  body.no-tabbar.has-wfoot #timer{bottom:calc(var(--wfoot) + 16px + var(--sab))}
+  body.no-tabbar.has-wfoot #app{padding-bottom:calc(var(--wfoot) + 40px + var(--sab))}
+  body.no-tabbar.has-wfoot.resting #app{padding-bottom:calc(var(--wfoot) + 130px + var(--sab))}
   .exmedia img,.exmedia video{height:380px}
   .hm-wrap{display:flex;flex-direction:column;align-items:center}
 }

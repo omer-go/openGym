@@ -211,7 +211,6 @@ export default {
   'Exercise {0} / {1}': '動作 {0} / {1}',
   'Superset · do these back-to-back, rest when done': '超級組 · 動作連續進行不間斷，全數完成後再休息',
   'Freestyle workout. Add your first exercise and off you go.': '自由訓練。新增第一個動作，開練吧。',
-  'Finish workout early · {0} exercises': '提早結束訓練 · 共 {0} 個動作',
   'Rest’s over. Next set!': '休息結束，下一組！',
   'Hi {0}': '嗨，{0}',
   'This week': '本週',

@@ -218,7 +218,6 @@ export default {
   'Exercise {0} / {1}': 'التمرين {0} / {1}',
   'Superset · do these back-to-back, rest when done': 'سوبر سِت · نفّذ التمارين تلو الأخرى، واسترح عند الانتهاء',
   'Freestyle workout. Add your first exercise and off you go.': 'تمرين حر. أضف أول تمرين وانطلق.',
-  'Finish workout early · {0} exercises': 'إنهاء التمرين مبكرًا · {0} تمارين',
   'Rest’s over. Next set!': 'انتهت الراحة. المجموعة التالية!',
   'Hi {0}': 'مرحبًا {0}',
   'This week': 'هذا الأسبوع',

@@ -1041,6 +1041,12 @@ function ActiveWorkout() {
     }
   }
   const progressHighWater = useRef(A.entries.map(e => e.sets.filter(s => s.done).length))
+  // The pinned Add exercise footer (.wfoot): the page keeps room for it and the rest bar docks
+  // above it (index.css body.wfoot).
+  useEffect(() => {
+    document.body.classList.add('has-wfoot')
+    return () => document.body.classList.remove('has-wfoot')
+  }, [])
   // The marks are index-keyed, and removing an exercise shifts every index above it down
   // (removeActiveExercise splices). Re-baseline whenever the list length changes, otherwise a
   // shifted exercise inherits its predecessor's mark and its real progress reads as a re-check.
@@ -1416,7 +1422,8 @@ function ActiveWorkout() {
   }
   // Adds an exercise after the current unit: the button under the session and the ⋯ menu's Add.
   // It opens on the muscle groups (addExerciseSheet); its Search is the full picker, same handler.
-  const addExercise = () => addExerciseSheet((ex, quick) => {
+  // One pick, then back to the session: the picker closes once the exercise is in.
+  const addExercise = () => { const picker = addExerciseSheet((ex, quick) => {
     // A freehand add inherits the current unit's routine (its `rid`) so it lands in that
     // routine's block in a combined session and gets a real prescription; a routine-less
     // freestyle session has no `rid` to inherit. It inherits the block's `noProg` too: an
@@ -1437,6 +1444,9 @@ function ActiveWorkout() {
     // `typed`: the settings sheet's numbers, picked on purpose, so the rows open at them rather
     // than at last time's (a weight left on Auto still reads last time, buildSets useTarget).
     const commit = (cfg, typed = false) => {
+      picker.close()
+      // The list shows it where it landed, once the closing picker has put the page back.
+      revealCur.current = true
       if (focusMode) focusPointerEpoch.current++
       update(s => {
         const full = { ...cfg, id: ex.id }
@@ -1465,7 +1475,7 @@ function ActiveWorkout() {
     if (quick) { commit(seed || defaultConfig(ex.id)); useUI.getState().toast(t('“{0}” added to {1}', exerciseNameText(ex), routine ? routine.name : t('Freestyle'))) }
     // The confirm names what it changes: this workout, never the routine behind it.
     else exConfigSheet(ex, null, cfg => commit(cfg, true), null, routine, seed, null, t('Add to this workout'))
-  })
+  }) }
   // Ending the session without saving it. The ⋯ menu's last item since the header's ✕ became the
   // ⌄ that only leaves the screen (v1.3.11).
   const discardWorkout = () => confirmSheet({
@@ -1802,7 +1812,8 @@ function ActiveWorkout() {
     }
   }
 
-  // After the finished exercise folded away (toggle, above): the new current one is the next thing
+  // After the finished exercise folded away (toggle, above), or an exercise was added (addExercise):
+  // the new current one is the next thing
   // to do, so if it now sits under the header or low on the screen with little more than its title
   // showing, it glides up under the header. Where it is already in reach the page stays put. Run
   // after a closing sheet has put the page back (the effort picker ticks the set as it closes).
@@ -2114,7 +2125,6 @@ function ActiveWorkout() {
     </div>}
     {!listMode && <div style={{ height: 10 }} />}
     {wc.exerciseButtons && listMode && A.entries.length > 0 && <div className="muted small" style={{ marginBottom: 6 }}>{t('Move, swap and remove below act on the exercise marked {0}.', t('Current'))}</div>}
-    <Button onClick={addExercise} icon="plus">{t('Add exercise')}</Button>
     {wc.exerciseButtons && A.entries.length > 0 && <>
       <div style={{ height: 6 }} />
       <div className="row">
@@ -2133,21 +2143,9 @@ function ActiveWorkout() {
         <Button size="sm" icon="minus" style={{ color: 'var(--red)' }} disabled={!!work} onClick={removeExerciseSheet}>{t('Remove exercise')}</Button>
       </div>
     </>}
-    <div style={{ height: 10 }} />
-    {/* Wrapping up is when you know how the session went, so the note sits with the finish
-        button rather than somewhere in the header. */}
-    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-      <Button size="sm" icon="note" variant={A.note ? 'tinted' : undefined} onClick={sessionNoteSheet}>
-        {A.note ? t('Edit session note') : t('Add session note')}
-      </Button>
-    </div>
-    {(() => {
-      const exDone = A.entries.filter(e => e.sets.length && e.sets.every(s => s.done)).length
-      const allDone = A.entries.length > 0 && exDone === A.entries.length
-      return <button className={allDone ? 'btn primary' : 'btn ghost dim'} onClick={finishWorkout}>
-        {editing ? t('Save changes') : allDone ? t('Finish workout') : t('Finish workout early · {0} exercises', exDone + '/' + A.entries.length)}
-      </button>
-    })()}
+    {/* Add exercise rides in a footer pinned to the bottom edge, in reach from anywhere in the
+        session; the session note is in the ⋯ menu and Finish in the header. */}
+    <div className="wfoot"><Button onClick={addExercise} icon="plus">{t('Add exercise')}</Button></div>
     <div className="workout-end-spacer" />
   </WorkoutScrollAnchor>
 }

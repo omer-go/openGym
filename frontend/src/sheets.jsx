@@ -1437,7 +1437,7 @@ export function swapActiveWorkoutExercise(index) {
   const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
   function swapTo(ex, cfg, typed = false) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
-    // the workout. (The add flow deliberately leaves it open.) A pick by hand starts a new
+    // the workout, as the add flow does. A pick by hand starts a new
     // one-tap cycle from what was picked (swapOf cleared).
     picker.close()
     swapEntryTo(index, ex, cfg, { swapOf: undefined }, undefined, typed)

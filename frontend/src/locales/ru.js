@@ -209,7 +209,6 @@ export default {
   'Exercise {0} / {1}': 'Упражнение {0} / {1}',
   'Superset · do these back-to-back, rest when done': 'Суперсет · выполняйте подряд, отдых в конце',
   'Freestyle workout. Add your first exercise and off you go.': 'Свободная тренировка. Добавьте первое упражнение, и вперёд.',
-  'Finish workout early · {0} exercises': 'Завершить раньше · упражнений: {0}',
   'Rest’s over. Next set!': 'Отдых окончен. Следующий подход!',
   'Hi {0}': 'Привет, {0}',
   'This week': 'Эта неделя',
