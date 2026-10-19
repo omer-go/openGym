@@ -27,6 +27,11 @@ const type = (el, value) => {
   el.dispatchEvent(new Event('input', { bubbles: true }))
 }
 const button = (host, text) => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === text)
+// Opens "Edit, share & more" on a workout's detail sheet and returns its entry called `label`.
+function menuItem(host, label) {
+  act(() => { button(host, 'Edit, share & more').click() })
+  return [...render(() => {}).querySelectorAll('.menu-item')].find(el => el.querySelector('.tt').textContent === label)
+}
 const unmountAll = () => act(() => { mounted.splice(0).forEach(r => r.unmount()) })
 
 const entry = (id, w) => ({ id, sets: [{ w, r: 5, done: true }] })
@@ -51,7 +56,7 @@ describe('changing the date of a saved workout', () => {
 
   it('is offered from the workout detail sheet and opens prefilled', () => {
     const host = render(() => workoutDetailSheet(history()[1]))
-    const open = button(host, 'Change date & time')
+    const open = menuItem(host, 'Change date & time')
     expect(open).toBeTruthy()
     const edit = render(() => open.click())
     expect(edit.querySelector('h3').textContent).toBe('Change date & time')
@@ -140,12 +145,17 @@ describe('changing the date of a saved workout', () => {
     expect(history()).toHaveLength(2)
   })
 
-  // The note field only writes on blur, and moving a legacy record re-keys it — so a note
-  // typed and left focused has to be flushed before the move, not after it.
-  it('keeps a note typed but never blurred', () => {
-    const host = render(() => workoutDetailSheet(history()[1]))
-    act(() => { type(host.querySelector('textarea'), 'felt strong') })
-    const edit = render(() => button(host, 'Change date & time').click())
+  // Moving a record re-keys a legacy one: a note written just before has to move with it.
+  it('keeps a note written just before', () => {
+    let host = render(() => workoutDetailSheet(history()[1]))
+    const note = menuItem(host, 'Session note')
+    const sheet = render(() => note.click())
+    act(() => { type(sheet.querySelector('textarea'), 'felt strong') })
+    unmountAll()
+    useUI.setState({ sheets: [] })
+    host = render(() => workoutDetailSheet(history()[1]))
+    const move = menuItem(host, 'Change date & time')
+    const edit = render(() => move.click())
     act(() => { type(edit.querySelector('input[type=date]'), '2026-08-18') })
     act(() => { button(edit, 'Save').click() })
     unmountAll()
@@ -163,16 +173,18 @@ describe('changing the date of a saved workout', () => {
     expect(history()[0].d).toBe('2026-08-18')
   })
 
-  // The sheet keeps the copy it opened with. A sync that brings in the same record with its old
-  // key frozen as its id (moved or edited on the other device) must not make its note and date
-  // rows quietly write nowhere.
+  // The note sheet keeps the copy it opened with. A sync that brings in the same record with its
+  // old key frozen as its id (moved or edited on the other device) must not make the note quietly
+  // write nowhere.
   it('keeps writing to a record from before ids after a sync froze its key as its id', () => {
     const legacy = { d: '2026-08-25', start: 1767636000000, end: 1767639600000, name: 'Old', vol: 0, entries: [], prs: [] }
     setHistory([legacy])
     const host = render(() => workoutDetailSheet(legacy))
+    const note = menuItem(host, 'Session note')
+    const sheet = render(() => note.click())
     setHistory([{ ...legacy, id: '2026-08-25|1767636000000', d: '2026-08-24', _ts: 5 }])
-    act(() => { type(host.querySelector('textarea'), 'felt strong') })
-    act(() => { host.querySelector('textarea').dispatchEvent(new FocusEvent('focusout', { bubbles: true })) })
+    act(() => { type(sheet.querySelector('textarea'), 'felt strong') })
+    unmountAll()
     expect(history()).toHaveLength(1)
     expect(history()[0].note).toBe('felt strong')
   })
@@ -182,7 +194,8 @@ describe('changing the date of a saved workout', () => {
     const b = { d: '2026-08-25', start: 1767636000000, end: 1767639600000, name: 'B', vol: 0, entries: [], prs: [] }
     setHistory([a, b, history()[1]])
     const host = render(() => workoutDetailSheet(b))
-    const confirm = render(() => button(host, 'Delete workout').click())
+    const del = menuItem(host, 'Delete workout')
+    const confirm = render(() => del.click())
     act(() => { button(confirm, 'Delete').click() })
     expect(history().map(w => w.name)).toEqual(['A', 'late'])
   })
@@ -213,7 +226,7 @@ describe('changing the duration of a saved workout', () => {
 
   it('is offered from the workout detail sheet and opens at the length it has', () => {
     const host = render(() => workoutDetailSheet(history()[1]))
-    const open = button(host, 'Change duration')
+    const open = menuItem(host, 'Change duration')
     expect(open).toBeTruthy()
     const edit = render(() => open.click())
     expect(edit.querySelector('h3').textContent).toBe('Change duration')
@@ -299,10 +312,16 @@ describe('changing the duration of a saved workout', () => {
     expect(useUI.getState().sheets).toHaveLength(0)
   })
 
-  it('keeps a note typed in the detail sheet but never blurred', () => {
-    const host = render(() => workoutDetailSheet(history()[1]))
-    act(() => { type(host.querySelector('textarea'), 'forgot to stop') })
-    const edit = render(() => button(host, 'Change duration').click())
+  it('keeps a note written just before', () => {
+    let host = render(() => workoutDetailSheet(history()[1]))
+    const note = menuItem(host, 'Session note')
+    const sheet = render(() => note.click())
+    act(() => { type(sheet.querySelector('textarea'), 'forgot to stop') })
+    unmountAll()
+    useUI.setState({ sheets: [] })
+    host = render(() => workoutDetailSheet(history()[1]))
+    const fix = menuItem(host, 'Change duration')
+    const edit = render(() => fix.click())
     act(() => { type(edit.querySelector('input.num'), '60') })
     act(() => { button(edit, 'Save').click() })
     unmountAll()

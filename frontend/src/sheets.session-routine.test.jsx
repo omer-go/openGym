@@ -27,6 +27,11 @@ function renderTop() {
 }
 
 const button = (host, label) => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === label)
+// Opens "Edit, share & more" and returns its entry called `label`.
+const menuItem = (host, label) => {
+  act(() => { button(host, 'Edit, share & more').click() })
+  return [...renderTop().querySelectorAll('.menu-item')].find(el => el.querySelector('.tt').textContent === label)
+}
 
 describe('WorkoutDetail — save as routine', () => {
   let navigated
@@ -46,9 +51,8 @@ describe('WorkoutDetail — save as routine', () => {
     const saved = workout()
     useStore.setState(s => ({ S: { ...s.S, workouts: [saved] } }))
     const host = (workoutDetailSheet(saved), renderTop())
-    expect(button(host, 'Save as routine')).toBeTruthy()
-
-    act(() => { button(host, 'Save as routine').click() })
+    const item = menuItem(host, 'Save as routine')
+    act(() => { item.click() })
     const confirm = renderTop()
     expect(confirm.textContent).toContain('Create an independent routine')
     expect(useStore.getState().S.routines).toHaveLength(0)

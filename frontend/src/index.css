@@ -1543,6 +1543,27 @@ body.no-tabbar #timer.working{box-shadow:inset 0 var(--hair) 0 var(--acc),0 -10p
 @keyframes sheetup{from{transform:translateY(100%)}to{transform:none}}
 .sheet .grab{width:36px;height:5px;border-radius:99px;background:var(--label-4);margin:6px auto 14px}
 .sheet h3{font-size:20px;font-weight:600;letter-spacing:-.021em;margin-bottom:14px}
+/* A sheet is a column at full height: its title stays put at the top while the rest scrolls, and
+   its main button (a primary or danger button last in the sheet) stands at the foot, in reach of
+   the thumb, however short or long what is above it. */
+.sheet{display:flex;flex-direction:column}
+.sheet>*{flex:none}
+.sheet>.grab+h3,.sheet>.grab+.row:has(h3),.sheet>.grab+.cfg-head{
+  position:sticky;top:-8px;z-index:3;margin-top:-8px;padding-top:8px;background:inherit;
+}
+.sheet>.grab+h3{padding-bottom:4px;margin-bottom:10px}
+.sheet>.grab+.cfg-head{padding-bottom:10px;margin-bottom:4px}
+/* The main button: a primary one with nothing after it but other buttons (Delete, Cancel…) and
+   spacers. One mid-sheet, with content below it, stays where it is. */
+.sheet>.btn.primary:not(:has(~ :not(.btn,div:empty))){
+  position:sticky;bottom:0;z-index:3;
+  /* the band around it, so what scrolls beneath does not show past its edges */
+  border-image:linear-gradient(var(--bg-el),var(--bg-el)) 1 / 14px 18px calc(20px + var(--sab)) / 14px 18px calc(20px + var(--sab));
+}
+.sheet>.btn.primary:last-child{margin-top:auto}
+:root[data-theme="light"] .sheet>.btn.primary:not(:has(~ :not(.btn,div:empty))){
+  border-image-source:linear-gradient(var(--bg),var(--bg));
+}
 .picker-search{
   position:sticky;top:0;z-index:2;margin-bottom:0;padding-bottom:10px;
   background:var(--bg-el);
@@ -1818,6 +1839,7 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 /* The saved-workout sheet fits the screen: only its exercise list scrolls (WorkoutDetail). */
 .sheet:has(.wd-fit){display:flex;flex-direction:column;overflow:hidden}
 .wd-fit{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+.wd-foot{flex:none}
 .wd-media .wmedia-h{display:none}
 .wd-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -18px 12px;padding:0 18px}
 .wd-ex>.grow{flex:1;min-width:0}
@@ -1913,14 +1935,24 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gen-tile .tt{font-weight:600;font-size:15px;letter-spacing:-.01em}
 /* one-tap workout setup (sheets.jsx GenSetup) */
 .gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-/* The one-tap setup's group tiles: Add exercise's (.ax-gt), with a check; one left out dims. */
-.gs-gt{position:relative;min-width:0;box-shadow:inset 0 0 0 1.5px transparent;transition:box-shadow .15s}
-.gs-gt.on{box-shadow:inset 0 0 0 1.5px var(--acc)}
-.gs-gt .ax-m{padding-inline-end:12px}
-.gs-gt .chk{position:absolute;top:7px;inset-inline-end:7px;width:18px;height:18px}
-.gs-gt .chk .icn{font-size:10px}
-.gs-gt .chk::before{display:none}
-.gs-gt:not(.on) .ava,.gs-gt:not(.on) .ax-m{opacity:.5}
+/* The one-tap setup: the exercises it picked fold away under one row. */
+.gs-exs{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border-radius:var(--r-lg);background:var(--surface);color:var(--label);text-align:start}
+.gs-exs .grow{flex:1;min-width:0}
+.gs-exs .icn{color:var(--label-3);transition:transform .2s}
+.gs-exs.open .icn{transform:rotate(90deg)}
+/* The one-tap setup's groups: pills with Add exercise's pictures (.ava), lit when the workout
+   covers the group; one left out dims. */
+.gs-pills{display:flex;flex-wrap:wrap;gap:8px}
+.gs-pill{
+  display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 4px;border-radius:99px;
+  background:var(--surface);color:var(--label);font-size:14.5px;font-weight:500;
+  box-shadow:inset 0 0 0 1.5px transparent;transition:box-shadow .15s,background .15s;
+}
+.gs-pill.on{background:color-mix(in srgb,var(--acc) 18%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--acc)}
+.gs-pill:active{opacity:.6}
+.gs-pill .ava{width:32px;height:32px}
+.gs-pill .ax-ico{font-size:17px}
+.gs-pill:not(.on) .ava,.gs-pill:not(.on) span{opacity:.6}
 .gs-chk{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r);background:var(--surface-2);text-align:left;min-width:0;color:var(--label)}
 .gs-chk .chk{width:24px;height:24px}
 .gs-chk .chk .icn{font-size:13px}

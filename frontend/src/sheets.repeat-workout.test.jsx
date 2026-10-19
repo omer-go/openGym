@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // "Repeat today" in a saved workout's sheet (#58): a new freestyle session dated today, seeded
-// from this workout; the record itself is left as it is.
+// from this workout; the record itself is left as it is. It sits in "Edit, share & more".
 import React, { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createRoot } from 'react-dom/client'
@@ -32,6 +32,11 @@ function renderTop() {
   return host
 }
 const button = (host, label) => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === label)
+// Opens "Edit, share & more" and returns its entry called `label`.
+const menuItem = (host, label) => {
+  act(() => { button(host, 'Edit, share & more').click() })
+  return [...renderTop().querySelectorAll('.menu-item')].find(el => el.querySelector('.tt').textContent === label)
+}
 
 describe('WorkoutDetail — repeat today', () => {
   let navigated
@@ -50,7 +55,8 @@ describe('WorkoutDetail — repeat today', () => {
     const saved = workout()
     useStore.setState(s => ({ S: { ...s.S, workouts: [saved] } }))
     const host = (workoutDetailSheet(saved), renderTop())
-    act(() => { button(host, 'Repeat today').click() })
+    const item = menuItem(host, 'Repeat today')
+    act(() => { item.click() })
     const active = useStore.getState().S.active
     expect(active).toMatchObject({ d: todayISO(), routineIds: [], name: 'Push', cur: 0, bw: null })
     expect(active.entries.map(e => e.id)).toEqual([A, B])
@@ -65,7 +71,8 @@ describe('WorkoutDetail — repeat today', () => {
     const saved = workout()
     useStore.setState(s => ({ S: { ...s.S, workouts: [saved], weighIn: true } }))
     const host = (workoutDetailSheet(saved), renderTop())
-    act(() => { button(host, 'Repeat today').click() })
+    const item = menuItem(host, 'Repeat today')
+    act(() => { item.click() })
     expect(useStore.getState().S.active).toBeNull()
     expect(useUI.getState().sheets.length).toBe(1)
     expect(navigated).toBeNull()
@@ -75,6 +82,10 @@ describe('WorkoutDetail — repeat today', () => {
     const saved = workout()
     useStore.setState(s => ({ S: { ...s.S, workouts: [saved], active: { id: 'x', d: todayISO(), start: 1, entries: [] } } }))
     const host = (workoutDetailSheet(saved), renderTop())
-    expect(button(host, 'Repeat today').disabled).toBe(true)
+    const item = menuItem(host, 'Repeat today')
+    expect(item.getAttribute('aria-disabled')).toBe('true')
+    expect(item.textContent).toContain('Finish the current workout first.')
+    act(() => { item.click() })
+    expect(useStore.getState().S.active.id).toBe('x')
   })
 })

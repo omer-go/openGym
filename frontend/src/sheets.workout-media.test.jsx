@@ -40,6 +40,19 @@ function renderTop() {
   const sheet = useUI.getState().sheets.at(-1)
   return Object.assign(render(sheet.render(() => useUI.getState().closeSheet(sheet.id))), { sheet })
 }
+// Opens "Edit, share & more" on the top sheet and returns its entry called `label`.
+function menuItem(label) {
+  const open = [...renderTop().querySelectorAll('button')].find(b => b.textContent.trim() === 'Edit, share & more')
+  act(() => open.click())
+  return [...renderTop().querySelectorAll('.menu-item')].find(el => el.querySelector('.tt').textContent === label)
+}
+// A saved workout's photos and videos, the way the app reaches them: its detail sheet, the menu.
+function renderMediaOf(w) {
+  workoutDetailSheet(w)
+  const item = menuItem('Photos & videos')
+  act(() => item.click())
+  return renderTop()
+}
 const settle = async () => { for (let i = 0; i < 6; i++) await act(async () => { await new Promise(r => setTimeout(r, 0)) }) }
 async function pick(host, count = 1, ingested = count) {
   const input = host.querySelector('.wmedia input[type="file"]')
@@ -79,15 +92,13 @@ afterEach(() => {
 
 describe('a workout\'s photos and videos', () => {
   it('asks for images and videos, several at once', () => {
-    workoutDetailSheet(S().workouts[0])
-    const input = renderTop().querySelector('.wmedia input[type="file"]')
+    const input = renderMediaOf(S().workouts[0]).querySelector('.wmedia input[type="file"]')
     expect(input.getAttribute('accept')).toBe('image/*,video/*')
     expect(input.multiple).toBe(true)
   })
 
   it('a picked photo and video land on the saved record, stamped, with their files pending — never the file name', async () => {
-    workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
+    const host = renderMediaOf(S().workouts[0])
     await pick(host, 2)
     const w = S().workouts[0]
     expect(w.media).toEqual([refOf(1), refOf(2, 'video')])
@@ -101,8 +112,7 @@ describe('a workout\'s photos and videos', () => {
   it('shows posters in the grid, and opens the viewer on the one tapped', async () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout({ media: [refOf(1), refOf(2, 'video')] })] } }))
     await media.put(hex(101), new Blob(['p']), { mime: 'image/webp' })
-    workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
+    const host = renderMediaOf(S().workouts[0])
     await settle()
     expect(host.querySelector('.wmedia-item img.thumb')?.getAttribute('src')).toBe('blob:t/1')
     act(() => host.querySelectorAll('.wmedia-item')[1].click())
@@ -117,8 +127,7 @@ describe('a workout\'s photos and videos', () => {
 
   it('Remove in the viewer asks, then takes it off the record and stamps it', async () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout({ media: [refOf(1), refOf(3)] })] } }))
-    workoutDetailSheet(S().workouts[0])
-    const detail = renderTop()
+    const detail = renderMediaOf(S().workouts[0])
     act(() => detail.querySelectorAll('.wmedia-item')[0].click())
     const viewer = renderTop()
     act(() => viewer.querySelector('button[aria-label="Remove"]').click())
@@ -131,8 +140,7 @@ describe('a workout\'s photos and videos', () => {
   })
 
   it('a full workout offers no Add and says how many fit; a seventh picked in a batch is refused', async () => {
-    workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
+    const host = renderMediaOf(S().workouts[0])
     await pick(host, WORKOUT_MEDIA_MAX + 1, WORKOUT_MEDIA_MAX)
     expect(S().workouts[0].media).toHaveLength(WORKOUT_MEDIA_MAX)
     expect(h.ingest).toHaveBeenCalledTimes(WORKOUT_MEDIA_MAX)   // the seventh is never ingested
@@ -143,8 +151,7 @@ describe('a workout\'s photos and videos', () => {
 
   it('a batch bigger than the room left ingests only what fits', async () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout({ media: [1, 3, 5, 7].map(n => refOf(n + 20)) })] } }))
-    workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
+    const host = renderMediaOf(S().workouts[0])
     await pick(host, 5, 2)
     expect(h.ingest).toHaveBeenCalledTimes(2)
     expect(S().workouts[0].media).toHaveLength(WORKOUT_MEDIA_MAX)
@@ -157,8 +164,7 @@ describe('a workout\'s photos and videos', () => {
     workoutDetailSheet(S().workouts[0])
     expect(renderTop().querySelector('.wmedia')).toBeNull()
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout({ media: [refOf(1)] })] } }))
-    workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
+    const host = renderMediaOf(S().workouts[0])
     expect(host.querySelectorAll('.wmedia-item')).toHaveLength(1)
     expect(host.querySelector('.wmedia-add')).toBeNull()
     expect(host.textContent).toContain('Your server does not store photos and videos yet.')
@@ -228,15 +234,15 @@ describe('a workout\'s photos and videos', () => {
   it('Delete workout in the detail sheet says its photos and videos go with it', () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout({ media: [refOf(1)] })] } }))
     workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
-    act(() => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === 'Delete workout').click())
+    const item = menuItem('Delete workout')
+    act(() => item.click())
     expect(renderTop().textContent).toContain('This removes it from your history for good. Its photo or video is deleted with it.')
   })
 
   it('Delete workout without any says nothing about them', () => {
     workoutDetailSheet(S().workouts[0])
-    const host = renderTop()
-    act(() => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === 'Delete workout').click())
+    const item = menuItem('Delete workout')
+    act(() => item.click())
     expect(renderTop().textContent).not.toContain('deleted with it')
   })
 

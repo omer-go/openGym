@@ -16,7 +16,7 @@ import { nav, closeThenNav, navToWorkout } from './lib/nav.js'
 import { buildStarterPlan, starterPlanDays, starterPlanOptions } from './lib/starter.js'
 import Media, { Thumb } from './components/Media.jsx'
 import CustomMediaField from './components/CustomMediaField.jsx'
-import WorkoutMediaSection, { workoutMediaCount } from './components/WorkoutMedia.jsx'
+import WorkoutMediaSection, { workoutMediaCount, serverTakesWorkoutMedia } from './components/WorkoutMedia.jsx'
 import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf } from './lib/media-refs.js'
 import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
@@ -2619,6 +2619,8 @@ function WorkoutDetail({ w, close }) {
   const groups = sessionSections(w.entries)
   const grouped = groups.length > 1 || (groups[0] && groups[0].rid && (w.routineIds || []).length > 1)
   const mediaN = workoutMediaCount(rec)
+  // A server that keeps no photos or videos has nothing to show for a workout without any.
+  const mediaOffered = useStore(s => mediaN > 0 || serverTakesWorkoutMedia(s.user, s.config))
   const busy = st.active ? t('Finish the current workout first.') : undefined
   // Everything you do to a saved workout once, behind one button: the sheet is for reading it.
   const actions = () => menuSheet({
@@ -2646,7 +2648,7 @@ function WorkoutDetail({ w, close }) {
       }) },
     ] }, { items: [
       // Photos, videos and the note are kept with the workout but are not what you open it to read.
-      { icon: 'image', label: t('Photos & videos'), sub: mediaN ? tn('{0} photo or video', '{0} photos or videos', mediaN) : undefined, onClick: () => ui().openSheet(() => <>
+      mediaOffered && { icon: 'image', label: t('Photos & videos'), sub: mediaN ? tn('{0} photo or video', '{0} photos or videos', mediaN) : undefined, onClick: () => ui().openSheet(() => <>
         <h3>{t('Photos & videos')}</h3>
         <div className="wd-media"><WorkoutMediaSection w={w} /></div>
       </>) },
@@ -2776,7 +2778,9 @@ export const workoutDetailSheet = w => ui().openSheet(close => <WorkoutDetail w=
 /* ============================ calendar ============================ */
 function Calendar({ start, close }) {
   const st = useStore(s => s.S)
-  const [cur, setCur] = useState(() => { const d = start ? new Date(start) : new Date(); d.setDate(1); return d })
+  // `start` is a local day ('2026-09-01'): new Date() would read it as UTC midnight, the day
+  // before west of Greenwich, and open the month before.
+  const [cur, setCur] = useState(() => { const d = start ? new Date(start + 'T12:00') : new Date(); d.setDate(1); return d })
   const y = cur.getFullYear(), mo = cur.getMonth()
   const byDay = {}
   st.workouts.forEach(w => {
@@ -2943,20 +2947,17 @@ function GenSetup({ type, close }) {
   const st = useStore(s => s.S)
   const [setup, setSetup] = useState(() => ({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
   const [shift, setShift] = useState(0)
+  const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift }),
     [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
-  // The same tiles as Add exercise's groups (AddExerciseSheet): the muscles pictured, the group's
-  // name, and here a check for whether the workout covers it.
+  // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's
+  // name, lit when the workout covers it.
   const body = st.body === 'female' ? 'female' : 'male'
-  const check = (key, on, pic, label, onClick, sub) => <button key={key} type="button" role="checkbox" aria-checked={on}
-    className={'ax-gt gs-gt' + (on ? ' on' : '')} onClick={onClick}>
-    {pic}
-    <span className="ax-m"><b>{label}</b>{sub && <span className="muted small">{sub}</span>}</span>
-    <span className={'chk' + (on ? ' on' : '')}><Icon name="check" /></span>
-  </button>
+  const check = (key, on, pic, label, onClick) => <button key={key} type="button" role="checkbox" aria-checked={on}
+    className={'gs-pill' + (on ? ' on' : '')} onClick={onClick}>{pic}<span>{label}</span></button>
   const groupTile = g => check(g.id, setup.groups.includes(g.id), <Ava slugs={g.m} body={body} />, t(g.n), () => toggleGroup(g.id))
   const actIcon = id => <span className="ava ax-ico"><Icon name={ACTIVITY_GROUPS.find(a => a.id === id).icon} /></span>
   const start = () => {
@@ -2964,65 +2965,79 @@ function GenSetup({ type, close }) {
     close()
     beginGenerated(type, entries, { shift, setup })
   }
-  return <>
-    <div className="row between" style={{ alignItems: 'flex-start' }}>
-      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small">{t('Choose what to train, then start.')}</div></div>
+  return <div className="wd-fit">
+    <div className="row between" style={{ alignItems: 'flex-start', flex: 'none' }}>
+      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{t('Choose what to train, then start.')}</div></div>
       <Button size="sm" variant="plain" onClick={() => { setSetup(genDefaults(type)); setShift(0) }}>{t('Reset')}</Button>
     </div>
-    <h4 className="sec">{t('Upper body')}</h4>
-    <div className="ax-gts">{ADD_GROUPS.filter(g => !g.low).map(groupTile)}</div>
-    <h4 className="sec">{t('Lower body')}</h4>
-    <div className="ax-gts">{ADD_GROUPS.filter(g => g.low).map(groupTile)}</div>
-    <h4 className="sec">{t('Cardio & stretching')}</h4>
-    <div className="ax-gts">
-      {check('cardio', setup.cardio, actIcon('cardio'), t('Cardio'), () => set({ cardio: !setup.cardio }), t('Timed with the stopwatch'))}
-      {check('stretch', setup.stretch, actIcon('stretching'), t('Stretching'), () => set({ stretch: !setup.stretch }), t('Two, for what you train'))}
-    </div>
-    <h4 className="sec">{t('Sets and rest')}</h4>
-    <div className="row cfgrow" style={{ marginBottom: 12 }}>
-      <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
-      <Stepper label={t('Sets')} value={setup.sets} step={1} min={1} max={10} decimal={false} onChange={v => set({ sets: v })} />
-      <Stepper label={t('Reps')} value={setup.reps} step={1} min={1} max={50} decimal={false} onChange={v => set({ reps: v })} />
-    </div>
-    <div className="row cfgrow" style={{ marginBottom: 12 }}>
-      <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
-    </div>
-    <div className="sect-b" style={{ marginBottom: 6 }}>
-      <Row icon="timer" iconTint="var(--orange)" title={t('Rest between sets')} accessory="chevron"
-        value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', fmtRest(st.restSec))}
-        onClick={() => durationSheet({
-          title: t('Rest between sets'), value: setup.restSec > 0 ? setup.restSec : 0, max: REST_MAX,
-          off: t('Default ({0})', fmtRest(st.restSec)),
-          footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
-          onDone: v => set({ restSec: v }),
-        })} />
-      <Row icon="gauge" iconTint="var(--purple)" title={t('Last set to failure')}
-        subtitle={setup.lastToFailure ? t('The last set goes until nothing is left, and counts as all-out effort unless you rate it.') : t('Plan the final set as an all-out one.')}>
-        <Switch checked={setup.lastToFailure === true} onChange={v => set({ lastToFailure: v })} />
-      </Row>
-    </div>
-    <div className="row between" style={{ marginTop: 18 }}>
-      <h4 className="sec" style={{ margin: 0 }}>{t('Exercises')}</h4>
-      <Button size="sm" variant="tinted" icon="shuffle" disabled={!picks.length} onClick={() => setShift(n => n + 1)}>{t('Shuffle')}</Button>
-    </div>
-    <div className="muted small" style={{ margin: '4px 0 8px' }}>{entries.length ? t('In the workout, tap an exercise’s name to set its weight, sets and rest.') : t('Tick at least one muscle group.')}</div>
-    <div className="list">{entries.map((e, i) => {
-      const ex = exOr(e.id), pick = picks[i]
-      const cfg = { ...e.target, id: e.id }
-      const work = e.sets.filter(x => !isWarmupRow(x))
-      const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
-      const timed = modeOf(cfg) === 'time'
-      const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
-        : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
-      return <div key={e.id} className="item">
-        <Thumb ex={ex} />
-        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
-        {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
+    <div className="wd-scroll sheet-scroll">
+      <h4 className="sec">{t('Upper body')}</h4>
+      <div className="gs-pills">{ADD_GROUPS.filter(g => !g.low).map(groupTile)}</div>
+      <h4 className="sec">{t('Lower body')}</h4>
+      <div className="gs-pills">{ADD_GROUPS.filter(g => g.low).map(groupTile)}</div>
+      <h4 className="sec">{t('Cardio & stretching')}</h4>
+      <div className="gs-pills">
+        {check('cardio', setup.cardio, actIcon('cardio'), t('Cardio'), () => set({ cardio: !setup.cardio }))}
+        {check('stretch', setup.stretch, actIcon('stretching'), t('Stretching'), () => set({ stretch: !setup.stretch }))}
       </div>
-    })}</div>
-    <div style={{ height: 14 }} />
-    <Button variant="primary" disabled={!entries.length} onClick={start}>{t('Start workout')}</Button>
-  </>
+      <h4 className="sec">{t('Sets and rest')}</h4>
+      <div className="row cfgrow" style={{ marginBottom: 12 }}>
+        <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
+        <Stepper label={t('Sets')} value={setup.sets} step={1} min={1} max={10} decimal={false} onChange={v => set({ sets: v })} />
+        <Stepper label={t('Reps')} value={setup.reps} step={1} min={1} max={50} decimal={false} onChange={v => set({ reps: v })} />
+      </div>
+      <div className="row cfgrow" style={{ marginBottom: 12 }}>
+        <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
+      </div>
+      <div className="sect-b" style={{ marginBottom: 6 }}>
+        <Row icon="timer" iconTint="var(--orange)" title={t('Rest between sets')} accessory="chevron"
+          value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', fmtRest(st.restSec))}
+          onClick={() => durationSheet({
+            title: t('Rest between sets'), value: setup.restSec > 0 ? setup.restSec : 0, max: REST_MAX,
+            off: t('Default ({0})', fmtRest(st.restSec)),
+            footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
+            onDone: v => set({ restSec: v }),
+          })} />
+        <Row icon="gauge" iconTint="var(--purple)" title={t('Last set to failure')}
+          subtitle={setup.lastToFailure ? t('The last set goes until nothing is left, and counts as all-out effort unless you rate it.') : t('Plan the final set as an all-out one.')}>
+          <Switch checked={setup.lastToFailure === true} onChange={v => set({ lastToFailure: v })} />
+        </Row>
+      </div>
+      {/* What the setup picked, folded: the session is built from the choices above, and each
+          exercise is set up in the workout itself. */}
+      <h4 className="sec">{t('Exercises')}</h4>
+      {entries.length ? <>
+        <button type="button" className={'gs-exs' + (showEx ? ' open' : '')} aria-expanded={showEx} onClick={() => setShowEx(v => !v)}>
+          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)}</div>
+            <div className="muted small">{showEx ? t('Hide') : t('Show the list')}</div></div>
+          <Icon name="chevronRight" />
+        </button>
+        {showEx && <>
+          <div className="row between" style={{ margin: '10px 0 8px' }}>
+            <div className="muted small">{t('In the workout, tap an exercise’s name to set its weight, sets and rest.')}</div>
+            <Button size="sm" variant="tinted" icon="shuffle" onClick={() => setShift(n => n + 1)}>{t('Shuffle')}</Button>
+          </div>
+          <div className="list">{entries.map((e, i) => {
+            const ex = exOr(e.id), pick = picks[i]
+            const cfg = { ...e.target, id: e.id }
+            const work = e.sets.filter(x => !isWarmupRow(x))
+            const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
+            const timed = modeOf(cfg) === 'time'
+            const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
+              : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
+            return <div key={e.id} className="item">
+              <Thumb ex={ex} />
+              <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+              {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
+            </div>
+          })}</div>
+        </>}
+      </> : <div className="muted small">{t('Tick at least one muscle group.')}</div>}
+    </div>
+    <div className="wd-foot">
+      <Button variant="primary" disabled={!entries.length} onClick={start}>{t('Start workout')}</Button>
+    </div>
+  </div>
 }
 // Shuffle: the same day type one step further down each muscle's list. Only before anything is
 // logged — the workout hides the button after the first ticked set.

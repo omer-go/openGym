@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 // The session note shipped with a hole in it: buildCompletedWorkout read `active.note` and
 // nothing in the app ever wrote it, so the only way to get one was after the fact — and that
-// path threw the text away unless you happened to tab out of the field first.
+// path threw the text away unless you happened to tab out of the field first. A saved workout's
+// note is written in its own sheet, opened from "Edit, share & more" on the workout.
 import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -24,6 +25,15 @@ function render(open) {
 const type = (el, value) => {
   Object.getOwnPropertyDescriptor(el.constructor.prototype, 'value').set.call(el, value)
   el.dispatchEvent(new Event('input', { bubbles: true }))
+}
+// The saved workout's note sheet, the way the app reaches it: the workout, its menu, the note.
+function renderNoteOf(w) {
+  const detail = render(() => workoutDetailSheet(w))
+  act(() => { [...detail.querySelectorAll('button')].find(b => b.textContent.trim() === 'Edit, share & more').click() })
+  const menu = render(() => {})
+  const item = [...menu.querySelectorAll('.menu-item')].find(el => el.querySelector('.tt').textContent === 'Session note')
+  act(() => { item.click() })
+  return render(() => {})
 }
 const unmountAll = () => act(() => { mounted.splice(0).forEach(r => r.unmount()) })
 
@@ -54,9 +64,9 @@ describe('session note', () => {
     expect(buildCompletedWorkout(A, { end: 2 }).note).toBe('slept badly, still hit it')
   })
 
-  it('is kept when the history sheet is dismissed without blurring the field', () => {
+  it('is kept when the note sheet is dismissed without blurring the field', () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [workout()] } }))
-    const host = render(() => workoutDetailSheet(useStore.getState().S.workouts[0]))
+    const host = renderNoteOf(useStore.getState().S.workouts[0])
     act(() => { type(host.querySelector('textarea'), 'good session') })
     // Escape / Android back / swipe all unmount without a blur.
     unmountAll()
@@ -65,7 +75,7 @@ describe('session note', () => {
 
   it('clearing it removes the note rather than storing an empty string', () => {
     useStore.setState(s => ({ S: { ...s.S, workouts: [{ ...workout(), note: 'old' }] } }))
-    const host = render(() => workoutDetailSheet(useStore.getState().S.workouts[0]))
+    const host = renderNoteOf(useStore.getState().S.workouts[0])
     act(() => { type(host.querySelector('textarea'), '   ') })
     unmountAll()
     expect(useStore.getState().S.workouts[0].note).toBeUndefined()

@@ -94,12 +94,12 @@ describe('WorkoutDetail — per-routine grouping', () => {
     useStore.setState({ S, user: null })
   })
 
-  it('groups a combined workout into per-routine sections with a sets/volume subheader', () => {
+  it('groups a combined workout into per-routine sections, each under its routine\'s name', () => {
     const host = (workoutDetailSheet(combined), renderTop())
     expect(host.textContent).toContain('Strength')
     expect(host.textContent).toContain('Core')
-    expect(host.textContent).toMatch(/2 sets/)
-    expect(host.textContent).toMatch(/1 sets|1 set/)
+    // The sheet lists exercises by name; sets live in each exercise's history.
+    expect(host.textContent).not.toMatch(/\d sets?\b/)
   })
 
   it('renders a legacy single-routine workout flat — no routine subheader', () => {
