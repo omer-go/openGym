@@ -2203,7 +2203,6 @@ export default {
   'Shuffle': 'Перемішати',
   'Nothing fits your equipment for that one.': 'Для цього тренування нічого не підходить до вашого інвентарю.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': '«Рекомендуємо» — не тренували цього тижня',
   'Search': 'Пошук',
   'Groups': 'Групи',
   'Body map': 'Карта тіла',
@@ -2216,7 +2215,6 @@ export default {
   'Tap an area to see only its exercises': 'Торкніться зони, щоб бачити лише її вправи',
   'In this workout': 'У цьому тренуванні',
   'Trained {0}': 'Тренували {0}',
-  'Not this week · last {0}': 'Не цього тижня · востаннє {0}',
   'Not trained yet': 'Ще не тренували',
   'Do next': 'Наступне',
   'Not yet': 'Ще ні',

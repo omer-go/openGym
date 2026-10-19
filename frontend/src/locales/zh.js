@@ -2206,7 +2206,6 @@ export default {
   'Shuffle': '打乱',
   'Nothing fits your equipment for that one.': '没有适合你器械的动作。',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': '“推荐”表示本周还没练过',
   'Search': '搜索',
   'Groups': '肌群',
   'Body map': '身体图',
@@ -2219,7 +2218,6 @@ export default {
   'Tap an area to see only its exercises': '点按一个部位，只看它的动作',
   'In this workout': '在本次训练中',
   'Trained {0}': '{0}练过',
-  'Not this week · last {0}': '本周未练 · 上次 {0}',
   'Not trained yet': '尚未训练',
   'Do next': '下一个',
   'Not yet': '还没有',

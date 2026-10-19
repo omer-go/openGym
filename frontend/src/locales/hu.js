@@ -2209,7 +2209,6 @@ export default {
   'Shuffle': 'Keverés',
   'Nothing fits your equipment for that one.': 'Ehhez semmi nem illik a felszerelésedhez.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'A javasolt azt jelenti: ezen a héten nem edzett',
   'Search': 'Keresés',
   'Groups': 'Csoportok',
   'Body map': 'Testtérkép',
@@ -2222,7 +2221,6 @@ export default {
   'Tap an area to see only its exercises': 'Koppints egy területre, hogy csak annak gyakorlatait lásd',
   'In this workout': 'Ebben az edzésben',
   'Trained {0}': 'Edzve {0}',
-  'Not this week · last {0}': 'Nem ezen a héten · utoljára {0}',
   'Not trained yet': 'Még nem edzett',
   'Do next': 'Következő',
   'Not yet': 'Még nem',

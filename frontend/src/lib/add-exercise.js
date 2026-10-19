@@ -3,16 +3,18 @@
 //
 // A group is a handful of the body map's own muscles (lib/muscles.js) — its "areas". The map has
 // no heads or regions finer than a muscle, so Back is upper back + lower back + traps and Chest is
-// the chest. Each area has a status for the week: in this workout ('td'), trained since the week
-// began ('wk'), or not yet (''). A muscle counts as trained the way the one-tap workouts count it
-// (generate.js trainingIndex): a completed work set of an exercise that works it as a primary.
+// the chest. Each area has a status: in this session ('td'), trained in the last 7 days ('wk'), or
+// not (''). A muscle counts as trained the way generate.js trainingIndex counts it: a completed
+// work set of an exercise that works it as a primary. Which groups are Suggested, and the order
+// of a group's exercises, go by the week's coverage (lib/coverage.js), as the one-tap workouts do.
 import { EXIDX, allExercises, isCardio } from './exercises.js'
 import { exAvailable } from './equipment.js'
 import { musclesOf } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { lastEntryFor } from './history.js'
 import { trainingIndex, candidatesFor } from './generate.js'
-import { todayISO, weekKey, weekStartOf } from './format.js'
+import { todayISO, isoOf } from './format.js'
+import { rankForGaps, sessionCredit } from './coverage.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { ACTIVITY_GROUPS, activityGroup, isStretch } from './activities.js'
 
@@ -64,14 +66,17 @@ export function avatarOf(slugs, body = 'male') {
 const TRAINED_AT = 0.5
 
 /**
- * Per muscle: `st` ('td' in this workout, 'wk' trained this week, '' not yet) and `last`, the
- * ISO day it was last trained (null when never).
+ * Per muscle: `st` ('td' in the session, 'wk' trained in the last 7 days, '' not) and `last`, the
+ * ISO day it was last trained (null when never). The session is the workout in progress, or the
+ * entries `have` (a routine being edited, which has no week: then 'wk' is never set).
  */
-export function muscleStatus(S, today = todayISO()) {
+export function muscleStatus(S, today = todayISO(), have = null) {
   const { muscles } = trainingIndex(S)
-  const week = weekKey(today, weekStartOf(S))
+  const from = new Date(today + 'T12:00')
+  from.setDate(from.getDate() - 6)
+  const week = have ? '~' : isoOf(from)
   const now = new Set()
-  for (const e of S?.active?.entries || []) {
+  for (const e of have || S?.active?.entries || []) {
     for (const [slug, w] of Object.entries(EXIDX[e.id] ? musclesOf(EXIDX[e.id]) : {})) if (w >= TRAINED_AT) now.add(slug)
   }
   const out = {}
@@ -82,20 +87,18 @@ export function muscleStatus(S, today = todayISO()) {
   return out
 }
 
-const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000)
+// A group the week needs less than this of is not worth suggesting (coverage.js RESTED).
+const WORTH = 0.1
 
 /**
- * The groups worth doing next, best first, at most `n`: the larger the share of a group's areas
- * not trained this week the better, then the longer since any of it was. A group with every area
- * covered is never suggested.
+ * The groups worth doing next, best first, at most `n`: the most the week still needs (`need`,
+ * coverage.js weeklyNeed), less what the session's exercises (`have`) already give it. A group
+ * the session covers is never suggested.
  */
-export function suggestedGroups(status, today = todayISO(), n = 2) {
-  return ADD_GROUPS.map(g => {
-    const open = g.m.filter(s => !status[s]?.st).length
-    const lasts = g.m.map(s => status[s]?.last).filter(Boolean).sort()
-    const since = g.m.some(s => status[s]?.st === 'td') ? 0 : lasts.length ? Math.min(14, daysBetween(lasts[lasts.length - 1], today)) : 14
-    return { id: g.id, open, score: open / g.m.length * 10 + since / 14 }
-  }).filter(x => x.open).sort((a, b) => b.score - a.score).slice(0, n).map(x => x.id)
+export function suggestedGroups(need, have = [], n = 2) {
+  const covered = sessionCredit(have)
+  return ADD_GROUPS.map(g => ({ id: g.id, score: (need[g.id] || 0) * Math.max(0, 1 - (covered[g.id] || 0)) }))
+    .filter(x => x.score >= WORTH).sort((a, b) => b.score - a.score).slice(0, n).map(x => x.id)
 }
 
 // The usable exercises each muscle is the primary of, built once per custom-exercise list.
@@ -127,20 +130,23 @@ const byName = (a, b) => exerciseNameFor(a).localeCompare(exerciseNameFor(b))
 
 /**
  * The exercises of a group, as the sheet lists them. `sort`:
- * - 'suggested': one section per area, areas not trained this week first and the longest-rested
- *   of those first; within an area what you have logged (longest ago first, so it rotates), then
- *   the staple lifts, then the rest by name — generate.js's order, so it matches one-tap workouts.
+ * - 'suggested': one section per area, areas not trained in the last 7 days first and the
+ *   longest-rested of those first; within an area what you have logged and the staple lifts,
+ *   ranked by what they add to the session for the week (`gaps`: { need, history }, see
+ *   coverage.js rankForGaps; without it, generate.js's order), then the rest by name.
  * - 'az': one section per area in the group's order, exercises by name.
  * - 'recent': one section of everything you have logged in the group, most recent first.
- * Exercises already in the workout are left out and counted in `hidden`; so is what the active
- * equipment profile rules out. `area` narrows to one muscle.
+ * Exercises already in the session (`have`, else the workout in progress) are left out and
+ * counted in `hidden`; so is what the active equipment profile rules out. `area` narrows to
+ * one muscle.
  */
-export function groupExercises(S, groupId, { sort = 'suggested', area = '', status = muscleStatus(S) } = {}) {
+export function groupExercises(S, groupId, { sort = 'suggested', area = '', have = null, gaps = null, status = muscleStatus(S, todayISO(), have) } = {}) {
   if (activityGroup(groupId)) return activityExercises(S, groupId, { sort, area })
   const g = ADD_GROUPS.find(x => x.id === groupId)
   if (!g) return { sections: [], hidden: 0 }
   const map = byPrimary(S)
-  const inWorkout = new Set((S?.active?.entries || []).map(e => e.id))
+  const session = have || S?.active?.entries || []
+  const inWorkout = new Set(session.map(e => e.id))
   const areas = g.m.filter(s => !area || s === area)
   let hidden = 0
   const usable = slug => (map[slug] || []).filter(ex => {
@@ -158,7 +164,8 @@ export function groupExercises(S, groupId, { sort = 'suggested', area = '', stat
     const list = usable(m)
     if (sort === 'az') list.sort(byName)
     else {
-      const first = candidatesFor(S, m)
+      let first = candidatesFor(S, m)
+      if (gaps) first = rankForGaps(first.map((id, rank) => ({ id, rank })), { groups: ADD_GROUPS.map(x => x.id), have: session, ...gaps })
       const at = id => { const i = first.indexOf(id); return i < 0 ? Infinity : i }
       list.sort((a, b) => at(a.id) - at(b.id) || byName(a, b))
     }

@@ -6,7 +6,8 @@ import { MUSCLE_NAME } from '../lib/muscles.js'
 import { EXIDX } from '../lib/exercises.js'
 import { primaryMuscleOf } from '../lib/strength-exercises.js'
 import { groupColor, mcStyle } from '../lib/muscle-colors.js'
-import { fmtNum, fmtDaysAgo } from '../lib/format.js'
+import { fmtNum, fmtDaysAgo, todayISO } from '../lib/format.js'
+import { weeklyNeed, variantHistory } from '../lib/coverage.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import BodyMap, { MuscleAvatar } from './BodyMap.jsx'
@@ -14,9 +15,12 @@ import { Thumb } from './Media.jsx'
 import Icon from './Icon.jsx'
 import { Button, Segmented } from './ui.jsx'
 
-// The workout's Add exercise: pick a muscle group (what you have not trained this week is marked
-// Suggested), then an exercise from it, its areas in the order you most need them. The full search
+// The workout's Add exercise: pick a muscle group (what the last 7 days lack most, less what the
+// workout already covers, is marked Suggested), then an exercise from it, its areas in the order
+// you most need them and its exercises by what they add (lib/coverage.js). The full search
 // picker — every exercise, filters, Create your own — stays one tap away (`onSearch`).
+// The routine editor opens it with `routineId`: the routine is then the session, and the week is
+// left out, since a routine is for any week: Suggested is what the routine covers least.
 // Grouping and ranking live in lib/add-exercise.js.
 // A swap opens it with a `title` and `like`, the exercise being replaced: it then starts on that
 // exercise's group and area, Back still leading to every group.
@@ -34,14 +38,17 @@ export const Ava = ({ slugs, body, className }) => {
   return <MuscleAvatar body={body} view={a.view} on={a.on} vb={a.vb} className={className} />
 }
 
-function areaLine({ st, last }) {
+function areaLine({ st, last }, routine) {
+  if (routine) return st === 'td' ? t('In this routine') : last ? t('Last {0}', fmtDaysAgo(last)) : t('Not trained yet')
   if (st === 'td') return t('In this workout')
   if (st === 'wk') return t('Trained {0}', fmtDaysAgo(last))
-  return last ? t('Not this week · last {0}', fmtDaysAgo(last)) : t('Not trained yet')
+  return last ? t('Last {0}', fmtDaysAgo(last)) : t('Not trained yet')
 }
 
-const Legend = () => <div className="ax-legend">
-  <span><Dot st="td" />{t('Today')}</span><span><Dot st="wk" />{t('This week')}</span><span><Dot />{t('Not yet')}</span>
+const Legend = ({ routine }) => <div className="ax-legend">
+  {routine
+    ? <><span><Dot st="td" />{t('In this routine')}</span><span><Dot />{t('Not yet')}</span></>
+    : <><span><Dot st="td" />{t('Today')}</span><span><Dot st="wk" />{t('Last 7 days')}</span><span><Dot />{t('Not yet')}</span></>}
 </div>
 
 // Where a swap away from `id` starts: its primary muscle's group, narrowed to that muscle when
@@ -54,8 +61,13 @@ function startOf(id) {
   return { group: g.id, area: g.m.length > 1 ? primaryMuscleOf(EXIDX[id]).slug : '' }
 }
 
-export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
+const ALL = ADD_GROUPS.map(g => g.id)
+const NONE = []
+
+export default function AddExerciseSheet({ onPick, onSearch, title, like, routineId }) {
   const S = useStore(s => s.S)
+  const routine = routineId ? S.routines.find(r => r.id === routineId) || { ex: NONE } : null
+  const have = routine ? routine.ex : S.active?.entries || NONE
   const body = S.body === 'female' ? 'female' : 'male'
   const [start] = useState(() => startOf(like))
   const [group, setGroup] = useState(start.group)
@@ -63,9 +75,14 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
   const [area, setArea] = useState(start.area)
   const [sort, setSort] = useState('suggested')  // 'suggested' | 'recent' | 'az'
   const [more, setMore] = useState({})           // area -> rows shown, past the default
-  const status = useMemo(() => muscleStatus(S), [S.workouts, S.active, S.weekStart])
+  const status = useMemo(() => muscleStatus(S, todayISO(), routine && have), [S.workouts, have])
   const actLast = useMemo(() => activityLast(S), [S.workouts])
-  const suggested = useMemo(() => suggestedGroups(status), [status])
+  // What the week still needs per group; a routine, being for any week, needs everything.
+  const gaps = useMemo(() => ({
+    need: routine ? Object.fromEntries(ALL.map(id => [id, 1])) : weeklyNeed(S, ALL),
+    history: variantHistory(S),
+  }), [S.workouts, S.unit, !!routine])
+  const suggested = useMemo(() => suggestedGroups(gaps.need, have), [gaps, have])
   const openGroup = (id, slug = '') => { setGroup(id); setArea(slug); setMore({}) }
 
   if (!group) {
@@ -85,7 +102,7 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
     const load = Object.fromEntries(Object.entries(status).map(([m, s]) => [m, s.st === 'td' ? 2 : s.st === 'wk' ? 1 : 0]))
     return <>
       <div className="row between" style={{ alignItems: 'flex-start', marginBottom: 12 }}>
-        <div><h3>{title || t('Add exercise')}</h3><div className="muted small">{t('Suggested means not trained this week')}</div></div>
+        <div><h3>{title || t('Add exercise')}</h3><div className="muted small">{routine ? t('Suggested is what this routine covers least') : t('Suggested is what your last 7 days lack most')}</div></div>
         <Button size="sm" variant="tinted" icon="magnifier" onClick={onSearch}>{t('Search')}</Button>
       </div>
       <Segmented options={[{ value: 'grid', label: t('Groups') }, { value: 'map', label: t('Body map') }]} value={view} onChange={setView} />
@@ -99,7 +116,7 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
         </>}
       <h4 className="sec">{t('Cardio & stretching')}</h4>
       <div className="ax-gts">{ACTIVITY_GROUPS.map(actTile)}</div>
-      <Legend />
+      <Legend routine={!!routine} />
     </>
   }
 
@@ -107,7 +124,7 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
   const g = act ? { ...act, m: act.areas.map(a => a.id) } : ADD_GROUPS.find(x => x.id === group)
   const areaOf = m => act?.areas.find(a => a.id === m)
   const areaName = m => (act ? t(areaOf(m).n) : t(MUSCLE_NAME[m]))
-  const { sections, hidden } = groupExercises(S, group, { sort, area, status })
+  const { sections, hidden } = groupExercises(S, group, { sort, area, status, have, gaps })
   const single = !!area || sort === 'recent'
   const row = ex => {
     const last = lastTopSet(S, ex.id)
@@ -153,13 +170,13 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like }) {
     {sections.map((x, k) => x.m
       ? <div key={x.m} className="ax-area">
         <div className="ax-ahd">{act ? <span className="ava xs ax-ico"><Icon name={areaOf(x.m).icon} /></span> : <Ava slugs={[x.m]} body={body} className="xs" />}
-          <span className="grow"><b>{areaName(x.m)}</b><small>{act ? (x.last ? t('Last {0}', fmtDaysAgo(x.last)) : t('Not done yet')) : areaLine(x)}</small></span>
+          <span className="grow"><b>{areaName(x.m)}</b><small>{act ? (x.last ? t('Last {0}', fmtDaysAgo(x.last)) : t('Not done yet')) : areaLine(x, !!routine)}</small></span>
           {!act && sort === 'suggested' && k === 0 && !x.st && <span className="ax-badge">{t('Do next')}</span>}
         </div>
         {list(x.m, x.list)}
       </div>
       : <div key="recent" className="ax-area">{list('recent', x.list)}</div>)}
-    {hidden > 0 && <div className="small dim" style={{ margin: '10px 2px 0' }}>{t('Already in this workout: {0}', hidden)}</div>}
+    {hidden > 0 && <div className="small dim" style={{ margin: '10px 2px 0' }}>{routine ? t('Already in this routine: {0}', hidden) : t('Already in this workout: {0}', hidden)}</div>}
     <div style={{ height: 12 }} />
     <Button variant="ghost" icon="magnifier" onClick={onSearch}>{t('Search all exercises')}</Button>
   </div>

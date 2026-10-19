@@ -20,7 +20,11 @@
 // done longest ago for that group wins, then the tool (barbell, dumbbell, smith…, variant.js),
 // then the exercise you know. So a flat barbell bench is followed by an incline on dumbbells.
 // Presses rotate with presses: an isolation lift is only offered where an isolation lift is best.
-import { EXIDX } from './exercises.js'
+//
+// The same numbers show elsewhere: the one-tap setup and the routine editor draw what a session
+// adds per group (plannedSets), and Add exercise suggests groups and orders a group's exercises
+// by what the session in progress still lacks (rankForGaps).
+import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { musclesOf } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
@@ -61,6 +65,32 @@ export function groupCredit(weights) {
 }
 
 const groupOf = slug => ADD_GROUPS.find(g => g.m.includes(slug)) || null
+const isLift = ex => !!ex && !isCardio(ex) && ex.cat !== 'stretching'
+
+/**
+ * Effective sets per group that planned entries add: credit × work sets. An entry's sets are its
+ * rows (a workout's, warm-ups left out) or a count (a routine's). Cardio and stretches add none.
+ */
+export function plannedSets(entries) {
+  const out = {}
+  for (const e of entries || []) {
+    if (!isLift(EXIDX[e?.id]) && EXIDX[e?.id]) continue
+    const n = Array.isArray(e?.sets) ? e.sets.filter(x => !isWarmupRow(x)).length : Number(e?.sets) || 0
+    if (!n) continue
+    for (const [g, c] of Object.entries(groupCredit(entryWeights(e)))) out[g] = (out[g] || 0) + c * n
+  }
+  return out
+}
+
+/** Group id -> credit the exercises of a session already give it, one exercise counted once. */
+export function sessionCredit(entries) {
+  const out = {}
+  for (const e of entries || []) {
+    if (!isLift(EXIDX[e?.id]) && EXIDX[e?.id]) continue
+    for (const [g, c] of Object.entries(groupCredit(entryWeights(e)))) out[g] = (out[g] || 0) + c
+  }
+  return out
+}
 
 /** Effective sets per group over the 7 days up to `now` (today counts as one of them). */
 export function weeklyDone(S, now = Date.now()) {
@@ -109,6 +139,42 @@ export function variantHistory(S) {
 // Within `share` of the best gain, which can be below zero when every pick left overfills a group.
 const within = (g, best, share) => g >= best - Math.abs(best) * (1 - share)
 const totalOf = credit => Object.values(credit).reduce((a, b) => a + b, 0)
+// An exercise as the pickers weigh it, or null when its main muscle is in none of the groups.
+function itemOf(id, rank, on) {
+  const ex = EXIDX[id]
+  const slug = primaryMuscleOf(ex)?.slug
+  const g = groupOf(slug)
+  if (!g || !on.has(g.id)) return null
+  const full = groupCredit(musclesOf(ex))
+  return {
+    id, rank, slug, ex, group: g.id, main: g.m[0] === slug, variant: variantOf(ex),
+    credit: Object.fromEntries(Object.entries(full).filter(([k]) => on.has(k))),
+    total: totalOf(full),
+    // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
+    // a fly or a curl has one helper at most. Isolation lifts rotate among themselves.
+    compound: Object.values(full).filter(c => c >= 0.4).length >= 3,
+  }
+}
+// Staler first: the angle, then the tool last done longest ago for the group, then the exercise
+// you know best. A tool the session already uses for the group (`taken`, [{ group, variant }])
+// counts as the latest of all, so a second back exercise is on another tool. Angles go by
+// history only: most groups have one.
+function fresherFor(history, taken) {
+  const lastDone = (c, k) => (k === 'tool' && taken.some(p => p.group === c.group && p.variant.tool === c.variant.tool)
+    ? '~' : history[c.group]?.[k]?.[c.variant[k]] || '')
+  return (a, b) => {
+    for (const k of ['angle', 'tool']) {
+      const x = lastDone(a, k), y = lastDone(b, k)
+      if (x !== y) return x < y ? -1 : 1
+    }
+    return a.rank - b.rank
+  }
+}
+// What `c` adds to coverage `covered` capped at `cap` per group, weighted by need.
+const gainOf = (c, covered, cap, weight) => Object.entries(c.credit).reduce((s, [g, a]) => s + weight(g) * (
+  Math.min(cap, (covered[g] || 0) + a) - Math.min(cap, covered[g] || 0) - ((covered[g] || 0) >= cap ? OVER * a : 0)), 0)
+const weightFor = need => g => Math.max((need[g] || 0) ** 2, MIN_WEIGHT)
+
 const distance = (a, b) => {
   let d = 0
   for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) d += Math.abs((a[k] || 0) - (b[k] || 0))
@@ -124,34 +190,13 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
-    const ex = EXIDX[id]
-    const slug = primaryMuscleOf(ex)?.slug
-    const g = groupOf(slug)
-    if (!g || !on.has(g.id) || pool.some(c => c.id === id)) continue
-    const full = groupCredit(musclesOf(ex))
-    pool.push({
-      id, rank, slug, ex, group: g.id, main: g.m[0] === slug, variant: variantOf(ex),
-      credit: Object.fromEntries(Object.entries(full).filter(([k]) => on.has(k))),
-      total: totalOf(full),
-      // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
-      // a fly or a curl has one helper at most. Isolation lifts rotate among themselves.
-      compound: Object.values(full).filter(c => c >= 0.4).length >= 3,
-    })
+    const item = pool.some(c => c.id === id) ? null : itemOf(id, rank, on)
+    if (item) pool.push(item)
   }
-  const weight = g => Math.max((need[g] || 0) ** 2, MIN_WEIGHT)
+  const weight = weightFor(need)
   const covered = Object.fromEntries(groups.map(g => [g, 0]))
   const picks = []
-  // A tool this session already uses for the group counts as the latest of all, so a second
-  // back exercise is on another tool. Angles go by history only: most groups have one.
-  const lastDone = (c, k) => (k === 'tool' && picks.some(p => p.group === c.group && p.variant.tool === c.variant.tool)
-    ? '~' : history[c.group]?.[k]?.[c.variant[k]] || '')
-  const fresher = (a, b) => {
-    for (const k of ['angle', 'tool']) {
-      const x = lastDone(a, k), y = lastDone(b, k)
-      if (x !== y) return x < y ? -1 : 1
-    }
-    return a.rank - b.rank
-  }
+  const fresher = fresherFor(history, picks)
   let cap = 1, relaxed = false
   while (picks.length < count) {
     const open = pool.filter(c => !picks.includes(c) && covered[c.group] < cap
@@ -163,8 +208,7 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       else if (!relaxed) { relaxed = true; cap = 1 } else break
       continue
     }
-    const gain = c => Object.entries(c.credit).reduce((s, [g, a]) => s + weight(g) * (
-      Math.min(cap, covered[g] + a) - Math.min(cap, covered[g]) - (covered[g] >= cap ? OVER * a : 0)), 0)
+    const gain = c => gainOf(c, covered, cap, weight)
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
     const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
@@ -177,4 +221,29 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   }
   // Array#sort is stable: equal compounds keep the order they were picked in.
   return picks.sort((a, b) => b.total - a.total).map(c => ({ id: c.id, slug: c.slug, group: c.group }))
+}
+
+/**
+ * `candidates` ([{ id, rank }]) in the order Add exercise suggests them for a session that
+ * already has the entries `have`: what fills the session's gaps best for the week's `need`
+ * first, and among the ones about as good, the staler variation (as the one-tap workouts pick).
+ * Returns ids; an id whose main muscle is in none of `groups` keeps its place at the end.
+ */
+export function rankForGaps(candidates, { groups, need, have = [], history = {} }) {
+  const on = new Set(groups)
+  const covered = sessionCredit(have)
+  const weight = weightFor(need)
+  const taken = have.map(e => EXIDX[e?.id] && itemOf(e.id, 0, on)).filter(Boolean)
+  const items = [], rest = []
+  for (const { id, rank } of candidates) {
+    const item = itemOf(id, rank, on)
+    if (item) items.push({ c: item, g: gainOf(item, covered, 1, weight) })
+    else rest.push(id)
+  }
+  if (!items.length) return rest
+  const best = Math.max(...items.map(x => x.g))
+  const fresher = fresherFor(history, taken)
+  const top = items.filter(x => within(x.g, best, NEAR)).map(x => x.c).sort(fresher)
+  const others = items.filter(x => !within(x.g, best, NEAR)).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank).map(x => x.c)
+  return [...top, ...others].map(c => c.id).concat(rest)
 }

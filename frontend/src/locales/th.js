@@ -2217,7 +2217,6 @@ export default {
   'Shuffle': 'สุ่มใหม่',
   'Nothing fits your equipment for that one.': 'ไม่มีท่าที่เข้ากับอุปกรณ์ของคุณสำหรับแบบนี้',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'แนะนำ หมายถึงยังไม่ได้ฝึกสัปดาห์นี้',
   'Search': 'ค้นหา',
   'Groups': 'กลุ่ม',
   'Body map': 'แผนที่ร่างกาย',
@@ -2230,7 +2229,6 @@ export default {
   'Tap an area to see only its exercises': 'แตะบริเวณเพื่อดูเฉพาะท่าของส่วนนั้น',
   'In this workout': 'ในเวิร์กเอาต์นี้',
   'Trained {0}': 'ฝึกแล้ว {0}',
-  'Not this week · last {0}': 'ไม่ใช่สัปดาห์นี้ · ล่าสุด {0}',
   'Not trained yet': 'ยังไม่เคยฝึก',
   'Do next': 'ทำต่อไป',
   'Not yet': 'ยังไม่',

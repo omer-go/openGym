@@ -2206,7 +2206,6 @@ export default {
   'Shuffle': 'Karıştır',
   'Nothing fits your equipment for that one.': 'Bunun için ekipmanına uyan bir şey yok.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'Önerilen: bu hafta çalışılmadı',
   'Search': 'Ara',
   'Groups': 'Gruplar',
   'Body map': 'Vücut haritası',
@@ -2219,7 +2218,6 @@ export default {
   'Tap an area to see only its exercises': 'Yalnızca egzersizlerini görmek için bir bölgeye dokun',
   'In this workout': 'Bu antrenmanda',
   'Trained {0}': 'Çalışıldı {0}',
-  'Not this week · last {0}': 'Bu hafta değil · son {0}',
   'Not trained yet': 'Henüz çalışılmadı',
   'Do next': 'Sıradaki',
   'Not yet': 'Henüz değil',

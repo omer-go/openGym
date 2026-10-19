@@ -2261,7 +2261,6 @@ export default {
   'Shuffle': 'خلط',
   'Nothing fits your equipment for that one.': 'لا شيء يناسب معداتك لهذا التمرين.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': '«مقترح» يعني لم يُدرَّب هذا الأسبوع',
   'Search': 'بحث',
   'Groups': 'المجموعات',
   'Body map': 'خريطة الجسم',
@@ -2274,7 +2273,6 @@ export default {
   'Tap an area to see only its exercises': 'اضغط على منطقة لترى تمارينها فقط',
   'In this workout': 'في هذا التمرين',
   'Trained {0}': 'دُرِّب {0}',
-  'Not this week · last {0}': 'ليس هذا الأسبوع · آخر مرة {0}',
   'Not trained yet': 'لم يُدرَّب بعد',
   'Do next': 'التالي',
   'Not yet': 'ليس بعد',

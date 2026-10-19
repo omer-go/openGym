@@ -8,7 +8,7 @@ import { uid, exerciseNameText } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { supersetUnits, moveRoutineEntry, cleanupSg, exLine, defaultConfig } from '../lib/history.js'
 import { Thumb } from '../components/Media.jsx'
-import { glyphPicker, exercisePicker, exConfigSheet, confirmSheet, supersetSheet } from '../sheets.jsx'
+import { glyphPicker, exercisePicker, addExerciseSheet, exConfigSheet, confirmSheet, supersetSheet } from '../sheets.jsx'
 import { supersetMeta, setSupersetMeta } from '../lib/superset-meta.js'
 import { fmtRest } from '../lib/duration.js'
 import Icon from '../components/Icon.jsx'
@@ -25,6 +25,8 @@ import { POLICIES_FOR, POLICY_NAME, POLICY_DESC } from '../lib/progression.js'
 import BodyMap from '../components/BodyMap.jsx'
 import { loadOfRoutine, rankOf, MUSCLE_NAME } from '../lib/muscles.js'
 import { muscleColor, mcStyle } from '../lib/muscle-colors.js'
+import { WEEKLY_TARGET, plannedSets } from '../lib/coverage.js'
+import CoverageStrip from '../components/CoverageStrip.jsx'
 
 export const ROUTINE_LONG_PRESS_MS = 380
 export const ROUTINE_DRAG_SLOP = 8
@@ -437,14 +439,16 @@ export default function RoutineEdit() {
     cleanupSg(ex)
   })
 
-  const addExercise = () => exercisePicker((ex, quick) => {
+  // The workout's Add exercise, with this routine as the session: its groups suggested by what
+  // the routine covers least, its Search the full picker.
+  const addExercise = () => addExerciseSheet((ex, quick) => {
     if (quick) {
       edit(x => x.push({ id: ex.id, ...defaultConfig(ex.id) }))
       toast(t('“{0}” added to {1}', exerciseNameText(ex), r.name))
     } else {
       exConfigSheet(ex, null, cfg => edit(x => { x.push({ id: ex.id, ...cfg }) }), null, r)
     }
-  })
+  }, { routineId: id })
 
   const units = supersetUnits(r.ex)
   const unitFirst = new Set(units.filter(u => u.length > 1).map(u => u[0]))
@@ -579,6 +583,8 @@ export default function RoutineEdit() {
         <div className="mchips">
           {worked.slice(0, 6).map(m => <span key={m} className={'mchip' + (muscleColor(m) ? ' mg' : '')} style={mcStyle(muscleColor(m))}>{t(MUSCLE_NAME[m])}</span>)}
         </div>
+        {/* Effective sets per group (lib/coverage.js), the numbers Add exercise suggests by. */}
+        <div style={{ marginTop: 14 }}><CoverageStrip adds={plannedSets(r.ex)} label={t('Sets per group in this routine, toward {0} a week', WEEKLY_TARGET)} /></div>
       </div>
     })()}
 

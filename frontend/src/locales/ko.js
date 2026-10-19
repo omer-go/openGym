@@ -2206,7 +2206,6 @@ export default {
   'Shuffle': '섞기',
   'Nothing fits your equipment for that one.': '이 운동에는 내 장비에 맞는 게 없어요.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': '추천은 이번 주에 훈련하지 않았다는 뜻이에요',
   'Search': '검색',
   'Groups': '그룹',
   'Body map': '신체 지도',
@@ -2219,7 +2218,6 @@ export default {
   'Tap an area to see only its exercises': '부위를 탭하면 그 부위 운동만 보여요',
   'In this workout': '이번 운동에 포함',
   'Trained {0}': '{0} 훈련함',
-  'Not this week · last {0}': '이번 주 아님 · 마지막 {0}',
   'Not trained yet': '아직 훈련 안 함',
   'Do next': '다음 차례',
   'Not yet': '아직',

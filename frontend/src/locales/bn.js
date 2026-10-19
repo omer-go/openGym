@@ -2285,7 +2285,6 @@ export default {
   'Shuffle': 'শাফল',
   'Nothing fits your equipment for that one.': 'এর জন্য আপনার সরঞ্জামের সাথে কিছুই মেলে না।',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'প্রস্তাবিত মানে এই সপ্তাহে ট্রেন করা হয়নি',
   'Search': 'খুঁজুন',
   'Groups': 'গ্রুপ',
   'Body map': 'বডি ম্যাপ',
@@ -2298,7 +2297,6 @@ export default {
   'Tap an area to see only its exercises': 'শুধু সেই অংশের ব্যায়াম দেখতে একটি অংশে ট্যাপ করুন',
   'In this workout': 'এই ওয়ার্কআউটে',
   'Trained {0}': 'ট্রেন করা হয়েছে {0}',
-  'Not this week · last {0}': 'এই সপ্তাহে নয় · শেষবার {0}',
   'Not trained yet': 'এখনও ট্রেন করা হয়নি',
   'Do next': 'এরপর',
   'Not yet': 'এখনও না',

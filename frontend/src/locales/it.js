@@ -2206,7 +2206,6 @@ export default {
   'Shuffle': 'Rimescola',
   'Nothing fits your equipment for that one.': 'Niente è adatto alla tua attrezzatura per questo.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'Suggerito significa non allenato questa settimana',
   'Search': 'Cerca',
   'Groups': 'Gruppi',
   'Body map': 'Mappa del corpo',
@@ -2219,7 +2218,6 @@ export default {
   'Tap an area to see only its exercises': 'Tocca una zona per vedere solo i suoi esercizi',
   'In this workout': 'In questo allenamento',
   'Trained {0}': 'Allenato {0}',
-  'Not this week · last {0}': 'Non questa settimana · ultimo {0}',
   'Not trained yet': 'Non ancora allenato',
   'Do next': 'Prossimo',
   'Not yet': 'Non ancora',

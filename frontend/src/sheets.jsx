@@ -52,6 +52,8 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
+import { WEEKLY_TARGET, plannedSets } from './lib/coverage.js'
+import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
@@ -1415,9 +1417,10 @@ export const exercisePicker = (onPick, { title, like } = {}) => ui().openSheet(c
 // The workout's Add exercise, and its Swap's choice: muscle groups, then the exercises of one
 // (components/AddExerciseSheet). Its Search swaps it for the picker above, so a pick from there
 // does not land back on it. `title` and `like` are a swap's, as the picker's are; the handle's
-// close() closes whichever of the two is open.
-export function addExerciseSheet(onPick, { title, like } = {}) {
-  let open = ui().openSheet(close => <AddExerciseSheet onPick={onPick} title={title} like={like}
+// close() closes whichever of the two is open. The routine editor passes `routineId`: the routine
+// is then what it fills the gaps of.
+export function addExerciseSheet(onPick, { title, like, routineId } = {}) {
+  let open = ui().openSheet(close => <AddExerciseSheet onPick={onPick} title={title} like={like} routineId={routineId}
     onSearch={() => { close(); open = exercisePicker(onPick, { title, like }) }} />)
   return { close: () => open.close() }
 }
@@ -2968,6 +2971,11 @@ function GenSetup({ type, close }) {
       <div className="gs-pills">{ADD_GROUPS.filter(g => !g.low).map(groupTile)}</div>
       <h4 className="sec">{t('Lower body')}</h4>
       <div className="gs-pills">{ADD_GROUPS.filter(g => g.low).map(groupTile)}</div>
+      {/* What the workout adds to each ticked group's week (lib/coverage.js). */}
+      {setup.groups.length > 0 && <>
+        <h4 className="sec">{t('This workout')}</h4>
+        <CoverageStrip groups={setup.groups} adds={plannedSets(entries)} label={t('Sets per group in this workout, toward {0} a week', WEEKLY_TARGET)} />
+      </>}
       <h4 className="sec">{t('Cardio & stretching')}</h4>
       <div className="gs-pills">
         {check('cardio', setup.cardio, actIcon('cardio'), t('Cardio'), () => set({ cardio: !setup.cardio }))}

@@ -1396,7 +1396,6 @@ export const PT_BR_OVERRIDES = {
   'Shuffle': 'Embaralhar',
   'Nothing fits your equipment for that one.': 'Nada combina com seu equipamento para esse.',
   // --- add exercise by muscle group ---
-  'Suggested means not trained this week': 'Sugerido significa não treinado nesta semana',
   'Search': 'Buscar',
   'Groups': 'Grupos',
   'Body map': 'Mapa do corpo',
@@ -1409,7 +1408,6 @@ export const PT_BR_OVERRIDES = {
   'Tap an area to see only its exercises': 'Toque em uma área para ver só os exercícios dela',
   'In this workout': 'Neste treino',
   'Trained {0}': 'Treinado {0}',
-  'Not this week · last {0}': 'Não nesta semana · último {0}',
   'Not trained yet': 'Ainda não treinado',
   'Do next': 'Próximo',
   'Not yet': 'Ainda não',

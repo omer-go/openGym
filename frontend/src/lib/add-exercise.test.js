@@ -4,6 +4,8 @@ import { MUSCLES } from './muscles.js'
 import { STAPLES } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
+import { weeklyNeed, variantHistory } from './coverage.js'
+import { variantOf } from './variant.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const session = (d, ids, sets = [row()]) => ({ id: 'w' + d + ids.join(), d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets })) })
@@ -11,8 +13,9 @@ const state = (over = {}) => ({ unit: 'kg', workouts: [], exWeights: {}, routine
 
 // bench press (chest), dumbbell bench (chest), lat pulldown (upper back), squat (quads)
 const BENCH = '0025', DBBENCH = '0289', PULLDOWN = '2330', SQUAT = '0043'
-// 2026-10-16 is a Friday; with a Monday start the week began on the 12th
 const TODAY = '2026-10-16'
+const NOW = new Date(2026, 9, 16, 12).getTime()
+const ALL = ADD_GROUPS.map(g => g.id)
 
 describe('groups', () => {
   it('every muscle the map draws belongs to exactly one group, and has a side and a box', () => {
@@ -32,7 +35,7 @@ describe('groups', () => {
 })
 
 describe('muscleStatus', () => {
-  it('marks what is in the workout, what was trained this week, and when each was last', () => {
+  it('marks what is in the workout, what was trained in the last 7 days, and when each was last', () => {
     const st = muscleStatus(state({
       workouts: [session('2026-10-05', [PULLDOWN]), session('2026-10-13', [BENCH])],
       active: { entries: [{ id: SQUAT, sets: [] }] },
@@ -42,28 +45,37 @@ describe('muscleStatus', () => {
     expect(st['upper-back']).toEqual({ st: '', last: '2026-10-05' })
     expect(st.calves).toEqual({ st: '', last: null })
   })
-  it('follows the profile’s week start', () => {
-    // Sunday the 11th is last week for a Monday start, this week for a Sunday one
-    const S = state({ workouts: [session('2026-10-11', [BENCH])] })
-    expect(muscleStatus(S, TODAY).chest.st).toBe('')
-    expect(muscleStatus({ ...S, weekStart: 0 }, TODAY).chest.st).toBe('wk')
+  it('counts the last 7 days, not the calendar week', () => {
+    const S = state({ workouts: [session('2026-10-10', [BENCH]), session('2026-10-09', [PULLDOWN])] })
+    expect(muscleStatus(S, TODAY).chest.st).toBe('wk')
+    expect(muscleStatus(S, TODAY)['upper-back'].st).toBe('')
+  })
+  it('for a routine, marks what the routine has and leaves the week out', () => {
+    const S = state({ workouts: [session('2026-10-13', [BENCH])] })
+    const st = muscleStatus(S, TODAY, [{ id: PULLDOWN, sets: 3 }])
+    expect(st['upper-back'].st).toBe('td')
+    expect(st.chest).toEqual({ st: '', last: '2026-10-13' })
   })
 })
 
 describe('suggestedGroups', () => {
-  it('suggests the groups with the most left to train, longest rested first', () => {
+  it('suggests what the week needs most, secondaries and sets counted', () => {
     const S = state({ workouts: [
-      session('2026-10-13', [BENCH, SQUAT]),
-      // back: only the upper back this week; hamstrings a month ago
-      session('2026-10-14', [PULLDOWN]), session('2026-09-10', ['0586']),
+      // ten sets of bench help shoulders and triceps too; a single set of pulldowns is not a week
+      session('2026-10-12', [BENCH, SQUAT], Array.from({ length: 10 }, () => row())),
+      session('2026-10-14', [PULLDOWN]),
     ] })
-    const st = muscleStatus(S, TODAY)
-    const top = suggestedGroups(st, TODAY, 20)
+    const top = suggestedGroups(weeklyNeed(S, ALL, NOW), [], 20)
     expect(top).not.toContain('chest')
     expect(top).not.toContain('quads')
-    // a group never trained outranks one with some of it done this week
-    expect(top.indexOf('shoulders')).toBeLessThan(top.indexOf('back'))
-    expect(suggestedGroups(st, TODAY)).toHaveLength(2)
+    expect(top).toContain('back')
+    expect(top.indexOf('biceps')).toBeLessThan(top.indexOf('shoulders'))
+    expect(suggestedGroups(weeklyNeed(S, ALL, NOW))).toHaveLength(2)
+  })
+  it('leaves out a group the session already covers', () => {
+    const need = weeklyNeed(state(), ALL, NOW)
+    expect(suggestedGroups(need, [], 20)).toContain('chest')
+    expect(suggestedGroups(need, [{ id: BENCH, sets: [] }], 20)).not.toContain('chest')
   })
 })
 
@@ -77,7 +89,7 @@ describe('groupExercises', () => {
     expect(ids.slice(2, 4)).toEqual(STAPLES.chest.filter(id => id !== BENCH && id !== DBBENCH).slice(0, 2))
     expect(sections[0].list.every(e => primaryMuscleOf(e)?.slug === 'chest')).toBe(true)
   })
-  it('puts areas not trained this week before the ones that were', () => {
+  it('puts areas not trained in the last 7 days before the ones that were', () => {
     const S = state({ workouts: [session('2026-10-13', [PULLDOWN])] })
     const { sections } = groupExercises(S, 'back', { status: muscleStatus(S, TODAY) })
     expect(sections.map(s => s.m)).toEqual(['lower-back', 'trapezius', 'upper-back'])
@@ -102,6 +114,29 @@ describe('groupExercises', () => {
     const ids = groupExercises(S, 'chest').sections[0].list.map(e => e.id)
     expect(ids).not.toContain(BENCH)
     expect(ids).toContain(DBBENCH)
+  })
+})
+
+describe('groupExercises, ranked by the session’s gaps', () => {
+  const gapsOf = S => ({ need: weeklyNeed(S, ALL, NOW), history: variantHistory(S) })
+  it('after a flat barbell bench, a fresh variation comes first', () => {
+    const S = state({ workouts: [session('2026-10-01', [BENCH])] })
+    const [first] = groupExercises(S, 'chest', { gaps: gapsOf(S), status: muscleStatus(S, TODAY) }).sections[0].list
+    expect(variantOf(first)).not.toMatchObject({ angle: 'flat' })
+    expect(variantOf(first).tool).not.toBe('barbell')
+  })
+  it('with the shoulders done today, a press that needs them waits behind one that does not', () => {
+    const S = state({ workouts: [session('2026-10-01', [BENCH])] })
+    const have = [{ id: '0426', sets: [] }, { id: '0241', sets: [] }]  // overhead press, pushdown
+    const plain = groupExercises(S, 'chest', { have, status: muscleStatus(S, TODAY, have) }).sections[0].list.map(e => e.id)
+    const ranked = groupExercises(S, 'chest', { have, gaps: gapsOf(S), status: muscleStatus(S, TODAY, have) }).sections[0].list.map(e => e.id)
+    expect(new Set(ranked)).toEqual(new Set(plain))
+    expect(ranked).not.toEqual(plain)
+  })
+  it('a routine’s exercises are left out the way a workout’s are', () => {
+    const { hidden, sections } = groupExercises(state(), 'chest', { have: [{ id: BENCH, sets: 3 }] })
+    expect(hidden).toBe(1)
+    expect(sections[0].list.map(e => e.id)).not.toContain(BENCH)
   })
 })
 

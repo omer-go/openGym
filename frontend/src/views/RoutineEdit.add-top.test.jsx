@@ -8,13 +8,13 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({})) }))
-vi.mock('../sheets.jsx', () => ({ exConfigSheet: vi.fn(), exercisePicker: vi.fn(), glyphPicker: vi.fn(), confirmSheet: vi.fn() }))
+vi.mock('../sheets.jsx', () => ({ exConfigSheet: vi.fn(), exercisePicker: vi.fn(), addExerciseSheet: vi.fn(), glyphPicker: vi.fn(), confirmSheet: vi.fn() }))
 vi.mock('../components/Media.jsx', () => ({ Thumb: () => null }))
 vi.mock('../components/BodyMap.jsx', () => ({ default: () => null }))
 
 import RoutineEdit from './RoutineEdit.jsx'
 import { DEF, useStore } from '../store/useStore.js'
-import { exercisePicker, exConfigSheet } from '../sheets.jsx'
+import { addExerciseSheet, exConfigSheet } from '../sheets.jsx'
 import { EXIDX } from '../lib/exercises.js'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -55,7 +55,9 @@ describe('RoutineEdit — Add exercise at the top', () => {
   it('adds at the defaults from "+", and through the settings from a tap', () => {
     mount([])
     act(() => addButton().click())
-    const onPick = exercisePicker.mock.calls[0][0]
+    // the workout's Add exercise, with the routine as its session
+    const [onPick, opts] = addExerciseSheet.mock.calls[0]
+    expect(opts.routineId).toBeTruthy()
     const ex = EXIDX['0025']
     act(() => onPick(ex, true))
     expect(stored().map(e => e.id)).toEqual(['0025'])
