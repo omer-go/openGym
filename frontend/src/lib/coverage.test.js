@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, groupCredit, weeklyDone, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
+import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, weeklyDone, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
 import { generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -54,6 +54,27 @@ describe('weeklyNeed', () => {
     const need = weeklyNeed(st, ['chest', 'quads'], NOW)
     expect(need.quads).toBe(1)
     expect(need.chest).toBeLessThan(1 - 4 / WEEKLY_TARGET)
+  })
+})
+
+describe('group sets over a period (Stats)', () => {
+  it('counts credit × completed work sets, and `keep` narrows them', () => {
+    const w = session('2026-09-14', [BENCH], [row({ rir: 1 }), row({ rir: 4 }), row({ warmup: true, rir: 0 }), row({ done: false, rir: 0 })])
+    expect(groupSetsOf([w])).toEqual({ chest: 2, shoulders: 0.8, triceps: 0.8 })
+    expect(groupSetsOf([w], s => s.rir <= 2).chest).toBe(1)
+  })
+  it('averages a week over the period, cut to the first workout in it', () => {
+    const NOW = at(2026, 9, 29)
+    const ws = [session('2026-09-15', [BENCH], sets(10)), session('2026-09-22', [BENCH], sets(10))] // two weeks of 10
+    expect(groupSetsPerWeek(ws, 90, NOW).chest).toBeCloseTo(10)  // not 20 over 13 weeks
+    expect(groupSetsPerWeek(ws, 0, NOW).chest).toBeCloseTo(10)
+    expect(groupSetsPerWeek(ws, 30, NOW + 14 * 864e5).chest).toBeCloseTo(20 / (28 / 7))
+  })
+  it('is never less than a week, and leaves out what falls outside the period', () => {
+    const NOW = at(2026, 9, 29)
+    expect(groupSetsPerWeek([session('2026-09-28', [BENCH], sets(4))], 30, NOW).chest).toBe(4)
+    expect(groupSetsPerWeek([session('2026-06-01', [BENCH])], 30, NOW)).toEqual({})
+    expect(groupSetsPerWeek([session('2026-10-01', [BENCH])], 30, NOW)).toEqual({})
   })
 })
 

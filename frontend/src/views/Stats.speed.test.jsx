@@ -23,7 +23,7 @@ const session = (d, speeds) => ({
   entries: [{ id: BIKE, target: { id: BIKE, sets: speeds.length, min: 20, speed: 8 }, sets: speeds.map(speed => ({ min: 20, speed, done: true })) }],
 })
 let root, host
-afterEach(() => { act(() => root.unmount()); host.remove(); mocks.charts = [] })
+afterEach(() => { act(() => root.unmount()); host.remove(); mocks.charts = []; window.location.hash = '' })
 
 function mount(settings) {
   mocks.S = { body: 'male', effort: 'none', targetW: null, bodyweight: [], routines: [], exWeights: {}, ...settings,
@@ -31,6 +31,7 @@ function mount(settings) {
   host = document.createElement('div')
   document.body.appendChild(host)
   root = createRoot(host)
+  window.location.hash = '#/stats?tab=progress' // the charts live on the Progress tab
   act(() => root.render(<Stats />))
   return mocks.charts.find(c => c.color === 'var(--blue)')
 }

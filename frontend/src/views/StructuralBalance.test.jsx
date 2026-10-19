@@ -200,6 +200,9 @@ describe('StructuralBalance view', () => {
 })
 
 describe('the way in from Stats', () => {
+  // on the Progress tab, with the other charts
+  beforeEach(() => { window.location.hash = '#/stats?tab=progress' })
+  afterEach(() => { window.location.hash = '' })
   it('is a card like the others that opens the screen, once there is a workout to read', () => {
     const host = render(Stats)
     const card = [...host.querySelectorAll('.card')].find(c => c.querySelector('h2')?.textContent === 'Structural balance')

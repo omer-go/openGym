@@ -31,6 +31,7 @@ import { primaryMuscleOf } from './strength-exercises.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { fatigueOf } from './recovery.js'
 import { isoOf } from './format.js'
+import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
 
 export const WEEKLY_TARGET = 10
@@ -92,19 +93,41 @@ export function sessionCredit(entries) {
   return out
 }
 
+/**
+ * Effective sets per group the logged workouts did: credit × completed work sets. `keep` narrows
+ * the sets counted (Stats passes the hard-set test).
+ */
+export function groupSetsOf(workouts, keep = null) {
+  const out = {}
+  for (const w of workouts || []) {
+    for (const entry of w?.entries || []) {
+      const n = keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry)
+      if (!n) continue
+      for (const [g, c] of Object.entries(groupCredit(entryWeights(entry)))) out[g] = (out[g] || 0) + c * n
+    }
+  }
+  return out
+}
+
+/**
+ * Effective sets per group a week, averaged over the `days` before `now` (0: all of it). A period
+ * longer than the training is cut to the first workout in it, so a fortnight of training read
+ * over 90 days is not a third of what it was. Never less than a week.
+ */
+export function groupSetsPerWeek(workouts, days, now = Date.now(), keep = null) {
+  const from = days ? now - days * 864e5 : -Infinity
+  const inWin = (workouts || []).filter(w => { const at = workoutAt(w); return at > from && at <= now })
+  if (!inWin.length) return {}
+  const first = Math.min(...inWin.map(workoutAt))
+  const weeks = Math.max(1, (now - Math.max(from, first)) / (7 * 864e5))
+  const total = groupSetsOf(inWin, keep)
+  return Object.fromEntries(Object.entries(total).map(([g, v]) => [g, v / weeks]))
+}
+
 /** Effective sets per group over the 7 days up to `now` (today counts as one of them). */
 export function weeklyDone(S, now = Date.now()) {
   const today = isoOf(new Date(now)), from = isoOf(new Date(now - 7 * 864e5))
-  const done = {}
-  for (const w of S?.workouts || []) {
-    if (typeof w?.d !== 'string' || w.d <= from || w.d > today) continue
-    for (const entry of w.entries || []) {
-      const n = workSets(entry)
-      if (!n) continue
-      for (const [g, c] of Object.entries(groupCredit(entryWeights(entry)))) done[g] = (done[g] || 0) + c * n
-    }
-  }
-  return done
+  return groupSetsOf((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d > from && w.d <= today))
 }
 
 /** Group id -> how much it still needs this week, 0–1, for the `groups` given. */

@@ -30,13 +30,14 @@ const session = (ago, w) => {
   }
 }
 let root, host
-afterEach(() => { act(() => root.unmount()); host.remove(); mocks.charts = [] })
+afterEach(() => { act(() => root.unmount()); host.remove(); mocks.charts = []; window.location.hash = '' })
 
 function mount(workouts) {
   mocks.S = { body: 'male', effort: 'none', unit: 'kg', targetW: null, bodyweight: [], routines: [], exWeights: {}, workouts }
   host = document.createElement('div')
   document.body.appendChild(host)
   root = createRoot(host)
+  window.location.hash = '#/stats?tab=progress' // the charts live on the Progress tab
   act(() => root.render(<Stats />))
 }
 // The exercise card's chart is the last one drawn; the body weight chart has no colour of its own.

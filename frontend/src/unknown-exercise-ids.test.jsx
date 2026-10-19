@@ -150,7 +150,9 @@ describe('exercise ids this build does not know', () => {
 
   it('Stats draws it, and its exercise picker leaves out the id it has no name for', () => {
     seed()
+    window.location.hash = '#/stats?tab=progress'
     const host = render(<Stats />)
+    window.location.hash = ''
     // Exercise progress opens on the known lift: an id with no name to show is left out of
     // the picker (Stats.jsx exHist), not charted as a bare number.
     expect(host.textContent).toContain('Barbell Full Squat · 100 kg')

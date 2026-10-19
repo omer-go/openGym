@@ -168,8 +168,10 @@ function installDom() {
   root = createRoot(container)
 }
 
-async function mountStats() {
+// The muscle maps are on the Muscles tab, Effort and Exercise progress on Progress.
+async function mountStats(tab = 'muscles') {
   installDom()
+  dom.location.hash = '#/stats?tab=' + tab
   await act(async () => { root.render(React.createElement(React.Fragment, null, React.createElement(Stats), React.createElement(Modals))) })
 }
 
@@ -349,7 +351,7 @@ describe('Stats estimated effort', () => {
     resetFixture([workout('unrated', BASE_NOW, [
       entry('0025', Array.from({ length: 6 }, () => set(true, { w: 80, r: 8 }))),
     ])])
-    await mountStats()
+    await mountStats('progress')
     const head = effortHead()
     expect(head, 'expected an Effort card for estimable history').toBeTruthy()
     // Six self-anchored sets estimate RIR 0: a real average with an honest badge.
@@ -361,7 +363,7 @@ describe('Stats estimated effort', () => {
     resetFixture([workout('rated', BASE_NOW, [
       entry('0025', Array.from({ length: 6 }, () => set(true, { w: 80, r: 8, rir: 2 }))),
     ])])
-    await mountStats()
+    await mountStats('progress')
     const head = effortHead()
     expect(head, 'expected an Effort card for rated history').toBeTruthy()
     expect(head.textContent).not.toContain('estimated')
@@ -419,7 +421,7 @@ describe('Stats exercise progress picker', () => {
     resetFixture([workout('legacy-topw', BASE_NOW, [
       { id: '0025', target: { mode: 'reps' }, topW: 70, sets: [] },
     ])])
-    await mountStats()
+    await mountStats('progress')
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
     expect(card.textContent).toContain('70 kg')
@@ -433,7 +435,7 @@ describe('Stats exercise progress picker', () => {
       { id: '0025', target: { mode: 'reps' }, topW: 70, sets: [] },
       { id: '0025', target: { mode: 'reps' }, topW: 60, sets: [] },
     ])])
-    await mountStats()
+    await mountStats('progress')
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
     expect(card.textContent).toContain('70 kg')
@@ -447,7 +449,7 @@ describe('Stats exercise progress picker', () => {
       entry('0025', [set(true, { w: 50, r: 5 })]),
       { id: '0025', target: { mode: 'reps' }, topW: 70, sets: [] },
     ])])
-    await mountStats()
+    await mountStats('progress')
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
     expect(card.textContent).toContain('70 kg')
@@ -461,7 +463,7 @@ describe('Stats exercise progress picker', () => {
       entry('0025', [set(true, { w: 60, r: 5 })]),
       entry('0025', [set(true, { w: 80, r: 5 })]),
     ])])
-    await mountStats()
+    await mountStats('progress')
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
     expect(card.textContent).toContain('80 kg')
@@ -476,7 +478,7 @@ describe('Stats exercise progress picker', () => {
       entry('0017', [set(true, { w: 30, r: 8 })]),
       entry('0017', [set(true, { w: 20, r: 8 })]),
     ])])
-    await mountStats()
+    await mountStats('progress')
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
     expect(card.textContent).toContain('20 kg')
@@ -487,7 +489,7 @@ describe('Stats exercise progress picker', () => {
 
   it('filters with the shared exercise matcher and still selects from the mounted sheet', async () => {
     resetFixture(exercisePickerWorkouts())
-    await mountStats()
+    await mountStats('progress')
     expect(EXIDX[LEGACY_SNAPSHOT_ID]).toBeUndefined()
 
     const card = [...container.querySelectorAll('.card')].find(el => el.querySelector('h2')?.textContent.trim() === 'Exercise progress')
