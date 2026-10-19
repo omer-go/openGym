@@ -95,8 +95,7 @@ if you want to try it before installing anything.
   ATG), a year-long activity heatmap.
 - A muscle map in three modes: where your volume went, what is still recovering, and what has gone
   untrained.
-- Body-weight chart against a goal line, and progress photos on a timeline with a before/after
-  slider.
+- Body-weight chart against a goal line.
 - Edit any saved workout after the fact, log one you did on paper, or move it to the right date.
   Records are re-read from the corrected history.
 

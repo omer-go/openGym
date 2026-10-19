@@ -16,7 +16,6 @@ import { nav, closeThenNav, navToWorkout } from './lib/nav.js'
 import { buildStarterPlan, starterPlanDays, starterPlanOptions } from './lib/starter.js'
 import Media, { Thumb } from './components/Media.jsx'
 import CustomMediaField from './components/CustomMediaField.jsx'
-import WorkoutMediaSection, { workoutMediaCount, serverTakesWorkoutMedia } from './components/WorkoutMedia.jsx'
 import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf } from './lib/media-refs.js'
 import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
@@ -2618,9 +2617,6 @@ function WorkoutDetail({ w, close }) {
   // anywhere) renders flat.
   const groups = sessionSections(w.entries)
   const grouped = groups.length > 1 || (groups[0] && groups[0].rid && (w.routineIds || []).length > 1)
-  const mediaN = workoutMediaCount(rec)
-  // A server that keeps no photos or videos has nothing to show for a workout without any.
-  const mediaOffered = useStore(s => mediaN > 0 || serverTakesWorkoutMedia(s.user, s.config))
   const busy = st.active ? t('Finish the current workout first.') : undefined
   // Everything you do to a saved workout once, behind one button: the sheet is for reading it.
   const actions = () => menuSheet({
@@ -2647,11 +2643,7 @@ function WorkoutDetail({ w, close }) {
         }
       }) },
     ] }, { items: [
-      // Photos, videos and the note are kept with the workout but are not what you open it to read.
-      mediaOffered && { icon: 'image', label: t('Photos & videos'), sub: mediaN ? tn('{0} photo or video', '{0} photos or videos', mediaN) : undefined, onClick: () => ui().openSheet(() => <>
-        <h3>{t('Photos & videos')}</h3>
-        <div className="wd-media"><WorkoutMediaSection w={w} /></div>
-      </>) },
+      // The note is kept with the workout but is not what you open it to read.
       { icon: 'note', label: t('Session note'), sub: rec.note ? rec.note.slice(0, 60) : undefined, onClick: () => ui().openSheet(c2 => <WorkoutNoteSheet w={w} close={c2} />) },
     ] }, { items: [
       { icon: 'copy', label: t('Copy as text'), onClick: copyAsText },
@@ -2836,12 +2828,10 @@ export const calendarSheet = start => ui().openSheet(close => <Calendar start={s
 export function WorkoutRow({ w, onClick, icon, color }) {
   const st = useStore(s => s.S)
   const glyph = icon || glyphOf((st.routines.find(r => r.id === w.routineId) || {}).emoji)
-  const mediaN = workoutMediaCount(w)
   return <div className="item" {...tappable(onClick)}>
     <span className="lrow-i" style={{ width: 34, height: 34, borderRadius: 8, fontSize: 19, ...(color ? { background: `color-mix(in srgb,${color} 22%,transparent)`, color } : {}) }}><Icon name={glyph} /></span>
     <div className="grow"><div className="tt">{w.name}</div>
       <div className="ss">{[fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(w.vol, st.unit)].join(' · ')}</div></div>
-    {mediaN > 0 && <span className="wrow-media" title={tn('{0} photo or video', '{0} photos or videos', mediaN)} aria-label={tn('{0} photo or video', '{0} photos or videos', mediaN)}><Icon name="image" />{mediaN}</span>}
     {w.prs && w.prs.length > 0 && <span className="pr"><Icon name="trophy" />{w.prs.length} PR</span>}
     <Icon name="chevronRight" className="chev" />
   </div>
@@ -3558,9 +3548,6 @@ function FinishSummary({ w, prs, e1prs = [], close }) {
     <div style={{ height: 14 }} />
     <LastAndNext st={st} w={w} />
     <CardioDone st={st} w={w} />
-    {/* The moment for a progress photo or the clip of a set: the workout is already saved, so
-        what is added here goes straight onto its record. */}
-    <div style={{ textAlign: 'start' }}><WorkoutMediaSection w={w} hint /></div>
     <Button variant="primary" onClick={() => closeThenNav(close, '/home')}>{t('Nice!')}</Button>
   </div>
 }

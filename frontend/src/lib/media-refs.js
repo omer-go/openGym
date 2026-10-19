@@ -94,7 +94,7 @@ export const WORKOUT_MEDIA_MAX = 6
  * a file listed twice shows once, and never more than `max` — WORKOUT_MEDIA_MAX unless the
  * caller asks otherwise (a hand-edited or foreign copy can hold anything). Oldest first, the
  * order they were added in. A reading, never a rewrite: the list on the record keeps whatever
- * this leaves out (lib/workout-media.js edits it as it stands).
+ * this leaves out.
  */
 export function workoutMediaOf(w, max = WORKOUT_MEDIA_MAX) {
   const raw = w && typeof w === 'object' && Array.isArray(w.media) ? w.media : []

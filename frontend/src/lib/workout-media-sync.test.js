@@ -1,10 +1,10 @@
-// The photos and videos of a logged workout: the list on the saved record (add, remove, cap,
-// stamp), what the sync merge keeps of it, what the history editor does with it, and the places
-// that must never carry it (copy as text, a routine saved from the workout, a plan file).
+// The photos and videos already saved on a logged workout. Nothing adds new ones any more, but the
+// record keeps them: what the sync merge keeps of the list, what the history editor does with it,
+// and the places that must never carry it (copy as text, a routine saved from the workout, a plan
+// file).
 import { describe, expect, it } from 'vitest'
-import { addWorkoutMedia, removeWorkoutMedia } from './workout-media.js'
-import { WORKOUT_MEDIA_MAX, workoutMediaOf, referencedHashes, referencedFiles, stateMediaRefs } from './media-refs.js'
-import { mergeStates } from './sync-merge.js'
+import { workoutMediaOf, referencedHashes, referencedFiles, stateMediaRefs } from './media-refs.js'
+import { mergeStates, stampWorkout } from './sync-merge.js'
 import { editCompletedSession, saveWorkoutEdit } from './session-edit.js'
 import { workoutText } from './workout-text.js'
 import { saveSessionAsRoutine } from './session-routines.js'
@@ -17,71 +17,16 @@ const set = (w, r) => ({ w, r, done: true })
 const workout = over => ({ id: 'w1', d: '2026-09-20', start: 1000, end: 4000, name: 'Push', routineIds: [], routineId: null, entries: [{ id: 'bench', sets: [set(60, 5)], topW: 60, target: null }], prs: [], vol: 300, ...over })
 const state = (...ws) => ({ unit: 'kg', workouts: ws, routines: [], customEx: [], exWeights: {}, bodyweight: [], active: null })
 
-describe('addWorkoutMedia / removeWorkoutMedia', () => {
-  it('adds a normalised ref to the saved record and stamps it', () => {
-    const S = state(workout())
-    expect(addWorkoutMedia(S, { id: 'w1' }, { ...photo(H(1), H(2)), name: 'IMG_1.HEIC' }, 777)).toBe('added')
-    expect(S.workouts[0].media).toEqual([photo(H(1), H(2))])
-    expect(S.workouts[0]._ts).toBe(777)
-  })
-
-  it('finds a workout from before ids by its day and start', () => {
-    const legacy = workout({ id: undefined })
-    delete legacy.id
-    const S = state(legacy)
-    expect(addWorkoutMedia(S, { d: legacy.d, start: legacy.start }, photo(H(1)), 5)).toBe('added')
-    expect(S.workouts[0].media).toHaveLength(1)
-    expect(S.workouts[0].id).toBeUndefined()
-  })
-
-  it('refuses a malformed ref, the same file twice, a deleted workout and a seventh item — without stamping', () => {
-    const S = state(workout({ _ts: 3 }))
-    expect(addWorkoutMedia(S, { id: 'w1' }, { ...photo(H(1)), mime: 'image/svg+xml' }, 9)).toBe('invalid')
-    expect(addWorkoutMedia(S, { id: 'nope' }, photo(H(1)), 9)).toBe('gone')
-    expect(S.workouts[0]._ts).toBe(3)
-    for (let i = 0; i < WORKOUT_MEDIA_MAX; i++) expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(i)), 10 + i)).toBe('added')
-    expect(workoutMediaOf(S.workouts[0])).toHaveLength(WORKOUT_MEDIA_MAX)
-    const stamp = S.workouts[0]._ts
-    expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(0)), 99)).toBe('dup')
-    expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(9)), 99)).toBe('full')
-    expect(S.workouts[0].media).toHaveLength(WORKOUT_MEDIA_MAX)
-    expect(S.workouts[0]._ts).toBe(stamp)
-  })
-
-  it('removes one by hash, stamps, and drops the field with the last one', () => {
-    const S = state(workout({ media: [photo(H(1)), clip(H(2), H(3))] }))
-    expect(removeWorkoutMedia(S, { id: 'w1' }, H(1), 50)).toBe(true)
-    expect(S.workouts[0].media.map(m => m.hash)).toEqual([H(2)])
-    expect(S.workouts[0]._ts).toBe(50)
-    expect(removeWorkoutMedia(S, { id: 'w1' }, H(1), 60)).toBe(false)
-    expect(S.workouts[0]._ts).toBe(50)
-    expect(removeWorkoutMedia(S, { id: 'w1' }, H(2), 70)).toBe(true)
-    expect('media' in S.workouts[0]).toBe(false)
-    // …and its files are no longer referenced: the GCs take them (after the server's grace).
-    expect(referencedHashes(S).size).toBe(0)
-  })
-
-  it('edits the list as it stands: a ref it cannot show, one past the cap and unknown fields stay on the record', () => {
-    const future = { kind: 'model3d', hash: H(7), mime: 'model/gltf-binary', size: 10, width: 1, height: 1, at: 1 }
-    const tagged = { ...photo(H(1)), caption: 'front' }
-    const many = [tagged, future, ...[2, 3, 4, 5, 6, 8].map(n => photo(H(n)))]   // seven that show
-    const S = state(workout({ _ts: 3, media: structuredClone(many) }))
-    expect(workoutMediaOf(S.workouts[0])).toHaveLength(WORKOUT_MEDIA_MAX)
-    expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(9)), 9)).toBe('full')
-    expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(8)), 9)).toBe('dup')   // past the cap, still on it
-    expect(S.workouts[0].media).toEqual(many)
-    expect(removeWorkoutMedia(S, { id: 'w1' }, H(3), 10)).toBe(true)
-    expect(S.workouts[0].media).toEqual(many.filter(m => m.hash !== H(3)))
-    // The one past the cap moves up into view; the unknown kind and the caption are still there.
-    expect(workoutMediaOf(S.workouts[0]).map(m => m.hash)).toEqual([1, 2, 4, 5, 6, 8].map(H))
-    expect(S.workouts[0].media[0].caption).toBe('front')
-    // With room again, an add goes on the end of the raw list.
-    expect(removeWorkoutMedia(S, { id: 'w1' }, H(4), 11)).toBe(true)
-    expect(addWorkoutMedia(S, { id: 'w1' }, photo(H(9)), 12)).toBe('added')
-    expect(S.workouts[0].media.at(-1)).toEqual(photo(H(9)))
-    expect(S.workouts[0].media[1]).toEqual(future)
-  })
-})
+// An edit of the list as another device (or an older version) makes it: the saved record changed
+// and stamped, the way any edit of a saved workout is.
+const addMedia = (S, ref, now) => { const w = S.workouts[0]; w.media = [...(w.media || []), ref]; stampWorkout(w, now) }
+const removeMedia = (S, hash, now) => {
+  const w = S.workouts[0]
+  const left = (w.media || []).filter(m => m.hash !== hash)
+  if (left.length) w.media = left
+  else delete w.media
+  stampWorkout(w, now)
+}
 
 describe('workoutMediaOf / the state walk', () => {
   it('shows only valid refs, each file once, at most six', () => {
@@ -109,7 +54,7 @@ describe('the sync keeps a media edit', () => {
   it('a photo added on the phone survives the desktop copy that is newer as a whole', () => {
     const base = state(workout({ _ts: 10 }))
     const phone = structuredClone(base)
-    addWorkoutMedia(phone, { id: 'w1' }, photo(H(1)), 200)
+    addMedia(phone, photo(H(1)), 200)
     phone._ts = 200
     const desktop = structuredClone(base)
     desktop.bodyweight = [{ d: '2026-09-21', w: 80, t: 300 }]
@@ -123,7 +68,7 @@ describe('the sync keeps a media edit', () => {
   it('a photo added on one device survives the other device\'s later note edit of the same workout', () => {
     const base = state(workout({ _ts: 10 }))
     const phone = structuredClone(base)
-    addWorkoutMedia(phone, { id: 'w1' }, photo(H(1)), 200)
+    addMedia(phone, photo(H(1)), 200)
     phone._ts = 200
     const desktop = structuredClone(base)
     desktop.workouts[0].note = 'Felt strong'
@@ -139,10 +84,10 @@ describe('the sync keeps a media edit', () => {
   it('a photo on each device: both are kept, the later-edited copy\'s first', () => {
     const base = state(workout({ _ts: 10, media: [photo(H(1))] }))
     const phone = structuredClone(base)
-    addWorkoutMedia(phone, { id: 'w1' }, photo(H(2)), 200)
+    addMedia(phone, photo(H(2)), 200)
     phone._ts = 200
     const desktop = structuredClone(base)
-    addWorkoutMedia(desktop, { id: 'w1' }, clip(H(3), H(4)), 300)
+    addMedia(desktop, clip(H(3), H(4)), 300)
     desktop._ts = 300
     for (const merged of [mergeStates(desktop, phone), mergeStates(phone, desktop)]) {
       expect(merged.workouts[0].media.map(m => m.hash)).toEqual([H(1), H(3), H(2)])
@@ -153,7 +98,7 @@ describe('the sync keeps a media edit', () => {
   it('signing in (prefer) keeps the preferred version but not at the cost of the other\'s photo', () => {
     const base = state(workout({ _ts: 10 }))
     const device = structuredClone(base)
-    addWorkoutMedia(device, { id: 'w1' }, photo(H(1)), 200)
+    addMedia(device, photo(H(1)), 200)
     const server = structuredClone(base)
     server.workouts[0].note = 'server'
     const merged = mergeStates(server, device, { prefer: 'a' })
@@ -164,7 +109,7 @@ describe('the sync keeps a media edit', () => {
   it('a removal inside the conflict window comes back from the copy that still lists it (resurrected beats lost); one already pulled sticks', () => {
     const base = state(workout({ _ts: 10, media: [photo(H(1)), photo(H(2))] }))
     const a = structuredClone(base)
-    removeWorkoutMedia(a, { id: 'w1' }, H(1), 200)
+    removeMedia(a, H(1), 200)
     a._ts = 200
     const b = structuredClone(base)
     b._ts = 400
@@ -180,7 +125,7 @@ describe('the sync keeps a media edit', () => {
     const base = state(workout({ _ts: 10 }))
     base.exWeights = { bench: { w: 60, d: '2026-09-20' } }
     const a = structuredClone(base)
-    addWorkoutMedia(a, { id: 'w1' }, photo(H(1)), 200)
+    addMedia(a, photo(H(1)), 200)
     const b = structuredClone(base)
     b.exWeights = { bench: { w: 65, d: '2026-09-22' } }
     b._ts = 300
@@ -199,10 +144,10 @@ describe('the history editor (#203) leaves a workout\'s media on the record', ()
     expect(referencedHashes(S)).toEqual(new Set([H(1)]))
   })
 
-  it('a photo removed from the detail sheet while the editor was open stays removed', () => {
+  it('a photo removed on another device while the editor was open stays removed', () => {
     const S = state(workout({ media: [photo(H(1)), photo(H(2))] }))
     editCompletedSession(S, 'w1')
-    removeWorkoutMedia(S, { id: 'w1' }, H(1), 400)
+    removeMedia(S, H(1), 400)
     S.active.entries[0].sets[0].r = 6
     const saved = saveWorkoutEdit(S, 500)
     expect(saved.media.map(m => m.hash)).toEqual([H(2)])

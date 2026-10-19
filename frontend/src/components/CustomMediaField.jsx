@@ -53,8 +53,7 @@ const loadIngest = () => import('../lib/media-ingest.js').catch(() => {
 const KIND_ICON = { image: 'image', gif: 'play', video: 'play' }
 
 /**
- * The picking half of a media field, shared by the custom-exercise editor and a workout's photos
- * and videos (WorkoutMedia.jsx) so both run the very same ingest and store path. pick(file)
+ * The picking half of the custom-exercise editor's media field. pick(file)
  * turns a picked file into what the state keeps (lib/media-ingest.js: re-encoded or scrubbed,
  * hashed, with a poster), puts its files into the local store as pending, and resolves the
  * MediaRef — or null after it toasted why not. `note` is the dim line that says where the files

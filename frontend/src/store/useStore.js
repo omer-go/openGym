@@ -77,14 +77,6 @@ function logoutOwed(on) {
 const MIRROR_OWNER_FILE = 'opengym-state-owner.json'
 const CHECK_MIN_MS = 3000    // rev checks closer together than this are the same event (focus + visibility)
 const POLL_MS = 30000        // while the app is open and signed in, ask the server for its revision this often
-const AUTO_BACKUP_SOON_MS = 2000   // several photos picked at once make one backup
-// Whether `next` has a workout photo or video that `prev` had on none of its workouts.
-const workoutMediaHashes = S => (Array.isArray(S?.workouts) ? S.workouts : [])
-  .flatMap(w => (Array.isArray(w?.media) ? w.media.map(m => m?.hash).filter(h => typeof h === 'string' && h) : []))
-const gainedWorkoutMedia = (prev, next) => {
-  const had = new Set(workoutMediaHashes(prev))
-  return workoutMediaHashes(next).some(h => !had.has(h))
-}
 export const DEF = {
   unit: 'lb', restSec: 90, restPauseSec: 15, sound: true, soundOnSilent: false, vibrateOnSilent: false, timerFlash: false, timedSetOvertime: false, keepAwake: true, lang: 'en',
   theme: 'dark', accent: 'lime', body: 'male', targetW: null,
@@ -312,7 +304,6 @@ export const useStore = create((set, get) => {
   let lastCheck = 0
   let pollTm = null
   let offlineChanges = false   // a push failed for lack of network — the next one that lands says so
-  let backupTm = null      // phone: the auto-backup after workout media changed, on its debounce
   let adoptHold = false    // a sign-in's adoption has not decided yet: no pull, no push (ADOPT_KEY)
   let adopting = null      // the adoptProfile in flight
   let rejoined = false     // the account signing in is the one this copy already belongs to (setUser)
@@ -1319,13 +1310,6 @@ export const useStore = create((set, get) => {
       // (lib/sync-merge.js stampChange).
       S._ts = stampChange(prev, S, Date.now())
       persist(S, push)
-      // A photo or video added to a workout is a change worth the day's backup too: the one
-      // finishing wrote went before the finish screen's pictures (autoBackupNow). Not a removal,
-      // nor a workout deleted: the day's copy then still holds what was taken off, as a backup should.
-      if (MOBILE && S.autoBackup && gainedWorkoutMedia(prev, S)) {
-        clearTimeout(backupTm)
-        backupTm = setTimeout(() => { backupTm = null; get().autoBackupNow() }, AUTO_BACKUP_SOON_MS)
-      }
     },
     // An edit of a saved workout (lib/session-edit.js) is saved or dropped like any other change:
     // the store's own sync takes it to the server, and a conflict on the way is settled by
