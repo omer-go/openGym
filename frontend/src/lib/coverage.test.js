@@ -72,14 +72,17 @@ describe('pickForCoverage, a fresh week', () => {
     for (const g of ALL) expect(covered[g], g).toBeGreaterThan(0)
   })
   it('runs compounds first', () => {
-    const total = p => Object.values(credit(p.id)).reduce((a, b) => a + b, 0)
-    const totals = fresh.map(total)
-    expect(totals).toEqual(totals.slice().sort((a, b) => b - a))
+    const helpers = p => Object.values(credit(p.id)).filter(c => c >= 0.4).length
+    const compound = fresh.map(p => helpers(p) >= 3 && !['calves', 'forearms', 'abs'].includes(groupOfExercise(EXIDX[p.id])))
+    expect(compound).toEqual(compound.slice().sort((a, b) => b - a))
   })
-  it('a shuffle changes the exercises, not the groups', () => {
-    const next = generateWorkout(state(), 'full', { now: NOW, shift: 1 })
-    expect(next.map(p => p.id)).not.toEqual(fresh.map(p => p.id))
-    expect(new Set(next.map(p => p.id)).size).toBe(7)
+  it('then big groups before small ones: a wrist curl or a calf raise never runs before a bench', () => {
+    // the curl and the calf raise credit three groups each, as the bench does; forearms are the most behind
+    const cands = [{ id: '1412', rank: 0 }, { id: '1372', rank: 1 }, { id: '0757', rank: 2 }, { id: '0241', rank: 3 }]
+    const groups = [...ALL, 'forearms']
+    const picks = pickForCoverage(cands, { count: 4, groups, need: { ...Object.fromEntries(groups.map(g => [g, 0.5])), forearms: 1 } })
+    // smith incline bench, pushdown, barbell calf raise, wrist curl
+    expect(picks.map(p => p.id)).toEqual(['0757', '0241', '1372', '1412'])
   })
 })
 

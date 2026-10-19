@@ -181,6 +181,16 @@ const distance = (a, b) => {
   return d
 }
 
+// The order a session runs in: compounds for the big groups first, then the big groups before the
+// small ones, abs last; within a group, the exercise that trains more. The catalogue credits a
+// barbell calf raise or a wrist curl over a bench to three groups, so a small group never counts
+// as a compound. Array#sort is stable: what still ties keeps the order it was picked in.
+const BIG_FIRST = ['quads', 'glutes', 'hamstrings', 'back', 'chest', 'shoulders', 'triceps', 'biceps', 'calves', 'forearms', 'abs']
+const SMALL = new Set(['calves', 'forearms', 'abs'])
+const leads = c => c.compound && !SMALL.has(c.group)
+const runOrder = (a, b) => leads(b) - leads(a)
+  || BIG_FIRST.indexOf(a.group) - BIG_FIRST.indexOf(b.group) || b.total - a.total
+
 /**
  * `count` exercises from `candidates` ([{ id, rank }], rank lower = better known) that cover
  * the ticked `groups` best for their `need` (weeklyNeed), compounds first. `history` is
@@ -219,8 +229,7 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     picks.push(pick)
     for (const [g, a] of Object.entries(pick.credit)) covered[g] += a
   }
-  // Array#sort is stable: equal compounds keep the order they were picked in.
-  return picks.sort((a, b) => b.total - a.total).map(c => ({ id: c.id, slug: c.slug, group: c.group }))
+  return picks.sort(runOrder).map(c => ({ id: c.id, slug: c.slug, group: c.group }))
 }
 
 /**
