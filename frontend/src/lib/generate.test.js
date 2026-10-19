@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genSlots } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount } from './generate.js'
 import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
+import { groupOfExercise } from './muscle-colors.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const session = (d, ids, sets = [row()]) => ({ id: 'w' + d + ids.join(), d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets })) })
 const state = (over = {}) => ({ unit: 'kg', workouts: [], exWeights: {}, routines: [], ...over })
+const sets = n => Array.from({ length: n }, () => row())
+const NOW = new Date(2026, 8, 15, 12).getTime()
 
 // bench press (chest), lat pulldown (upper back), standing overhead press (shoulders), squat
 // (quads), barbell curl (biceps), pushdown (triceps), lying leg curl (hamstrings)
@@ -67,24 +70,16 @@ describe('generateWorkout', () => {
       expect(new Set(picks.map(p => p.id)).size, type).toBe(picks.length)
     }
   })
-  it('puts the muscle trained longest ago first, never trained before all', () => {
-    const st = state({ workouts: [session('2026-09-01', [OHP]), session('2026-09-08', [PUSHDOWN]), session('2026-09-12', [BENCH])] })
-    const picks = generateWorkout(st, 'push')
-    expect(picks.map(p => p.muscle)).toEqual(['deltoids', 'deltoids', 'triceps', 'triceps', 'chest', 'chest'])
-    expect(picks[0].last).toBe('2026-09-01')
-    // and with one muscle never trained, that one leads
-    const fresh = generateWorkout(state({ workouts: [session('2026-09-01', [OHP]), session('2026-09-12', [BENCH])] }), 'push')
-    expect(fresh[0]).toMatchObject({ muscle: 'triceps', last: null })
+  it('a muscle trained this week waits for the ones that were not', () => {
+    const st = state({ workouts: [session('2026-09-14', [BENCH], sets(5))] })
+    const picks = generateWorkout(st, 'push', { count: 2, now: NOW })
+    expect(picks.map(p => p.muscle)).not.toContain('chest')
+    expect(picks.every(p => p.last === null)).toBe(true)
   })
-  it('a slot with a choice goes to the staler muscle', () => {
-    const st = state({ workouts: [session('2026-09-01', [LEGCURL]), session('2026-09-10', ['1060'])] })
-    const picks = generateWorkout(st, 'full')
-    expect(picks.map(p => p.muscle)).toContain('hamstring')
-    expect(picks.map(p => p.muscle)).not.toContain('gluteal')
-  })
-  it('opens a muscle on an exercise you know before a staple', () => {
-    const st = state({ workouts: [session('2026-09-01', ['0293'])] })
-    expect(generateWorkout(st, 'pull').find(p => p.muscle === 'upper-back').id).toBe('0293')
+  it('a pick carries its muscle and when that muscle was last trained', () => {
+    const st = state({ workouts: [session('2026-09-01', [BENCH])] })
+    const chest = generateWorkout(st, 'push', { now: NOW }).find(p => p.muscle === 'chest')
+    expect(chest.last).toBe('2026-09-01')
   })
   it('a shift picks different exercises', () => {
     const a = generateWorkout(state(), 'legs').map(p => p.id)
@@ -137,13 +132,9 @@ describe('workout setup', () => {
   })
   it('unticked groups are left out and ticked ones the type lacks are added', () => {
     const picks = generateWorkout(state(), 'full', { count: 7, groups: ['chest', 'back', 'forearms'] })
-    const muscles = new Set(picks.map(p => p.muscle))
-    expect([...muscles].sort()).toEqual(['chest', 'forearm', 'upper-back'])
+    const groups = new Set(picks.map(p => groupOfExercise(EXIDX[p.id])))
+    expect([...groups].sort()).toEqual(['back', 'chest', 'forearms'])
     expect(picks).toHaveLength(7)
-  })
-  it('a choice slot keeps only its ticked muscle', () => {
-    const slots = genSlots('full', ['hamstrings', 'triceps'])
-    expect(slots.map(s => s.options)).toEqual([['hamstring'], ['triceps']])
   })
   it('no groups ticked means no lifts', () => {
     expect(generateWorkout(state(), 'full', { groups: [] })).toEqual([])

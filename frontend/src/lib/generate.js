@@ -1,15 +1,17 @@
-// One-tap workouts: a full-body, push, pull or leg session built from the muscles you have
-// trained least lately. Pure: reads state, returns picks and session entries, never writes.
+// One-tap workouts: a full-body, push, pull or leg session built from what your last 7 days
+// left short. Pure: reads state, returns picks and session entries, never writes.
 //
-// A day type is a list of slots, each a muscle (or a choice of two, 'a|b') and how many
-// exercises it gets. Each slot goes to its stalest muscle — the one whose last completed work
-// set is longest ago, never trained counting as the stalest of all — and the session is then
-// ordered stalest first, so the muscle that needs it most is the one you are freshest for.
+// A day type is the muscle groups it covers and how many exercises it has (GEN_TYPES, read as
+// groups by genGroupsOf). lib/coverage.js picks the exercises: each one is the one that adds the
+// most to the groups that still need it this week, secondary muscles counting too, so a squat
+// covers quads, glutes and some hamstrings at once. Among picks that cover about the same, the
+// bench angle and the tool done longest ago win, so the bench press rotates through incline,
+// decline, dumbbells and the smith machine. The session runs compounds first.
 //
-// Within a muscle, exercises you have already logged come first, longest-ago first so the
-// variety rotates; after them a short list of staple lifts, so a muscle you have never trained
-// opens on a bench press, not on whichever of 300 catalogue rows sorts first. `shift` walks each
-// muscle's list one further: Shuffle in the workout is a shift + 1.
+// Within a muscle, exercises you have already logged come first, longest-ago first; after them
+// a short list of staple lifts, so a muscle you have never trained opens on a bench press, not
+// on whichever of 300 catalogue rows sorts first. `shift` walks each choice one further:
+// Shuffle in the workout is a shift + 1.
 //
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
 // which muscle groups it covers, add a run and stretches, and set the sets, reps, rest and
@@ -18,10 +20,10 @@ import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf } from './muscles.js'
+import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { exAvailable } from './equipment.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, modeOf } from './history.js'
-import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
@@ -36,10 +38,11 @@ export const GEN_TYPES = {
 // English names, used as i18n keys where they are shown (t(GEN_NAME[type])).
 export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day', legs: 'Leg day' }
 
-// Staple lifts per muscle, best first. Only reached for exercises you have not logged yet.
+// Staple lifts per muscle, best first. Only reached for exercises you have not logged yet. The
+// last few are the decline, smith and military-press variants the variety rotation moves on to.
 export const STAPLES = {
-  chest: ['0025', '0289', '0047', '0314', '0308', '1030', '0251', '0662', '0188'],
-  deltoids: ['0426', '0405', '0091', '0334', '0178', '0603', '2137', '0383', '5609'],
+  chest: ['0025', '0289', '0047', '0314', '0308', '1030', '0251', '0662', '0188', '0033', '0301', '0748', '0757'],
+  deltoids: ['0426', '0405', '0091', '0334', '0178', '0603', '2137', '0383', '5609', '1162', '1224'],
   triceps: ['0241', '0030', '0061', '0814', '2188', '0333', '0187'],
   'upper-back': ['0652', '2330', '0027', '1323', '0861', '0293', '2393', '1326', '0327', '1350'],
   biceps: ['0031', '0313', '0447', '0318', '0868', '0372', '0070'],
@@ -56,14 +59,6 @@ export const STAPLES = {
 // a supporting role (muscles.js weighs a secondary at 0.4) — a bench press is not a shoulder day.
 const TRAINED_AT = 0.5
 
-const weightsOfEntry = entry => {
-  const ex = EXIDX[entry?.id]
-  if (ex) return musclesOf(ex)
-  const snap = entry?.muscleSnapshot?.muscleWeights || entry?.muscleWeights
-  return snap && typeof snap === 'object' ? snap : {}
-}
-const worked = entry => (entry?.sets || []).some(s => hasCompletedWork(s) && !isWarmupRow(s))
-
 /** Muscle slug -> the latest ISO day it was trained, and exercise id -> { d, n } of logged use. */
 export function trainingIndex(S) {
   const muscles = {}, exercises = {}
@@ -71,11 +66,11 @@ export function trainingIndex(S) {
     const d = typeof w?.d === 'string' ? w.d : null
     if (!d) continue
     for (const entry of w.entries || []) {
-      if (!worked(entry)) continue
+      if (!workSets(entry)) continue
       const seen = exercises[entry.id] || (exercises[entry.id] = { d, n: 0 })
       seen.n++
       if (d > seen.d) seen.d = d
-      for (const [slug, weight] of Object.entries(weightsOfEntry(entry))) {
+      for (const [slug, weight] of Object.entries(entryWeights(entry))) {
         if (weight >= TRAINED_AT && !(muscles[slug] >= d)) muscles[slug] = d
       }
     }
@@ -102,10 +97,8 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
 /** How many exercises a `type` session has unless the setup says otherwise. */
 export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
 
-// The muscle groups the setup offers are the Add exercise groups (ADD_GROUPS). A group a day
-// type does not cover gets one slot of its own when ticked: its first muscle. add-exercise.js
+// The muscle groups the setup offers are the Add exercise groups (ADD_GROUPS). add-exercise.js
 // imports this file too, so ADD_GROUPS is only read inside functions, never at load.
-const groupMuscles = groups => new Set(ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m))
 /** The group ids a `type` session covers by default: every group one of its slots trains. */
 export const genGroupsOf = type => {
   const slugs = new Set((GEN_TYPES[type] || []).flatMap(([spec]) => spec.split('|')))
@@ -118,35 +111,6 @@ export const genDefaults = type => ({
   sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
 })
 export const MAX_GEN_COUNT = 15
-
-/**
- * The slots of a `type` session over the ticked `groups`: [{ options, n }]. A choice slot keeps
- * only its ticked muscles, a slot with none left goes, and a ticked group no slot covers is added.
- */
-export function genSlots(type, groups) {
-  const base = (GEN_TYPES[type] || []).map(([spec, n]) => ({ options: spec.split('|'), n }))
-  if (!groups) return base
-  const on = groupMuscles(groups)
-  const slots = base.map(s => ({ ...s, options: s.options.filter(m => on.has(m)) })).filter(s => s.options.length)
-  const covered = new Set(slots.flatMap(s => s.options))
-  for (const g of ADD_GROUPS) {
-    if (groups.includes(g.id) && !g.m.some(m => covered.has(m))) slots.push({ options: [g.m[0]], n: 1 })
-  }
-  return slots
-}
-
-// The muscle each pick goes to, `count` long: every slot's first exercise before any slot's
-// second, the stalest slot first — so a shorter session drops the muscles trained most lately,
-// and a longer one goes round the slots again. At the type's own count it is exactly its slots.
-function slotSequence(slots, count) {
-  const seq = []
-  if (!slots.length) return seq
-  const most = Math.max(...slots.map(s => s.n))
-  for (let r = 0; seq.length < count; r++) {
-    for (const s of slots) if ((r < most ? s.n > r : true) && seq.length < count) seq.push(s.slug)
-  }
-  return seq
-}
 
 // Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
 // then the staples of each cardio area.
@@ -170,35 +134,20 @@ function stretchCandidates(S, index, slugs) {
 export const GEN_STRETCHES = 2
 
 /**
- * The exercises of a `type` session: [{ id, muscle, last }], stalest muscle first. `last` is
- * the ISO day that muscle was last trained, null when never. A slot with nothing to offer
- * (an equipment profile that rules every candidate out) is left out.
+ * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
+ * exercise's primary muscle and `last` the ISO day it was last trained, null when never.
  * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
- * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }.
+ * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week.
  */
-export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false } = {}) {
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now() } = {}) {
   if (!GEN_TYPES[type]) return []
   const index = trainingIndex(S)
-  const lastOf = slug => index.muscles[slug] || null
-  // Each slot goes to its stalest muscle; the slots then run stalest first.
-  const slots = genSlots(type, groups)
-    .map(s => ({ ...s, slug: s.options.slice().sort((a, b) => staler(lastOf(a), lastOf(b)))[0] }))
-    .sort((a, b) => staler(lastOf(a.slug), lastOf(b.slug)))
+  const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
+  const candidates = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
+    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
-  const lists = {}, used = {}, taken = new Set(), picks = []
-  for (const slug of slotSequence(slots, n)) {
-    const list = lists[slug] || (lists[slug] = candidatesFor(S, slug, index))
-    for (let tries = 0; tries < list.length; tries++) {
-      const id = list[(shift + (used[slug] || 0) + tries) % list.length]
-      if (taken.has(id)) continue
-      used[slug] = (used[slug] || 0) + tries + 1
-      taken.add(id)
-      picks.push({ id, muscle: slug, last: lastOf(slug) })
-      break
-    }
-  }
-  // Array#sort is stable: a slot's own order holds within one muscle.
-  picks.sort((a, b) => staler(a.last, b.last))
+  const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift })
+    .map(({ id, slug }) => ({ id, muscle: slug, last: index.muscles[slug] || null }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }
