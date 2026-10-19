@@ -40,16 +40,21 @@ describe('muscle group colours', () => {
   })
 
   it('names the group, and the target muscle only when it says more', () => {
-    expect(muscleTagsOf(EXIDX['1032'])).toEqual({ group: 'Biceps', color: 'var(--mg-biceps)', muscle: null })
-    expect(muscleTagsOf(EXIDX['1029'])).toEqual({ group: 'Chest', color: 'var(--mg-chest)', muscle: 'pectorals' })
+    expect(muscleTagsOf(EXIDX['1032'])).toEqual({ group: 'Biceps', color: 'var(--mg-biceps)', muscle: null, secondaries: ['brachialis', 'forearms'] })
+    expect(muscleTagsOf(EXIDX['1029'])).toEqual({ group: 'Chest', color: 'var(--mg-chest)', muscle: 'pectorals', secondaries: ['Triceps', 'shoulders', 'upper chest'] })
     const pulldown = muscleTagsOf(EXIDX['1013'])
     expect(pulldown.group).toBe('Back')
     expect(pulldown.color).toBe('var(--mg-back)')
     expect(pulldown.muscle).toBe('lats')
+    // Secondaries already named by a chip are left out: the Z press's 'triceps' group field
+    // and its 'triceps' secondary make one chip.
+    expect(muscleTagsOf(EXIDX['10049']).secondaries).toEqual(['Triceps', 'upper chest', 'core'])
+    expect(muscleTagsOf({ id: 'c_5', n: 'Mine', tg: 'chest', sm: ['chest', 'triceps', 'triceps', 'abs', 'calves'] }).secondaries)
+      .toEqual(['Triceps', 'Abs', 'Calves'])
     expect(muscleTagsOf(EXIDX['1051'])).toMatchObject({ group: 'Stretching', color: null })
     expect(muscleTagsOf({ id: 'c_3', n: 'Mine', primaries: ['adductors'], tg: 'adductors' }))
-      .toEqual({ group: 'Glutes & hips', color: 'var(--mg-glutes)', muscle: 'Adductors' })
-    expect(muscleTagsOf({ id: 'c_4', n: 'Nothing' })).toEqual({ group: null, color: null, muscle: null })
+      .toEqual({ group: 'Glutes & hips', color: 'var(--mg-glutes)', muscle: 'Adductors', secondaries: [] })
+    expect(muscleTagsOf({ id: 'c_4', n: 'Nothing' })).toEqual({ group: null, color: null, muscle: null, secondaries: [] })
   })
 
   it('leaves out what has no group', () => {

@@ -1959,8 +1959,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       {!cardio && tags.group && <span className={'tag pill' + (tags.color ? ' mg' : '')} style={mcStyle(tags.color)}>{t(tags.group)}</span>}
       {tags.muscle && <span className="tag pill">{t(tags.muscle)}</span>}
       {ex.eq && <span className="tag pill">{t(ex.eq)}</span>}
-      {!cardio && (ex.secondaries?.length ? ex.secondaries : smOf(ex)).filter(trainedBy(ex)).slice(0, 3)
-        .map((s, i) => <span key={i} className="tag pill dim">{t(MUSCLE_NAME[s] || s)}</span>)}
+      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{t(s)}</span>)}
     </div>
     {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
     {!cardio && <div style={{ marginBottom: 14 }}>

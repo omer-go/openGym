@@ -6,7 +6,8 @@
 // Colours are CSS tokens (--mg-*, index.css), set for the dark and the light theme.
 import { ADD_GROUPS, groupOfMuscle } from './add-exercise.js'
 import { ACTIVITY_GROUPS, activityOf } from './activities.js'
-import { MUSCLE_NAME } from './muscles.js'
+import { MUSCLE_NAME, muscleWeightsOf } from './muscles.js'
+import { smOf } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 
 export const GROUP_COLOR_IDS = [
@@ -37,18 +38,26 @@ export const muscleColor = slug => groupColor(groupOfMuscle(slug)?.id)
 export const exerciseColor = ex => groupColor(groupOfExercise(ex))
 
 /** What an exercise's muscle chips say: its group's name and colour, then its target muscle only
- *  when that adds something to the group's name ('Delts' under Shoulders, nothing under Chest).
+ *  when that adds something to the group's name ('Delts' under Shoulders, nothing under Chest),
+ *  then up to three secondary muscles it trains, leaving out the ones already named.
  *  Names are English i18n keys. */
 export function muscleTagsOf(ex) {
   const id = groupOfExercise(ex)
   const group = (id && [...ADD_GROUPS, ...ACTIVITY_GROUPS].find(g => g.id === id)?.n) || null
   const raw = ex?.tg || ex?.bp
   const muscle = raw ? MUSCLE_NAME[raw] || raw : null
-  return {
-    group,
-    color: groupColor(id),
-    muscle: muscle && muscle.toLowerCase() !== group?.toLowerCase() ? muscle : null,
+  const shown = muscle && muscle.toLowerCase() !== group?.toLowerCase() ? muscle : null
+  // A secondary weighted 0 is listed for the record but not trained (muscles.js).
+  const weights = muscleWeightsOf(ex || {})
+  const named = new Set([group, shown].filter(Boolean).map(n => n.toLowerCase()))
+  const secondaries = []
+  for (const s of ex?.secondaries?.length ? ex.secondaries : smOf(ex || {})) {
+    const n = MUSCLE_NAME[s] || s
+    if (weights[s] === 0 || named.has(n.toLowerCase())) continue
+    named.add(n.toLowerCase())
+    secondaries.push(n)
   }
+  return { group, color: groupColor(id), muscle: shown, secondaries: secondaries.slice(0, 3) }
 }
 
 /** A style setting `--mc` (what the .mg rules colour with), or undefined for no colour. */

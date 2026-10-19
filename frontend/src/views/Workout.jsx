@@ -704,6 +704,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       {!cardio && tags.group && <span className={'tag pill' + (mc ? ' mg' : '')} style={mcStyle(mc)}>{t(tags.group)}</span>}
       {tags.muscle && <span className="tag pill">{t(tags.muscle)}</span>}
       {ex.eq && <span className="tag pill">{t(ex.eq)}</span>}
+      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{t(s)}</span>)}
       {best > 0 && <span className="tag pill nocap">{t('Best:')} {fmtNum(best)} {S.unit}</span>}
     </div>
     {/* Three notes can apply to one exercise and they are not interchangeable, so each keeps its
