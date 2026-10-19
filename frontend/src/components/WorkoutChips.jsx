@@ -19,17 +19,19 @@ import { exerciseColor } from '../lib/muscle-colors.js'
 // Functions, so each word is a literal t() call the string checks can see.
 const STATE_WORD = { done: () => t('Finished'), partial: () => t('Started'), todo: () => t('Not started yet') }
 
-export default function WorkoutChips({ entries, cur, onPick }) {
+export default function WorkoutChips({ entries, cur, view, onPick }) {
   const strip = useRef(null)
   const chips = exerciseChips(entries, cur)
   const curKey = chips.find(c => c.current)?.key
-  // Keep the current chip in view along the strip, as the filter strips do (useRevealActiveChip):
-  // after a tap, a swipe to the next card, or the marker moving on. Only the strip scrolls.
+  // Keep the chip of the exercise on screen in view along the strip, as the filter strips do
+  // (useRevealActiveChip): the current one, or in the list the one scrolled to (`view`), so the
+  // strip follows the page. Only the strip scrolls.
+  const shownKey = view && chips.some(c => c.key === view) ? view : curKey
   useEffect(() => {
     const el = strip.current
-    const chip = el?.querySelector?.('[aria-current]')
+    const chip = [...(el?.querySelectorAll?.('.wchip') || [])].find(c => c.getAttribute('data-unit-key') === shownKey)
     if (chip) revealChip(el, chip)
-  }, [curKey, chips.length])
+  }, [shownKey, chips.length])
   if (!chips.length) return null
   return <nav ref={strip} className="chips wchips" aria-label={t('Exercises in this workout')}>
     {chips.map(c => {

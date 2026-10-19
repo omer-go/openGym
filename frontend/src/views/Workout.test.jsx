@@ -2720,6 +2720,38 @@ describe('exercise chips at the top of the workout (#323)', () => {
     expect(mocks.S.active.cur).toBe(0)
   })
 
+  it('in the list, the strip follows the unit scrolled to, not only Current', async () => {
+    // linkedom has no layout: a 100 px strip with 50 px chips every 60 px, and `inView` across the
+    // line a third of the way down the screen under a 120 px header
+    // (linkedom's element classes are shared between windows, so this holds for the one mount makes)
+    let inView = '0'
+    const proto = parseHTML('<p></p>').window.Element.prototype
+    const realRect = proto.getBoundingClientRect
+    proto.getBoundingClientRect = function () {
+      if (this.classList?.contains('whdr')) return { top: 0, bottom: 120 }
+      if (this.classList?.contains('wchips')) return { left: 0, width: 100 }
+      if (this.classList?.contains('wchip')) { const i = [...this.parentNode.children].indexOf(this); return { left: i * 60, width: 50 } }
+      if (this.classList?.contains('wl-unit')) return this.getAttribute('data-unit-key') === inView ? { top: 200, bottom: 600 } : { top: -400, bottom: -100 }
+      return { top: 0, bottom: 0, left: 0, width: 0 }
+    }
+    try {
+      await mount(session(), 0, { active: { workoutView: 'list' } })
+      dom.innerHeight = 800
+      await act(async () => { dom.dispatchEvent(new dom.Event('scroll')) })
+      await flushFrame()
+      const strip = container.querySelector('.wchips')
+      expect(strip.scrollLeft || 0).toBe(0)
+      inView = '3'
+      await act(async () => { dom.dispatchEvent(new dom.Event('scroll')) })
+      await flushFrame()
+      expect(strip.scrollLeft).toBe(120 + 50 + 16 - 100)   // chip 3's right edge, plus the strip's pad
+      expect(mocks.S.active.cur).toBe(0)
+      expect(chip(1).getAttribute('aria-current')).toBe('step')
+    } finally {
+      proto.getBoundingClientRect = realRect
+    }
+  })
+
   it('jumps without the glide when the system asks for less motion', async () => {
     await mount(session(), 0, { active: { workoutView: 'list' } })
     dom.matchMedia = q => ({ matches: q.includes('reduce') })

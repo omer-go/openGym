@@ -1858,8 +1858,33 @@ function ActiveWorkout() {
     if (chip.unit.includes(cur)) return
     update(s => { if (s.active) s.active.cur = chip.unit[0] })
   }
+  // The list unit you are looking at: the one across a line a third of the way down the screen
+  // under the header, or at the foot of the page the last one showing. The chip row keeps its
+  // chip in view, so the strip follows the scroll and not only the current marker.
+  const [viewKey, setViewKey] = useState(null)
+  useEffect(() => {
+    if (!listMode) { setViewKey(null); return }
+    let frame = 0
+    const read = () => {
+      frame = 0
+      const units = [...(listRef.current?.querySelectorAll('.wl-unit') || [])]
+      if (!units.length) return
+      const screen = window.innerHeight || 0
+      const under = hdrRef.current?.getBoundingClientRect?.().bottom || 0
+      const line = under + (screen - under) / 3
+      const atFoot = window.scrollY + screen >= document.documentElement.scrollHeight - 2
+      const pick = atFoot
+        ? units.filter(u => u.getBoundingClientRect().top < screen).at(-1)
+        : units.find(u => u.getBoundingClientRect().bottom > line)
+      setViewKey((pick || units.at(-1)).getAttribute('data-unit-key'))
+    }
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(read) }
+    read()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => { window.removeEventListener('scroll', onScroll); if (frame) window.cancelAnimationFrame(frame) }
+  }, [listMode, A.entries.length])
   const chipRow = wc.exerciseChips && A.entries.length > 0
-    ? <WorkoutChips entries={A.entries} cur={cur} onPick={pickChip} />
+    ? <WorkoutChips entries={A.entries} cur={cur} view={listMode ? viewKey : null} onPick={pickChip} />
     : null
 
   // Hardware keys (issue #133, lib/workout-keys.js): Space or Enter ticks the next set, ← and →
