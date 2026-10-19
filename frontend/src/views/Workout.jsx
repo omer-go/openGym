@@ -9,7 +9,7 @@ import { exOr, betterWeight } from '../lib/exercises.js'
 import { usesBar } from '../lib/bar.js'
 import { loadKindFor, baseWeightFor, inventoryFor, rowLoad, sameLoad, plateDelta, dropGrid } from '../lib/plates.js'
 import { effectiveRoutines, effectiveRoutineIds, lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, freestyleConfig, defaultConfig, setsDoneActive, setUnitsTotal, supersetUnits, unitOf, setLabel, fmtMin, modeOf, isBw, isPerSide, repStep, EFFORT, effortOf, stepEffort, capEffort, cascadeWeight, insertWarmupRow, barFloor, makeWarmupAt, canBeWarmup, makeWorkAt, removeRowAt, removeLastSet, setSpanAt, copyRowAt, copySpanAt, insertRowAt, pairAdjacent, unpairSuperset, cleanupSg, applyIntensifierPlan, pinnedNoteFor, exNoteFor, setsRepsOf } from '../lib/history.js'
-import { fmtNum, fmtPlate, exerciseNameText, fmtDate, fmtDaysAgo, todayISO, exCount, DAYN } from '../lib/format.js'
+import { capFirst, fmtNum, fmtPlate, exerciseNameText, fmtDate, fmtDaysAgo, todayISO, exCount, DAYN } from '../lib/format.js'
 import { speedUnitOf, toSpeed, fromSpeed } from '../lib/speed.js'
 import { clampIncline, hasIncline, inclineFits, inclineFrom, INCLINE_STEP } from '../lib/incline.js'
 import { beep, vibrate, unlock } from '../lib/sound.js'
@@ -701,10 +701,10 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
           derived, it is what you enter. The tag only flags that this is per-side. */}
       {!cardio && isPerSide(cfg) && <span className="tag pill acc nocap"><Icon name="sides" />{t('Per side')}</span>}
       {/* The muscle group (in its colour), then the target muscle when it says more. */}
-      {!cardio && tags.group && <span className={'tag pill' + (mc ? ' mg' : '')} style={mcStyle(mc)}>{t(tags.group)}</span>}
-      {tags.muscle && <span className="tag pill">{t(tags.muscle)}</span>}
-      {ex.eq && <span className="tag pill">{t(ex.eq)}</span>}
-      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{t(s)}</span>)}
+      {!cardio && tags.group && <span className={'tag pill' + (mc ? ' mg' : '')} style={mcStyle(mc)}>{capFirst(t(tags.group))}</span>}
+      {tags.muscle && <span className="tag pill">{capFirst(t(tags.muscle))}</span>}
+      {ex.eq && <span className="tag pill">{capFirst(t(ex.eq))}</span>}
+      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{capFirst(t(s))}</span>)}
       {best > 0 && <span className="tag pill nocap">{t('Best:')} {fmtNum(best)} {S.unit}</span>}
     </div>
     {/* Three notes can apply to one exercise and they are not interchangeable, so each keeps its

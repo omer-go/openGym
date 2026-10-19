@@ -39,6 +39,9 @@ export const durPart = ms => (ms >= 60000 ? [fmtDur(ms)] : [])
 // Exercise names are stored lower-case and shown through CSS `capitalize`; text that has no
 // element of its own (a toast) capitalises here instead.
 export const capWords = s => String(s || '').replace(/(^|[\s(\-\/])(\p{Ll})/gu, (m, pre, ch) => pre + ch.toUpperCase())
+// Sentence case for a dataset term ("upper chest" → "Upper chest"): the exercise chips use it
+// where CSS `capitalize` would title-case every word.
+export const capFirst = s => String(s || '').replace(/^\p{Ll}/u, ch => ch.toUpperCase())
 // An exercise's display name as plain text, cased the way its element would be on screen
 // (exerciseNameClass): for a toast, a dialog title or a picker label, which have no element of
 // their own to put the class on.

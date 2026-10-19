@@ -5,7 +5,7 @@ import { quickPicks, lastTop, REP_CHIPS } from './lib/weight-pick.js'
 import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
-import { fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
+import { capFirst, fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
 import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
 import { usesBar, defaultBarWeight, hasBarOverride, isNoBar } from './lib/bar.js'
 import { PLATE_SIZES, pairsOf, ownsPlates, withPlatePairs, withStandardPlates, withLoadKind, loadKindFor, baseWeightFor, dropGrid } from './lib/plates.js'
@@ -1956,10 +1956,10 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         turns into a translatable label. */}
     <div className="row" style={{ gap: 6, flexWrap: 'wrap', margin: '10px 0 14px' }}>
       {cardio && <span className="tag pill acc"><Icon name="figureRun" />{t('Cardio')}</span>}
-      {!cardio && tags.group && <span className={'tag pill' + (tags.color ? ' mg' : '')} style={mcStyle(tags.color)}>{t(tags.group)}</span>}
-      {tags.muscle && <span className="tag pill">{t(tags.muscle)}</span>}
-      {ex.eq && <span className="tag pill">{t(ex.eq)}</span>}
-      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{t(s)}</span>)}
+      {!cardio && tags.group && <span className={'tag pill' + (tags.color ? ' mg' : '')} style={mcStyle(tags.color)}>{capFirst(t(tags.group))}</span>}
+      {tags.muscle && <span className="tag pill">{capFirst(t(tags.muscle))}</span>}
+      {ex.eq && <span className="tag pill">{capFirst(t(ex.eq))}</span>}
+      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{capFirst(t(s))}</span>)}
     </div>
     {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
     {!cardio && <div style={{ marginBottom: 14 }}>

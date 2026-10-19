@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { exerciseNameText } from './format.js'
+import { capFirst, exerciseNameText } from './format.js'
 import { _setLangState } from './i18n-core.js'
 import de from '../exercise-names/de.js'
 import es from '../exercise-names/es.js'
@@ -36,5 +36,16 @@ describe('ACCENT_NAMES', () => {
     const packs = import.meta.glob('../locales/*.js', { eager: true, import: 'default' })
     for (const [file, pack] of Object.entries(packs))
       for (const name of Object.values(ACCENT_NAMES)) expect(pack[name], `${file}: ${name}`).toBeTruthy()
+  })
+})
+
+describe('capFirst', () => {
+  it('upper-cases only the first letter', () => {
+    expect(capFirst('upper chest')).toBe('Upper chest')
+    expect(capFirst('obere Brust')).toBe('Obere Brust')
+    expect(capFirst('Glutes & hips')).toBe('Glutes & hips')
+    expect(capFirst('ez barbell')).toBe('Ez barbell')
+    expect(capFirst('')).toBe('')
+    expect(capFirst(null)).toBe('')
   })
 })

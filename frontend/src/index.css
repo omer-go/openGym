@@ -551,8 +551,9 @@ h4.sec{
 .tag.acc{background:var(--acc-soft);color:var(--acc)}
 .tag.mg{background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 80%,var(--label))}
 /* An exercise's chips (its muscle group, muscle, equipment): pills with a hairline edge, the
-   group's one carrying a dot in its colour (lib/muscle-colors.js). */
-.tag.pill{border-radius:99px;padding:3px 10px;background:var(--surface-2);border:1px solid var(--sep);color:var(--label)}
+   group's one carrying a dot in its colour (lib/muscle-colors.js). Sentence case, set in the
+   markup (capFirst), not CSS title case: "Upper chest", "Leverage machine". */
+.tag.pill{border-radius:99px;padding:3px 10px;background:var(--surface-2);border:1px solid var(--sep);color:var(--label);text-transform:none}
 .tag.pill.mg{gap:6px;padding-inline-start:8px;background:var(--surface-2);color:var(--label)}
 .tag.pill.mg::before{content:'';flex:none;width:9px;height:9px;border-radius:50%;background:var(--mc)}
 .tag.pill.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}

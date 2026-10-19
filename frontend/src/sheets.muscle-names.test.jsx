@@ -80,11 +80,11 @@ describe('muscle names in the rows and tags (QA C9)', () => {
     seed(custom())
     exConfigSheet(EXIDX.cqa1, null, vi.fn())
     const tags = h => [...h.querySelectorAll('.tag')].map(e => e.textContent.trim())
-    expect(tags(renderTop())).toEqual(['Glutes & hips', 'Glutes', 'barbell', 'Forearms', 'Hip flexors'])
+    expect(tags(renderTop())).toEqual(['Glutes & hips', 'Glutes', 'Barbell', 'Forearms', 'Hip flexors'])
     // The group comes from the weighted primary muscle (quads), the muscle tag from the target.
     // #207 Olympic lifts list their secondaries as map ids ('forearm', 'deltoids').
     exConfigSheet(EXIDX['0648'], null, vi.fn())
-    expect(tags(renderTop())).toEqual(['Quads', 'hamstrings', 'barbell', 'Calves', 'Forearms', 'Shoulders'])
+    expect(tags(renderTop())).toEqual(['Quads', 'Hamstrings', 'Barbell', 'Calves', 'Forearms', 'Shoulders'])
   })
 
   it('translates them in German too — "forearm" was staying English', () => {
