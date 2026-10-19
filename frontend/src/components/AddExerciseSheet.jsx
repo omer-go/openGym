@@ -27,7 +27,8 @@ const PER_AREA = 5       // rows an area shows before its "Show all"
 const PAGE = 40          // rows a single list shows before "Show more"
 
 const Dot = ({ st }) => <i className={'ax-dot' + (st ? ' ' + st : '')} />
-const Ava = ({ slugs, body, className }) => {
+// A muscle group's picture: the body cropped to its muscles, lit. The one-tap setup (GenSetup) shows it too.
+export const Ava = ({ slugs, body, className }) => {
   const a = avatarOf(slugs, body)
   return <MuscleAvatar body={body} view={a.view} on={a.on} vb={a.vb} className={className} />
 }

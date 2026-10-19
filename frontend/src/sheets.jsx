@@ -28,7 +28,7 @@ import Icon from './components/Icon.jsx'
 import { Button, Slider, Switch, Segmented, SelectRow, Row, TextField, NumberField, MultiSelectRow } from './components/ui.jsx'
 import { glyphOf, GLYPH_GROUPS, DEFAULT_GLYPH } from './lib/glyphs.js'
 import BodyMap from './components/BodyMap.jsx'
-import AddExerciseSheet from './components/AddExerciseSheet.jsx'
+import AddExerciseSheet, { Ava } from './components/AddExerciseSheet.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
@@ -53,6 +53,7 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
+import { ACTIVITY_GROUPS } from './lib/activities.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
@@ -2947,11 +2948,17 @@ function GenSetup({ type, close }) {
     [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
-  const check = (on, label, onClick, sub) => <button key={label} type="button" role="checkbox" aria-checked={on}
-    className={'gs-chk' + (on ? ' on' : '')} onClick={onClick}>
+  // The same tiles as Add exercise's groups (AddExerciseSheet): the muscles pictured, the group's
+  // name, and here a check for whether the workout covers it.
+  const body = st.body === 'female' ? 'female' : 'male'
+  const check = (key, on, pic, label, onClick, sub) => <button key={key} type="button" role="checkbox" aria-checked={on}
+    className={'ax-gt gs-gt' + (on ? ' on' : '')} onClick={onClick}>
+    {pic}
+    <span className="ax-m"><b>{label}</b>{sub && <span className="muted small">{sub}</span>}</span>
     <span className={'chk' + (on ? ' on' : '')}><Icon name="check" /></span>
-    <span className="gs-l"><b>{label}</b>{sub && <small>{sub}</small>}</span>
   </button>
+  const groupTile = g => check(g.id, setup.groups.includes(g.id), <Ava slugs={g.m} body={body} />, t(g.n), () => toggleGroup(g.id))
+  const actIcon = id => <span className="ava ax-ico"><Icon name={ACTIVITY_GROUPS.find(a => a.id === id).icon} /></span>
   const start = () => {
     update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: setup } })
     close()
@@ -2962,12 +2969,14 @@ function GenSetup({ type, close }) {
       <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small">{t('Choose what to train, then start.')}</div></div>
       <Button size="sm" variant="plain" onClick={() => { setSetup(genDefaults(type)); setShift(0) }}>{t('Reset')}</Button>
     </div>
-    <h4 className="sec">{t('Muscle groups')}</h4>
-    <div className="gs-grid">{ADD_GROUPS.map(g => check(setup.groups.includes(g.id), t(g.n), () => toggleGroup(g.id)))}</div>
-    <h4 className="sec">{t('Also add')}</h4>
-    <div className="gs-grid">
-      {check(setup.cardio, t('Cardio'), () => set({ cardio: !setup.cardio }), t('Timed with the stopwatch'))}
-      {check(setup.stretch, t('Stretching'), () => set({ stretch: !setup.stretch }), t('Two, for what you train'))}
+    <h4 className="sec">{t('Upper body')}</h4>
+    <div className="ax-gts">{ADD_GROUPS.filter(g => !g.low).map(groupTile)}</div>
+    <h4 className="sec">{t('Lower body')}</h4>
+    <div className="ax-gts">{ADD_GROUPS.filter(g => g.low).map(groupTile)}</div>
+    <h4 className="sec">{t('Cardio & stretching')}</h4>
+    <div className="ax-gts">
+      {check('cardio', setup.cardio, actIcon('cardio'), t('Cardio'), () => set({ cardio: !setup.cardio }), t('Timed with the stopwatch'))}
+      {check('stretch', setup.stretch, actIcon('stretching'), t('Stretching'), () => set({ stretch: !setup.stretch }), t('Two, for what you train'))}
     </div>
     <h4 className="sec">{t('Sets and rest')}</h4>
     <div className="row cfgrow" style={{ marginBottom: 12 }}>
