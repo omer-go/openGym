@@ -31,7 +31,7 @@ const mocks = vi.hoisted(() => ({
 }))
 
 // The confirm dialog is captured, not rendered: a test reads what it was asked and presses
-// its onConfirm itself, the same shape CheckIn.test.jsx uses.
+// its onConfirm itself.
 vi.mock('../sheets.jsx', () => ({ confirmSheet: (...a) => mocks.confirmSheet(...a) }))
 
 // One fake API. `routes` maps a path to a value, a function of the parsed body, or an Error to
