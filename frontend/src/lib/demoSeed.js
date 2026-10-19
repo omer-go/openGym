@@ -72,6 +72,7 @@ export function buildDemoState() {
   const mrnd = rng(20260724)
   const [push, pull, legs] = starterRoutines()
   const byWeekday = { 1: push, 3: pull, 5: legs }
+  const genOf = new Map([[push, 'push'], [pull, 'pull'], [legs, 'legs']])
 
   const nowH = new Date().getHours()
   const today = new Date(); today.setHours(12, 0, 0, 0)
@@ -166,6 +167,9 @@ export function buildDemoState() {
       entries,
       prs: weekIdx === 0 ? [] : prs   // the very first session isn't a PR party
     }
+    // Every other week the same day came from the Start tile instead of the saved routine, so
+    // Home's week strip shows both colours (lib/workout-kind.js).
+    if (weekIdx % 2 === 1) w.genType = genOf.get(routine)
     w.vol = entries.reduce((v, e) => v + e.sets.reduce((n, s) => n + s.w * s.r, 0), 0)
     workouts.push(w)
   }

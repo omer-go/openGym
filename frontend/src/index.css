@@ -1811,6 +1811,11 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 /* A past workout's detail: each exercise opens its history, and a superset's exercises share the
    routine editor's label and bar. */
 .wd-ex{margin-bottom:12px;cursor:pointer;border-radius:10px}
+/* The saved-workout sheet fits the screen: only its exercise list scrolls (WorkoutDetail). */
+.sheet:has(.wd-fit){display:flex;flex-direction:column;overflow:hidden}
+.wd-fit{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+.wd-media .wmedia-h{display:none}
+.wd-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -18px 12px;padding:0 18px}
 .wd-ex>.grow{flex:1;min-width:0}
 .wd-ex:active{background:var(--surface-2)}
 .wd-ss{box-shadow:inset 3px 0 0 var(--acc);padding-inline-start:11px;margin-bottom:12px}
@@ -1918,6 +1923,13 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gen-bar .tt{font-weight:600;font-size:15px}
 .gen-bar .ss{color:var(--label-2);font-size:12.5px;margin-top:2px;line-height:1.3}
 .gen-why{color:var(--acc);font-size:13px;font-weight:500;margin-bottom:6px}
+
+/* --- home: kind colours (lib/workout-kind.js) on the Start tiles and the week strip --- */
+.gen-tile.kind{box-shadow:inset 3px 0 0 var(--kind)}
+.gen-tile.kind .lrow-i{background:color-mix(in srgb,var(--kind) 22%,transparent);color:var(--kind)}
+.home-week .dots{display:flex;justify-content:center;gap:3px;height:6px}
+.home-week .dot{width:6px;height:6px;margin:0}
+.home-week .wk-name{font-size:10.5px;font-weight:600;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
 
 /* --- home: today's session row --- */
 .today-row{

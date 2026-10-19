@@ -62,7 +62,11 @@ function Sheet({ sheet }) {
     const el = ref.current
     if (target.closest && target.closest(NODRAG)) { drag.current = idle(); return }
     if (el.scrollTop > 0) { drag.current = idle(); return }
-    drag.current = { ...idle(), startX: x, startY: y, lastY: y, lastT: performance.now() }
+    // A sheet that fits the screen scrolls an inner list instead (.sheet-scroll): the pull only
+    // closes it from that list's top too.
+    const inner = target.closest ? target.closest('.sheet-scroll') : null
+    if (inner && inner.scrollTop > 0) { drag.current = idle(); return }
+    drag.current = { ...idle(), startX: x, startY: y, lastY: y, lastT: performance.now(), inner }
   }
   const move = (e, x, y) => {
     const el = ref.current, d = drag.current
@@ -79,7 +83,7 @@ function Sheet({ sheet }) {
     const now = performance.now()
     // velocity from the last move, so a fast short flick can still be told from a slow drag
     if (now > d.lastT) { d.vy = (y - d.lastY) / (now - d.lastT); d.lastY = y; d.lastT = now }
-    if (dy > 0 && el.scrollTop <= 0) {
+    if (dy > 0 && el.scrollTop <= 0 && !(d.inner && d.inner.scrollTop > 0)) {
       e.preventDefault()
       d.delta = dy
       el.style.transition = 'none'

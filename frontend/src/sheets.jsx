@@ -2541,55 +2541,51 @@ function WorkoutDurationEdit({ w, onDone, close }) {
 }
 export const workoutDurationSheet = (w, onDone) => ui().openSheet(close => <WorkoutDurationEdit w={w} onDone={onDone} close={close} />)
 
-function WorkoutDetail({ w, close }) {
+// The session note of a saved workout, on its own sheet from the detail's options: what you want
+// to record about a session is often clearer once you have looked at what you actually did.
+function WorkoutNoteSheet({ w, close }) {
   const noteRef = useRef(null)
   const onNoteFocus = useSheetKeyboard(noteRef)
-  const st = useStore(s => s.S)
   const update = useStore(s => s.update)
-  // The session note is editable here rather than only at the finish sheet: what you want to
-  // record about a session is often clearer once you have looked at what you actually did.
-  const [note, setNote] = useState(w.note || '')
+  const [note, setNote] = useState((S().workouts.find(x => sameWorkout(x, w)) || w).note || '')
   // A note written here is an edit of the saved workout, stamped for the sync to keep it over an
   // older copy of the same workout (stampWorkout) — and only when it changed, since a stamp
   // outranks what another device wrote since.
-  const saveNote = () => update(s => {
+  const write = text => update(s => {
     const rec = s.workouts.find(x => sameWorkout(x, w))
-    if (!rec) return
-    const text = note.trim().slice(0, NOTE_MAX)
-    if (text === (rec.note || '')) return
+    if (!rec || text === (rec.note || '')) return   // deleted meanwhile, or nothing changed
     if (text) rec.note = text; else delete rec.note
     stampWorkout(rec)
   })
-  // onBlur alone loses the note: Escape, the Android back gesture and swipe-to-dismiss all
-  // close the sheet without ever moving focus out of the textarea. Flush on unmount too. The
-  // ref is what makes that work — a cleanup closes over the note from its own render, which
-  // is the empty string this started with.
+  // Escape, the Android back gesture and swipe-to-dismiss all close the sheet without Save: the
+  // note is kept on unmount too. The ref is what makes that work — a cleanup closes over the
+  // note from its own render, which is the one this started with.
   const latest = useRef(note)
   latest.current = note
-  const initial = useRef(w.note || '')
-  useEffect(() => () => {
-    const text = latest.current.trim().slice(0, NOTE_MAX)
-    if (text === initial.current) return
-    update(s => {
-      const rec = s.workouts.find(x => sameWorkout(x, w))
-      if (!rec || text === (rec.note || '')) return   // deleted from this very sheet, or already saved
-      if (text) rec.note = text; else delete rec.note
-      stampWorkout(rec)
-    })
-  }, [])
+  useEffect(() => () => write(latest.current.trim().slice(0, NOTE_MAX)), [])
+  return <>
+    <h3>{t('Session note')}</h3>
+    <textarea ref={noteRef} className="input" rows={4} maxLength={NOTE_MAX} value={note}
+      placeholder={t('How the session went as a whole.')}
+      onFocus={onNoteFocus} onChange={e => setNote(e.target.value)} />
+    <div style={{ height: 14 }} />
+    <Button variant="primary" onClick={close}>{t('Save')}</Button>
+  </>
+}
+
+function WorkoutDetail({ w, close }) {
+  const st = useStore(s => s.S)
+  const update = useStore(s => s.update)
+  const rec = st.workouts.find(x => sameWorkout(x, w)) || w
   const nameOf = e => (EXIDX[e.id] ? exerciseNameFor(EXIDX[e.id]) : (e.n || e.id))
   // Tapping an exercise opens its history (Discord 'Improvement ideas'): from one session to the
   // curve it sits on, which is the question a past workout raises most often.
   const entryRow = (e, i) => {
     const ex = EXIDX[e.id]
-    return <div key={i} className="row wd-ex" style={{ alignItems: 'flex-start' }} {...tappable(() => exerciseHistorySheet(e.id))}>
+    return <div key={i} className="row wd-ex" {...tappable(() => exerciseHistorySheet(e.id))}>
       {ex && <Thumb ex={ex} />}
-      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div>
-        <div className="ss">{e.sets.filter(hasCompletedWork).map(s => setLabel(e.id, s, e.target, speedUnitOf(st))).join('  ·  ') || t('no sets')}</div>
-        {e.note && <div className="small dim" style={{ marginTop: 3 }}>
-          {e.notePin && <Icon name="pin" style={{ fontSize: 12, marginInlineEnd: 4, verticalAlign: '-1px', color: 'var(--yellow)' }} />}{e.note}
-        </div>}</div>
-      <Icon name="chevronRight" className="chev" style={{ alignSelf: 'center' }} />
+      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div></div>
+      <Icon name="chevronRight" className="chev" />
     </div>
   }
   // Exercises done as a superset stay together under a "Superset" label and one bar, the way the
@@ -2602,21 +2598,17 @@ function WorkoutDetail({ w, close }) {
       {unit.map(i => entryRow(w.entries[i], i))}
     </div>
   })
-  // Copied with the note as it stands in the box, which may not be saved yet.
   const copyAsText = async () => {
-    const rec = { ...(st.workouts.find(x => sameWorkout(x, w)) || w), note: note.trim() }
     toast(await copyText(workoutText(rec, { unit: st.unit, nameOf, speedUnit: speedUnitOf(st) })) ? t('Copied') : t('Could not copy'))
   }
   // A Garmin .fit activity (#447) of the saved record, for Garmin Connect's Import Data.
   const exportFit = () => {
-    const rec = st.workouts.find(x => sameWorkout(x, w)) || w
     let bytes
     try { bytes = workoutFit(rec, { unit: st.unit, version: __APP_VERSION__ }) }
     catch (e) { toast(t('Could not create the file')); return }
     saveFitFile(new Blob([bytes], { type: 'application/vnd.ant.fit' }), fitFileName(rec))
   }
   const shareAsImage = () => {
-    const rec = st.workouts.find(x => sameWorkout(x, w)) || w
     ui().openSheet(c2 => <ShareWorkoutImage w={rec} nameOf={nameOf} close={c2} />)
   }
   // A combined session's entries carry a `rid`; group them into per-routine sections in merge
@@ -2625,83 +2617,67 @@ function WorkoutDetail({ w, close }) {
   // anywhere) renders flat.
   const groups = sessionSections(w.entries)
   const grouped = groups.length > 1 || (groups[0] && groups[0].rid && (w.routineIds || []).length > 1)
-  return <>
+  const mediaN = workoutMediaCount(rec)
+  const busy = st.active ? t('Finish the current workout first.') : undefined
+  // Everything you do to a saved workout once, behind one button: the sheet is for reading it.
+  const actions = () => menuSheet({
+    title: w.name,
+    sections: [{ items: [
+      { icon: 'pencil', label: t('Edit workout'), sub: busy, disabled: !!st.active, onClick: () => {
+        try { update(state => { editCompletedSession(state, w) }); closeThenNav(close, '/workout') }
+        catch (error) { toast(t(error.message)) }
+      } },
+      // The same exercises again, today, as a new session (#58). The record itself stays as it is.
+      { icon: 'reset', label: t('Repeat today'), sub: busy, disabled: !!st.active, onClick: () => { repeatWorkout(w, close) } },
+      { icon: 'calendar', label: t('Change date & time'), onClick: () => { workoutDateSheet(w, close) } },
+      { icon: 'stopwatch', label: t('Change duration'), onClick: () => { workoutDurationSheet(w, close) } },
+      { icon: 'plus', label: t('Save as routine'), onClick: () => confirmSheet({
+        title: t('Save as routine?'),
+        message: t('Create an independent routine from these exercise targets. Your workout history is kept.'),
+        confirmText: t('Save'),
+        onConfirm: () => {
+          let id
+          try { update(s => { id = saveSessionAsRoutine(s, w, w.name) }) }
+          catch (e) { toast(t(e.message)); return }
+          close()
+          nav('/plan/r/' + id)
+        }
+      }) },
+    ] }, { items: [
+      // Photos, videos and the note are kept with the workout but are not what you open it to read.
+      { icon: 'image', label: t('Photos & videos'), sub: mediaN ? tn('{0} photo or video', '{0} photos or videos', mediaN) : undefined, onClick: () => ui().openSheet(() => <>
+        <h3>{t('Photos & videos')}</h3>
+        <div className="wd-media"><WorkoutMediaSection w={w} /></div>
+      </>) },
+      { icon: 'note', label: t('Session note'), sub: rec.note ? rec.note.slice(0, 60) : undefined, onClick: () => ui().openSheet(c2 => <WorkoutNoteSheet w={w} close={c2} />) },
+    ] }, { items: [
+      { icon: 'copy', label: t('Copy as text'), onClick: copyAsText },
+      { icon: 'share', label: t('Share as image'), onClick: shareAsImage },
+      { icon: 'download', label: t('Export as .fit file'), onClick: exportFit },
+    ] }, { items: [
+      // Matched the way the edits above are, not by id: a workout from before ids has none, and
+      // filtering on `x.id !== undefined` took every other one of them with it.
+      { icon: 'trash', label: t('Delete workout'), danger: true, onClick: () => confirmSheet({ title: t('Delete workout?'), message: t('This removes it from your history for good.') + mediaGoesToo(S().workouts.find(x => sameWorkout(x, w))), confirmText: t('Delete'), danger: true, onConfirm: () => { update(s => { s.workouts = s.workouts.filter(x => !sameWorkout(x, w)) }); close(); toast(t('Workout deleted')) } }) },
+    ] }],
+  })
+  // The sheet fits the screen: the title and the options button stay put, the exercises scroll
+  // between them.
+  return <div className="wd-fit">
     <h3>{w.name}</h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{[fmtDate(w.d, true), ...durPart(w.end - w.start), fmtVol(w.vol, st.unit), ...(w.bw ? [fmtNum(w.bw) + ' ' + st.unit] : [])].join(' · ')}</div>
-    {grouped ? groups.map(g => {
-      const r = g.rid ? st.routines.find(x => x.id === g.rid) : null
-      const items = g.items.map(i => w.entries[i])
-      const setN = items.reduce((n, e) => n + e.sets.filter(s => s.done && !isWarmupRow(s)).length, 0)
-      const vol = workoutVolume({ entries: items })
-      return <div key={g.rid || '__none'}>
-        <div className="row between" style={{ margin: '2px 0 8px', paddingBottom: 6, borderBottom: '1px solid var(--sep)' }}>
-          <div className="row" style={{ gap: 7, fontWeight: 600 }}>
+    <div className="wd-scroll sheet-scroll">
+      {grouped ? groups.map(g => {
+        const r = g.rid ? st.routines.find(x => x.id === g.rid) : null
+        return <div key={g.rid || '__none'}>
+          <div className="row" style={{ gap: 7, fontWeight: 600, margin: '2px 0 8px', paddingBottom: 6, borderBottom: '1px solid var(--sep)' }}>
             {r && <Icon name={glyphOf(r.emoji)} />}{r ? r.name : t('Freestyle')}
           </div>
-          <div className="small dim">{t('{0} sets', setN)} · {fmtVol(vol, st.unit)}</div>
+          {entryRows(g.units)}
         </div>
-        {entryRows(g.units)}
-      </div>
-    }) : entryRows(groups[0]?.units || [])}
-    {/* Progress photos and form-check videos: added and removed right here, on the saved record. */}
-    <WorkoutMediaSection w={w} />
-    <div className="small muted" style={{ margin: '4px 0 6px' }}>{t('Session note')}</div>
-    <textarea ref={noteRef} className="input" rows={2} maxLength={NOTE_MAX} value={note}
-      placeholder={t('How the session went as a whole.')}
-      onFocus={onNoteFocus} onChange={e => setNote(e.target.value)} onBlur={saveNote} />
-    <div style={{ height: 14 }} />
-    {st.active && <p className="small muted">{t('Finish the current workout first.')}</p>}
-    {/* The editor starts from the record as it is, so a note typed here goes in first — the same
-        flush the date row does, and the unmount hook then has nothing left to write over it. */}
-    <Button icon="pencil" disabled={!!st.active} onClick={() => {
-      saveNote()
-      initial.current = latest.current.trim().slice(0, NOTE_MAX)
-      try { update(state => { editCompletedSession(state, w) }); closeThenNav(close, '/workout') }
-      catch (error) { toast(t(error.message)) }
-    }}>{t('Edit workout')}</Button>
-    <div style={{ height: 8 }} />
-    {/* The same exercises again, today, as a new session (#58): the rows read what was logged
-        in this workout. The record itself stays as it is. */}
-    <Button icon="reset" disabled={!!st.active} style={{ marginBottom: 8 }} onClick={() => {
-      saveNote()
-      initial.current = latest.current.trim().slice(0, NOTE_MAX)
-      repeatWorkout(w, close)
-    }}>{t('Repeat today')}</Button>
-    {/* The note lives in a textarea that only writes on blur, and moving the workout re-keys a
-        legacy record — so flush it first and stop the unmount hook writing it a second time. */}
-    <Button icon="calendar" style={{ marginBottom: 8 }} onClick={() => {
-      saveNote()
-      initial.current = latest.current.trim().slice(0, NOTE_MAX)
-      workoutDateSheet(w, close)
-    }}>{t('Change date & time')}</Button>
-    <Button icon="stopwatch" style={{ marginBottom: 8 }} onClick={() => {
-      saveNote()
-      initial.current = latest.current.trim().slice(0, NOTE_MAX)
-      workoutDurationSheet(w, close)
-    }}>{t('Change duration')}</Button>
-    <Button icon="plus" onClick={() => confirmSheet({
-      title: t('Save as routine?'),
-      message: t('Create an independent routine from these exercise targets. Your workout history is kept.'),
-      confirmText: t('Save'),
-      onConfirm: () => {
-        let id
-        try { update(s => { id = saveSessionAsRoutine(s, w, w.name) }) }
-        catch (e) { toast(t(e.message)); return }
-        close()
-        nav('/plan/r/' + id)
-      }
-    })}>{t('Save as routine')}</Button>
-    <div style={{ height: 8 }} />
-    <Button icon="copy" onClick={copyAsText}>{t('Copy as text')}</Button>
-    <div style={{ height: 8 }} />
-    <Button icon="share" onClick={shareAsImage}>{t('Share as image')}</Button>
-    <div style={{ height: 8 }} />
-    <Button icon="download" onClick={exportFit}>{t('Export as .fit file')}</Button>
-    <div style={{ height: 10 }} />
-    {/* Matched the way the edits above are, not by id: a workout from before ids has none, and
-        filtering on `x.id !== undefined` took every other one of them with it. */}
-    <Button variant="danger" onClick={() => confirmSheet({ title: t('Delete workout?'), message: t('This removes it from your history for good.') + mediaGoesToo(S().workouts.find(x => sameWorkout(x, w))), confirmText: t('Delete'), danger: true, onConfirm: () => { update(s => { s.workouts = s.workouts.filter(x => !sameWorkout(x, w)) }); close(); toast(t('Workout deleted')) } })}>{t('Delete workout')}</Button>
-  </>
+      }) : entryRows(groups[0]?.units || [])}
+    </div>
+    <Button variant="tinted" icon="pencil" trailingIcon="chevronUp" onClick={actions}>{t('Edit, share & more')}</Button>
+  </div>
 }
 // "Share as image" (#453): the card lib/workout-card.js lays out, painted in the theme and accent
 // the app is showing right now, previewed before it goes anywhere. The muscle map is the finish
@@ -2851,12 +2827,13 @@ function Calendar({ start, close }) {
 export const calendarSheet = start => ui().openSheet(close => <Calendar start={start} close={close} />)
 
 /* shared small workout row (used in lists) */
-export function WorkoutRow({ w, onClick }) {
+// `icon` and `color` (Home's day sheet) override the routine's glyph and the plain tile.
+export function WorkoutRow({ w, onClick, icon, color }) {
   const st = useStore(s => s.S)
-  const glyph = glyphOf((st.routines.find(r => r.id === w.routineId) || {}).emoji)
+  const glyph = icon || glyphOf((st.routines.find(r => r.id === w.routineId) || {}).emoji)
   const mediaN = workoutMediaCount(w)
   return <div className="item" {...tappable(onClick)}>
-    <span className="lrow-i" style={{ width: 34, height: 34, borderRadius: 8, fontSize: 19 }}><Icon name={glyph} /></span>
+    <span className="lrow-i" style={{ width: 34, height: 34, borderRadius: 8, fontSize: 19, ...(color ? { background: `color-mix(in srgb,${color} 22%,transparent)`, color } : {}) }}><Icon name={glyph} /></span>
     <div className="grow"><div className="tt">{w.name}</div>
       <div className="ss">{[fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(w.vol, st.unit)].join(' · ')}</div></div>
     {mediaN > 0 && <span className="wrow-media" title={tn('{0} photo or video', '{0} photos or videos', mediaN)} aria-label={tn('{0} photo or video', '{0} photos or videos', mediaN)}><Icon name="image" />{mediaN}</span>}
