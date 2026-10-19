@@ -42,9 +42,9 @@
   --purple:#bf5af2; --mint:#63e6e2; --brown:#ac8e68; --grey:#8e8e93;
   /* Muscle groups (lib/muscle-colors.js): one hue each, so a workout's exercises tell apart. */
   --mg-chest:var(--red); --mg-back:var(--blue); --mg-shoulders:var(--orange);
-  --mg-biceps:var(--purple); --mg-triceps:var(--pink); --mg-forearms:var(--mint);
+  --mg-biceps:var(--purple); --mg-triceps:#a3e048; --mg-forearms:#98a2b3;
   --mg-abs:var(--yellow); --mg-quads:var(--green); --mg-hamstrings:var(--teal);
-  --mg-glutes:var(--indigo); --mg-calves:var(--brown); --mg-cardio:#a3e048; --mg-stretching:#98a2b3;
+  --mg-glutes:var(--indigo); --mg-calves:var(--brown);
 
   /* accent (per-account, synced) */
   --acc:  var(--green);
@@ -92,7 +92,7 @@
   --blue:#007aff; --green:#34c759; --red:#ff3b30; --orange:#ff9500;
   --yellow:#ffcc00; --teal:#30b0c7; --indigo:#5856d6; --pink:#ff2d55;
   --purple:#af52de; --mint:#00c7be; --brown:#a2845e; --grey:#8e8e93;
-  --mg-cardio:#65a30d; --mg-stretching:#64748b;
+  --mg-triceps:#65a30d; --mg-forearms:#64748b;
   --acc-2:#248a3d;
   --on-acc:#ffffff;
 }
@@ -550,6 +550,13 @@ h4.sec{
 }
 .tag.acc{background:var(--acc-soft);color:var(--acc)}
 .tag.mg{background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 80%,var(--label))}
+/* An exercise's chips (its muscle group, muscle, equipment): pills with a hairline edge, the
+   group's one carrying a dot in its colour (lib/muscle-colors.js). */
+.tag.pill{border-radius:99px;padding:3px 10px;background:var(--surface-2);border:1px solid var(--sep);color:var(--label)}
+.tag.pill.mg{gap:6px;padding-inline-start:8px;background:var(--surface-2);color:var(--label)}
+.tag.pill.mg::before{content:'';flex:none;width:9px;height:9px;border-radius:50%;background:var(--mc)}
+.tag.pill.acc{background:var(--acc-soft);color:var(--acc);border-color:transparent}
+.tag.pill.dim{color:var(--label-2)}
 /* Left / Right on a per-side row: one width for both (#322). The two hidden words share the
    visible one's grid cell, so the pill is as wide as the longer word. */
 .tag.sidepill{display:inline-grid;justify-items:center;flex:none}
@@ -1914,6 +1921,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gen-bar .tt{font-weight:600;font-size:15px}
 .gen-bar .ss{color:var(--label-2);font-size:12.5px;margin-top:2px;line-height:1.3}
 .gen-why{color:var(--acc);font-size:13px;font-weight:500;margin-bottom:6px}
+.gen-why::first-letter{text-transform:uppercase}
 
 /* --- home: kind colours (lib/workout-kind.js) on the Start tiles and the week strip --- */
 .gen-tile.kind{box-shadow:inset 3px 0 0 var(--kind)}

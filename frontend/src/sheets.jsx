@@ -52,7 +52,7 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
-import { groupColor, exerciseColor, mcStyle } from './lib/muscle-colors.js'
+import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
 import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
@@ -1690,6 +1690,7 @@ export const MORE_KEY = 'gym_cfg_more'
 function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel }) {
   const st = useStore(s => s.S)
   const cardio = isCardio(ex.id)
+  const tags = muscleTagsOf(ex)
   const speedUnit = speedUnitOf(st)
   const seed = existing || initial || defaultConfig(ex.id)
   const [c, setC] = useState(() => {
@@ -1954,10 +1955,12 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         metadata name muscles by the map's ids ("forearm", "gluteal"), which only MUSCLE_NAME
         turns into a translatable label. */}
     <div className="row" style={{ gap: 6, flexWrap: 'wrap', margin: '10px 0 14px' }}>
-      {cardio && <span className="tag acc"><Icon name="figureRun" />{t('Cardio')}</span>}
-      <span className={'tag' + (exerciseColor(ex) ? ' mg' : '')} style={mcStyle(exerciseColor(ex))}>{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)}</span><span className="tag">{t(ex.eq)}</span>
+      {cardio && <span className="tag pill acc"><Icon name="figureRun" />{t('Cardio')}</span>}
+      {!cardio && tags.group && <span className={'tag pill' + (tags.color ? ' mg' : '')} style={mcStyle(tags.color)}>{t(tags.group)}</span>}
+      {tags.muscle && <span className="tag pill">{t(tags.muscle)}</span>}
+      {ex.eq && <span className="tag pill">{t(ex.eq)}</span>}
       {!cardio && (ex.secondaries?.length ? ex.secondaries : smOf(ex)).filter(trainedBy(ex)).slice(0, 3)
-        .map((s, i) => <span key={i} className="tag dim">{t(MUSCLE_NAME[s] || s)}</span>)}
+        .map((s, i) => <span key={i} className="tag pill dim">{t(MUSCLE_NAME[s] || s)}</span>)}
     </div>
     {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
     {!cardio && <div style={{ marginBottom: 14 }}>

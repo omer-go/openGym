@@ -1,18 +1,20 @@
 // One colour per muscle group, so the exercises of a workout tell apart at a glance: the
 // one-tap setup's pills, Add exercise's groups, the exercise rows (their thumbnail's ring) and
-// the workout's exercise cards. The groups are Add exercise's (lib/add-exercise.js ADD_GROUPS)
-// plus Cardio and Stretching (lib/activities.js); an exercise takes its primary muscle's group.
+// the workout's exercise cards. The groups are Add exercise's (lib/add-exercise.js ADD_GROUPS);
+// an exercise takes its primary muscle's group. Cardio and stretches (lib/activities.js) keep
+// their own group but get no colour, so the muscle groups have more hues to spread across.
 // Colours are CSS tokens (--mg-*, index.css), set for the dark and the light theme.
-import { groupOfMuscle } from './add-exercise.js'
-import { activityOf } from './activities.js'
+import { ADD_GROUPS, groupOfMuscle } from './add-exercise.js'
+import { ACTIVITY_GROUPS, activityOf } from './activities.js'
+import { MUSCLE_NAME } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 
 export const GROUP_COLOR_IDS = [
   'chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs',
-  'quads', 'hamstrings', 'glutes', 'calves', 'cardio', 'stretching',
+  'quads', 'hamstrings', 'glutes', 'calves',
 ]
 
-/** The CSS colour of a group id ('chest', 'cardio'…), or null for anything else. */
+/** The CSS colour of a muscle group id ('chest', 'quads'…), or null for anything else. */
 export const groupColor = id => (GROUP_COLOR_IDS.includes(id) ? `var(--mg-${id})` : null)
 
 // The library is long and rows re-render often: remember each exercise object's group.
@@ -33,6 +35,21 @@ export const muscleColor = slug => groupColor(groupOfMuscle(slug)?.id)
 
 /** The CSS colour of an exercise's group, or null when it has none. */
 export const exerciseColor = ex => groupColor(groupOfExercise(ex))
+
+/** What an exercise's muscle chips say: its group's name and colour, then its target muscle only
+ *  when that adds something to the group's name ('Delts' under Shoulders, nothing under Chest).
+ *  Names are English i18n keys. */
+export function muscleTagsOf(ex) {
+  const id = groupOfExercise(ex)
+  const group = (id && [...ADD_GROUPS, ...ACTIVITY_GROUPS].find(g => g.id === id)?.n) || null
+  const raw = ex?.tg || ex?.bp
+  const muscle = raw ? MUSCLE_NAME[raw] || raw : null
+  return {
+    group,
+    color: groupColor(id),
+    muscle: muscle && muscle.toLowerCase() !== group?.toLowerCase() ? muscle : null,
+  }
+}
 
 /** A style setting `--mc` (what the .mg rules colour with), or undefined for no colour. */
 export const mcStyle = color => (color ? { '--mc': color } : undefined)

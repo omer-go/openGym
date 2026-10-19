@@ -16,9 +16,12 @@ const TILES = [
   { type: 'legs', glyph: 'legs', what: 'Quads, hamstrings, glutes, calves' },
 ]
 
+// How long a muscle has waited ("last trained 3 days ago").
+export const genSince = (last, today = todayISO()) =>
+  last ? t('last trained {0}', fmtDaysAgo(last, today)) : t('not trained yet')
+
 // What the first exercise is there for: the muscle the session opens on, and how long it has waited.
-export const genReason = (muscle, last, today = todayISO()) => t(MUSCLE_NAME[muscle]) + ' · '
-  + (last ? t('last trained {0}', fmtDaysAgo(last, today)) : t('not trained yet'))
+export const genReason = (muscle, last, today = todayISO()) => t(MUSCLE_NAME[muscle]) + ' · ' + genSince(last, today)
 
 // One-tap workouts (lib/generate.js): four tiles, each a session built from the muscles you have
 // trained least lately. Each tile says which muscle it would open on, so the choice is informed,
