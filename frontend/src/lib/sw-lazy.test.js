@@ -30,11 +30,11 @@ const ok = body => ({ ok: true, status: 200, redirected: false, text: async () =
 
 describe('the worker keeps the on-demand code too', () => {
   it('fetches every listed chunk at install', async () => {
-    const sw = stampSw(source, { stamp: 'abc', lazy: ['./assets/index-new.js', './assets/media-ingest-x.js', './assets/jsQR-y.js'] })
+    const sw = stampSw(source, { stamp: 'abc', lazy: ['./assets/index-new.js', './assets/media-ingest-x.js', './assets/lean-qr-y.js'] })
     const asked = []
     const cache = await install(sw, async u => { asked.push(String(u)); return String(u) === 'index.html' ? ok(shell) : ok('') })
     expect(asked.filter(u => u === './assets/index-new.js')).toHaveLength(1)
-    expect([...cache.keys()]).toEqual(expect.arrayContaining(['./assets/media-ingest-x.js', './assets/jsQR-y.js', 'index.html']))
+    expect([...cache.keys()]).toEqual(expect.arrayContaining(['./assets/media-ingest-x.js', './assets/lean-qr-y.js', 'index.html']))
   })
 
   it('a chunk that will not come is no reason to fail the install', async () => {
