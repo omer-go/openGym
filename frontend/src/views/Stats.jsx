@@ -11,7 +11,9 @@ import LineChart from '../components/LineChart.jsx'
 import Heatmap from '../components/Heatmap.jsx'
 import Icon from '../components/Icon.jsx'
 import BodyMap, { BodyMapLegend } from '../components/BodyMap.jsx'
-import { loadOfWeeklyPlan, loadOfWorkouts, muscleBalanceWindow, rankOf, MUSCLES, MUSCLE_NAME, musclesOf } from '../lib/muscles.js'
+import { loadOfWeeklyPlan, loadOfWorkouts, doneSetItems, muscleBalanceWindow, rankOf, MUSCLES, MUSCLE_NAME, musclesOf } from '../lib/muscles.js'
+import { regionBreakdown } from '../lib/muscle-roles.js'
+import { useMuscleRoles } from '../components/MuscleRoles.jsx'
 import { fatigueOf, strengthOf, STRENGTH_FLOOR, LB_TO_KG } from '../lib/recovery.js'
 import { strengthExerciseRowsForMuscle } from '../lib/strength-exercises.js'
 import { fatigueStateOf } from '../lib/recovery-view.js'
@@ -133,6 +135,7 @@ function MuscleBalance({ S }) {
   const [weeklyExpanded, setWeeklyExpanded] = useState(false)
   const now = useNow()
   const lang = getLang()
+  useMuscleRoles()  // the per-part breakdown under a tapped muscle reads them
   const workouts = S.workouts
   const bodyweightKg = useMemo(() => profileBodyweightKg(S), [S.bodyweight, S.unit])
   const fatigue = useMemo(() => fatigueOf(workouts, now, { bodyweightKg, unit: S.unit }), [workouts, now, bodyweightKg, S.unit])
@@ -161,6 +164,20 @@ function MuscleBalance({ S }) {
   const rated = inWin.some(w => w.entries.some(e => e.sets.some(s => s.done && isHardSet(s))))
   const on = !weekly && hard && rated
   const load = loadOfWorkouts(inWin, on ? isHardSet : null)
+  // A tapped muscle split into its parts (front, side, rear delt…), from the exercises the
+  // catalogue has muscle roles for; the line under it says how many of its sets that covers.
+  const parts = sel ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null), sel) : null
+  const partsMax = parts ? Math.max(...parts.rows.map(r => r.sets)) : 0
+  const breakdown = parts && <div className="mparts" data-muscle-parts={sel}>
+    {parts.rows.map(r => <div key={r.name} className="mrow">
+      <span className="nm">{t(r.name)}</span>
+      <span className="bar"><i style={{ width: Math.round(r.sets / partsMax * 100) + '%', background: on ? 'var(--yellow)' : undefined }} /></span>
+      <span className="v">{fmtNum(r.sets)}</span>
+    </div>)}
+    <div className="muted small">{parts.covered >= parts.total
+      ? t('Target sets count 1, helper sets 0.4.')
+      : t('Detail for {0} of {1} sets. Target sets count 1, helper sets 0.4.', fmtNum(parts.covered), fmtNum(parts.total))}</div>
+  </div>
   const planned = weekly && weekOffset === 0 ? loadOfWeeklyPlan(S) : {}
   const comparisonMuscles = MUSCLES
     .filter(muscle => (planned[muscle] || 0) > 0 || (load[muscle] || 0) > 0)
@@ -227,6 +244,7 @@ function MuscleBalance({ S }) {
       <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
       <span className="v">{sets(sel) ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
     </div>}
+    {breakdown}
     {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m}>
       <span className="nm">{t(MUSCLE_NAME[m])}</span>
       <span className="bar"><i style={{ width: Math.round(load[m] / max * 100) + '%', background: on ? 'var(--yellow)' : undefined }} /></span>
@@ -279,7 +297,7 @@ function MuscleBalance({ S }) {
         <BodyMapLegend />
         {groupBars}
         {weekly && weekOffset === 0
-          ? comparisonRows.length ? <>{comparisonRows}{weeklyToggle(comparisonMuscles.length)}{completionSummary}</> : <div className="muted small">{t('No workouts in this period yet.')}</div>
+          ? comparisonRows.length ? <>{comparisonRows}{breakdown}{weeklyToggle(comparisonMuscles.length)}{completionSummary}</> : <div className="muted small">{t('No workouts in this period yet.')}</div>
           : inWin.length ? completedRows : <div className="muted small">{t('No workouts in this period yet.')}</div>}
       </div>
     </> : view === 'fatigue' ? <>

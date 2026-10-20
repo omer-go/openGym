@@ -1694,6 +1694,9 @@ body.no-tabbar.has-wfoot #timer{bottom:calc(var(--wfoot) + var(--sab));padding-b
 .mrow .bar{width:74px;height:5px;border-radius:3px;background:var(--surface-2);flex:none;overflow:hidden}
 .mrow .bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
 .mrow .v{font-size:12px;color:var(--label-2);min-width:52px;text-align: end;flex:none}
+.mparts{padding-block:2px 6px;padding-inline-start:14px;border-inline-start:2px solid var(--sep);margin:2px 0 8px}
+.mparts .nm{color:var(--label-2)}
+.mparts .muted{margin-top:4px}
 /* A headline number inside a card — tile weight without a tile around it, for the pair of
    readings at the top of the effort card. */
 .stat-v{font-size:26px;font-weight:600;letter-spacing:-.026em;line-height:1.1}

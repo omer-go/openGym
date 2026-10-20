@@ -272,9 +272,11 @@ export function loadOf(items) {
  * question from where the sets went: a muscle can lead on volume and still never be trained
  * near failure.
  */
-export const loadOfWorkouts = (workouts, pick) =>
-  loadOf((workouts || []).flatMap(w =>
-    (w.entries || []).map(e => ({ id: e.id, ex: e.exercise || e, sets: (e.sets || []).filter(s => s.done && !isWarmupRow(s) && (!pick || pick(s))).length }))))
+export const loadOfWorkouts = (workouts, pick) => loadOf(doneSetItems(workouts, pick))
+
+/** [{ id, ex, sets }] for finished workouts: the ticked-off work sets per entry, as loadOf reads. */
+export const doneSetItems = (workouts, pick) => (workouts || []).flatMap(w =>
+  (w.entries || []).map(e => ({ id: e.id, ex: e.exercise || e, sets: (e.sets || []).filter(s => s.done && !isWarmupRow(s) && (!pick || pick(s))).length })))
 
 /**
  * Workouts in one existing Muscle balance range, with time injected for deterministic tests.

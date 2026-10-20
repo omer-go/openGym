@@ -3,6 +3,8 @@
 // so every caller keeps a fallback for an exercise with none. The data is loaded on first use,
 // not with the app: most sessions never open an exercise's detail.
 
+import { loadOf } from './muscles.js'
+
 let roles = null, pending = null
 
 export function loadMuscleRoles() {
@@ -53,4 +55,54 @@ export function roleChips(r, helpers = 3) {
   if (!r || !r.target?.length) return null
   const name = m => ROLE_MUSCLE_NAME[m] || m
   return { targets: r.target.map(name), helpers: (r.synergists || []).slice(0, helpers).map(name) }
+}
+
+// The parts of each body-map region (lib/muscles.js MUSCLES) a breakdown splits it into. A row
+// can gather several role muscles: the four rotator-cuff muscles read as one. Regions with a
+// single part (quads, calves…) have no breakdown.
+export const REGION_PARTS = {
+  deltoids: [['Front delt', ['front-delt']], ['Side delt', ['side-delt']], ['Rear delt', ['rear-delt']],
+    ['Rotator cuff', ['supraspinatus', 'infraspinatus', 'teres-minor', 'subscapularis']]],
+  trapezius: [['Upper traps', ['upper-trap']], ['Middle traps', ['middle-trap']], ['Lower traps', ['lower-trap']]],
+  'upper-back': [['Lats', ['lats']], ['Rhomboids', ['rhomboids']], ['Teres major', ['teres-major']]],
+  chest: [['Upper chest', ['pec-major-clavicular']], ['Mid and lower chest', ['pec-major-sternal']], ['Pec minor', ['pec-minor']]],
+  biceps: [['Biceps', ['biceps']], ['Brachialis', ['brachialis']]],
+  triceps: [['Triceps (long head)', ['triceps-long-head']], ['Triceps', ['triceps']]],
+  forearm: [['Brachioradialis', ['brachioradialis']], ['Wrist flexors', ['wrist-flexors']], ['Wrist extensors', ['wrist-extensors']]],
+  abs: [['Abs', ['rectus-abdominis']], ['Deep abs', ['transverse-abdominis']]],
+  'lower-back': [['Spinal erectors', ['erector-spinae']], ['Quadratus lumborum', ['quadratus-lumborum']]],
+  gluteal: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']]],
+  adductors: [['Adductors', ['adductors']], ['Adductor magnus', ['adductor-magnus']]],
+}
+
+// How much a set counts for a muscle in each role: the target fully, a helper as a secondary
+// muscle counts on the body map (lib/muscles.js SECONDARY), a stabilizer not at all.
+export const ROLE_WEIGHT = { target: 1, synergists: 0.4 }
+
+/**
+ * One body-map region's sets split into its parts, counted from the exercises that have roles.
+ * `items` are [{ id, ex, sets }] (muscles.js doneSetItems). `total` is the region's sets as the
+ * body map counts them and `covered` the share of those from exercises with roles, so the screen
+ * can say how much of the region the split speaks for. Null when the region has no parts or no
+ * exercise with roles reaches it.
+ */
+export function regionBreakdown(items, region, rolesOf = muscleRolesOf) {
+  const parts = REGION_PARTS[region]
+  if (!parts) return null
+  const partOf = {}
+  for (const [name, muscles] of parts) for (const m of muscles) partOf[m] = name
+  const sets = Object.fromEntries(parts.map(([name]) => [name, 0]))
+  const withRoles = []
+  for (const item of items || []) {
+    const r = item?.sets && rolesOf(item.id)
+    if (!r) continue
+    withRoles.push(item)
+    for (const role in ROLE_WEIGHT) for (const m of r[role] || []) {
+      if (partOf[m]) sets[partOf[m]] += item.sets * ROLE_WEIGHT[role]
+    }
+  }
+  const round = n => Math.round((n || 0) * 10) / 10
+  const rows = parts.map(([name]) => ({ name, sets: round(sets[name]) }))
+  if (!rows.some(r => r.sets > 0)) return null
+  return { rows, covered: round(loadOf(withRoles)[region]), total: round(loadOf(items || [])[region]) }
 }
