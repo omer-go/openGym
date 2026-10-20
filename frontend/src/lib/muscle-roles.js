@@ -13,6 +13,8 @@ export function loadMuscleRoles() {
 }
 
 export const muscleRolesOf = id => (roles && roles[id]) || null
+/** Whether the roles are in: what was worked out from them before must be worked out again. */
+export const rolesLoaded = () => !!roles
 
 // English names, also the i18n keys.
 export const ROLE_MUSCLE_NAME = {

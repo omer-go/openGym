@@ -1,10 +1,11 @@
-import { describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, weeklyDone, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps } from './coverage.js'
 import { generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
 import { groupOfExercise } from './muscle-colors.js'
+import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const sets = n => Array.from({ length: n }, () => row())
@@ -164,5 +165,59 @@ describe('variety', () => {
     const cands = [{ id: '0047', rank: 3 }, { id: '0314', rank: 1 }, { id: '0757', rank: 2 }]
     const [pick] = pickForCoverage(cands, { count: 1, groups: ['chest'], need: { chest: 1 } })
     expect(pick.id).toBe('0314')
+  })
+})
+
+describe('the parts of a muscle', () => {
+  const FRONT = '0310', SIDE = '0334', REAR = '0378'
+  const ROLES = { [FRONT]: { target: ['front-delt'] }, [SIDE]: { target: ['side-delt'] }, [REAR]: { target: ['rear-delt'] } }
+  const rolesOf = id => ROLES[id] || null
+  const raises = [{ id: FRONT, rank: 0 }, { id: SIDE, rank: 1 }, { id: REAR, rank: 2 }]
+  const opts = { groups: ['shoulders'], need: { shoulders: 1 }, rolesOf }
+  const pick = (workouts, cands = raises, o = {}) =>
+    pickForCoverage(cands, { count: 1, ...opts, history: variantHistory(state({ workouts }), rolesOf), ...o })[0].id
+
+  it('history keeps when each target muscle was last done, under its group', () => {
+    const h = variantHistory(state({ workouts: [session('2026-09-01', [SIDE]), session('2026-09-08', [SIDE, FRONT])] }), rolesOf)
+    expect(h.shoulders.part).toEqual({ 'side-delt': '2026-09-08', 'front-delt': '2026-09-08' })
+  })
+  it('the part done longest ago comes first, ahead of the exercise you know', () => {
+    expect(pick([])).toBe(FRONT)
+    expect(pick([session('2026-09-01', [REAR]), session('2026-09-08', [FRONT])])).toBe(SIDE)
+    expect(pick([session('2026-09-01', [SIDE]), session('2026-09-08', [FRONT])])).toBe(REAR)
+  })
+  it('a second exercise for the group in one session is for another part', () => {
+    const cands = [{ id: SIDE, rank: 0 }, { id: CABLE_RAISE, rank: 1 }, { id: REAR, rank: 2 }]
+    const ids = o => pickForCoverage(cands, { count: 2, ...opts, ...o }).map(p => p.id).sort()
+    expect(ids({ rolesOf: id => (id === CABLE_RAISE ? ROLES[SIDE] : rolesOf(id)) })).toEqual([SIDE, REAR].sort())
+    // Without roles, only the tool rotates: two side raises.
+    expect(ids({ rolesOf: () => null })).toEqual([SIDE, CABLE_RAISE].sort())
+  })
+  it('parts only decide when every exercise in the running has roles', () => {
+    const someRoles = id => (id === FRONT ? null : ROLES[id] || null)
+    const workouts = [session('2026-09-08', [SIDE])]
+    // Without the front raise's roles the parts say nothing: the exercise you know comes first.
+    expect(pick(workouts, raises, { rolesOf: someRoles, history: variantHistory(state({ workouts }), someRoles) })).toBe(FRONT)
+    expect(pick(workouts, raises.slice(1))).toBe(REAR)
+  })
+  it('Add exercise puts another part first after one already in the session', () => {
+    const order = rankForGaps(raises, { ...opts, have: [{ id: FRONT, sets: [] }] })
+    expect(order[0]).not.toBe(FRONT)
+    expect(order.indexOf(FRONT)).toBe(2)
+  })
+
+  describe('with the catalogue roles', () => {
+    beforeAll(loadMuscleRoles)
+    const targets = p => muscleRolesOf(p.id)?.target || []
+    it('after pulldowns, a pull day opens on the mid back', () => {
+      const st = state({ workouts: [session('2026-09-10', ['2330'])] })
+      const [first] = generateWorkout(st, 'pull', { now: NOW })
+      expect(targets(first)).toContain('middle-trap')
+    })
+    it('a pull day pairs lat work with a row', () => {
+      const back = generateWorkout(state(), 'pull', { now: NOW }).filter(p => groupOfExercise(EXIDX[p.id]) === 'back' && p.muscle === 'upper-back')
+      expect(back.some(p => targets(p).includes('middle-trap'))).toBe(true)
+      expect(back.some(p => targets(p).join() === 'lats')).toBe(true)
+    })
   })
 })

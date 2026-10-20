@@ -7,6 +7,8 @@ import { generateWorkout, GEN_NAME } from '../lib/generate.js'
 import { glyphOf } from '../lib/glyphs.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { startGenerated } from '../sheets.jsx'
+import { useMuscleRoles } from './MuscleRoles.jsx'
+import { rolesLoaded } from '../lib/muscle-roles.js'
 import Icon from './Icon.jsx'
 
 const TILES = [
@@ -28,10 +30,11 @@ export const genReason = (muscle, last, today = todayISO()) => t(MUSCLE_NAME[mus
 // and opens the setup sheet (sheets.jsx GenSetup) before the workout starts.
 export default function GenerateCard() {
   const S = useStore(s => s.S)
+  useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
   const firsts = useMemo(() => Object.fromEntries(TILES.map(({ type }) => [type, generateWorkout(S, type, S.genSetup?.[type])[0] || null])),
     // The picks only move with what was logged, the equipment in use, the exercises there are and
-    // the setup each tile last started with.
-    [S.workouts, S.equipFilterOn, S.activeEquipId, S.equipProfiles, S.customEx, S.genSetup])
+    // the setup each tile last started with, and the muscle roles once they are in.
+    [S.workouts, S.equipFilterOn, S.activeEquipId, S.equipProfiles, S.customEx, S.genSetup, rolesLoaded()])
   return <div className="card">
     <h2 style={{ marginBottom: 2 }}>{t('One-tap workout')}</h2>
     <div className="muted small" style={{ marginBottom: 10 }}>{t('Built from the muscles you have trained least lately.')}</div>

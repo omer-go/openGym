@@ -14,6 +14,8 @@ import BodyMap, { MuscleAvatar } from './BodyMap.jsx'
 import { Thumb } from './Media.jsx'
 import Icon from './Icon.jsx'
 import { Button, Segmented } from './ui.jsx'
+import { useMuscleRoles } from './MuscleRoles.jsx'
+import { rolesLoaded } from '../lib/muscle-roles.js'
 
 // The workout's Add exercise: pick a muscle group (what the last 7 days lack most, less what the
 // workout already covers, is marked Suggested), then an exercise from it, its areas in the order
@@ -77,11 +79,13 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
   const [more, setMore] = useState({})           // area -> rows shown, past the default
   const status = useMemo(() => muscleStatus(S, todayISO(), routine && have), [S.workouts, have])
   const actLast = useMemo(() => activityLast(S), [S.workouts])
-  // What the week still needs per group; a routine, being for any week, needs everything.
+  // What the week still needs per group; a routine, being for any week, needs everything. The
+  // muscle roles say which part of a muscle was done last (coverage.js).
+  useMuscleRoles()
   const gaps = useMemo(() => ({
     need: routine ? Object.fromEntries(ALL.map(id => [id, 1])) : weeklyNeed(S, ALL),
     history: variantHistory(S),
-  }), [S.workouts, S.unit, !!routine])
+  }), [S.workouts, S.unit, !!routine, rolesLoaded()])
   const suggested = useMemo(() => suggestedGroups(gaps.need, have), [gaps, have])
   const openGroup = (id, slug = '') => { setGroup(id); setArea(slug); setMore({}) }
 

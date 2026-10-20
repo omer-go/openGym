@@ -30,6 +30,7 @@ import BodyMap from './components/BodyMap.jsx'
 import AddExerciseSheet, { Ava } from './components/AddExerciseSheet.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
 import MuscleRoles, { useMuscleRoles } from './components/MuscleRoles.jsx'
+import { rolesLoaded } from './lib/muscle-roles.js'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
 import { nextSwap } from './lib/quick-swap.js'
@@ -2949,8 +2950,9 @@ function GenSetup({ type, close }) {
   const [shift, setShift] = useState(0)
   const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
+  useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift }),
-    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch])
+    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
   // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's

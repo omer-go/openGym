@@ -16,10 +16,14 @@
 // first every group gets one exercise that targets its main muscle, then a second, and so on;
 // groups that have had their week (need under 0.1) wait until every other group is served.
 //
-// Variety. Among picks that cover about the same, the bench angle (incline, decline, flat) last
-// done longest ago for that group wins, then the tool (barbell, dumbbell, smith…, variant.js),
-// then the exercise you know. So a flat barbell bench is followed by an incline on dumbbells.
-// Presses rotate with presses: an isolation lift is only offered where an isolation lift is best.
+// Variety. Among picks that cover about the same, the part of the muscle (front, side or rear
+// delt; upper or mid chest; lats or mid back: the exercise's target in its muscle roles,
+// muscle-roles.js) last done longest ago for that group wins, then the bench angle (incline,
+// decline, flat), then the tool (barbell, dumbbell, smith…, variant.js), then the exercise you
+// know. So a flat barbell bench is followed by an incline on dumbbells, and lateral raises by
+// rear-delt work. Parts only decide where every exercise in the running has roles: the catalogue
+// has them for part of it. Presses rotate with presses: an isolation lift is only offered where
+// an isolation lift is best.
 //
 // The same numbers show elsewhere: the one-tap setup and the routine editor draw what a session
 // adds per group (plannedSets), and Add exercise suggests groups and orders a group's exercises
@@ -33,6 +37,7 @@ import { fatigueOf } from './recovery.js'
 import { isoOf } from './format.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
+import { muscleRolesOf } from './muscle-roles.js'
 
 export const WEEKLY_TARGET = 10
 const OTHER_MUSCLE = 0.25 // a group's other muscles credit it at a quarter
@@ -142,8 +147,11 @@ export function weeklyNeed(S, groups, now = Date.now()) {
   return need
 }
 
-/** Group id -> { angle: { incline: day }, tool: { barbell: day } }: when each was last done. */
-export function variantHistory(S) {
+/**
+ * Group id -> { part: { 'rear-delt': day }, angle: { incline: day }, tool: { barbell: day } }:
+ * when each was last done. A part is a target muscle in the exercise's roles (`rolesOf`).
+ */
+export function variantHistory(S, rolesOf = muscleRolesOf) {
   const last = {}
   for (const w of S?.workouts || []) {
     if (typeof w?.d !== 'string') continue
@@ -151,7 +159,8 @@ export function variantHistory(S) {
       const ex = EXIDX[entry.id]
       const g = ex && workSets(entry) ? groupOf(primaryMuscleOf(entry)?.slug)?.id : null
       if (!g) continue
-      const v = variantOf(ex), seen = last[g] || (last[g] = { angle: {}, tool: {} })
+      const v = variantOf(ex), seen = last[g] || (last[g] = { part: {}, angle: {}, tool: {} })
+      for (const m of rolesOf(entry.id)?.target || []) if (!(seen.part[m] >= w.d)) seen.part[m] = w.d
       if (!(seen.angle[v.angle] >= w.d)) seen.angle[v.angle] = w.d
       if (!(seen.tool[v.tool] >= w.d)) seen.tool[v.tool] = w.d
     }
@@ -163,7 +172,7 @@ export function variantHistory(S) {
 const within = (g, best, share) => g >= best - Math.abs(best) * (1 - share)
 const totalOf = credit => Object.values(credit).reduce((a, b) => a + b, 0)
 // An exercise as the pickers weigh it, or null when its main muscle is in none of the groups.
-function itemOf(id, rank, on) {
+function itemOf(id, rank, on, rolesOf) {
   const ex = EXIDX[id]
   const slug = primaryMuscleOf(ex)?.slug
   const g = groupOf(slug)
@@ -171,6 +180,7 @@ function itemOf(id, rank, on) {
   const full = groupCredit(musclesOf(ex))
   return {
     id, rank, slug, ex, group: g.id, main: g.m[0] === slug, variant: variantOf(ex),
+    parts: rolesOf(id)?.target || null,
     credit: Object.fromEntries(Object.entries(full).filter(([k]) => on.has(k))),
     total: totalOf(full),
     // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
@@ -178,19 +188,28 @@ function itemOf(id, rank, on) {
     compound: Object.values(full).filter(c => c >= 0.4).length >= 3,
   }
 }
-// Staler first: the angle, then the tool last done longest ago for the group, then the exercise
-// you know best. A tool the session already uses for the group (`taken`, [{ group, variant }])
-// counts as the latest of all, so a second back exercise is on another tool. Angles go by
-// history only: most groups have one.
+// Sorts `list` staler first: the part of the muscle, the angle, then the tool last done longest
+// ago for the group, then the exercise you know best. A part or tool the session already uses
+// for the group (`taken`, [{ group, parts, variant }]) counts as the latest of all, so a second
+// shoulder exercise is for another delt and a second back exercise on another tool. An exercise
+// is as fresh as the stalest of its parts, the one it brings back: after pull-ups a row (mid back
+// and lats) beats a pulldown. Parts count only when every exercise in `list`
+// has roles; angles go by history only: most groups have one.
 function fresherFor(history, taken) {
   const lastDone = (c, k) => (k === 'tool' && taken.some(p => p.group === c.group && p.variant.tool === c.variant.tool)
     ? '~' : history[c.group]?.[k]?.[c.variant[k]] || '')
-  return (a, b) => {
-    for (const k of ['angle', 'tool']) {
-      const x = lastDone(a, k), y = lastDone(b, k)
-      if (x !== y) return x < y ? -1 : 1
-    }
-    return a.rank - b.rank
+  const partDone = c => c.parts.map(m => taken.some(p => p.group === c.group && p.parts?.includes(m))
+    ? '~' : history[c.group]?.part?.[m] || '').reduce((a, b) => (b < a ? b : a))
+  return list => {
+    const parts = list.every(c => c.parts) ? new Map(list.map(c => [c, partDone(c)])) : null
+    return list.sort((a, b) => {
+      if (parts && parts.get(a) !== parts.get(b)) return parts.get(a) < parts.get(b) ? -1 : 1
+      for (const k of ['angle', 'tool']) {
+        const x = lastDone(a, k), y = lastDone(b, k)
+        if (x !== y) return x < y ? -1 : 1
+      }
+      return a.rank - b.rank
+    })
   }
 }
 // What `c` adds to coverage `covered` capped at `cap` per group, weighted by need.
@@ -217,13 +236,14 @@ const runOrder = (a, b) => leads(b) - leads(a)
 /**
  * `count` exercises from `candidates` ([{ id, rank }], rank lower = better known) that cover
  * the ticked `groups` best for their `need` (weeklyNeed), compounds first. `history` is
- * variantHistory; `shift` walks each choice one further (Shuffle).
+ * variantHistory; `shift` walks each choice one further (Shuffle). `rolesOf` gives the muscle
+ * roles the parts of a group rotate by.
  */
-export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0 }) {
+export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf }) {
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
-    const item = pool.some(c => c.id === id) ? null : itemOf(id, rank, on)
+    const item = pool.some(c => c.id === id) ? null : itemOf(id, rank, on, rolesOf)
     if (item) pool.push(item)
   }
   const weight = weightFor(need)
@@ -245,9 +265,8 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
     const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
-    const near = scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
-      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))
-      .map(x => x.c).sort(fresher)
+    const near = fresher(scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
+      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE)).map(x => x.c))
     const pick = near[shift % near.length]
     picks.push(pick)
     for (const [g, a] of Object.entries(pick.credit)) covered[g] += a
@@ -261,21 +280,21 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
  * first, and among the ones about as good, the staler variation (as the one-tap workouts pick).
  * Returns ids; an id whose main muscle is in none of `groups` keeps its place at the end.
  */
-export function rankForGaps(candidates, { groups, need, have = [], history = {} }) {
+export function rankForGaps(candidates, { groups, need, have = [], history = {}, rolesOf = muscleRolesOf }) {
   const on = new Set(groups)
   const covered = sessionCredit(have)
   const weight = weightFor(need)
-  const taken = have.map(e => EXIDX[e?.id] && itemOf(e.id, 0, on)).filter(Boolean)
+  const taken = have.map(e => EXIDX[e?.id] && itemOf(e.id, 0, on, rolesOf)).filter(Boolean)
   const items = [], rest = []
   for (const { id, rank } of candidates) {
-    const item = itemOf(id, rank, on)
+    const item = itemOf(id, rank, on, rolesOf)
     if (item) items.push({ c: item, g: gainOf(item, covered, 1, weight) })
     else rest.push(id)
   }
   if (!items.length) return rest
   const best = Math.max(...items.map(x => x.g))
   const fresher = fresherFor(history, taken)
-  const top = items.filter(x => within(x.g, best, NEAR)).map(x => x.c).sort(fresher)
+  const top = fresher(items.filter(x => within(x.g, best, NEAR)).map(x => x.c))
   const others = items.filter(x => !within(x.g, best, NEAR)).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank).map(x => x.c)
   return [...top, ...others].map(c => c.id).concat(rest)
 }
