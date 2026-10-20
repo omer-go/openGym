@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { SWAP_CYCLE, swapCycle, nextSwap } from './quick-swap.js'
 import { STAPLES } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
+import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
 
 const session = (d, ids) => ({ id: 'w' + d, d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets: [{ w: 60, r: 8, done: true }] })) })
 const state = (over = {}) => ({ unit: 'kg', workouts: [], exWeights: {}, routines: [], ...over })
@@ -28,6 +29,31 @@ describe('swapCycle', () => {
   })
   it('an unknown exercise has nothing to swap to', () => {
     expect(swapCycle(state(), 'nope')).toEqual(['nope'])
+  })
+})
+
+// dumbbell lateral raise (side delt), dumbbell reverse fly (rear delt), overhead press (front delt)
+const RAISE = '0334', FLY = '0383', OHP = '0426'
+const targetOf = id => muscleRolesOf(id)?.target.join(' ')
+
+describe('swapCycle by muscle roles', () => {
+  beforeAll(() => loadMuscleRoles())
+  it('a lateral raise swaps to other side-delt work, not to the shoulder-press staples', () => {
+    const cycle = swapCycle(state(), RAISE)
+    expect(cycle).toHaveLength(SWAP_CYCLE)
+    expect(cycle.every(id => targetOf(id) === 'side-delt')).toBe(true)
+  })
+  it('a reverse fly swaps to other rear-delt work', () => {
+    expect(swapCycle(state(), FLY).every(id => targetOf(id) === 'rear-delt')).toBe(true)
+  })
+  it('what you logged leads within its tier, and only there', () => {
+    const S = state({ workouts: [session('2026-10-01', ['0178', OHP])] })
+    expect(swapCycle(S, RAISE)[1]).toBe('0178')
+    expect(swapCycle(S, OHP)[1]).not.toBe('0178')
+    expect(targetOf(swapCycle(S, OHP)[1])).toBe('front-delt')
+  })
+  it('without roles the order is the one before them', () => {
+    expect(swapCycle(state(), RAISE, () => null)[1]).toBe(STAPLES.deltoids[0])
   })
 })
 

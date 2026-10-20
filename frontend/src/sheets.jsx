@@ -29,7 +29,7 @@ import { glyphOf, GLYPH_GROUPS, DEFAULT_GLYPH } from './lib/glyphs.js'
 import BodyMap from './components/BodyMap.jsx'
 import AddExerciseSheet, { Ava } from './components/AddExerciseSheet.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
-import MuscleRoles from './components/MuscleRoles.jsx'
+import MuscleRoles, { useMuscleRoles } from './components/MuscleRoles.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
 import { nextSwap } from './lib/quick-swap.js'
@@ -1292,6 +1292,8 @@ function ExercisePicker({ onPick, title, close, like }) {
   // What a swap is away from: the picker opens on what trains the same muscle, if anything you
   // can use does, and "All" is one tap back to everything.
   const likeEx = like ? (EXIDX[like] || allExercises(st).find(e => e.id === like) || null) : null
+  // The same-muscle list orders by muscle roles once they are loaded (similar-exercises.js).
+  useMuscleRoles(like)
   // A muscle nothing else trains gets no chip at all rather than one that lists nothing.
   const likeTg = swapMuscleOf(likeEx) && sameMuscleFirst(allExercises(st), likeEx).length ? swapMuscleOf(likeEx) : ''
   const [bp, setBp] = useState(() => {

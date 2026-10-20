@@ -6,20 +6,23 @@
 // "Similar" is what generate.js would build the slot from (what you have logged on the same
 // primary muscle, stalest first, then the staple lifts) followed by the rest of the catalogue on
 // the same target muscle, same equipment first (similar-exercises.js) — the lifts you know come
-// before the 40th variation of a shrug. An entry remembers where its swaps began in `swapOf`, a
+// before the 40th variation of a shrug. Where the catalogue has muscle roles, all of that is
+// ordered by them first: a lateral raise swaps to other side-delt work before a shoulder press,
+// a reverse fly to other rear-delt work. An entry remembers where its swaps began in `swapOf`, a
 // live-session field only (finish-workout.js keeps a whitelist), so the order never drifts.
 import { EXIDX, allExercises, isCardio } from './exercises.js'
 import { exAvailable } from './equipment.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { candidatesFor } from './generate.js'
-import { sameMuscleFirst } from './similar-exercises.js'
+import { sameMuscleFirst, roleLikeness } from './similar-exercises.js'
+import { muscleRolesOf } from './muscle-roles.js'
 import { activityOf, activityGroup, isStretch } from './activities.js'
 
 // The slot's own exercise and the alternatives it rotates through.
 export const SWAP_CYCLE = 8
 
 /** The ids a slot that started as `fromId` cycles through, `fromId` itself first. */
-export function swapCycle(S, fromId) {
+export function swapCycle(S, fromId, rolesOf = muscleRolesOf) {
   const all = allExercises(S || {})
   const from = EXIDX[fromId] || all.find(e => e.id === fromId)
   if (!from) return [fromId]
@@ -39,8 +42,11 @@ export function swapCycle(S, fromId) {
   const usable = ex => ex && !isCardio(ex) && !isStretch(ex) && exAvailable(S, ex)
   const slug = primaryMuscleOf(from)?.slug
   if (slug) candidatesFor(S, slug).forEach(add)
-  for (const ex of sameMuscleFirst(all, from)) if (usable(ex)) add(ex.id)
-  return ids.slice(0, SWAP_CYCLE)
+  for (const ex of sameMuscleFirst(all, from, rolesOf)) if (usable(ex)) add(ex.id)
+  // By target muscles first; within each tier the order above (stable sort).
+  const byId = new Map(all.map(ex => [ex.id, ex]))
+  const tier = new Map(ids.map(id => [id, roleLikeness(from, byId.get(id), rolesOf).target]))
+  return [fromId, ...ids.slice(1).sort((a, b) => tier.get(b) - tier.get(a))].slice(0, SWAP_CYCLE)
 }
 
 /**
