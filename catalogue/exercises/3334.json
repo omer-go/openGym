@@ -18,5 +18,22 @@
     "Squeeze your chest to bring the dumbbell back above you.",
     "Finish all reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

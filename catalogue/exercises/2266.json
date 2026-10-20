@@ -19,5 +19,18 @@
     "Repeat for the planned reps."
   ],
   "femaleVariant": "5184",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

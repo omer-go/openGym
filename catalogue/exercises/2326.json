@@ -20,5 +20,35 @@
     "Lower slowly until your arms are straight.",
     "Avoid jerking with your torso."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "lats",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

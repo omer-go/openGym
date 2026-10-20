@@ -18,5 +18,23 @@
     "Press back up.",
     "Keep your shoulders down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "rhomboids",
+      "pec-minor",
+      "pec-major-clavicular",
+      "lats",
+      "triceps"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

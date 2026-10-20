@@ -20,5 +20,29 @@
     "Slide the hands back overhead with control.",
     "Keep your core braced."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "pec-minor",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

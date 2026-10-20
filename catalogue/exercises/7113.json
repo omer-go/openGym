@@ -20,5 +20,21 @@
     "Pull the dumbbell back over your chest.",
     "Repeat with a smooth tempo."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "lats",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

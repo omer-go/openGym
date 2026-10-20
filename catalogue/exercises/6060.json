@@ -18,5 +18,21 @@
     "Stop when you feel a stretch in your sides.",
     "Pull it back over your chest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

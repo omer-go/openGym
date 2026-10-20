@@ -20,5 +20,21 @@
     "Keep your hips low and ribs down."
   ],
   "femaleVariant": "6484",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "lats",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

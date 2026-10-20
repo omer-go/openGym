@@ -18,5 +18,17 @@
     "Keep your neck relaxed.",
     "Repeat for your reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

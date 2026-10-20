@@ -19,5 +19,22 @@
     "Pull back to the W while keeping your shoulder blades squeezed.",
     "Repeat smoothly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "infraspinatus",
+      "middle-trap",
+      "lower-trap"
+    ],
+    "synergists": [
+      "side-delt",
+      "teres-minor",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors"
+    ]
+  }
 }

@@ -19,5 +19,22 @@
     "Lower back to the bent over position slowly.",
     "Keep your neck in line with your spine."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "erector-spinae"
+    ],
+    "synergists": [
+      "lower-trap",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "quadratus-lumborum"
+    ]
+  }
 }

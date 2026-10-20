@@ -18,5 +18,20 @@
     "Lower and switch to the other side.",
     "Keep your neck neutral and move with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "lower-trap"
+    ]
+  }
 }

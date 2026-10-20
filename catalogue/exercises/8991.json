@@ -19,5 +19,18 @@
     "Avoid hyperextending at the top.",
     "Use a light weight and control the bar."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

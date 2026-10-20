@@ -20,5 +20,29 @@
     "Lean over the bar and press yourself up to straight arms.",
     "Lower back down slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "front-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "pec-minor",
+      "pec-major-sternal",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

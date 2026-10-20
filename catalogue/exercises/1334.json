@@ -19,5 +19,18 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2821",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

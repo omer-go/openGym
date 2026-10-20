@@ -19,5 +19,20 @@
     "Lower with control.",
     "Keep your neck neutral by looking down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "lower-trap"
+    ]
+  }
 }

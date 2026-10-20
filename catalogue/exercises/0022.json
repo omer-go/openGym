@@ -18,5 +18,29 @@
     "Pause for a moment, then reverse the motion and press the barbell back to the starting position above your chest.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-clavicular",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

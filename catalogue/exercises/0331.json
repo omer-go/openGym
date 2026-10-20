@@ -18,5 +18,22 @@
     "Reverse the motion and bring the dumbbells back up to the starting position, squeezing your chest muscles together at the top.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-clavicular"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "coracobrachialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

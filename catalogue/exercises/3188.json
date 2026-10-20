@@ -20,5 +20,25 @@
     "Keep your ribs down and your core tight.",
     "Use a light load to stay controlled."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "lats",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "subscapularis",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

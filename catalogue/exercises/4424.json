@@ -20,5 +20,27 @@
     "Pull your chest to the bar and squeeze your shoulder blades.",
     "Lower with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "lats",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -18,5 +18,21 @@
     "Pull it back over your chest using your lats.",
     "Keep your ribs down and core tight throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "teres-major",
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

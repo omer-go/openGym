@@ -20,5 +20,18 @@
     "Stop when your body forms a straight line.",
     "Avoid over-arching at the top."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

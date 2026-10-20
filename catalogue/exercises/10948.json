@@ -19,5 +19,19 @@
     "Keep the motion controlled.",
     "Lower to a full hang and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lower-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "rhomboids",
+      "pec-minor",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -17,5 +17,14 @@
     "Hold for 10-15 seconds.",
     "Release and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular"
+    ]
+  }
 }

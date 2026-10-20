@@ -19,5 +19,29 @@
     "Press up until your arms are fully straight.",
     "Lower yourself back down with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "front-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "pec-minor",
+      "pec-major-sternal",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

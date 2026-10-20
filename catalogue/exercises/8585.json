@@ -19,5 +19,17 @@
     "Return slowly to the start.",
     "Keep your neck relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

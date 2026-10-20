@@ -16,5 +16,14 @@
     "Squeeze your forearms together.",
     "Open them back to the sides under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular"
+    ]
+  }
 }

@@ -20,5 +20,25 @@
     "Return under control and press with the other arm.",
     "Keep your hips steady and alternate sides for the full set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-clavicular"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "coracobrachialis",
+      "triceps",
+      "obliques"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors"
+    ]
+  }
 }

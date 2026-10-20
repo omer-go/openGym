@@ -19,5 +19,29 @@
     "Extend your arms slowly back to the start.",
     "Keep your torso upright throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "lats",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

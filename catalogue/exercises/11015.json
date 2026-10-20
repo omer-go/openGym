@@ -19,5 +19,19 @@
     "Keep your elbows locked straight the whole time.",
     "Pause briefly, then lower slowly back to the full hang."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lower-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "rhomboids",
+      "pec-minor",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -20,5 +20,31 @@
     "Return slowly to a straight arm.",
     "Finish your reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "lats",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max"
+    ]
+  }
 }

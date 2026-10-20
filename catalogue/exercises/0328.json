@@ -18,5 +18,18 @@
     "Pause for a moment at the top, then inhale and slowly lower the dumbbells back to shoulder height.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "serratus-anterior"
+    ],
+    "synergists": [
+      "pec-minor"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

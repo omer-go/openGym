@@ -18,5 +18,28 @@
     "Form a W shape with your arms and hold for a second.",
     "Lower slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus",
+      "lower-trap"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "wrist-extensors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

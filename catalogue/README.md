@@ -54,7 +54,7 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   move the weight, `dynamicStabilizers` cross two joints and shorten at one while lengthening at
   the other, `stabilizers` hold a joint or the trunk still, and `antagonistStabilizers` hold the
   trunk against the stabilizers' pull. A muscle has one role; leave an empty role out. The app shows
-  them on the exercise's detail sheet. The shoulder exercises were seeded from movement templates
+  them on the exercise's detail sheet. The shoulder, chest and back exercises were seeded from movement templates
   ([`scripts/catalogue/seed-roles.mjs`](../scripts/catalogue/seed-roles.mjs)); once you edit an
   entry's roles, the seeder never touches it again.
 

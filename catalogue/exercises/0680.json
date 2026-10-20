@@ -21,5 +21,26 @@
     "To descend, reverse the hand-over-hand movement while controlling your descent.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

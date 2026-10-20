@@ -18,5 +18,24 @@
     "Squeeze the chest, then return slowly.",
     "Keep your back against the pad and your shoulders down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-clavicular"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors"
+    ]
+  }
 }

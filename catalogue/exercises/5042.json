@@ -19,5 +19,20 @@
     "Hold for a second.",
     "Lower with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus",
+      "lower-trap"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "wrist-extensors"
+    ]
+  }
 }

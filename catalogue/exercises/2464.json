@@ -19,5 +19,27 @@
     "Squeeze your back muscles at the top of the movement, then slowly return to the starting position.",
     "Repeat for the desired number of repetitions, then switch sides and perform with your left arm."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

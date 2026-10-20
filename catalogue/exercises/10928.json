@@ -17,5 +17,19 @@
     "Reach the top without shrugging.",
     "Slide back down slowly and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "serratus-anterior"
+    ],
+    "synergists": [
+      "upper-trap",
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

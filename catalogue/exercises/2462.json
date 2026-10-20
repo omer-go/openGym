@@ -17,5 +17,23 @@
     "Push yourself back up to the starting position by straightening your arms.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "rhomboids",
+      "pec-minor",
+      "pec-major-clavicular",
+      "lats",
+      "triceps"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

@@ -18,5 +18,22 @@
     "Pause for a moment, then reverse the motion and bring your arm back to the starting position.",
     "Repeat for the desired number of repetitions, then switch to your left arm and repeat the exercise."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "pec-minor",
+      "lats",
+      "coracobrachialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

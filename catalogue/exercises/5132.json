@@ -18,5 +18,17 @@
     "Maintain the squeeze throughout.",
     "Continue for 20-30 seconds."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

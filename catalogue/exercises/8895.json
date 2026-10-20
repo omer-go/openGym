@@ -19,5 +19,22 @@
     "Lower back down slowly without rounding.",
     "Do not overarch at the top."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "erector-spinae"
+    ],
+    "synergists": [
+      "lower-trap",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "quadratus-lumborum"
+    ]
+  }
 }

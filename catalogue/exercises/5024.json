@@ -18,5 +18,19 @@
     "Keep your ribs down and shoulder blades moving freely.",
     "Slide back down slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "serratus-anterior"
+    ],
+    "synergists": [
+      "upper-trap",
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

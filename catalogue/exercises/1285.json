@@ -18,5 +18,22 @@
     "Pause when your arm is parallel to the ground, then reverse the movement and bring the dumbbell back to the starting position.",
     "Repeat for the desired number of repetitions, then switch arms and repeat."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

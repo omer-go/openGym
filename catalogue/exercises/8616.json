@@ -17,5 +17,14 @@
     "Open them out again under control.",
     "Keep your shoulders away from your ears."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular"
+    ]
+  }
 }

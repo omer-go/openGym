@@ -21,5 +21,20 @@
     "Keep your neck long throughout."
   ],
   "femaleVariant": "3209",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "middle-trap",
+      "lower-trap",
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt"
+    ]
+  }
 }

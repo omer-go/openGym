@@ -18,5 +18,19 @@
     "Keep your ribs down and shoulders away from your ears.",
     "Roll back down slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "serratus-anterior"
+    ],
+    "synergists": [
+      "upper-trap",
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

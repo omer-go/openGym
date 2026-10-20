@@ -67,6 +67,54 @@ export const PATTERNS = {
   'lying-circle': { ...P('front-delt, pec-major-clavicular', 'pec-major-sternal, side-delt, lats, serratus-anterior, coracobrachialis', 'triceps-long-head', 'wrist-flexors'), trunk: 'none' },
   'yoke': { ...P('quads, glute-max', 'adductor-magnus, hamstrings, calves', '', 'upper-trap, erector-spinae, rectus-abdominis, obliques, quadratus-lumborum, glute-med, wrist-flexors'), trunk: 'none' },
   'curl': { ...P('biceps', 'brachialis, brachioradialis', '', 'wrist-flexors'), trunk: 'light' },
+
+  // Chest. A flat press or fly is for the lower, sternal part of the chest; an incline one, or a
+  // fly that rises from low to high, for the upper, clavicular part. Pinned shoulder blades
+  // (rhomboids, middle traps) hold the press steady on a bench.
+  'bench-press': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt, triceps, coracobrachialis', 'biceps', 'rhomboids, middle-trap, wrist-flexors'), trunk: 'press' },
+  'incline-press': { ...P('pec-major-clavicular', 'front-delt, triceps, pec-major-sternal, coracobrachialis', 'biceps', 'rhomboids, middle-trap, wrist-flexors'), trunk: 'press' },
+  'decline-press': { ...P('pec-major-sternal', 'triceps, pec-major-clavicular, front-delt, lats', 'biceps', 'rhomboids, middle-trap, wrist-flexors'), trunk: 'press' },
+  'close-press': { ...P('triceps', 'pec-major-sternal, pec-major-clavicular, front-delt', 'biceps', 'rhomboids, middle-trap, wrist-flexors'), trunk: 'press' },
+  // Hands squeezed together while pressing: the chest works to hold them, not only to push.
+  'squeeze-press': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt, triceps', '', 'wrist-flexors'), trunk: 'press' },
+  'fly': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt, coracobrachialis', 'biceps', 'triceps, wrist-flexors'), trunk: 'press' },
+  'upper-fly': { ...P('pec-major-clavicular', 'front-delt, coracobrachialis, pec-major-sternal', 'biceps', 'triceps, wrist-flexors'), trunk: 'press' },
+  'lower-fly': { ...P('pec-major-sternal', 'pec-minor, lats, coracobrachialis', 'biceps', 'triceps, wrist-flexors'), trunk: 'press' },
+  // Elbows bent, no weight: the chest squeezes against the hands or the other arm.
+  'squeeze': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt', '', ''), trunk: 'none' },
+  'push-up': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt, triceps, serratus-anterior, coracobrachialis', 'biceps', 'rectus-abdominis, obliques, transverse-abdominis, quads, glute-max, wrist-flexors', 'erector-spinae'), trunk: 'none' },
+  'feet-up-push-up': { ...P('pec-major-clavicular', 'front-delt, pec-major-sternal, triceps, serratus-anterior, coracobrachialis', 'biceps', 'rectus-abdominis, obliques, transverse-abdominis, quads, glute-max, wrist-flexors', 'erector-spinae'), trunk: 'none' },
+  'close-push-up': { ...P('triceps', 'pec-major-sternal, pec-major-clavicular, front-delt, serratus-anterior', '', 'rectus-abdominis, obliques, transverse-abdominis, quads, glute-max, wrist-flexors', 'erector-spinae'), trunk: 'none' },
+  // A push-up from the knees: the thighs rest, the trunk still holds the line.
+  'knee-push-up': { ...P('pec-major-sternal', 'pec-major-clavicular, front-delt, triceps, serratus-anterior, coracobrachialis', '', 'rectus-abdominis, obliques, glute-max, wrist-flexors', 'erector-spinae'), trunk: 'none' },
+  // Protraction only, the elbows straight: the shoulder blades spread around the ribs and back.
+  'scap-push-up': { ...P('serratus-anterior', 'pec-minor', '', 'triceps, front-delt, rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
+  'serratus-raise': { ...P('serratus-anterior', 'pec-minor', '', 'triceps, front-delt, wrist-flexors'), trunk: 'none' },
+  'wall-slide': { ...P('serratus-anterior', 'lower-trap, upper-trap', '', 'front-delt, triceps, rectus-abdominis'), trunk: 'none' },
+  'dip': { ...P('pec-major-sternal', 'triceps, front-delt, pec-major-clavicular, pec-minor, lats, rhomboids', '', 'lower-trap, rectus-abdominis, wrist-flexors'), trunk: 'none' },
+  'chest-pass': { ...P('pec-major-sternal', 'triceps, front-delt, pec-major-clavicular, serratus-anterior', '', 'rectus-abdominis, obliques, wrist-flexors'), trunk: 'press' },
+  'pullover-chest': { ...P('pec-major-sternal', 'lats, teres-major, triceps-long-head, pec-minor, serratus-anterior', '', 'rectus-abdominis, wrist-flexors'), trunk: 'none' },
+
+  // Back. A row is for the upper back and the lats together; a wide or high one leans to the
+  // upper back and rear delts, an underhand or elbows-in one to the lats.
+  'wide-row': { ...P('middle-trap, rhomboids, rear-delt', 'lats, teres-major, infraspinatus, teres-minor, lower-trap, brachialis, brachioradialis', 'biceps', 'wrist-flexors'), trunk: 'row', leans: true },
+  'lat-row': { ...P('lats', 'teres-major, middle-trap, rhomboids, rear-delt, lower-trap, brachialis, brachioradialis', 'biceps', 'wrist-flexors'), trunk: 'row', leans: true },
+  'pulldown': { ...P('lats', 'teres-major, rear-delt, rhomboids, middle-trap, lower-trap, pec-minor, brachialis, brachioradialis, biceps', 'triceps-long-head', 'wrist-flexors'), trunk: 'row' },
+  // Hanging from a bar, the trunk and hips keep the body from swinging.
+  'pull-up': { ...P('lats', 'teres-major, rear-delt, rhomboids, middle-trap, lower-trap, pec-minor, brachialis, brachioradialis, biceps', 'triceps-long-head', 'rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
+  'muscle-up': { ...P('lats', 'teres-major, pec-major-sternal, triceps, front-delt, rhomboids, middle-trap, lower-trap, pec-minor, brachialis, brachioradialis, biceps', '', 'rectus-abdominis, obliques, hip-flexors, wrist-flexors'), trunk: 'none' },
+  'pullover': { ...P('lats', 'teres-major, pec-major-sternal, triceps-long-head, pec-minor, serratus-anterior', '', 'rectus-abdominis, wrist-flexors'), trunk: 'none' },
+  // Straight-bodied from a bar: the straight arms pull the body level.
+  'front-lever': { ...P('lats', 'teres-major, rear-delt, triceps-long-head, pec-major-sternal, lower-trap, rhomboids', '', 'rectus-abdominis, obliques, transverse-abdominis, hip-flexors, glute-max, quads, wrist-flexors'), trunk: 'none' },
+  // Hanging on a rope, one hand over the other: the grip holds on while the back pulls.
+  'climb': { ...P('lats', 'teres-major, biceps, brachialis, brachioradialis, wrist-flexors, rear-delt, rhomboids, middle-trap, lower-trap', '', 'rectus-abdominis, obliques, hip-flexors'), trunk: 'none' },
+  'back-extension': { ...P('erector-spinae', 'glute-max, hamstrings, adductor-magnus', '', 'quadratus-lumborum'), trunk: 'none' },
+  // Lying face down and lifting the chest, the arms, the legs or all of them off the floor.
+  'superman': { ...P('erector-spinae', 'glute-max, hamstrings, quadratus-lumborum', '', 'middle-trap, lower-trap, rear-delt'), trunk: 'none' },
+  // Lying face down on a bench or ball, the legs rising behind.
+  'reverse-hyper': { ...P('glute-max, erector-spinae', 'hamstrings, adductor-magnus, quadratus-lumborum', '', 'wrist-flexors'), trunk: 'none' },
+  'good-morning': { ...P('erector-spinae', 'glute-max, hamstrings, adductor-magnus, quadratus-lumborum', '', 'rectus-abdominis, obliques'), trunk: 'none' },
+  'hinge': { ...P('hamstrings, glute-max', 'adductor-magnus, erector-spinae', '', 'quadratus-lumborum, rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
 }
 
 // Names no template describes: written by hand in the exercise file (the seeder never touches an
@@ -148,6 +196,88 @@ const RULES = [
   [/press|seated alternate shoulder$|^dumbbell incline raise$/, 'overhead-press'],
 ]
 
+// Chest and back, tried before the shoulder rules above for those body parts: there "press" is a
+// bench press, not an overhead one. { review } leaves the name for a person.
+const PLANK = 'rectus-abdominis, obliques, glute-max, hamstrings'
+const PUSH_PLANK = 'rectus-abdominis, obliques, transverse-abdominis, quads, glute-max'
+// Which row: wide or high leans to the upper back, underhand or elbows-in to the lats.
+const rowKind = name => /narrow pronated/.test(name) ? 'row' : /lats? focused|kroc|underhand|reverse[- ]grip|reverse t-bar|supinat|supine grip|kayak/.test(name) ? 'lat-row'
+  : /wide|high row|upper row|seal row|pronated grip (seated )?row|overhand/.test(name) ? 'wide-row' : 'row'
+const ODD = { review: 'no template fits the movement' }
+
+const CHEST_RULES = [
+  [/plate push|push up pull|push and pull|overhead hit|lateral hit|overhead throw|forward slide press|chest pullback/, ODD],
+  [/internal rotation/, 'internal-rotation'],
+  [/scapula push|scapular push|push-up plus|push up plus/, 'scap-push-up'],
+  [/shoulder raise/, 'serratus-raise'],
+  [/planche push|pseudo planche/, 'planche-press'],
+  [/pike push/, 'pike-press'],
+  [/front raise and pullover/, ['front-raise', 'pullover-chest']],
+  [/push up front raise/, ['push-up', 'front-raise']],
+  [/pullover/, 'pullover-chest'],
+  [/push up and triceps dip/, ['push-up', 'dip']],
+  [/\bdips?\b/, 'dip'],
+  [/diamond|close grip push|close-grip push/, 'close-push-up'],
+  [/svend|squeeze (bench )?press|hex press|inner chest press/, 'squeeze-press'],
+  [/chest squeeze|prayer|pec dec on a chair|elbow chest fly on a chair|isometric chest/, 'squeeze'],
+  [/chest pass|chest push|horizontal smash|press catch|punch/, 'chest-pass'],
+  [/kneeling push up row/, ['knee-push-up', 'row']],
+  [/(kneeling|knee)\b.*push|push.*(on knees|kneeling)|kneeling.*press up/, 'knee-push-up'],
+  [/decline.*push|push.*decline|elevated push up|raise single leg push/, 'feet-up-push-up'],
+  [/push up to side plank/, { p: 'push-up', add: { stabilizers: 'quadratus-lumborum, glute-med' } }],
+  [/push[- ]?ups?\b|press up|push with chair|isometric wipers|shoulder tap/, 'push-up'],
+  [/high to low|lateral bent-over/, 'lower-fly'],
+  [/cross raise|low (chest )?fly|low to high|upper chest|incline.*fly|incline.*flye|breeding/, 'upper-fly'],
+  [/high (to low )?fly|high to low|decline.*fly|crossover|cross-over/, 'lower-fly'],
+  [/fly|flye|pec deck/, 'fly'],
+  [/california press|close grip/, 'close-press'],
+  [/decline/, 'decline-press'],
+  [/incline|reverse[- ]grip|reverse bench|supinated/, 'incline-press'],
+  [/larsen/, { p: 'bench-press', add: { stabilizers: 'rectus-abdominis, obliques' } }],
+  [/bridge (bench|chest) press/, { p: 'bench-press', add: { stabilizers: 'glute-max, hamstrings' } }],
+  [/press/, 'bench-press'],
+]
+
+const BACK_RULES = [
+  [/alternating arm ups|seated behind back raise|t spine press|london bridge|power push aways|elbow lift|one arm against wall|self assisted inverted pullover|sled|back lever|elevator|static position|cable twisting pull|slam|overhead throw|staff pose|child to cobra|scapula elevation|standing archer|roll around the world|back extension and flexion/, ODD],
+  [/rear delt row|rear delt horizontal row/, 'rear-delt-row'],
+  [/prone press swan/, { p: 'superman', add: { synergists: 'lower-trap, middle-trap' } }],
+  [/back extension scapular adduction/, ['back-extension', 'retraction']],
+  [/serratus.*slide|wall slide/, 'wall-slide'],
+  [/scapula(r)? push/, 'scap-push-up'],
+  [/scapular pull ?up/, 'scap-hang'],
+  [/side plank with rear fly/, { p: 'rear-raise', add: { stabilizers: 'obliques, quadratus-lumborum, glute-med' } }],
+  [/scapular retraction|scapular adduction|back squeeze|elbow squeeze|scapula(r)? row|pulse row|prone a$/, 'retraction'],
+  [/prone w to t/, ['w-raise', 't-raise']],
+  [/prone (w to )?ys?\b|y raise|y-raise/, 'y-raise'],
+  [/prone w|floor w|\bw raise/, 'w-raise'],
+  [/prone t|floor t raise|\bt raise/, 't-raise'],
+  [/muscle[- ]up/, 'muscle-up'],
+  [/front lever/, 'front-lever'],
+  [/l-pull-up/, { p: 'pull-up', add: { stabilizers: 'hip-flexors, quads' } }],
+  [/rope climb|ropes climb|arm over arm|rope pull up/, 'climb'],
+  [/power pull/, 'lat-row'],
+  [/pull[- ]?ups?\b|chin[- ]?ups?\b|\bchin\b/, 'pull-up'],
+  [/straight arm|pushdown|stepback pulldown/, 'straight-arm-pulldown'],
+  [/pull ?down/, 'pulldown'],
+  [/pullover to press/, ['pullover', 'close-press']],
+  [/pullover/, 'pullover'],
+  [/superman row/, ['superman', 'row']],
+  [/renegade/, { p: 'row', add: { stabilizers: `${PUSH_PLANK}, pec-major-sternal, triceps` } }],
+  [/rdl and bent over row|deadlift bent over row/, ['hinge', 'row']],
+  [/squat row/, { p: 'row', add: { synergists: 'quads, glute-max' } }],
+  [/inverted|row (in doorway|under table|between)|towel row|bed sheet|suspended row|suspender .*row|ring (elevated |high )?row|lying floor row|bodyweight (standing |squatting )?.*row|row with towel|parallel bars bent knee/,
+    e => ({ p: rowKind(e.name), add: { stabilizers: PLANK } })],
+  [/\brows?\b/, e => rowKind(e.name)],
+  [/good morning/, 'good-morning'],
+  [/straight leg deadlift/, 'hinge'],
+  [/reverse extension|prone leg raise/, 'reverse-hyper'],
+  [/lying back extension with press/, { p: 'superman', add: { synergists: 'lower-trap, middle-trap' } }],
+  [/lying back extension|lying hyperextension|floor hyperextension|superman|swimmer|cobra|opposite arm and leg|snow angel/, 'superman'],
+  [/hyperextension|back extension|lower back curl/, 'back-extension'],
+]
+const BODY_RULES = { chest: CHEST_RULES, back: BACK_RULES }
+
 const RANK = Object.fromEntries(ROLES.map((r, i) => [r, i]))
 
 // A muscle → role map, so a muscle can only ever hold one role.
@@ -175,7 +305,7 @@ const FREE = /dumbbell|barbell|kettlebell|weighted|body weight|weight plate|ez b
 function posture(name, e, pat) {
   if (/z press/.test(name)) return 'floor'
   if (/stability ball|exercise ball/.test(name)) return 'ball'
-  if (/lying|prone|supine|chest support|with support|bench supported|support head|face down|side lying|incline|decline|on floor/.test(name)) return 'supported'
+  if (/lying|prone|supine|chest support|with support|bench supported|support head|face down|side lying|incline|decline|on floor|\bbench\b|floor (press|fly|chest)|on rack|pec deck|(press|row|fly).*\bmachine\b/.test(name)) return 'supported'
   if (e.equipment === 'leverage machine' || (e.equipment === 'smith machine' && /seated/.test(name))) return 'supported'
   if (e.equipment === 'suspension trainer' && !/press|push up/.test(name)) return 'suspension'
   const bent = /bent over|bent-over/.test(name)
@@ -192,15 +322,21 @@ const STANCE = {
   heavy: { standing: 'erector-spinae, rectus-abdominis, obliques, glute-max', kneeling: 'erector-spinae, rectus-abdominis, obliques, glute-max' },
   light: { standing: 'erector-spinae', kneeling: 'erector-spinae, glute-max, obliques' },
   shrug: { standing: 'erector-spinae', kneeling: 'erector-spinae, glute-max' },
+  // Pressing or flying standing, the trunk braces against the push.
+  press: { standing: 'rectus-abdominis, obliques, erector-spinae, glute-max', kneeling: 'rectus-abdominis, obliques, erector-spinae, glute-max' },
+  // A row or pulldown sitting upright still needs the back held straight.
+  row: { standing: 'erector-spinae, glute-max', kneeling: 'erector-spinae, glute-max, obliques', seated: 'erector-spinae' },
 }
 
 export function rolesFor(e) {
   const name = e.name
-  const skip = REVIEW.find(([r]) => r.test(name))
-  if (skip) return { review: skip[1] }
-  const rule = RULES.find(([r]) => r.test(name))
+  const rule = (BODY_RULES[e.bodyPart] || []).find(([r]) => r.test(name)) || (() => {
+    const skip = REVIEW.find(([r]) => r.test(name))
+    return skip ? [null, { review: skip[1] }] : RULES.find(([r]) => r.test(name))
+  })()
   if (!rule) return { review: 'no template matches the name' }
   let got = typeof rule[1] === 'function' ? rule[1](e) : rule[1]
+  if (got.review) return { review: got.review }
   if (typeof got === 'string' || Array.isArray(got)) got = { p: got }
   const pats = [].concat(got.p)
   const r = new Roles()
@@ -229,7 +365,7 @@ export function rolesFor(e) {
     r.drop('front-delt').add('synergists', 'rear-delt')
   if (/front-raise|lateral-raise/.test(main) && /lu raise|above head|over head|high front raise/.test(name)) r.set('synergists', 'upper-trap')
   if (main === 'front-raise' && /underhand|supinated/.test(name)) r.add('synergists', 'biceps')
-  if (/twisting/.test(name)) r.add('synergists', 'obliques')
+  if (/twisting|twist row|with twist|with rotation|rotational push|kneeling rotational|twist push/.test(name)) r.add('synergists', 'obliques')
   if (/wrist straps|gripless/.test(name)) r.drop('wrist-flexors, wrist-extensors')
   if (/rotation/.test(main) && /90|upright/.test(name)) r.add('stabilizers', 'side-delt, supraspinatus')
   if (/sumo/.test(name)) r.add('synergists', 'adductors')
@@ -246,4 +382,6 @@ export const TARGET_OF = {
   'front-delt': 'delts', 'side-delt': 'delts', 'rear-delt': 'delts', supraspinatus: 'delts', infraspinatus: 'delts', 'teres-minor': 'delts', subscapularis: 'delts',
   'upper-trap': 'traps', 'middle-trap': 'traps, upper back', 'lower-trap': 'traps, upper back', rhomboids: 'upper back', lats: 'lats', 'pec-minor': 'pectorals',
   biceps: 'biceps', triceps: 'triceps', 'glute-max': 'glutes', quads: 'quads', 'adductor-magnus': 'adductors',
+  'pec-major-sternal': 'pectorals', 'pec-major-clavicular': 'pectorals', 'serratus-anterior': 'serratus anterior',
+  'erector-spinae': 'spine', 'teres-major': 'lats',
 }

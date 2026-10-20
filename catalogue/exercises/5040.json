@@ -19,5 +19,17 @@
     "Hold for a second.",
     "Lower with control and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

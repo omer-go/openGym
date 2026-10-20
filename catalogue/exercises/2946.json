@@ -19,5 +19,20 @@
     "Push the floor away to round your upper back slightly.",
     "Finish the reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "serratus-anterior"
+    ],
+    "synergists": [
+      "pec-minor"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }
