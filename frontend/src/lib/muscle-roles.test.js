@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows } from './muscle-roles.js'
+import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows, roleChips } from './muscle-roles.js'
 import data from './exercise-roles.json'
 
 describe('muscle roles', () => {
@@ -28,5 +28,13 @@ describe('muscle roles', () => {
     expect(rows.steady).toBe(null)
     expect(roleRows(null)).toBe(null)
     expect(roleRows({ synergists: ['quads'] })).toBe(null)
+  })
+
+  it('gives a card the targets and the first helpers', () => {
+    const chips = roleChips({ target: ['side-delt'], synergists: ['front-delt', 'supraspinatus', 'middle-trap', 'lower-trap'],
+      stabilizers: ['upper-trap'] })
+    expect(chips).toEqual({ targets: ['Side delt'], helpers: ['Front delt', 'Supraspinatus', 'Middle traps'] })
+    expect(roleChips({ target: ['quads'] })).toEqual({ targets: ['Quads'], helpers: [] })
+    expect(roleChips(null)).toBe(null)
   })
 })

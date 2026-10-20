@@ -46,3 +46,11 @@ export function roleRows(r) {
     steady: steady.length ? { key: 'steady', label: 'Holds steady', muscles: steady } : null,
   }
 }
+
+// The chips on a workout card: the target muscles, then the first few helpers (the catalogue
+// lists them strongest first). Names are English, for t().
+export function roleChips(r, helpers = 3) {
+  if (!r || !r.target?.length) return null
+  const name = m => ROLE_MUSCLE_NAME[m] || m
+  return { targets: r.target.map(name), helpers: (r.synergists || []).slice(0, helpers).map(name) }
+}

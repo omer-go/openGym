@@ -3,16 +3,22 @@ import { t } from '../lib/i18n.js'
 import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows } from '../lib/muscle-roles.js'
 import Icon from './Icon.jsx'
 
+// An exercise's catalogue roles, or null; loads them on first use and re-renders once they're in.
+export function useMuscleRoles(id) {
+  const [, setLoaded] = useState(0)
+  useEffect(() => {
+    let live = true
+    loadMuscleRoles().then(() => { if (live) setLoaded(1) }, () => {})
+    return () => { live = false }
+  }, [])
+  return muscleRolesOf(id)
+}
+
 // What each muscle does in this exercise, for the entries the catalogue has roles for. Nothing
 // at all for the rest: the tags at the top of the sheet already say the main muscles.
 export default function MuscleRoles({ id }) {
-  const [rows, setRows] = useState(() => roleRows(muscleRolesOf(id)))
+  const rows = roleRows(useMuscleRoles(id))
   const [open, setOpen] = useState(false)
-  useEffect(() => {
-    let live = true
-    loadMuscleRoles().then(() => { if (live) setRows(roleRows(muscleRolesOf(id))) }, () => {})
-    return () => { live = false }
-  }, [id])
   if (!rows) return null
   const line = r => <div className="mroles-row" key={r.key}>
     <span className="mroles-k">{t(r.label)}</span>

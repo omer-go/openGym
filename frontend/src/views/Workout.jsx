@@ -51,6 +51,8 @@ import GenerateCard, { genSince } from '../components/GenerateCard.jsx'
 import { withMeaning, historyAs, dbLoadFor, entryDbLoad, bellsIn, ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 import { pickWorkoutView } from '../lib/workout-view.js'
 import { exerciseColor, muscleTagsOf, mcStyle } from '../lib/muscle-colors.js'
+import { roleChips } from '../lib/muscle-roles.js'
+import { useMuscleRoles } from '../components/MuscleRoles.jsx'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -193,6 +195,9 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // carries it when there is one) and its muscle tag, so a workout's exercises tell apart.
   const mc = exerciseColor(ex)
   const tags = muscleTagsOf(ex)
+  // Where the catalogue has per-muscle roles, the chips name the exact muscles ("Side delt",
+  // not "Shoulders") in place of the target and secondary words.
+  const roles = roleChips(useMuscleRoles(entry.id))
   const mode = modeOf({ ...(entry.target || {}), id: entry.id })
   const cardio = mode === 'cardio'
   const timed = mode === 'time'
@@ -703,9 +708,10 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       {!cardio && isPerSide(cfg) && <span className="tag pill acc nocap"><Icon name="sides" />{t('Per side')}</span>}
       {/* The muscle group (in its colour), then the target muscle when it says more. */}
       {!cardio && tags.group && <span className={'tag pill' + (mc ? ' mg' : '')} style={mcStyle(mc)}>{capFirst(t(tags.group))}</span>}
-      {tags.muscle && <span className="tag pill">{capFirst(t(tags.muscle))}</span>}
+      {roles ? roles.targets.map(m => <span key={m} className="tag pill">{t(m)}</span>)
+        : tags.muscle && <span className="tag pill">{capFirst(t(tags.muscle))}</span>}
       {ex.eq && <span className="tag pill">{capFirst(t(ex.eq))}</span>}
-      {!cardio && tags.secondaries.map(s => <span key={s} className="tag pill dim">{capFirst(t(s))}</span>)}
+      {!cardio && (roles ? roles.helpers : tags.secondaries).map(s => <span key={s} className="tag pill dim">{roles ? t(s) : capFirst(t(s))}</span>)}
       {best > 0 && <span className="tag pill nocap">{t('Best:')} {fmtNum(best)} {S.unit}</span>}
     </div>
     {/* Three notes can apply to one exercise and they are not interchangeable, so each keeps its
