@@ -29,6 +29,7 @@ import { glyphOf, GLYPH_GROUPS, DEFAULT_GLYPH } from './lib/glyphs.js'
 import BodyMap from './components/BodyMap.jsx'
 import AddExerciseSheet, { Ava } from './components/AddExerciseSheet.jsx'
 import MuscleExplorer from './components/MuscleExplorer.jsx'
+import MuscleRoles from './components/MuscleRoles.jsx'
 import ExerciseViewToggle from './components/ExerciseViewToggle.jsx'
 import { sameMuscleFirst, swapMuscleOf } from './lib/similar-exercises.js'
 import { nextSwap } from './lib/quick-swap.js'
@@ -1026,6 +1027,7 @@ function ExerciseDetail({ ex, close }) {
         calculator would answer "your 1RM is 23 kg" about a number that gets smaller as you get
         stronger (issue #232). Cardio has none for the same kind of reason. */}
     {!isCardio(ex) && !isAssisted(ex) && <OneRM ex={ex} />}
+    <MuscleRoles id={ex.id} />
     {instrFor(ex).length > 0 &&<><h4 className="sec">{t('How to')}{getLang() !== 'en' && !instrTranslated(ex) && <span className="dim" style={{ textTransform: 'none', letterSpacing: 0 }}> · {t('instructions in English')}</span>}</h4><ol className="steps-list">{instrFor(ex).map((s, i) => <li key={i}>{s}</li>)}</ol></>}
     {/* The catalogue is community-edited (catalogue/README.md): a wrong muscle, a clumsy step or a
         missing translation is one tap from an issue that already names the exercise. */}
