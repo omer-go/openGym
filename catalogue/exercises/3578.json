@@ -18,5 +18,22 @@
     "Keep your hips square and core tight.",
     "Repeat in the same direction, then reverse."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rear-delt",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

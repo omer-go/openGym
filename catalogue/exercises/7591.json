@@ -19,5 +19,25 @@
     "Squeeze your shoulder blades together at the end.",
     "Return slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

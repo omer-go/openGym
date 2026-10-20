@@ -18,5 +18,23 @@
     "Pause, then lower back down the same path with control.",
     "Keep your ribs down and avoid shrugging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

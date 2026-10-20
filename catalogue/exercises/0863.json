@@ -18,5 +18,19 @@
     "Repeat for the desired number of repetitions, then switch sides."
   ],
   "femaleVariant": "3079",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "rhomboids",
+      "wrist-extensors"
+    ]
+  }
 }

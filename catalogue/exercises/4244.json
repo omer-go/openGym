@@ -20,5 +20,28 @@
     "Keep your wrist straight and avoid leaning.",
     "Lower the bell and repeat on the other arm."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "upper-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "infraspinatus",
+      "teres-minor",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

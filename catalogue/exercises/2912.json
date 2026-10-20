@@ -20,5 +20,22 @@
     "Cover the set distance without leaning or shrugging.",
     "Lower the bar back to the floor with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

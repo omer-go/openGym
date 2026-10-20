@@ -19,5 +19,31 @@
     "Lower slowly to a straight arm.",
     "Finish your reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max"
+    ]
+  }
 }

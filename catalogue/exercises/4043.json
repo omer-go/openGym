@@ -19,5 +19,23 @@
     "Lower back to a full hang under control.",
     "Repeat for controlled reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap",
+      "pec-minor",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

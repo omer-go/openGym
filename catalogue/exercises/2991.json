@@ -20,5 +20,24 @@
     "Return slowly to the start and complete your reps.",
     "Switch legs and repeat on the other side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "lower-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "rhomboids",
+      "serratus-anterior",
+      "lats"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med",
+      "hip-flexors"
+    ]
+  }
 }

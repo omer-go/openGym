@@ -19,5 +19,19 @@
     "Relax back to the hang.",
     "Keep your elbows straight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lower-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "rhomboids",
+      "pec-minor",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

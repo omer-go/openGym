@@ -19,5 +19,27 @@
     "Keep your elbows close and your head still.",
     "Do all reps, then reverse the direction."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "subscapularis",
+      "upper-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

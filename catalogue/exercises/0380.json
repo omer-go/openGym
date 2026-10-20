@@ -17,5 +17,30 @@
     "Pause for a moment at the top, then slowly lower your arms back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

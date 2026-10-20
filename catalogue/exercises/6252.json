@@ -19,5 +19,29 @@
     "Squeeze your shoulder blades.",
     "Lower slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

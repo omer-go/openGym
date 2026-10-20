@@ -30,5 +30,32 @@
       "obliques"
     ]
   },
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps",
+      "obliques"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

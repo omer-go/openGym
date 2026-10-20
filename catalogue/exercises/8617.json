@@ -18,5 +18,19 @@
     "Rotate your forearms outward, squeezing your shoulder blades.",
     "Return slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "rhomboids",
+      "wrist-extensors"
+    ]
+  }
 }

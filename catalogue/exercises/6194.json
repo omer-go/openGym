@@ -19,5 +19,18 @@
     "Lower slowly.",
     "Keep your chest tall and neck relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

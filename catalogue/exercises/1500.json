@@ -18,5 +18,28 @@
     "Pause briefly without shrugging too high.",
     "Lower slowly back down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

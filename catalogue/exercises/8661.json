@@ -18,5 +18,23 @@
     "Pause at the top.",
     "Lower slowly with straight arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "lower-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors"
+    ]
+  }
 }

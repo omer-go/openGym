@@ -17,5 +17,14 @@
     "Hold the contraction for a brief moment, then inhale and slowly lower your shoulders back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ]
+  }
 }

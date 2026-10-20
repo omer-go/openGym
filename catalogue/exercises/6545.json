@@ -19,5 +19,26 @@
     "Hold for 15-30 seconds, then come down with control."
   ],
   "femaleVariant": "6695",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

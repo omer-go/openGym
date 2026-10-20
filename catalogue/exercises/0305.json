@@ -18,5 +18,17 @@
     "Hold the contraction for a moment, then slowly lower the dumbbells back to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

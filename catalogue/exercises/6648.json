@@ -19,5 +19,28 @@
     "Squeeze your shoulder blades together at the end.",
     "Let the rope return slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

@@ -18,5 +18,24 @@
     "Lower slowly.",
     "Keep your chest on the bench."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "lower-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors"
+    ]
+  }
 }

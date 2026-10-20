@@ -19,5 +19,38 @@
     "Lower it back to your shoulder, then to the floor with control.",
     "Keep your torso upright. Finish the reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "glute-max"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

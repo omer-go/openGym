@@ -49,6 +49,22 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
 - **instructions**: 4 to 7 short steps, second person ("Brace your core..."). No em dashes.
 - **muscleMap** (optional): a more precise muscle-map drawing with the body map's own muscle names
   and weights from 0 to 1. Only needed when target and secondaryMuscles don't draw it right.
+- **muscleRoles** (optional): what each single muscle does in the movement, with the muscle names
+  listed as `ROLE_MUSCLES` in `validate.mjs`. `target` does most of the work, `synergists` help
+  move the weight, `dynamicStabilizers` cross two joints and shorten at one while lengthening at
+  the other, `stabilizers` hold a joint or the trunk still, and `antagonistStabilizers` hold the
+  trunk against the stabilizers' pull. A muscle has one role; leave an empty role out. The app does
+  not show it yet. The shoulder exercises were seeded from movement templates
+  ([`scripts/catalogue/seed-roles.mjs`](../scripts/catalogue/seed-roles.mjs)); once you edit an
+  entry's roles, the seeder never touches it again.
+
+  ```json
+  "muscleRoles": {
+    "target": ["side-delt"],
+    "synergists": ["front-delt", "supraspinatus", "middle-trap", "lower-trap", "serratus-anterior"],
+    "stabilizers": ["upper-trap", "levator-scapulae", "wrist-extensors", "erector-spinae"]
+  }
+  ```
 - **femaleVariant / variantOf**: links the same exercise drawn on a female figure. Leave as is.
 - **textSource: "exercisedb"**: the original 1,324 entries. Their text came under MIT (see NOTICE.md).
   You can still improve them.

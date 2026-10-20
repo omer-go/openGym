@@ -19,5 +19,28 @@
     "Hold for 10 to 20 seconds.",
     "Lower slowly and rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max",
+      "hip-flexors",
+      "neck-extensors"
+    ]
+  }
 }

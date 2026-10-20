@@ -27,5 +27,22 @@
     ]
   },
   "femaleVariant": "2822",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors"
+    ]
+  }
 }

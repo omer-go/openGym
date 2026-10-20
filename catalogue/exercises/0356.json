@@ -20,5 +20,22 @@
     "Repeat for the desired number of repetitions, then switch sides."
   ],
   "textSource": "exercisedb",
-  "femaleVariant": "2690"
+  "femaleVariant": "2690",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "rear-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-extensors"
+    ]
+  }
 }

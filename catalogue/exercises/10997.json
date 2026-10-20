@@ -19,5 +19,29 @@
     "Tuck your knees as you reach the planche position.",
     "Control the descent and then reset."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-clavicular",
+      "biceps",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

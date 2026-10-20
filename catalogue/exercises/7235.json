@@ -19,5 +19,19 @@
     "Return slowly.",
     "Finish all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "rhomboids",
+      "wrist-extensors"
+    ]
+  }
 }

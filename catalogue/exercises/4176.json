@@ -18,5 +18,20 @@
     "Lower with control.",
     "Keep your elbows locked."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lower-trap",
+      "pec-minor"
+    ],
+    "synergists": [
+      "pec-major-sternal",
+      "lats"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

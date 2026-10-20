@@ -19,5 +19,31 @@
     "Lower slowly.",
     "Switch sides after your reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis"
+    ]
+  }
 }

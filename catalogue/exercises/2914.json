@@ -20,5 +20,28 @@
     "Cover the set distance without arching your back.",
     "Lower the bar to your shoulders and set it down safely."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "upper-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "infraspinatus",
+      "teres-minor",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

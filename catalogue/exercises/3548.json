@@ -17,5 +17,28 @@
     "Continue walking for the desired distance or time.",
     "Switch hands and repeat the exercise."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "upper-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "infraspinatus",
+      "teres-minor",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

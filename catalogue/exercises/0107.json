@@ -19,5 +19,24 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2688",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

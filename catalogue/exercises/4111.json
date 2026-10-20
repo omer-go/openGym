@@ -18,5 +18,17 @@
     "Squeeze your traps at the end.",
     "Return slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

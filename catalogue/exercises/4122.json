@@ -18,5 +18,25 @@
     "Squeeze your rear delt.",
     "Return slowly, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

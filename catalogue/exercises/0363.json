@@ -18,5 +18,30 @@
     "Repeat for the desired number of repetitions, then switch to the other arm."
   ],
   "femaleVariant": "2600",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

@@ -19,5 +19,17 @@
     "Lower slowly to a full stretch.",
     "Keep your arms straight throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -18,5 +18,17 @@
     "Pause at the top for a moment.",
     "Lower your shoulders slowly without rolling them."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

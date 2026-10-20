@@ -19,5 +19,26 @@
     "Lower the end back to your shoulder with control.",
     "Keep your ribs down and brace your core. Finish the reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max"
+    ]
+  }
 }

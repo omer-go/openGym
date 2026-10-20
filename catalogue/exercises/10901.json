@@ -18,5 +18,20 @@
     "Hold for a moment at the top.",
     "Lower slowly. Finish your reps and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

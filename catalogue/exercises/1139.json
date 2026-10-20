@@ -18,5 +18,27 @@
     "Bring the arms back together under control.",
     "Switch the lead leg halfway through."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-clavicular",
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "coracobrachialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "triceps",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max",
+      "quads"
+    ]
+  }
 }

@@ -19,5 +19,24 @@
     "Keep your thumbs pointing up and shoulders down.",
     "Lower slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "lower-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

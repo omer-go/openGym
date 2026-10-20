@@ -19,5 +19,19 @@
     "Keep your elbow straight or slightly bent.",
     "Return slowly, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "teres-major",
+      "rhomboids",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "lower-trap"
+    ]
+  }
 }

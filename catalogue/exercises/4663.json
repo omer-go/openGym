@@ -19,5 +19,23 @@
     "Pause at the top.",
     "Lower slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "lats",
+      "triceps-long-head",
+      "erector-spinae"
+    ],
+    "stabilizers": [
+      "glute-max",
+      "hamstrings"
+    ]
+  }
 }

@@ -18,5 +18,25 @@
     "Do all reps, then switch sides."
   ],
   "textSource": "opengym",
-  "maleVariant": "0356"
+  "maleVariant": "0356",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-extensors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

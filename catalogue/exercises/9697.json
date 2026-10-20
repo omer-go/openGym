@@ -19,5 +19,29 @@
     "Walk slowly in a straight line.",
     "Lower it safely and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "upper-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps"
+    ],
+    "stabilizers": [
+      "infraspinatus",
+      "teres-minor",
+      "subscapularis",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

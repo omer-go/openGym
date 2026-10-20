@@ -20,5 +20,23 @@
     "Return slowly to the start.",
     "Keep your ribs down and your shoulders away from your ears."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

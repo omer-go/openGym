@@ -19,5 +19,24 @@
     "Lower slowly back to the start.",
     "Avoid shrugging toward your ears."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "lower-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

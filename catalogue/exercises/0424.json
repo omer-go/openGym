@@ -17,5 +17,33 @@
     "Pause for a moment at the top, then slowly lower the dumbbell back to the starting position.",
     "Repeat for the desired number of repetitions, then switch to the other arm."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max"
+    ]
+  }
 }

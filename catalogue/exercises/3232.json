@@ -20,5 +20,27 @@
     "Squeeze your rear shoulders.",
     "Return slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

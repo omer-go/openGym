@@ -18,5 +18,21 @@
     "Return slowly to the start.",
     "Do all reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "lower-trap",
+      "rhomboids",
+      "wrist-extensors"
+    ]
+  }
 }

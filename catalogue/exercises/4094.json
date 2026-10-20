@@ -19,5 +19,31 @@
     "Push through the front foot to return to standing and bring your hands together.",
     "Switch legs on the next rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med",
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ]
+  }
 }

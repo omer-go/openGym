@@ -19,5 +19,35 @@
     "As you pull the kettlebell up, keep your elbows high and wide, and squeeze your shoulder blades together.",
     "Lower the kettlebell back down to the starting position and repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "upper-trap"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "glute-max",
+      "adductors",
+      "adductor-magnus",
+      "hamstrings",
+      "quads",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

@@ -18,5 +18,18 @@
     "Hold the top for a second.",
     "Lower slowly under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

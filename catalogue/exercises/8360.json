@@ -18,5 +18,19 @@
     "Return slowly to the start.",
     "Finish the reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "subscapularis"
+    ],
+    "synergists": [
+      "front-delt",
+      "teres-major",
+      "pec-major-sternal",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

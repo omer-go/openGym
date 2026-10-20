@@ -19,5 +19,33 @@
     "Press back up.",
     "Make sure the chairs are stable."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "hip-flexors",
+      "quads"
+    ]
+  }
 }

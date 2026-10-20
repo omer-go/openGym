@@ -18,5 +18,23 @@
     "Hold briefly without shrugging.",
     "Lower slowly with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "supraspinatus"
+    ],
+    "synergists": [
+      "front-delt",
+      "side-delt",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

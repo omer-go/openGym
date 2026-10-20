@@ -20,5 +20,39 @@
     "Dip slightly and drive the bar overhead, splitting your feet.",
     "Recover your feet, stand tall and lower the bar under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "hamstrings",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

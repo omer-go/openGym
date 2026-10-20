@@ -18,5 +18,23 @@
     "Pause briefly.",
     "Lower slowly under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-extensors"
+    ]
+  }
 }

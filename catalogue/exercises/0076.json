@@ -19,5 +19,34 @@
     "Pause for a moment at the top, then slowly lower the barbell back to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

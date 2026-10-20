@@ -18,5 +18,24 @@
     "Return it and tap with the other hand.",
     "Keep your hips from rocking."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "obliques"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "pec-major-sternal",
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "triceps",
+      "wrist-flexors",
+      "glute-max",
+      "quads"
+    ]
+  }
 }

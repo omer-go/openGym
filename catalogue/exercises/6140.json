@@ -18,5 +18,19 @@
     "Lower slowly back to the start.",
     "Finish your reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "rhomboids",
+      "wrist-extensors"
+    ]
+  }
 }

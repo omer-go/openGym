@@ -19,5 +19,26 @@
     "Then bend forward and raise them out to the rear.",
     "Complete all six variations as one rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "side-delt"
+    ],
+    "synergists": [
+      "rear-delt",
+      "supraspinatus",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

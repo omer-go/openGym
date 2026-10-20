@@ -19,5 +19,41 @@
     "Lock out your elbow with your biceps near your ear.",
     "Lower it to your shoulder, then to the floor. Switch arms after your set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "adductor-magnus",
+      "quads"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

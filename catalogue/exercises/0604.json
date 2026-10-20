@@ -17,5 +17,17 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "3107",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

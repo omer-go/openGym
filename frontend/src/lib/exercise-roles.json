@@ -1,0 +1,11546 @@
+{
+ "1006": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "1012": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1017": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "1018": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "1022": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "1045": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "1048": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "1075": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1090": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1096": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "1107": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1113": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1120": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1133": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "1139": {
+  "target": [
+   "pec-major-clavicular",
+   "pec-major-sternal"
+  ],
+  "synergists": [
+   "front-delt",
+   "serratus-anterior",
+   "coracobrachialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "triceps",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max",
+   "quads"
+  ]
+ },
+ "1162": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1165": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1176": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "1200": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "1209": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1221": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "1224": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1225": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1226": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1230": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "1231": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "obliques"
+  ]
+ },
+ "1438": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "1439": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ]
+ },
+ "1443": {
+  "target": [
+   "front-delt",
+   "pec-major-sternal"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "1454": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "1456": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1457": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "1500": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "1508": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "1526": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "glute-max",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "1529": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "1538": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "1700": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "1765": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "1862": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "1876": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "2136": {
+  "target": [
+   "front-delt",
+   "side-delt",
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rhomboids",
+   "levator-scapulae",
+   "wrist-flexors",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2137": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2143": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "2151": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "2234": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2292": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "2317": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "2318": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "2381": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "2397": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2415": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "2470": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "2487": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "2500": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "2515": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2689": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "2690": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "2707": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "adductor-magnus",
+   "quads"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "hamstrings",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "2713": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2714": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2717": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2718": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2719": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2732": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "2735": {
+  "target": [
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "adductor-magnus",
+   "hamstrings",
+   "calves"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "2814": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "obliques",
+   "adductor-magnus",
+   "quads"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "2831": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "2905": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2909": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "2912": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae",
+   "wrist-flexors"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "2913": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "2914": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "2921": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "2924": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "2927": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "2928": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "lower-trap",
+   "levator-scapulae",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "supraspinatus",
+   "triceps",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "2930": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "2932": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "2934": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2940": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "2942": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "2962": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "2991": {
+  "target": [
+   "middle-trap",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "rhomboids",
+   "serratus-anterior",
+   "lats"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-med",
+   "hip-flexors"
+  ]
+ },
+ "2996": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "3012": {
+  "target": [
+   "lower-trap",
+   "pec-minor"
+  ],
+  "synergists": [
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis"
+  ]
+ },
+ "3122": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "3186": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "3232": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "3237": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3305": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "3321": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3342": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3343": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "3383": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3400": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "3401": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3402": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3403": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3404": {
+  "target": [
+   "rear-delt",
+   "middle-trap"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3405": {
+  "target": [
+   "infraspinatus",
+   "lower-trap"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor",
+   "middle-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3428": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3525": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "3542": {
+  "target": [
+   "rear-delt",
+   "middle-trap"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "3546": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "3548": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "3572": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "3573": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "quads"
+  ]
+ },
+ "3578": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rear-delt",
+   "wrist-flexors"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "3641": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "3684": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "3685": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "3689": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques"
+  ]
+ },
+ "3690": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "3693": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "3694": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "3696": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "3697": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "3722": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "3726": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "3730": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "3736": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "3737": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "obliques"
+  ]
+ },
+ "3740": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3741": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3744": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "3783": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max",
+   "glute-med",
+   "adductors",
+   "quads"
+  ]
+ },
+ "3823": {
+  "target": [
+   "front-delt",
+   "obliques"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-major-sternal",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ]
+ },
+ "3825": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3879": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3880": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3904": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3912": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis"
+  ]
+ },
+ "3913": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "3914": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "3915": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3916": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3943": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "3967": {
+  "target": [
+   "front-delt",
+   "pec-major-clavicular"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-sternal",
+   "lats",
+   "coracobrachialis"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "3968": {
+  "target": [
+   "front-delt",
+   "pec-major-clavicular"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-sternal",
+   "lats",
+   "coracobrachialis"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "3971": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "3972": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "3980": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "3986": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "3989": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "3990": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "4010": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4012": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "4013": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4014": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4016": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4043": {
+  "target": [
+   "middle-trap",
+   "rhomboids"
+  ],
+  "synergists": [
+   "lower-trap",
+   "pec-minor",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4049": {
+  "target": [
+   "middle-trap",
+   "rhomboids"
+  ],
+  "synergists": [
+   "lower-trap",
+   "pec-minor",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4053": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4055": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4057": {
+  "target": [
+   "front-delt",
+   "obliques"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "glute-max"
+  ]
+ },
+ "4065": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4066": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4067": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4071": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4094": {
+  "target": [
+   "rear-delt",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-med",
+   "adductor-magnus",
+   "hamstrings",
+   "calves"
+  ]
+ },
+ "4103": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4108": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4111": {
+  "target": [
+   "middle-trap",
+   "rhomboids"
+  ],
+  "synergists": [
+   "lower-trap"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4114": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "4120": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "obliques"
+  ]
+ },
+ "4122": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "4125": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "4164": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "pec-major-sternal",
+   "triceps",
+   "hip-flexors",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4172": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "4174": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "4175": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4176": {
+  "target": [
+   "lower-trap",
+   "pec-minor"
+  ],
+  "synergists": [
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis"
+  ]
+ },
+ "4177": {
+  "target": [
+   "lower-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "rhomboids",
+   "pec-minor",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4182": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4183": {
+  "target": [
+   "front-delt",
+   "side-delt",
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rhomboids",
+   "levator-scapulae",
+   "wrist-flexors",
+   "wrist-extensors"
+  ]
+ },
+ "4191": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4194": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "4195": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4202": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "4211": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4225": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors"
+  ]
+ },
+ "4226": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4227": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4235": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4236": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4237": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "4238": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4239": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "4244": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "4341": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4346": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4361": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4376": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4389": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4408": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4411": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "4412": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4445": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "4446": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "4531": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "4534": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rear-delt",
+   "wrist-flexors"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "4536": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "4542": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4568": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4577": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4663": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "teres-major",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "lats",
+   "triceps-long-head",
+   "erector-spinae"
+  ],
+  "stabilizers": [
+   "glute-max",
+   "hamstrings"
+  ]
+ },
+ "4682": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "4686": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4695": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "4697": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "4700": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "obliques",
+   "quadratus-lumborum"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4745": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4832": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "4833": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "4847": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4852": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4857": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4862": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4866": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "4871": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "4876": {
+  "target": [
+   "pec-major-clavicular",
+   "pec-major-sternal"
+  ],
+  "synergists": [
+   "front-delt",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "biceps",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis"
+  ]
+ },
+ "4923": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "4966": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "quads"
+  ]
+ },
+ "4967": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5001": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "5002": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "5065": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "wrist-flexors"
+  ]
+ },
+ "5074": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5075": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5087": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "5088": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "5089": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "wrist-flexors"
+  ]
+ },
+ "5092": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "5094": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "5122": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "adductor-magnus",
+   "quads"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "hamstrings",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5142": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5151": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "5204": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "5205": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5223": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5224": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5225": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5226": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5234": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5261": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "5282": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5303": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "5317": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5328": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5524": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "5527": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "5606": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "5607": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5609": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5631": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5632": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5635": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5636": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "5656": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5658": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "5662": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5665": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "5666": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5667": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "5668": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5705": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5817": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "5818": {
+  "target": [
+   "supraspinatus"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5819": {
+  "target": [
+   "supraspinatus"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5820": {
+  "target": [
+   "supraspinatus"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "5821": {
+  "target": [
+   "front-delt",
+   "infraspinatus"
+  ],
+  "synergists": [
+   "side-delt",
+   "rear-delt",
+   "supraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rhomboids",
+   "levator-scapulae",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "5853": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "5855": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "5859": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "5943": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "5944": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "6035": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "6061": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "6071": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "6072": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "6073": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6074": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6075": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6076": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "6123": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "6140": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "6141": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6142": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "6143": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques"
+  ]
+ },
+ "6194": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "6252": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "6259": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "6437": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "teres-major",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "lower-trap"
+  ]
+ },
+ "6439": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "6440": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "6441": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "6485": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6486": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "6543": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "6545": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "6549": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "6648": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "6754": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "6755": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "6756": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "6776": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "6833": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "6890": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "6891": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "7114": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "7155": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "rhomboids",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "7213": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "7231": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "7235": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "7252": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "7287": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "7449": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "7588": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "7591": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "7592": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "7743": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "7744": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "7745": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "7747": {
+  "target": [
+   "infraspinatus",
+   "lower-trap"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor",
+   "middle-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "wrist-extensors"
+  ]
+ },
+ "7995": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "8360": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "8361": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "8362": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "8363": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "8364": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "8502": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "8617": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "8633": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "8661": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "8662": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "8663": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap"
+  ]
+ },
+ "8847": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "8878": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "8879": {
+  "target": [
+   "front-delt",
+   "infraspinatus"
+  ],
+  "synergists": [
+   "side-delt",
+   "rear-delt",
+   "supraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rhomboids",
+   "levator-scapulae",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "8899": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "8901": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "8990": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "9316": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "9491": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9492": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors"
+  ]
+ },
+ "9503": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "9694": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "9695": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "9697": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "9703": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "9704": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max",
+   "hip-flexors",
+   "neck-extensors"
+  ]
+ },
+ "9705": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9867": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "9868": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "9869": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "9870": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors"
+  ]
+ },
+ "9871": {
+  "target": [
+   "side-delt",
+   "lower-trap"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap"
+  ]
+ },
+ "9872": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9873": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9874": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9933": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "9990": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "10040": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "10043": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "10049": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "hip-flexors"
+  ]
+ },
+ "10056": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "10094": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "10106": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "10107": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "10114": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "10117": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "glute-max"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "10126": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "10190": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "10196": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "10330": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "10386": {
+  "target": [
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "adductor-magnus",
+   "hamstrings",
+   "calves"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "10388": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "10411": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "subscapularis",
+   "upper-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "10559": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "10588": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "10597": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "wrist-flexors"
+  ]
+ },
+ "10664": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "pec-major-sternal",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
+  ]
+ },
+ "10665": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "biceps",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max",
+   "hamstrings"
+  ]
+ },
+ "10858": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "10863": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "10901": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "10933": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "10989": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
+  ]
+ },
+ "10997": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "10998": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "11014": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "11016": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "11017": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "11060": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "11254": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "11260": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "11272": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "11277": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "11716": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "11718": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "11799": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0041": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0067": {
+  "target": [
+   "glute-max",
+   "adductor-magnus",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "hamstrings",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0075": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0076": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0086": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0087": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0091": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0095": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0100": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "glute-max",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0105": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0107": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0119": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0120": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0121": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0123": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0148": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0154": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0161": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0162": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0164": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0178": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0192": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "0202": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0203": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0215": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0216": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0219": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0220": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0225": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0233": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0235": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "0240": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0246": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0286": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0287": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0290": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0299": {
+  "target": [
+   "front-delt",
+   "side-delt",
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rhomboids",
+   "levator-scapulae",
+   "wrist-flexors",
+   "wrist-extensors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0304": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0305": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0309": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0310": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0311": {
+  "target": [
+   "supraspinatus"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0323": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0325": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0326": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0329": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0332": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0334": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0335": {
+  "target": [
+   "front-delt",
+   "side-delt"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0341": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0345": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0348": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0355": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "0356": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0359": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0360": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "0361": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "0363": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum"
+  ]
+ },
+ "0376": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0377": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0378": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0379": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0380": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0383": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0386": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0387": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0388": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0392": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0395": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0396": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0404": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0405": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0406": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0408": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "rear-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0414": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0415": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0419": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0424": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "0426": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0427": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0437": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0438": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0445": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0520": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0523": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0527": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0528": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0529": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0537": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "brachialis",
+   "brachioradialis",
+   "triceps",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0538": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0539": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "glute-max"
+  ]
+ },
+ "0540": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "glute-max",
+   "adductor-magnus",
+   "quads",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0542": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "front-delt",
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "triceps",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0543": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "brachialis",
+   "brachioradialis",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0546": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0547": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0548": {
+  "target": [
+   "side-delt",
+   "upper-trap"
+  ],
+  "synergists": [
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "glute-max",
+   "adductors",
+   "adductor-magnus",
+   "hamstrings",
+   "quads",
+   "calves"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0550": {
+  "target": [
+   "front-delt",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "triceps",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0552": {
+  "target": [
+   "glute-max",
+   "hamstrings"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "upper-trap",
+   "middle-trap",
+   "brachialis",
+   "brachioradialis",
+   "adductor-magnus",
+   "quads"
+  ],
+  "stabilizers": [
+   "levator-scapulae",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0553": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0580": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0584": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors"
+  ]
+ },
+ "0587": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0590": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0601": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0602": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors"
+  ]
+ },
+ "0603": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0604": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0688": {
+  "target": [
+   "lower-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "rhomboids",
+   "pec-minor",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0698": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0746": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0762": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0765": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0766": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0767": {
+  "target": [
+   "upper-trap"
+  ],
+  "synergists": [
+   "middle-trap",
+   "levator-scapulae"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0772": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0774": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ },
+ "0775": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0793": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0834": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0844": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0863": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "0864": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "0869": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae"
+  ]
+ },
+ "0893": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "antagonistStabilizers": [
+   "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "0907": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0921": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "0924": {
+  "target": [
+   "subscapularis"
+  ],
+  "synergists": [
+   "front-delt",
+   "teres-major",
+   "pec-major-sternal",
+   "lats"
+  ],
+  "stabilizers": [
+   "wrist-flexors"
+  ]
+ },
+ "0934": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "biceps",
+   "brachialis",
+   "brachioradialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0935": {
+  "target": [
+   "infraspinatus"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-minor"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "lower-trap",
+   "rhomboids",
+   "wrist-extensors"
+  ]
+ },
+ "0977": {
+  "target": [
+   "side-delt"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0978": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0993": {
+  "target": [
+   "rear-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "infraspinatus",
+   "teres-minor",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids"
+  ],
+  "stabilizers": [
+   "triceps",
+   "wrist-extensors",
+   "erector-spinae"
+  ]
+ },
+ "0997": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "side-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "rectus-abdominis",
+   "obliques",
+   "erector-spinae",
+   "glute-max"
+  ]
+ }
+}

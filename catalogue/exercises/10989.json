@@ -19,5 +19,24 @@
     "Hold for a few seconds, rounding your upper back slightly.",
     "Lower your feet gently."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-clavicular",
+      "biceps"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "triceps",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "glute-max"
+    ]
+  }
 }

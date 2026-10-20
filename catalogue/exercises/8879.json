@@ -19,5 +19,37 @@
     "Return along the same path with control.",
     "Finish your reps and switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "infraspinatus"
+    ],
+    "synergists": [
+      "side-delt",
+      "rear-delt",
+      "supraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "rhomboids",
+      "levator-scapulae",
+      "wrist-extensors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

@@ -20,5 +20,33 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "4517",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

@@ -19,5 +19,22 @@
     "Squeeze your shoulder blades together.",
     "Lower slowly under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "supraspinatus"
+    ],
+    "synergists": [
+      "front-delt",
+      "side-delt",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-extensors"
+    ]
+  }
 }

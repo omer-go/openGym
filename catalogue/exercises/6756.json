@@ -17,5 +17,19 @@
     "Pause briefly at the end.",
     "Return slowly and switch arms after your reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "subscapularis"
+    ],
+    "synergists": [
+      "front-delt",
+      "teres-major",
+      "pec-major-sternal",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

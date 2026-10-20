@@ -19,5 +19,31 @@
     "Rotate your elbows under and catch the bar on your shoulders without dropping into a squat.",
     "Lower the bar back down under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "upper-trap"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "glute-max",
+      "hamstrings",
+      "quads",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

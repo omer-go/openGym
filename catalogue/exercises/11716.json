@@ -19,5 +19,33 @@
     "Press the stone overhead to full lockout.",
     "Lower it back to your chest with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps",
+      "glute-max",
+      "adductor-magnus",
+      "quads",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

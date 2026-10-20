@@ -20,5 +20,26 @@
     "Complete your reps, then switch arms."
   ],
   "femaleVariant": "10768",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-max"
+    ]
+  }
 }

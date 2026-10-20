@@ -18,5 +18,21 @@
     "Pause briefly.",
     "Return slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "infraspinatus",
+      "lower-trap"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-minor",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

@@ -10,6 +10,7 @@
 // Generated, never edited by hand:
 //   frontend/src/lib/exercises-data.js        EXDB: the list the app indexes and searches
 //   frontend/src/lib/exercise-muscle-map.json muscle-map corrections (catalogue "muscleMap")
+//   frontend/src/lib/exercise-roles.json      target, synergist and stabilizer muscles ("muscleRoles")
 //   frontend/src/instr/<lang>.js              instruction steps, loaded with the language
 //   frontend/src/exercise-names/<lang>.js     translated names, loaded with the language
 //   frontend/src/exercise-desc/<lang>.js      descriptions, loaded when one is shown
@@ -69,6 +70,10 @@ for (const e of exercises) {
   }
 }
 files['frontend/src/lib/exercise-muscle-map.json'] = JSON.stringify(muscleMap, null, 1) + '\n'
+
+// Not read by the app yet: the finer per-muscle roles, kept beside the muscle map until it is.
+const roles = Object.fromEntries(exercises.filter(e => e.muscleRoles && !e.variantOf).map(e => [e.id, e.muscleRoles]))
+files['frontend/src/lib/exercise-roles.json'] = JSON.stringify(roles, null, 1) + '\n'
 
 const pack = (obj) => header + 'export default ' + JSON.stringify(obj) + '\n'
 const byId = (pick) => Object.fromEntries(exercises.filter(e => !e.variantOf).map(e => [e.id, pick(e)]).filter(([, v]) => v && (!Array.isArray(v) || v.length)))

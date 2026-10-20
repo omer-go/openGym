@@ -20,5 +20,34 @@
     "Pull the bar up high with your elbows, turn it over and press to locked arms overhead without squatting.",
     "Stand tall to finish, then lower the bar with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "upper-trap"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "glute-max",
+      "hamstrings",
+      "quads",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

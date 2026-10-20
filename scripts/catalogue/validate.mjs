@@ -19,8 +19,19 @@ export const TARGETS = list('abs, pectorals, biceps, glutes, delts, triceps, upp
 export const SECONDARY = list('shoulders, deltoids, rear deltoids, rotator cuff, chest, upper chest, triceps, biceps, brachialis, forearms, wrists, wrist flexors, wrist extensors, grip muscles, back, upper back, lats, latissimus dorsi, rhomboids, trapezius, traps, lower back, core, abdominals, obliques, lower abs, hip flexors, glutes, quadriceps, hamstrings, adductors, inner thighs, groin, calves, soleus, shins, ankles, ankle stabilizers, feet, hands, sternocleidomastoid')
 export const CATEGORIES = list('strength, stretching, mobility, plyometrics, cardio, olympic, calisthenics, pilates, yoga, combat, isometric, rehab')
 export const MUSCLES = list('trapezius, deltoids, chest, upper-back, serratus, biceps, triceps, forearm, abs, obliques, lower-back, gluteal, quadriceps, hamstring, adductors, hip-flexors, calves, tibialis')
+// Single muscles for "muscleRoles", finer than the body map: which muscle moves the weight, which
+// help, which hold a joint still. Data only for now, the app does not read it yet.
+export const ROLE_MUSCLES = list(`
+  front-delt, side-delt, rear-delt, supraspinatus, infraspinatus, teres-minor, subscapularis, teres-major,
+  upper-trap, middle-trap, lower-trap, rhomboids, levator-scapulae, serratus-anterior, pec-minor,
+  pec-major-clavicular, pec-major-sternal, lats, coracobrachialis,
+  biceps, brachialis, brachioradialis, triceps, triceps-long-head, wrist-flexors, wrist-extensors,
+  rectus-abdominis, obliques, transverse-abdominis, erector-spinae, quadratus-lumborum,
+  glute-max, glute-med, hip-flexors, adductors, adductor-magnus, hamstrings, quads, calves, tibialis-anterior,
+  sternocleidomastoid, neck-extensors`)
+export const ROLES = list('target, synergists, dynamicStabilizers, stabilizers, antagonistStabilizers')
 export const LANGS = list('ar, bn, de, es, fr, hi, hu, it, ko, pl, pt, pt-BR, ru, th, tr, uk, zh, zh-TW')
-const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource']
+const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
 const I18N_KEYS = ['name', 'description', 'instructions']
 
 export function validateCatalogue(dir) {
@@ -59,6 +70,21 @@ export function validateCatalogue(dir) {
       for (const k of ['primaries', 'secondaries']) if (m[k] && (!Array.isArray(m[k]) || m[k].some(x => !MUSCLES.includes(x)))) say(file, `"muscleMap.${k}" must list body-map muscles: ${MUSCLES.join(', ')}`)
       if (m.bodyPart && !BODY_PARTS.includes(m.bodyPart)) say(file, '"muscleMap.bodyPart" is not a body part')
       if (m.weights && Object.entries(m.weights).some(([k, v]) => !MUSCLES.includes(k) || typeof v !== 'number' || v < 0 || v > 1)) say(file, '"muscleMap.weights" maps body-map muscles to numbers from 0 to 1')
+    }
+    if (e.muscleRoles) {
+      // Each muscle has one role; an empty role is left out rather than written as [].
+      const r = e.muscleRoles, seen = new Set()
+      for (const k of Object.keys(r)) if (!ROLES.includes(k)) say(file, `"muscleRoles": unknown role "${k}" (use ${ROLES.join(', ')})`)
+      if (!Array.isArray(r.target) || !r.target.length) say(file, '"muscleRoles.target" must list at least one muscle')
+      for (const k of ROLES) {
+        if (r[k] == null || (k === 'target' && !r[k]?.length)) continue
+        if (!Array.isArray(r[k]) || !r[k].length) { say(file, `"muscleRoles.${k}" must be a non-empty list (leave it out when empty)`); continue }
+        for (const m of r[k]) {
+          if (!ROLE_MUSCLES.includes(m)) say(file, `"muscleRoles.${k}": "${m}" is not one of: ${ROLE_MUSCLES.join(', ')}`)
+          else if (seen.has(m)) say(file, `"muscleRoles": "${m}" has more than one role`)
+          seen.add(m)
+        }
+      }
     }
   }
   const ids = new Map(exercises.map(e => [e.id, e]))

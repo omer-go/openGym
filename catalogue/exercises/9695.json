@@ -20,5 +20,25 @@
     "Complete your reps, then switch sides."
   ],
   "femaleVariant": "10767",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

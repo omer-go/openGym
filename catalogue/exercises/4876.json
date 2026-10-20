@@ -19,5 +19,21 @@
     "Relax and shake out your arms.",
     "Repeat for several rounds."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-clavicular",
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "biceps",
+      "triceps",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

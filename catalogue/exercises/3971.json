@@ -18,5 +18,30 @@
     "Pause, then lower slowly.",
     "Keep your elbows slightly bent."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "triceps",
+      "wrist-extensors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "antagonistStabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

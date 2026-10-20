@@ -16,5 +16,26 @@
     "Engage your core and swing the weights up and overhead, keeping your arms straight.",
     "Lower the weights back down to the starting position and repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-extensors",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

@@ -19,5 +19,25 @@
     "Finish your reps, then switch arms.",
     "Keep your ribs down and avoid leaning back."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

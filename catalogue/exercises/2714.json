@@ -19,5 +19,24 @@
     "Keep your shoulders down and avoid shrugging.",
     "Hold as long as you can, then lower under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-flexors",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }
