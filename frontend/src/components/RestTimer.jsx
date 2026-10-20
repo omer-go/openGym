@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
 import { REST_MAX } from '../lib/duration.js'
-import { durationSheet } from './DurationWheel.jsx'
+import { durationSheet } from './DurationPicker.jsx'
 import { Button } from './ui.jsx'
 import Icon from './Icon.jsx'
 
@@ -19,7 +19,6 @@ export function adjustRestSheet() {
   const opened = tm.ready ? 0 : Math.min(tm.left, REST_MAX)
   durationSheet({
     title: t('Time left'), value: opened, max: REST_MAX, off: t('Skip'),
-    footer: t('Scroll to 0:00 to end the rest now.'),
     onDone: v => applyRestLeft(v, opened),
   })
 }

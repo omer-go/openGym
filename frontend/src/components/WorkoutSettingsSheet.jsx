@@ -8,7 +8,7 @@ import { wakeLockSupported } from '../lib/wakelock.js'
 import { MOBILE } from '../lib/mobile.js'
 import { closeThenNav } from '../lib/nav.js'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
-import { durationSheet } from './DurationWheel.jsx'
+import { durationSheet } from './DurationPicker.jsx'
 import { Section, Row, Switch, Segmented, Button } from './ui.jsx'
 
 // The settings people touch at the gym, without leaving the workout (v1.3.11, opened from the
@@ -36,7 +36,6 @@ export function WorkoutSettings({ close }) {
       <Row icon="timer" iconTint="var(--orange)" title={t('Rest timer')} value={fmtRest(S.restSec)} accessory="chevron"
         onClick={() => durationSheet({
           title: t('Rest timer'), value: S.restSec, max: REST_MAX, off: t('Off'),
-          footer: t('Scroll to 0:00 to turn the rest timer off.'),
           onDone: v => update(s => { s.restSec = v }),
         })} />
       <Row icon="speaker" iconTint="var(--pink)" title={t('Play a sound')}>

@@ -35,7 +35,7 @@ import { forgetCoach } from '../lib/coach-api.js'
 import { REST_MAX, REST_PAUSE_MIN, REST_PAUSE_MAX, fmtRest, fmtDuration } from '../lib/duration.js'
 import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, menuSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
-import { durationSheet } from '../components/DurationWheel.jsx'
+import { durationSheet } from '../components/DurationPicker.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
 import { ServerSyncSection, KeptChangesRows, leaveServer, connectServer, passkeySignIn } from '../components/ServerSync.jsx'
@@ -416,7 +416,6 @@ export default function Settings({ page = null, find = null, via = null }) {
   const restRow = <Row icon="timer" iconTint="var(--orange)" title={t('Rest timer')} value={fmtRest(S.restSec)} accessory="chevron"
     onClick={() => durationSheet({
       title: t('Rest timer'), value: S.restSec, max: REST_MAX, off: t('Off'),
-      footer: t('Scroll to 0:00 to turn the rest timer off.'),
       onDone: v => update(s => { s.restSec = v }),
     })} />
   // Default for a rest-pause burst added live on a plain set. A planned exercise's own "Rest (s)"

@@ -42,7 +42,7 @@ const sheetHost = () => {
   return { el, r }
 }
 
-// v1.3.11: one docked row; the clock is a button that opens the wheel at the time left.
+// v1.3.11: one docked row; the clock is a button that opens the picker at the time left.
 describe('the docked rest bar', () => {
   it('is one row: the clock with its label, then −15, +15, pause and Skip', () => {
     act(() => useUI.getState().startRest(90, 0))
@@ -106,14 +106,14 @@ describe('the docked rest bar', () => {
     expect(host.querySelector('#timer .tclock .lbl').textContent).toBe('Paused')
   })
 
-  it('opens the wheel at the time left, and Done sets the rest to what was picked', () => {
+  it('opens the picker at the time left, and Done sets the rest to what was picked', () => {
     act(() => useUI.getState().startRest(90, 3))
     mount()
     act(() => vi.advanceTimersByTime(10_000))
     act(() => host.querySelector('#timer .tclock').click())
     const { el, r } = sheetHost()
     expect(el.querySelector('h3').textContent).toBe('Time left')
-    expect(el.querySelector('.dw-read').textContent).toBe('1:20')
+    expect(el.querySelector('.dp-v').textContent).toBe('1:20')
     act(() => r.unmount()); el.remove()
     act(() => applyRestLeft(120))
     expect(useUI.getState().timer).toMatchObject({ left: 120, forIdx: 3 })
@@ -133,8 +133,8 @@ describe('the docked rest bar', () => {
     expect(useUI.getState().timer.ready).toBeUndefined()
   })
 
-  it('Done on an untouched wheel leaves the rest alone', () => {
-    // still counting: the seconds that passed while the wheel was open are not given back
+  it('Done on an untouched picker leaves the rest alone', () => {
+    // still counting: the seconds that passed while the picker was open are not given back
     act(() => useUI.getState().startRest(60, 0))
     mount()
     act(() => host.querySelector('#timer .tclock').click())

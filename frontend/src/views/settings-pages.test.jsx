@@ -324,7 +324,7 @@ describe('the pages', () => {
   })
 })
 
-describe('the rest wheels', () => {
+describe('the rest pickers', () => {
   const doneIn = sheet => {
     const close = vi.fn()
     const h = document.createElement('div'); document.body.appendChild(h)
@@ -332,21 +332,20 @@ describe('the rest wheels', () => {
     act(() => r.render(sheet(close)))
     return { h, r, close }
   }
-  it('Rest timer opens the wheel and stores any value as seconds in restSec', () => {
+  it('Rest timer opens the picker: a chip, a step or a typed time, stored as seconds in restSec', () => {
     mount('workout')
     expect(rowTitled('Rest timer').querySelector('.lrow-v').textContent).toBe('1:30')
     act(() => rowTitled('Rest timer').click())
     const { h, r } = doneIn(mocks.sheets.at(-1))
     expect(h.querySelector('h3').textContent).toBe('Rest timer')
-    const [min, sec] = h.querySelectorAll('[role="spinbutton"]')
-    expect(min.getAttribute('aria-valuemax')).toBe('15')
-    act(() => { sec.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageUp', bubbles: true })) })
-    act(() => { sec.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true })) })
+    expect(h.querySelector('[role="spinbutton"]')).toBeNull() // no wheels
+    act(() => { [...h.querySelectorAll('.wgrid .chip')].find(b => b.textContent === '1:00').click() })
+    act(() => { h.querySelector('button[aria-label="15 seconds longer"]').click() })
     act(() => { [...h.querySelectorAll('button')].find(b => b.textContent === 'Done').click() })
-    expect(mocks.S.restSec).toBe(101)
+    expect(mocks.S.restSec).toBe(75)
     act(() => r.unmount()); h.remove()
     mount('workout')
-    expect(rowTitled('Rest timer').querySelector('.lrow-v').textContent).toBe('1:41')
+    expect(rowTitled('Rest timer').querySelector('.lrow-v').textContent).toBe('1:15')
   })
 
   it('0:00 is the timer off', () => {
@@ -355,13 +354,15 @@ describe('the rest wheels', () => {
     expect(rowTitled('Rest timer').querySelector('.lrow-v').textContent).toBe('Off')
   })
 
-  it('Rest-pause rest uses the wheel too, 5 s to 5 minutes', () => {
+  it('Rest-pause rest uses the picker too, 5 s to 5 minutes, with no Off', () => {
     mount('workout')
     act(() => rowTitled('Rest-pause rest').click())
     const { h, r } = doneIn(mocks.sheets.at(-1))
-    const [min, sec] = h.querySelectorAll('[role="spinbutton"]')
-    expect(min.getAttribute('aria-valuemax')).toBe('5')
-    act(() => { sec.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true })) })
+    expect(h.querySelector('.dp-off')).toBeNull()
+    expect([...h.querySelectorAll('.wgrid .chip')].at(-1).textContent).toBe('5:00')
+    act(() => { [...h.querySelectorAll('.wgrid .chip')].find(b => b.textContent === '10s').click() })
+    act(() => { h.querySelector('button[aria-label="5 seconds shorter"]').click() })
+    expect(h.querySelector('button[aria-label="5 seconds shorter"]').disabled).toBe(true)
     act(() => { [...h.querySelectorAll('button')].find(b => b.textContent === 'Done').click() })
     expect(mocks.S.restPauseSec).toBe(5)
     act(() => r.unmount()); h.remove()

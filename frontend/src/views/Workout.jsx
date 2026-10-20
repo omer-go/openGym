@@ -24,7 +24,8 @@ import WorkoutChips from '../components/WorkoutChips.jsx'
 import { supersetMeta } from '../lib/superset-meta.js'
 import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
-import { durationSheet } from '../components/DurationWheel.jsx'
+import { durationSheet } from '../components/DurationPicker.jsx'
+import { withSessionRest } from '../lib/generate.js'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
 import { startFlow, addExerciseSheet, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, quickSwapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, shuffleGenerated } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
@@ -1440,7 +1441,8 @@ function ActiveWorkout() {
     // Freestyle has no routine prescription to apply: show the last target in the config
     // sheet and carry its completed rows forward. A planned session uses its configured
     // target when progression is off, while progression-enabled sessions keep their path.
-    const seed = freestyle ? freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) }) : null
+    // In a one-tap workout it takes the rest the workout was set up with (withSessionRest).
+    const seed = freestyle ? withSessionRest(freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) }), A) : null
     // `typed`: the settings sheet's numbers, picked on purpose, so the rows open at them rather
     // than at last time's (a weight left on Auto still reads last time, buildSets useTarget).
     const commit = (cfg, typed = false) => {
@@ -1520,7 +1522,7 @@ function ActiveWorkout() {
       title: t('Rest for this exercise'),
       value: entry.target?.restSec > 0 ? entry.target.restSec : 0, max: REST_MAX,
       off: t('Default ({0})', fmtRest(state.restSec)),
-      footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
+      footer: t('Rest after each set of this exercise.'),
       onDone: v => update(s => {
         const e = s.active?.id === activeId ? s.active.entries?.[idx] : null
         if (!e || e.id !== entryId) return

@@ -175,6 +175,16 @@ export function genConfig(S, id, setup) {
 }
 
 /**
+ * The config of an exercise added to a running session, with the session's rest: a one-tap
+ * workout's setup chose a rest for every lift in it (genConfig), and one added later keeps to
+ * it instead of falling back to the app's default. Any other session leaves `cfg` as it is.
+ */
+export function withSessionRest(cfg, active) {
+  const rest = Math.round(Number(active?.gen?.setup?.restSec)) || 0
+  return cfg && rest > 0 ? { ...cfg, restSec: rest } : cfg
+}
+
+/**
  * Session entries for `picks`, built the way a freestyle exercise added mid-workout is
  * (Workout.jsx): last time's target and loads, in the exercise's dumbbell meaning today.
  * With a `setup` the lifts take its target instead (genConfig) and open at it, the weight

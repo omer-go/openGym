@@ -22,7 +22,6 @@ export const PT_BR_OVERRIDES = {
   'Workout settings': 'Configurações do treino',
   'Change the time left': 'Mudar o tempo que falta',
   'Paused': 'Pausado',
-  'Scroll to 0:00 to end the rest now.': 'Role até 0:00 para encerrar o descanso agora.',
   'Time left': 'Tempo restante',
   '{0} workouts and {1} weigh-ins were logged on this device while signed out. Add them to your profile, or keep the profile exactly as it is on the server.': '{0} treinos e {1} pesagens foram registrados neste dispositivo sem login. Adicione-os ao seu perfil ou mantenha o perfil exatamente como está no servidor.',
   '{0} workout and {1} weigh-in were logged on this device while signed out. Add them to your profile, or keep the profile exactly as it is on the server.': '{0} treino e {1} pesagem foram registrados neste dispositivo sem login. Adicione-os ao seu perfil ou mantenha o perfil exatamente como está no servidor.',
@@ -753,7 +752,6 @@ export const PT_BR_OVERRIDES = {
   '{0}: what’s planned': '{0}: previsto',
 
   // --- per-exercise rest ---
-  'Rest after each set of this exercise. 0:00 means your default rest.': 'Descanso depois de cada série deste exercício. Em 0:00 vale o seu descanso padrão.',
   'Hevy is rate-limiting requests. Wait a minute and try again': 'O Hevy está limitando as solicitações. Espere um minuto e tente de novo',
   'Log a past workout': 'Registrar um treino passado',
   'Logged on the usual workout screen, without timers.': 'Registrado na tela de treino habitual, só sem temporizadores.',
@@ -1163,7 +1161,6 @@ export const PT_BR_OVERRIDES = {
   'This phone': 'Este celular',
   'Search settings': 'Buscar nas configurações',
   'No setting matches “{0}”.': 'Nenhuma configuração corresponde a “{0}”.',
-  'Scroll to 0:00 to turn the rest timer off.': 'Role até 0:00 para desligar o temporizador.',
   'Each exercise can have its own rest too. Set it in the exercise settings of a routine.': 'Cada exercício também pode ter seu próprio descanso. Defina nas configurações do exercício de uma rotina.',
   'iPhone doesn’t let openGym vibrate. A sound or a flash does the job.': 'O iPhone não deixa o openGym vibrar. Um som ou uma piscada resolvem.',
   'No account, no cloud. Back it up anytime in Data & backup.': 'Sem conta, sem nuvem. Faça backup quando quiser em Dados e backup.',

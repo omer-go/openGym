@@ -112,7 +112,7 @@ vi.mock('../components/WorkoutThumb.jsx', () => ({
   default: ({ onExpand }) => React.createElement('button', { className: 'wthumb', 'aria-label': 'Expand', onClick: onExpand }),
   hasWorkoutMedia: () => true,
 }))
-vi.mock('../components/DurationWheel.jsx', () => ({ durationSheet: mocks.durationSheet }))
+vi.mock('../components/DurationPicker.jsx', () => ({ durationSheet: mocks.durationSheet }))
 vi.mock('../components/WorkoutSettingsSheet.jsx', () => ({ workoutSettingsSheet: mocks.workoutSettingsSheet }))
 // api.js reads navigator.userAgent at module scope. This file installs its own DOM inside the
 // tests rather than declaring a vitest environment, so it must not depend on an ambient one.

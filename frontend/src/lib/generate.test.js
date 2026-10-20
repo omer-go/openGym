@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, withSessionRest } from './generate.js'
 import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -179,5 +179,18 @@ describe('generatedEntries with a setup', () => {
     expect(run.sets).toHaveLength(1)
     expect(run.gen).toEqual({ k: 'cardio' })
     expect(str.target).toMatchObject({ mode: 'time', sets: 2 })
+  })
+})
+
+describe('an exercise added to a running session', () => {
+  const cfg = { id: '0025', sets: 3, reps: 10, restSec: 90 }
+  it('takes the rest a one-tap workout was set up with', () => {
+    expect(withSessionRest(cfg, { gen: { type: 'push', setup: { restSec: 20 } } }).restSec).toBe(20)
+  })
+  it('keeps its own when the workout set none, or is no one-tap workout', () => {
+    expect(withSessionRest(cfg, { gen: { type: 'push', setup: { restSec: 0 } } })).toBe(cfg)
+    expect(withSessionRest(cfg, { gen: { type: 'push' } })).toBe(cfg)
+    expect(withSessionRest(cfg, { entries: [] })).toBe(cfg)
+    expect(withSessionRest(null, { gen: { setup: { restSec: 20 } } })).toBeNull()
   })
 })

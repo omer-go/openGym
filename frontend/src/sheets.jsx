@@ -20,7 +20,7 @@ import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf } from './lib/medi
 import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
-import { durationSheet } from './components/DurationWheel.jsx'
+import { durationSheet } from './components/DurationPicker.jsx'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
 import { REST_MAX, fmtRest } from './lib/duration.js'
 import Icon from './components/Icon.jsx'
@@ -1989,20 +1989,20 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
     {/* Per-exercise rest (issue #10). Its own full-width row, like the other steppers with an
         explanation under them, and outside every mode branch because a heavy triple, a plank
         and a cardio interval all rest — they just do not all want the same break. */}
-    {/* On the same wheel as the default rest timer (v1.3.11): 0:00 is "no rest of its own", so
-        the default applies, and the row says which default that is. */}
+    {/* On the same picker as the default rest timer: its Default choice (0) is "no rest of its
+        own", so the default applies, and the row says which default that is. */}
     <div className="sect-b cfg-rest" style={{ marginBottom: 6 }}>
       <Row icon="timer" iconTint="var(--orange)" title={t('Rest for this exercise')} accessory="chevron"
         value={c.restSec > 0 ? fmtRest(c.restSec) : t('Default ({0})', fmtRest(st.restSec))}
         onClick={() => durationSheet({
           title: t('Rest for this exercise'), value: c.restSec > 0 ? c.restSec : 0, max: REST_MAX,
           off: t('Default ({0})', fmtRest(st.restSec)),
-          footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
+          footer: t('Rest after each set of this exercise.'),
           onDone: v => setC(x => ({ ...x, restSec: v })),
         })} />
     </div>
     <div className="small dim" style={{ marginBottom: 18 }}>
-      {t('Rest after each set of this exercise. 0:00 means your default rest.')}
+      {t('Rest after each set of this exercise.')}
     </div>
     {/* ---------- bodyweight + per side (issues #31/#32/#33) ---------- */}
     {!cardio && <div className="sect-b" style={{ marginBottom: 8 }}>
@@ -2996,7 +2996,7 @@ function GenSetup({ type, close }) {
           onClick={() => durationSheet({
             title: t('Rest between sets'), value: setup.restSec > 0 ? setup.restSec : 0, max: REST_MAX,
             off: t('Default ({0})', fmtRest(st.restSec)),
-            footer: t('Rest after each set of this exercise. 0:00 means your default rest.'),
+            footer: t('Rest after each set of this exercise.'),
             onDone: v => set({ restSec: v }),
           })} />
         <Row icon="gauge" iconTint="var(--purple)" title={t('Last set to failure')}

@@ -43,7 +43,7 @@ describe('saved workout state sync and restore', () => {
 
     expect(restored.routines.map(r => r.id)).toEqual(['remote'])
     expect(restored.active).toEqual(active)
-    expect(restored.restSec).toBe(90)
+    expect(restored.restSec).toBe(20)
   })
 
   it('adopts a newer clean remote state while preserving a local active workout', async () => {
@@ -118,7 +118,7 @@ describe('saved workout state sync and restore', () => {
     await useStore.getState().pullState()
 
     expect(useStore.getState().S.routines.map(r => r.id)).toEqual(['remote'])
-    expect(useStore.getState().S.restSec).toBe(90)
+    expect(useStore.getState().S.restSec).toBe(20)
     expect(useStore.getState().S.lang).toBe('en')
   })
 

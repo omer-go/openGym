@@ -78,7 +78,7 @@ describe('the in-workout settings sheet', () => {
     expect(S().active.workoutView).toBeUndefined()
   })
 
-  it('sets the rest timer on the wheel, 0:00 being off', () => {
+  it('sets the rest timer on the picker, Off being 0', () => {
     act(() => row('Rest timer').click())
     const sheet = useUI.getState().sheets.at(-1)
     const el = document.createElement('div')
@@ -86,9 +86,11 @@ describe('the in-workout settings sheet', () => {
     const r = createRoot(el)
     act(() => r.render(sheet.render(() => useUI.getState().closeSheet(sheet.id))))
     expect(el.querySelector('h3').textContent).toBe('Rest timer')
-    expect(el.querySelector('.dw-read').textContent).toBe('1:30')
+    expect(el.querySelector('.dp-v').textContent).toBe('1:30')
+    act(() => el.querySelector('.dp-off').click())
+    expect(el.querySelector('.dp-v').textContent).toBe('Off')
     act(() => [...el.querySelectorAll('button')].find(b => b.textContent === 'Done').click())
-    expect(S().restSec).toBe(90)
+    expect(S().restSec).toBe(0)
     act(() => r.unmount()); el.remove()
   })
 
