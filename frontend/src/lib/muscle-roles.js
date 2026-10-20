@@ -108,3 +108,25 @@ export function regionBreakdown(items, region, rolesOf = muscleRolesOf) {
   if (!rows.some(r => r.sets > 0)) return null
   return { rows, covered: round(loadOf(withRoles)[region]), total: round(loadOf(items || [])[region]) }
 }
+
+// The parts a gap hint may name: the ones a lifter trains on purpose. The rotator cuff, pec minor
+// and teres major only ever help, so a low count there says nothing; the traps work hardest
+// holding a deadlift or a carry, which a stabilizer's zero weight leaves out.
+export const GAP_PARTS = new Set(['Front delt', 'Side delt', 'Rear delt', 'Upper chest', 'Mid and lower chest', 'Lats', 'Rhomboids'])
+
+/**
+ * The part of a region the recent work left behind, as { name, sets, muscles }, or null.
+ * `items` as regionBreakdown takes them (the caller picks the window). Only speaks when the region
+ * was really trained (`min` sets), the exercises with roles account for at least half of it, and
+ * the weakest part got a quarter or less of the strongest: a split this lopsided is a gap, not noise.
+ */
+export function partGap(items, region, { rolesOf = muscleRolesOf, min = 4 } = {}) {
+  const b = regionBreakdown(items, region, rolesOf)
+  if (!b || b.total < min || b.covered < b.total / 2) return null
+  const rows = b.rows.filter(r => GAP_PARTS.has(r.name))
+  if (rows.length < 2) return null
+  const top = Math.max(...rows.map(r => r.sets))
+  const low = rows.reduce((a, r) => r.sets < a.sets ? r : a)
+  if (low.sets > top / 4) return null
+  return { name: low.name, sets: Math.round(low.sets), muscles: REGION_PARTS[region].find(([n]) => n === low.name)[1] }
+}

@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { ADD_GROUPS, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet, activityLast } from '../lib/add-exercise.js'
 import { ACTIVITY_GROUPS, activityGroup, activityOf } from '../lib/activities.js'
-import { MUSCLE_NAME } from '../lib/muscles.js'
+import { MUSCLE_NAME, doneSetItems } from '../lib/muscles.js'
 import { EXIDX } from '../lib/exercises.js'
 import { primaryMuscleOf } from '../lib/strength-exercises.js'
 import { groupColor, mcStyle } from '../lib/muscle-colors.js'
-import { fmtNum, fmtDaysAgo, todayISO } from '../lib/format.js'
+import { fmtNum, fmtDaysAgo, todayISO, isoOf } from '../lib/format.js'
 import { weeklyNeed, variantHistory } from '../lib/coverage.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
@@ -15,7 +15,7 @@ import { Thumb } from './Media.jsx'
 import Icon from './Icon.jsx'
 import { Button, Segmented } from './ui.jsx'
 import { useMuscleRoles } from './MuscleRoles.jsx'
-import { rolesLoaded } from '../lib/muscle-roles.js'
+import { rolesLoaded, partGap, muscleRolesOf } from '../lib/muscle-roles.js'
 
 // The workout's Add exercise: pick a muscle group (what the last 7 days lack most, less what the
 // workout already covers, is marked Suggested), then an exercise from it, its areas in the order
@@ -38,6 +38,11 @@ const Dot = ({ st }) => <i className={'ax-dot' + (st ? ' ' + st : '')} />
 export const Ava = ({ slugs, body, className }) => {
   const a = avatarOf(slugs, body)
   return <MuscleAvatar body={body} view={a.view} on={a.on} vb={a.vb} className={className} />
+}
+
+// "Rear delt: no sets in 2 weeks": the part of an area the last two weeks left behind.
+function gapLine({ name, sets }) {
+  return sets === 0 ? t('{0}: no sets in 2 weeks', t(name)) : sets === 1 ? t('{0}: 1 set in 2 weeks', t(name)) : t('{0}: {1} sets in 2 weeks', t(name), sets)
 }
 
 function areaLine({ st, last }, routine) {
@@ -87,6 +92,14 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
     history: variantHistory(S),
   }), [S.workouts, S.unit, !!routine, rolesLoaded()])
   const suggested = useMemo(() => suggestedGroups(gaps.need, have), [gaps, have])
+  // Which part of each area the last 14 days (this session's done sets included) left behind,
+  // from the muscle roles (muscle-roles.js partGap). Not for a routine: it has no recent past.
+  const partGaps = useMemo(() => {
+    if (routine) return {}
+    const since = new Date(); since.setDate(since.getDate() - 13)
+    const items = doneSetItems([...S.workouts.filter(w => w.d >= isoOf(since)), ...(S.active ? [S.active] : [])])
+    return Object.fromEntries(ADD_GROUPS.flatMap(x => x.m).map(m => [m, partGap(items, m)]).filter(([, v]) => v))
+  }, [S.workouts, S.active, !!routine, rolesLoaded()])
   const openGroup = (id, slug = '') => { setGroup(id); setArea(slug); setMore({}) }
 
   if (!group) {
@@ -130,12 +143,13 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
   const areaName = m => (act ? t(areaOf(m).n) : t(MUSCLE_NAME[m]))
   const { sections, hidden } = groupExercises(S, group, { sort, area, status, have, gaps })
   const single = !!area || sort === 'recent'
-  const row = ex => {
+  const fills = (ex, gap) => !!gap && !!muscleRolesOf(ex.id)?.target?.some(m => gap.muscles.includes(m))
+  const row = (ex, gap) => {
     const last = lastTopSet(S, ex.id)
     return <div key={ex.id} className="item" {...tappable(() => onPick(ex))}>
       <Thumb ex={ex} />
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
-        <div className="ss capitalize">{sort === 'recent' && g.m.length > 1 && !act ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{act?.id === 'stretching' ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) : t(ex.eq)}</div></div>
+        <div className="ss capitalize">{sort === 'recent' && g.m.length > 1 && !act ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{act?.id === 'stretching' ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) : t(ex.eq)}{fills(ex, gap) && <b className="ax-fills"> · {t(gap.name)}</b>}</div></div>
       <div className="ax-last">{last && act
         ? <span>{fmtDaysAgo(last.d)}</span>
         : last ? <><b>{last.w > 0 ? `${fmtNum(last.w)} ${S.unit} × ${last.r ?? '–'}` : `× ${last.r ?? '–'}`}</b><span>{fmtDaysAgo(last.d)}</span></>
@@ -145,10 +159,13 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
         onClick={ev => { ev.stopPropagation(); onPick(ex, true) }}><Icon name="plus" /></button>
     </div>
   }
-  const list = (key, xs) => {
+  // The best-ranked exercise for the area's gap part leads; the rest keep their order and variety.
+  const list = (key, xs, gap) => {
+    const lead = gap ? xs.findIndex(ex => fills(ex, gap)) : -1
+    if (lead > 0) xs = [xs[lead], ...xs.slice(0, lead), ...xs.slice(lead + 1)]
     const n = more[key] || (single ? PAGE : PER_AREA)
     return <>
-      <div className="list">{xs.slice(0, n).map(row)}</div>
+      <div className="list">{xs.slice(0, n).map(ex => row(ex, gap))}</div>
       {xs.length > n && <button className="ax-more" onClick={() => setMore(m => ({ ...m, [key]: n + PAGE }))}>
         {single ? t('Show more') : t('Show all {0}', fmtNum(xs.length))}</button>}
     </>
@@ -171,15 +188,19 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
     <Segmented options={[{ value: 'suggested', label: t('Suggested') }, { value: 'recent', label: t('Recent') }, { value: 'az', label: t('A to Z') }]}
       value={sort} onChange={v => { setSort(v); setMore({}) }} />
     {sections.length === 0 && <div className="empty">{sort === 'recent' ? t('Nothing logged here yet. Try Suggested or A to Z.') : t('Nothing left here.')}</div>}
-    {sections.map((x, k) => x.m
+    {sections.map((x, k) => {
+      const gap = !act && sort === 'suggested' ? partGaps[x.m] : null
+      return x.m
       ? <div key={x.m} className="ax-area">
         <div className="ax-ahd">{act ? <span className="ava xs ax-ico"><Icon name={areaOf(x.m).icon} /></span> : <Ava slugs={[x.m]} body={body} className="xs" />}
           <span className="grow"><b>{areaName(x.m)}</b><small>{act ? (x.last ? t('Last {0}', fmtDaysAgo(x.last)) : t('Not done yet')) : areaLine(x, !!routine)}</small></span>
           {!act && sort === 'suggested' && k === 0 && !x.st && <span className="ax-badge">{t('Do next')}</span>}
         </div>
-        {list(x.m, x.list)}
+        {gap && <div className="ax-gap"><Icon name="info" />{gapLine(gap)}</div>}
+        {list(x.m, x.list, gap)}
       </div>
-      : <div key="recent" className="ax-area">{list('recent', x.list)}</div>)}
+      : <div key="recent" className="ax-area">{list('recent', x.list)}</div>
+    })}
     {hidden > 0 && <div className="small dim" style={{ margin: '10px 2px 0' }}>{routine ? t('Already in this routine: {0}', hidden) : t('Already in this workout: {0}', hidden)}</div>}
     <div style={{ height: 12 }} />
     <Button variant="ghost" icon="magnifier" onClick={onSearch}>{t('Search all exercises')}</Button>
