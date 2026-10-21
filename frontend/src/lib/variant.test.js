@@ -3,10 +3,17 @@ import { variantOf } from './variant.js'
 import { EXIDX } from './exercises.js'
 
 describe('variantOf', () => {
-  it('reads the bench angle from the name', () => {
-    expect(variantOf(EXIDX['0025']).angle).toBe('flat')     // barbell bench press
-    expect(variantOf(EXIDX['0047']).angle).toBe('incline')  // barbell incline bench press
-    expect(variantOf(EXIDX['0301']).angle).toBe('decline')  // dumbbell decline bench press
+  it('reads the position from the name, the bench angle first', () => {
+    expect(variantOf(EXIDX['0025']).position).toBe('plain')    // barbell bench press
+    expect(variantOf(EXIDX['0047']).position).toBe('incline')  // barbell incline bench press
+    expect(variantOf(EXIDX['0301']).position).toBe('decline')  // dumbbell decline bench press
+    expect(variantOf({ n: 'dumbbell seated curl' }).position).toBe('seated')
+    expect(variantOf({ n: 'band sitting row' }).position).toBe('seated')
+    expect(variantOf({ n: 'barbell prone row' }).position).toBe('lying')
+    expect(variantOf({ n: 'cable half kneeling pulldown' }).position).toBe('kneeling')
+    expect(variantOf({ n: 'barbell bent over row' }).position).toBe('bent-over')
+    expect(variantOf({ n: 'dumbbell incline lying row' }).position).toBe('incline')
+    expect(variantOf({ n: 'barbell standing calf raise' }).position).toBe('standing')
   })
   it('folds the equipment into tool families', () => {
     expect(variantOf(EXIDX['0025']).tool).toBe('barbell')
@@ -18,7 +25,7 @@ describe('variantOf', () => {
     expect(variantOf({ n: 'leg press', eq: 'sled machine' }).tool).toBe('machine')
   })
   it('names what it cannot place', () => {
-    expect(variantOf({ n: 'Mine' })).toEqual({ angle: 'flat', tool: 'other' })
-    expect(variantOf(null)).toEqual({ angle: 'flat', tool: 'other' })
+    expect(variantOf({ n: 'Mine' })).toEqual({ tool: 'other', position: 'plain' })
+    expect(variantOf(null)).toEqual({ tool: 'other', position: 'plain' })
   })
 })

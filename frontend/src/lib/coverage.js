@@ -14,16 +14,24 @@
 // Picking. One exercise at a time, the one that adds the most coverage, weighted by need squared
 // (a group with nothing this week beats two half-done ones). Coverage spreads before it stacks:
 // first every group gets one exercise that targets its main muscle, then a second, and so on;
-// groups that have had their week (need under 0.1) wait until every other group is served.
+// groups that have had their week (need under 0.1) wait until every other group is served. Calves,
+// forearms and abs take one exercise each until then: a legs day whose thighs are still tired
+// brings the thighs back before a second calf raise.
 //
 // Variety. Among picks that cover about the same, the part of the muscle (front, side or rear
 // delt; upper or mid chest; lats or mid back: the exercise's target in its muscle roles,
-// muscle-roles.js) last done longest ago for that group wins, then the bench angle (incline,
-// decline, flat), then the tool (barbell, dumbbell, smith…, variant.js), then the exercise you
-// know. So a flat barbell bench is followed by an incline on dumbbells, and lateral raises by
-// rear-delt work. Parts only decide where every exercise in the running has roles: the catalogue
-// has them for part of it. Presses rotate with presses: an isolation lift is only offered where
-// an isolation lift is best.
+// muscle-roles.js) last done longest ago for that group wins, then the helpers (its synergists),
+// then the tool (barbell, dumbbell, smith…), then the position (standing, seated, lying,
+// incline…, variant.js), then the exercise you know. So a flat barbell bench is followed by an
+// incline press for the upper chest, and lateral raises by rear-delt work. Parts and helpers only
+// decide where every exercise in the running has roles. Presses rotate with presses: an isolation lift is only offered where
+// an isolation lift is best, or where the last two weeks left a part of the group out (`gaps`,
+// muscle-roles.js partGap): then the group's exercise is one for that part, so side delts
+// that only ever helped a press get a lateral raise.
+//
+// Anchor. A session can name groups one compound must come from (`anchor`): a full body keeps
+// a squat, hinge or leg press even in a week the legs have had, in the last slot if nothing
+// earlier took one.
 //
 // The same numbers show elsewhere: the one-tap setup and the routine editor draw what a session
 // adds per group (plannedSets), and Add exercise suggests groups and orders a group's exercises
@@ -148,29 +156,39 @@ export function weeklyNeed(S, groups, now = Date.now()) {
 }
 
 /**
- * Group id -> { part: { 'rear-delt': day }, angle: { incline: day }, tool: { barbell: day } }:
- * when each was last done. A part is a target muscle in the exercise's roles (`rolesOf`).
+ * Group id -> { part: { 'rear-delt': day }, helpers: { 'biceps,teres-major': day },
+ * tool: { barbell: day }, position: { seated: day } }: when each was last done. A part is a
+ * target muscle in the exercise's roles (`rolesOf`), the helpers its synergists as one set.
  */
 export function variantHistory(S, rolesOf = muscleRolesOf) {
   const last = {}
+  const mark = (seen, k, v, d) => { if (v != null && !(seen[k][v] >= d)) seen[k][v] = d }
   for (const w of S?.workouts || []) {
     if (typeof w?.d !== 'string') continue
     for (const entry of w.entries || []) {
       const ex = EXIDX[entry.id]
       const g = ex && workSets(entry) ? groupOf(primaryMuscleOf(entry)?.slug)?.id : null
       if (!g) continue
-      const v = variantOf(ex), seen = last[g] || (last[g] = { part: {}, angle: {}, tool: {} })
-      for (const m of rolesOf(entry.id)?.target || []) if (!(seen.part[m] >= w.d)) seen.part[m] = w.d
-      if (!(seen.angle[v.angle] >= w.d)) seen.angle[v.angle] = w.d
-      if (!(seen.tool[v.tool] >= w.d)) seen.tool[v.tool] = w.d
+      const v = variantOf(ex), roles = rolesOf(entry.id)
+      const seen = last[g] || (last[g] = { part: {}, helpers: {}, tool: {}, position: {} })
+      for (const m of roles?.target || []) mark(seen, 'part', m, w.d)
+      mark(seen, 'helpers', helpersOf(roles), w.d)
+      mark(seen, 'tool', v.tool, w.d)
+      mark(seen, 'position', v.position, w.d)
     }
   }
   return last
 }
+// The synergists of an exercise as one key, so two lifts that share them rotate as the same.
+const helpersOf = roles => (roles ? [...(roles.synergists || [])].sort().join() : null)
 
 // Within `share` of the best gain, which can be below zero when every pick left overfills a group.
 const within = (g, best, share) => g >= best - Math.abs(best) * (1 - share)
 const totalOf = credit => Object.values(credit).reduce((a, b) => a + b, 0)
+// The small groups. The catalogue credits a barbell calf raise or a wrist curl over a bench to
+// three groups, so an exercise for one never counts as a compound; and one exercise each is what
+// a session gives them until the big groups are served, rested or not.
+const SMALL = new Set(['calves', 'forearms', 'abs'])
 // An exercise as the pickers weigh it, or null when its main muscle is in none of the groups.
 function itemOf(id, rank, on, rolesOf) {
   const ex = EXIDX[id]
@@ -180,32 +198,38 @@ function itemOf(id, rank, on, rolesOf) {
   const full = groupCredit(musclesOf(ex))
   return {
     id, rank, slug, ex, group: g.id, main: g.m[0] === slug, variant: variantOf(ex),
-    parts: rolesOf(id)?.target || null,
+    parts: rolesOf(id)?.target || null, helpers: helpersOf(rolesOf(id)),
     credit: Object.fromEntries(Object.entries(full).filter(([k]) => on.has(k))),
     total: totalOf(full),
     // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
     // a fly or a curl has one helper at most. Isolation lifts rotate among themselves.
-    compound: Object.values(full).filter(c => c >= 0.4).length >= 3,
+    compound: !SMALL.has(g.id) && Object.values(full).filter(c => c >= 0.4).length >= 3,
   }
 }
-// Sorts `list` staler first: the part of the muscle, the angle, then the tool last done longest
-// ago for the group, then the exercise you know best. A part or tool the session already uses
-// for the group (`taken`, [{ group, parts, variant }]) counts as the latest of all, so a second
-// shoulder exercise is for another delt and a second back exercise on another tool. An exercise
-// is as fresh as the stalest of its parts, the one it brings back: after pull-ups a row (mid back
-// and lats) beats a pulldown. Parts count only when every exercise in `list`
-// has roles; angles go by history only: most groups have one.
+// Sorts `list` staler first, for the group: the part of the muscle, then the helpers, the tool
+// and the position last done longest ago, then the exercise you know best. A part, helper set or
+// tool the session already uses for the group (`taken`, [{ group, parts, helpers, variant }])
+// counts as the latest of all, so a second shoulder exercise is for another delt and a second
+// back exercise on another tool. An exercise is as fresh as the stalest of its parts, the one it
+// brings back: after pull-ups a row (mid back and lats) beats a pulldown. Parts and helpers count
+// only when every exercise in `list` has roles; positions go by history only.
 function fresherFor(history, taken) {
-  const lastDone = (c, k) => (k === 'tool' && taken.some(p => p.group === c.group && p.variant.tool === c.variant.tool)
-    ? '~' : history[c.group]?.[k]?.[c.variant[k]] || '')
-  const partDone = c => c.parts.map(m => taken.some(p => p.group === c.group && p.parts?.includes(m))
-    ? '~' : history[c.group]?.part?.[m] || '').reduce((a, b) => (b < a ? b : a))
+  const mine = (c, p) => p.group === c.group
+  const done = (c, k, v, inSession) => (inSession ? '~' : history[c.group]?.[k]?.[v] || '')
+  const partDone = c => c.parts.map(m => done(c, 'part', m, taken.some(p => mine(c, p) && p.parts?.includes(m))))
+    .reduce((a, b) => (b < a ? b : a))
+  const keys = [
+    c => done(c, 'helpers', c.helpers, taken.some(p => mine(c, p) && p.helpers === c.helpers)),
+    c => done(c, 'tool', c.variant.tool, taken.some(p => mine(c, p) && p.variant.tool === c.variant.tool)),
+    c => done(c, 'position', c.variant.position, false),
+  ]
   return list => {
-    const parts = list.every(c => c.parts) ? new Map(list.map(c => [c, partDone(c)])) : null
+    const roles = list.every(c => c.parts)
+    const parts = roles ? new Map(list.map(c => [c, partDone(c)])) : null
     return list.sort((a, b) => {
       if (parts && parts.get(a) !== parts.get(b)) return parts.get(a) < parts.get(b) ? -1 : 1
-      for (const k of ['angle', 'tool']) {
-        const x = lastDone(a, k), y = lastDone(b, k)
+      for (const key of roles ? keys : keys.slice(1)) {
+        const x = key(a), y = key(b)
         if (x !== y) return x < y ? -1 : 1
       }
       return a.rank - b.rank
@@ -224,22 +248,20 @@ const distance = (a, b) => {
 }
 
 // The order a session runs in: compounds for the big groups first, then the big groups before the
-// small ones, abs last; within a group, the exercise that trains more. The catalogue credits a
-// barbell calf raise or a wrist curl over a bench to three groups, so a small group never counts
-// as a compound. Array#sort is stable: what still ties keeps the order it was picked in.
+// small ones, abs last; within a group, the exercise that trains more. Array#sort is stable: what
+// still ties keeps the order it was picked in.
 const BIG_FIRST = ['quads', 'glutes', 'hamstrings', 'back', 'chest', 'shoulders', 'triceps', 'biceps', 'calves', 'forearms', 'abs']
-const SMALL = new Set(['calves', 'forearms', 'abs'])
-const leads = c => c.compound && !SMALL.has(c.group)
-const runOrder = (a, b) => leads(b) - leads(a)
+const runOrder = (a, b) => b.compound - a.compound
   || BIG_FIRST.indexOf(a.group) - BIG_FIRST.indexOf(b.group) || b.total - a.total
 
 /**
  * `count` exercises from `candidates` ([{ id, rank }], rank lower = better known) that cover
  * the ticked `groups` best for their `need` (weeklyNeed), compounds first. `history` is
  * variantHistory; `shift` walks each choice one further (Shuffle). `rolesOf` gives the muscle
- * roles the parts of a group rotate by.
+ * roles the parts of a group rotate by. `anchor` is the group ids one compound must come from;
+ * `gaps` maps a group id to the target muscles of the part it lacks (partGap's `muscles`).
  */
-export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf }) {
+export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {} }) {
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
@@ -250,23 +272,32 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const covered = Object.fromEntries(groups.map(g => [g, 0]))
   const picks = []
   const fresher = fresherFor(history, picks)
-  let cap = 1, relaxed = false
+  const anchors = c => c.compound && anchor.includes(c.group)
+  const anchored = () => !pool.some(anchors) || picks.some(anchors)
+  // A small group past its one exercise waits until every other group, rested ones too, is served.
+  const full = c => !spill && SMALL.has(c.group) && picks.some(p => p.group === c.group)
+  let cap = 1, relaxed = false, spill = false
   while (picks.length < count) {
-    const open = pool.filter(c => !picks.includes(c) && covered[c.group] < cap
-      && (relaxed || need[c.group] >= RESTED) && (cap > 1 || c.main))
+    const last = picks.length === count - 1 && !anchored()
+    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : covered[c.group] < cap
+      && (relaxed || need[c.group] >= RESTED) && (cap > 1 || c.main) && !full(c)))
     const distinct = open.filter(c => !picks.some(p => distance(p.credit, c.credit) < ALIKE))
     const ok = distinct.length ? distinct : open
     if (!ok.length) {
       if (cap < count) cap++
-      else if (!relaxed) { relaxed = true; cap = 1 } else break
+      else if (!relaxed) { relaxed = true; cap = 1 } else if (!spill) { spill = true; cap = 1 } else break
       continue
     }
     const gain = c => gainOf(c, covered, cap, weight)
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
     const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
-    const near = fresher(scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
-      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE)).map(x => x.c))
+    // A part the last two weeks left out, and nothing in the session for it yet: its exercise.
+    const gap = gaps[top.c.group]
+    const fills = c => c.group === top.c.group && c.parts?.some(m => gap.includes(m))
+    const fillers = gap && !picks.some(fills) ? scored.filter(x => fills(x.c)) : []
+    const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
+      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
     const pick = near[shift % near.length]
     picks.push(pick)
     for (const [g, a] of Object.entries(pick.credit)) covered[g] += a

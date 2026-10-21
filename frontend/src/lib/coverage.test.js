@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps } from './coverage.js'
-import { generateWorkout } from './generate.js'
+import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
@@ -129,19 +129,19 @@ describe('pickForCoverage, after the week so far', () => {
 
 describe('variety', () => {
   const chestPick = st => generateWorkout(st, 'full', { now: NOW }).find(p => groupOfExercise(EXIDX[p.id]) === 'chest')
-  it('after a flat barbell bench, chest moves to another angle and another tool', () => {
+  it('after a flat barbell bench, chest moves to another position and another tool', () => {
     const v = variantOf(EXIDX[chestPick(state({ workouts: [session('2026-09-01', [BENCH])] })).id])
-    expect(v.angle).not.toBe('flat')
+    expect(v.position).not.toBe('plain')
     expect(v.tool).not.toBe('barbell')
   })
   it('after a flat dumbbell bench, it moves to a barbell or the smith machine', () => {
     const v = variantOf(EXIDX[chestPick(state({ workouts: [session('2026-09-01', [DB_BENCH])] })).id])
-    expect(v.angle).not.toBe('flat')
+    expect(v.position).not.toBe('plain')
     expect(v.tool).not.toBe('dumbbell')
   })
-  it('after incline and decline, the angle done longest ago comes back', () => {
+  it('after incline and decline, the position done longest ago comes back', () => {
     const st = state({ workouts: [session('2026-08-25', [BENCH]), session('2026-09-01', ['0047', '0301'])] })
-    expect(variantOf(EXIDX[chestPick(st).id]).angle).toBe('flat')
+    expect(variantOf(EXIDX[chestPick(st).id]).position).toBe('plain')
   })
   it('the equipment profile still decides what is possible', () => {
     const st = state({
@@ -219,5 +219,121 @@ describe('the parts of a muscle', () => {
       expect(back.some(p => targets(p).includes('middle-trap'))).toBe(true)
       expect(back.some(p => targets(p).join() === 'lats')).toBe(true)
     })
+  })
+})
+
+describe('anchor: one compound from the named groups', () => {
+  const cands = [SQUAT, BENCH, OHP, PUSHDOWN].map((id, rank) => ({ id, rank }))
+  const groups = ['chest', 'shoulders', 'triceps', 'quads', 'glutes', 'hamstrings']
+  const need = { chest: 1, shoulders: 1, triceps: 1, quads: 0, glutes: 0, hamstrings: 0 }
+  const ids = o => pickForCoverage(cands, { count: 3, groups, need, ...o }).map(p => p.id)
+
+  it('legs that had their week wait, unless the session is anchored on them', () => {
+    expect(ids()).not.toContain(SQUAT)
+    const picks = ids({ anchor: ['quads', 'glutes', 'hamstrings'] })
+    expect(picks).toContain(SQUAT)
+    expect(picks[0]).toBe(SQUAT)   // and it runs first
+    expect(picks).toContain(BENCH) // the slot it takes is the last one
+  })
+  it('changes nothing when a pick already meets it, or nothing can', () => {
+    const fresh = { ...need, quads: 1 }
+    expect(ids({ need: fresh, anchor: ['quads'] })).toEqual(ids({ need: fresh }))
+    expect(ids({ anchor: ['calves'] })).toEqual(ids())
+  })
+  it('an isolation lift does not meet it', () => {
+    const picks = pickForCoverage([{ id: '0586', rank: 0 }, ...cands], { count: 3, groups, need: { ...need, hamstrings: 1 }, anchor: ['quads', 'hamstrings'] })
+    expect(picks.map(p => p.id)).toContain(SQUAT)
+  })
+  it('a full body keeps a lower-body compound after two leg-heavy sessions', () => {
+    let st = state()
+    for (const d of [5, 7]) {
+      const ids = generateWorkout(st, 'full', { now: at(2026, 10, d) }).map(p => p.id)
+      st = state({ workouts: [...st.workouts, session(`2026-10-0${d}`, ids)] })
+    }
+    const fri = generateWorkout(st, 'full', { now: at(2026, 10, 9) })
+    expect(fri.some(p => ['quads', 'glutes', 'hamstrings'].includes(groupOfExercise(EXIDX[p.id]))
+      && Object.values(credit(p.id)).filter(c => c >= 0.4).length >= 3)).toBe(true)
+  })
+})
+
+describe('calves, forearms and abs', () => {
+  // barbell standing, seated and floor calf raises, lever and dumbbell standing calf raises
+  const CALF = ['1372', '0088', '1370', '0605', '0417']
+  const groups = ['quads', 'glutes', 'hamstrings', 'calves']
+  const CURL = '0586' // lever lying leg curl
+  const cands = [...CALF, SQUAT, RDL, CURL].map((id, rank) => ({ id, rank }))
+
+  it('a calf raise credited to three groups is no compound', () => {
+    expect(Object.values(credit('1372')).filter(c => c >= 0.4).length).toBeGreaterThanOrEqual(3)
+    // so it rotates with the other calf raises: after the barbell ones, a machine or dumbbell one
+    const history = variantHistory(state({ workouts: [session('2026-09-08', ['1372']), session('2026-09-12', ['0088'])] }))
+    const [pick] = pickForCoverage(cands, { count: 1, groups, need: { calves: 1 }, history })
+    expect(['0605', '0417']).toContain(pick.id)
+  })
+  it('take one exercise while the tired big groups wait, then the big groups come back', () => {
+    // a legs day three days after the last: the thighs are under rested, only the calves are open
+    const picks = pickForCoverage(cands, { count: 4, groups, need: { quads: 0.05, glutes: 0.05, hamstrings: 0.05, calves: 1 } })
+    expect(picks.filter(p => p.group === 'calves')).toHaveLength(1)
+    expect(picks.map(p => p.id)).toEqual(expect.arrayContaining([SQUAT, RDL, CURL]))
+  })
+  it('take more only when nothing else is left', () => {
+    const picks = pickForCoverage(cands, { count: 5, groups, need: { quads: 0.05, glutes: 0.05, hamstrings: 0.05, calves: 1 } })
+    expect(picks).toHaveLength(5)
+    expect(picks.filter(p => p.group === 'calves')).toHaveLength(2)
+    expect(picks.slice(0, 2).map(p => p.id).sort()).toEqual([SQUAT, RDL].sort())  // and the compounds run first
+  })
+})
+
+describe('gaps: the part of a group the last two weeks left out', () => {
+  const ROLES = { [OHP]: { target: ['front-delt'], synergists: ['side-delt'] }, [CABLE_RAISE]: { target: ['side-delt'] } }
+  const rolesOf = id => ROLES[id] || null
+  const cands = [{ id: OHP, rank: 0 }, { id: CABLE_RAISE, rank: 1 }]
+  const opts = { groups: ['shoulders', 'triceps', 'chest'], need: { shoulders: 1, triceps: 1, chest: 1 }, rolesOf }
+
+  it('an exercise for the missing part takes the group’s slot, isolation or not', () => {
+    expect(pickForCoverage(cands, { count: 1, ...opts })[0].id).toBe(OHP)
+    expect(pickForCoverage(cands, { count: 1, ...opts, gaps: { shoulders: ['side-delt'] } })[0].id).toBe(CABLE_RAISE)
+  })
+  it('one is enough: a second shoulder exercise goes back to the best gain', () => {
+    const picks = pickForCoverage(cands, { count: 2, ...opts, groups: ['shoulders'], need: { shoulders: 1 }, gaps: { shoulders: ['side-delt'] } })
+    expect(picks.map(p => p.id).sort()).toEqual([OHP, CABLE_RAISE].sort())
+  })
+  it('a gap in a group that is not picked adds nothing', () => {
+    const picks = pickForCoverage([{ id: BENCH, rank: 0 }, ...cands], { count: 1, ...opts, need: { chest: 1, shoulders: 0, triceps: 0 }, gaps: { shoulders: ['side-delt'] } })
+    expect(picks.map(p => p.id)).toEqual([BENCH])
+  })
+
+  describe('with the catalogue roles', () => {
+    beforeAll(loadMuscleRoles)
+    it('after two weeks of presses, the shoulder exercise is for the rear delts', () => {
+      const days = ['2026-10-05', '2026-10-07', '2026-10-09', '2026-10-12']
+      const st = state({ workouts: days.map(d => session(d, [OHP, BENCH])) })
+      const now = at(2026, 10, 14)
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['rear-delt'] }) // presses help the side delt
+      const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
+      expect(muscleRolesOf(shoulders[0].id).target).toContain('rear-delt')
+    })
+  })
+})
+
+describe('rotation order: part, helpers, tool, then position', () => {
+  const SIDE = '0334', CABLE_FRONT = '0162', STANDING = '2234', SIDE_LYING = '2924', REAR_LYING = '4832', SEATED = '9933'
+  const pick = (ids, workouts, rolesOf = () => null) => pickForCoverage(ids.map((id, rank) => ({ id, rank })),
+    { count: 1, groups: ['shoulders'], need: { shoulders: 1 }, rolesOf, history: variantHistory(state({ workouts }), rolesOf) })[0].id
+
+  it('helpers done longest ago win over the tool', () => {
+    const ROLES = { [SIDE]: { target: ['side-delt'], synergists: ['supraspinatus'] },
+      [CABLE_RAISE]: { target: ['side-delt'], synergists: ['upper-trap'] }, [CABLE_FRONT]: { target: ['front-delt'], synergists: ['supraspinatus'] } }
+    const workouts = [session('2026-09-01', [SIDE]), session('2026-09-08', [CABLE_FRONT])]
+    // by tool the dumbbell raise is staler; its helpers came back a week later on the cable
+    expect(pick([SIDE, CABLE_RAISE], workouts, id => ROLES[id] || null)).toBe(CABLE_RAISE)
+  })
+  it('the tool comes before the position', () => {
+    const workouts = [session('2026-09-01', [SIDE_LYING]), session('2026-09-08', [REAR_LYING])]
+    expect(pick([STANDING, SIDE_LYING], workouts)).toBe(SIDE_LYING)
+  })
+  it('on the same tool, the position done longest ago comes back', () => {
+    expect(pick([STANDING, SEATED], [session('2026-09-08', [STANDING])])).toBe(SEATED)
+    expect(pick([STANDING, SEATED], [session('2026-09-08', [SEATED])])).toBe(STANDING)
   })
 })

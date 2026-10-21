@@ -5,8 +5,10 @@
 // groups by genGroupsOf). lib/coverage.js picks the exercises: each one is the one that adds the
 // most to the groups that still need it this week, secondary muscles counting too, so a squat
 // covers quads, glutes and some hamstrings at once. Among picks that cover about the same, the
-// bench angle and the tool done longest ago win, so the bench press rotates through incline,
-// decline, dumbbells and the smith machine. The session runs compounds first.
+// part of the muscle, then the helpers, the tool and the position done longest ago win, so the
+// bench press rotates through incline and decline, dumbbells and the smith machine. A part of a muscle the last two weeks left out
+// (side delts that only helped presses) gets its own exercise, and a full body always keeps
+// one lower-body compound. The session runs compounds first.
 //
 // Within a muscle, exercises you have already logged come first, longest-ago first; after them
 // a short list of staple lifts, so a muscle you have never trained opens on a bench press, not
@@ -19,13 +21,15 @@
 import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
-import { musclesOf } from './muscles.js'
+import { musclesOf, doneSetItems } from './muscles.js'
+import { partGap } from './muscle-roles.js'
 import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { exAvailable } from './equipment.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, modeOf } from './history.js'
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
+import { isoOf } from './format.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 
 export const GEN_TYPES = {
@@ -34,6 +38,10 @@ export const GEN_TYPES = {
   pull: [['upper-back', 3], ['trapezius', 1], ['biceps', 2]],
   legs: [['quadriceps', 2], ['hamstring', 2], ['gluteal', 1], ['calves', 1]],
 }
+
+// The groups a day type's one lower-body compound comes from (coverage.js anchor): a full body
+// without a squat, hinge or leg press is not one, even when the legs have had their week.
+export const GEN_ANCHOR = { full: ['quads', 'hamstrings', 'glutes'] }
 
 // English names, used as i18n keys where they are shown (t(GEN_NAME[type])).
 export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day', legs: 'Leg day' }
@@ -134,6 +142,24 @@ function stretchCandidates(S, index, slugs) {
 export const GEN_STRETCHES = 2
 
 /**
+ * Group id -> the target muscles of the part of it the 14 days up to `now` left out
+ * (muscle-roles.js partGap, the hint Add exercise shows), for the `groups` given.
+ */
+export function partGaps(S, groups, now = Date.now()) {
+  const today = isoOf(new Date(now)), from = isoOf(new Date(now - 13 * 864e5))
+  const items = doneSetItems((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= today))
+  const gaps = {}
+  for (const g of ADD_GROUPS) {
+    if (!groups.includes(g.id)) continue
+    for (const slug of g.m) {
+      const gap = partGap(items, slug)
+      if (gap) gaps[g.id] = [...(gaps[g.id] || []), ...gap.muscles]
+    }
+  }
+  return gaps
+}
+
+/**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
  * exercise's primary muscle and `last` the ISO day it was last trained, null when never.
  * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
@@ -146,7 +172,8 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const candidates = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
     .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
-  const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift })
+  const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
+    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now) })
     .map(({ id, slug }) => ({ id, muscle: slug, last: index.muscles[slug] || null }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

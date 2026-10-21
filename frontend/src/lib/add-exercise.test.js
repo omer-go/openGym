@@ -122,7 +122,7 @@ describe('groupExercises, ranked by the session’s gaps', () => {
   it('after a flat barbell bench, a fresh variation comes first', () => {
     const S = state({ workouts: [session('2026-10-01', [BENCH])] })
     const [first] = groupExercises(S, 'chest', { gaps: gapsOf(S), status: muscleStatus(S, TODAY) }).sections[0].list
-    expect(variantOf(first)).not.toMatchObject({ angle: 'flat' })
+    expect(variantOf(first)).not.toMatchObject({ position: 'plain' })
     expect(variantOf(first).tool).not.toBe('barbell')
   })
   it('with the shoulders done today, a press that needs them waits behind one that does not', () => {
