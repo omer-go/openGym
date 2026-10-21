@@ -95,7 +95,7 @@ vi.mock('../sheets.jsx', () => ({
   confirmSheet: mocks.confirmSheet,
   swapActiveWorkoutExercise: mocks.swapActiveWorkoutExercise,
   quickSwapActiveWorkoutExercise: mocks.quickSwapActiveWorkoutExercise,
-  menuSheet: mocks.menuSheet,
+  menuSheet: mocks.menuSheet, skipMenuItem: () => false,
   barWeightSheet: vi.fn(),
   // Both note sheets belong here even though the tests never open one: Workout.jsx reads
   // sessionNoteSheet during render, so a missing export is a render crash, not a no-op.

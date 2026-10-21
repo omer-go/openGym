@@ -29,7 +29,7 @@
  *     its neighbour there (unionByNeighbours); of an id that both have, the version
  *     edited last by its own `_ts` (stampRoutines), the newer copy's on a tie
  *   - bodyweight, measurements: union by day, the later-edited (`t`) entry of a day that both have
- *   - favEx: ordered set union, the newer copy first
+ *   - favEx, skipEx: ordered set union, the newer copy first
  *   - exWeights: union by exercise, the better `w` for that exercise — larger for an ordinary
  *     lift, smaller on an assistance machine (a PR logged on the other device must not be
  *     forgotten, whichever way it runs). An exercise in a workout whose edited version was kept
@@ -401,6 +401,7 @@ const bodyweightKey = e => `${e?.d}|${e?.t ?? ''}`
 const RESET_LISTS = {
   workouts: workoutKey, routines: x => x?.id, customEx: x => x?.id, bodyweight: bodyweightKey,
   measurements: bodyweightKey, gymCards: x => x?.id, equipProfiles: x => x?.id, favEx: x => x,
+  skipEx: x => x,
 }
 const RESET_MAPS = ['exNotes', 'barWeights', ...STAMPED_MAPS]
 /** An entry's name in resetIds: a workout's id (or day and start), a weigh-in's day and time, … */
@@ -460,6 +461,7 @@ export function sinceReset(S, at, ids) {
     out.equipProfiles = []
     out.gymCards = []
     out.favEx = []
+    out.skipEx = []
     out.exNotes = {}
     out.barWeights = {}
     for (const f of STAMPED_MAPS) {
@@ -487,7 +489,7 @@ export function sinceReset(S, at, ids) {
 // ---- Deletions (`deleted`) ------------------------------------------------------------------
 //
 //   S.deleted = { workouts: { <key>: at }, routines: {…}, customEx, bodyweight, gymCards,
-//                 equipProfiles, favEx }
+//                 equipProfiles, favEx, skipEx }
 //
 // A positive `at` is when the entry was removed on some device; a negative one (-at) is when it
 // was added back after such a removal (a favourite starred again). The store writes them on every
@@ -498,10 +500,13 @@ export function sinceReset(S, at, ids) {
 const DEL_LISTS = {
   workouts: workoutKey, routines: x => x?.id, customEx: x => x?.id, bodyweight: e => e?.d,
   measurements: e => e?.d, gymCards: x => x?.id, equipProfiles: x => x?.id, favEx: x => x,
+  skipEx: x => x,
 }
 // When an entry was last edited, to hold against a removal. Entries with no time of their own
 // (favourites, and cards and profiles saved before they were stamped) count as older than any
 // removal.
+// The plain id lists: no edit time of their own, so every add is stamped (stampDeletions).
+const ID_SETS = new Set(['favEx', 'skipEx'])
 const DEL_TIME = {
   workouts: workoutTime, routines: x => Number(x?._ts) || 0, customEx: x => Number(x?._ts) || 0,
   bodyweight: e => Number(e?.t) || 0, measurements: e => Number(e?.t) || 0,
@@ -544,12 +549,12 @@ export function stampDeletions(prev, next, now = Date.now()) {
     // A copy keeps an entry whose removal it has on record when that entry was edited after the
     // removal (applyDeletions); re-stamping it as added back on any unrelated change made the
     // stale copy outrank a later removal from another device, and the entry came back everywhere.
-    // A favourite has no edit time of its own, so a star is always stamped: a device that never
+    // A favourite (or a not-suggested mark) has no edit time of its own, so a star is always stamped: a device that never
     // saw the earlier unstar must still win against it with the star it set later.
     const had = new Set(before.filter(x => x != null).map(x => String(key(x))))
     for (const k of have) {
       if (had.has(k)) continue
-      if (k in m ? m[k] > 0 : f === 'favEx') { m[k] = -now; changed = true }
+      if (k in m ? m[k] > 0 : ID_SETS.has(f)) { m[k] = -now; changed = true }
     }
     if (changed) { del[f] = capStamps(m); touched = true }
   }
@@ -611,7 +616,7 @@ function applyDeletions(S, deleted) {
 // merge of their own are not stamped here; a field nobody stamped follows the newer copy, as before.
 const OWN_MERGE = new Set([
   '_ts', '_rev', '_wid', '_wids', '_unstamped', '_prior', 'active', 'unit', 'unitSet', 'resetAt', 'resetIds', 'deleted', 'edited', 'undone', 'routineOrder',
-  'workouts', 'routines', 'customEx', 'equipProfiles', 'gymCards', 'bodyweight', 'measurements', 'favEx',
+  'workouts', 'routines', 'customEx', 'equipProfiles', 'gymCards', 'bodyweight', 'measurements', 'favEx', 'skipEx',
   'exWeights', 'balanceOverrides', 'loadKind', 'plates', 'dbLoad', 'dumbbells', 'dayNotes',
 ])
 // Stamped per key instead of whole: one day of the plan, one exercise's note or bar.
@@ -821,6 +826,7 @@ export function mergeStates(a0, b0, { prefer } = {}) {
   // A day's body measurements are one check-in, kept and merged the way a weigh-in is.
   if (list(n.measurements).length || list(o.measurements).length) out.measurements = mergeBodyweight(n.measurements, o.measurements).map(clone)
   if (list(n.favEx).length || list(o.favEx).length) out.favEx = [...new Set([...list(n.favEx), ...list(o.favEx)])]
+  if (list(n.skipEx).length || list(o.skipEx).length) out.skipEx = [...new Set([...list(n.skipEx), ...list(o.skipEx)])]
   // What either device removed stays removed (the `deleted` section above). A workout taken out
   // this way leaves its exercises' kept loads to be read again, as an edit of it would: from the
   // merged history and from the deleting copy's own, which already let go of what it held.

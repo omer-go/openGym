@@ -33,8 +33,9 @@ import { CUSTOM, accentKey, adjustedIn, applyAccent, cleanHex, inkOn, isGrey } f
 import { checkForUpdate, downloadAndInstall, fetchChecksum, RELEASES_PAGE } from '../lib/update.js'
 import { forgetCoach } from '../lib/coach-api.js'
 import { REST_MAX, REST_PAUSE_MIN, REST_PAUSE_MAX, fmtRest, fmtDuration } from '../lib/duration.js'
-import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, menuSheet } from '../sheets.jsx'
+import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, menuSheet, skippedListSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
+import { skipIds } from '../lib/skipped.js'
 import { durationSheet } from '../components/DurationPicker.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
@@ -1278,6 +1279,9 @@ function EquipmentCard({ S, update }) {
       </Row>
     ))}
     <Row icon="plus" iconTint="var(--acc)" title={t('Add equipment profile')} accessory="chevron" onClick={() => equipmentProfileSheet(null)} />
+    {/* Single exercises left out of suggestions, for kit no profile covers or lifts you'd rather not do. */}
+    <Row icon="eyeSlash" iconTint="var(--red)" title={t('Not suggested')} value={String(skipIds(S).length)}
+      subtitle={t('Exercises left out of one-tap workouts and swaps')} accessory="chevron" onClick={() => skippedListSheet()} />
   </Section>
 }
 

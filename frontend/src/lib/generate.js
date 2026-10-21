@@ -26,7 +26,7 @@ import { musclesOf, doneSetItems } from './muscles.js'
 import { partGap } from './muscle-roles.js'
 import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
-import { exAvailable } from './equipment.js'
+import { suggestable } from './skipped.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, modeOf } from './history.js'
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
@@ -94,7 +94,7 @@ const staler = (a, b) => (staleKey(a) < staleKey(b) ? -1 : staleKey(a) > staleKe
 /** The exercises a slot on `slug` may use, in the order they are offered. */
 export function candidatesFor(S, slug, index = trainingIndex(S)) {
   // A stretch is filed under the muscle it lengthens; it is no strength slot's lift.
-  const usable = ex => ex && !isCardio(ex) && ex.cat !== 'stretching' && exAvailable(S, ex)
+  const usable = ex => ex && !isCardio(ex) && ex.cat !== 'stretching' && suggestable(S, ex)
   const logged = Object.entries(index.exercises)
     .filter(([id]) => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug)
     .sort(([a, x], [b, y]) => staler(x.d, y.d) || y.n - x.n || (a < b ? -1 : 1))
@@ -133,7 +133,7 @@ export const MAX_GEN_COUNT = 15
 // Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
 // then the staples of each cardio area.
 function cardioCandidates(S, index) {
-  const usable = ex => ex && isCardio(ex) && exAvailable(S, ex)
+  const usable = ex => ex && isCardio(ex) && suggestable(S, ex)
   const logged = Object.entries(index.exercises).filter(([id]) => usable(EXIDX[id]))
     .sort(([, x], [, y]) => staler(y.d, x.d)).map(([id]) => id)
   const staples = ACTIVITY_GROUPS[0].areas.flatMap(a => a.staples).filter(id => usable(EXIDX[id]) && !logged.includes(id))
@@ -141,7 +141,7 @@ function cardioCandidates(S, index) {
 }
 // Stretches for what the session trains first, then the rest; logged ones before the staples.
 function stretchCandidates(S, index, slugs) {
-  const usable = ex => ex && isStretch(ex) && exAvailable(S, ex)
+  const usable = ex => ex && isStretch(ex) && suggestable(S, ex)
   const logged = Object.entries(index.exercises).filter(([id]) => usable(EXIDX[id]))
     .sort(([, x], [, y]) => staler(y.d, x.d)).map(([id]) => id)
   const staples = ACTIVITY_GROUPS[1].areas.flatMap(a => a.staples).filter(id => usable(EXIDX[id]) && !logged.includes(id))

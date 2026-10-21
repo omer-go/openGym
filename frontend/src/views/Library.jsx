@@ -15,6 +15,10 @@ import { Button } from '../components/ui.jsx'
 import { tappable, useRevealActiveChip } from '../lib/use-sheet-keyboard.js'
 import { useAutoMore } from '../lib/use-auto-more.js'
 import { isFav, sortFavouritesFirst, sortYoursFirst, usageOf } from '../lib/favourites.js'
+import { isSkipped, skipIds } from '../lib/skipped.js'
+
+// The body-part row's "Not suggested" scope.
+const SKIPPED = '⊘'
 
 export default function Library() {
   const nav = useNavigate()
@@ -31,7 +35,11 @@ export default function Library() {
   // Your own exercises, counted the way the list below shows them (allExercises puts every
   // custom entry in front of the catalogue; deleting one removes it from customEx outright).
   const ownCount = (S.customEx || []).filter(c => c && c.id).length
-  const inPart = searchExercises(allExercises(S).filter(e => !bp || e.bp === bp), q)
+  // "Not suggested" sits in the body-part row as one more scope: the exercises you asked to be
+  // left out of suggestions (lib/skipped.js), a tap from each one's "Suggest again".
+  const skipCount = skipIds(S).length
+  const inScope = e => (bp === SKIPPED ? isSkipped(S, e.id) : !bp || e.bp === bp)
+  const inPart = searchExercises(allExercises(S).filter(inScope), q)
   // Kind of exercise (strength, stretching, cardio...), the same fallback as equipment below: a
   // choice the search or body part has narrowed away is ignored for now, never a dead end.
   const { opts: catOpts, on: catOn, list: base } = byCategory(inPart, cat)
@@ -55,13 +63,14 @@ export default function Library() {
   // Worked out a beat behind the typing (useDeferredValue): the list itself never waits for it.
   const qLate = useDeferredValue(q)
   const similar = q.trim() && qLate === q && f.length <= shown
-    ? similarExercises(allExercises(S).filter(e => (!bp || e.bp === bp) && (!profile || showAll || exAvailable(S, e))), q, f, f.length ? 12 : 30)
+    ? similarExercises(allExercises(S).filter(e => inScope(e) && (!profile || showAll || exAvailable(S, e))), q, f, f.length ? 12 : 30)
     : []
   const row = e => {
     const best = bestWeightFor(S, e.id)
     return <div key={e.id} className="item" {...tappable(() => exerciseDetailSheet(e))}>
       <Thumb ex={e} />
       <div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(S, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t(MUSCLE_NAME[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
+      {isSkipped(S, e.id) && <span className="tag nocap">{t('Not suggested')}</span>}
       {best > 0 && <span className="tag acc">{fmtNum(best)}</span>}
       <Button size="sm" variant="tinted" icon="plus" onClick={ev => { ev.stopPropagation(); addToRoutineSheet(e) }}>{t('Plan')}</Button>
     </div>
@@ -92,6 +101,7 @@ export default function Library() {
     <div className="chips" ref={bpStrip} style={{ marginBottom: eqOpts.length > 1 || catOpts.length > 1 ? 8 : 12 }}>
       <button className={'chip nocap' + (!bp ? ' on' : '')} onClick={() => { setBp(''); setEq(''); setShown(40) }}>{t('All')}</button>
       {BODYPARTS.map(b => <button key={b} className={'chip' + (bp === b ? ' on' : '')} onClick={() => { setBp(b); setShown(40) }}>{t(b)}</button>)}
+      {(skipCount > 0 || bp === SKIPPED) && <button className={'chip ic nocap' + (bp === SKIPPED ? ' on' : '')} onClick={() => { setBp(SKIPPED); setEq(''); setShown(40) }}><Icon name="eyeSlash" /> {t('Not suggested')}</button>}
     </div>
     {catOpts.length > 1 && <div className="chips" ref={catStrip} style={{ marginBottom: 8 }}>
       <button className={'chip nocap' + (!catOn ? ' on' : '')} onClick={() => { setCat(''); setShown(40) }}>{t('Any type')}</button>

@@ -8,7 +8,7 @@
 // work set of an exercise that works it as a primary. Which groups are Suggested, and the order
 // of a group's exercises, go by the week's coverage (lib/coverage.js), as the one-tap workouts do.
 import { EXIDX, allExercises, isCardio } from './exercises.js'
-import { exAvailable } from './equipment.js'
+import { suggestable } from './skipped.js'
 import { musclesOf, MUSCLE_NAME } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { lastEntryFor } from './history.js'
@@ -155,7 +155,7 @@ export function groupExercises(S, groupId, { sort = 'suggested', area = '', have
   const areas = g.m.filter(s => !area || s === area)
   let hidden = 0
   const usable = slug => (map[slug] || []).filter(ex => {
-    if (!exAvailable(S, ex)) return false
+    if (!suggestable(S, ex)) return false
     if (inWorkout.has(ex.id)) { hidden++; return false }
     return true
   })
@@ -265,7 +265,7 @@ function activityExercises(S, groupId, { sort, area }) {
   const byArea = {}
   for (const ex of allExercises(S || {})) {
     const a = g.of(ex)
-    if (!a || (area && a !== area) || !exAvailable(S, ex)) continue
+    if (!a || (area && a !== area) || !suggestable(S, ex)) continue
     if (inWorkout.has(ex.id)) { hidden++; continue }
     (byArea[a] || (byArea[a] = [])).push(ex)
   }

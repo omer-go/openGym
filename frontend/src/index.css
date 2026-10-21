@@ -644,6 +644,9 @@ h4.sec{
 .chip.on{background:var(--acc);color:var(--on-acc);font-weight:500}
 .chip.on .dim{color:color-mix(in srgb,var(--on-acc) 62%,transparent)}
 .chip .qstate{text-transform:none}
+/* A chip led by an icon (the Library's "Not suggested" scope): icon and label on one line. */
+.chip.ic{display:inline-flex;align-items:center;gap:5px}
+.chip.ic svg{width:14px;height:14px}
 /* On a phone these rows scroll by swipe. On a pointer device lib/hchips.js lets you
    click-drag anywhere on the row to pull it along; a grab cursor on rows that actually
    overflow (data-xscroll, set by hchips.js on hover) is the hint. */

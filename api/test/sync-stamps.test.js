@@ -77,6 +77,17 @@ test('an entry held against a removal on record is kept, marked as added back', 
   assert.deepEqual(next.workouts.map(w => w.id), ['w1', 'w2']);
 });
 
+test('an exercise marked not suggested again is kept against its removal, like a favourite', () => {
+  const cur = stored();
+  cur.skipEx = [];
+  cur.deleted.skipEx = { squat: NOW - 4000 };
+  const next = clone(cur);
+  next.skipEx = ['squat'];
+  stampPut(cur, next, { overRead: true, now: NOW });
+  assert.ok(next.deleted.skipEx.squat < 0);
+  assert.deepEqual(next.skipEx, ['squat']);
+});
+
 test('a reset keeps its own records; a replace without baseRev keeps the stored ones', () => {
   const cur = stored();
   const reset = { _ts: NOW, resetAt: NOW, workouts: [], routines: [] };

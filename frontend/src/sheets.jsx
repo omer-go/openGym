@@ -62,6 +62,7 @@ import { swapActiveExercise } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
 import { isFav, toggleFav, sortFavouritesFirst, sortYoursFirst } from './lib/favourites.js'
+import { isSkipped, skipIds, toggleSkip } from './lib/skipped.js'
 import { buildSessionEntries, buildPlannedEntry, builtOutOfProgression } from './lib/session-start.js'
 import { finishCompare, finishCardio } from './lib/finish-compare.js'
 import { workoutFit, fitFileName } from './lib/fit-export.js'
@@ -982,12 +983,47 @@ export function detailTags(ex) {
   return out
 }
 
+// "Don't suggest this exercise" (lib/skipped.js), from any menu or sheet that names one exercise.
+// Turned on in a workout, the toast offers the swap that takes it out of today's session too.
+export function toggleSkipExercise(ex, { onSwap } = {}) {
+  let on = false
+  update(s => { on = toggleSkip(s, ex.id) })
+  ui().toast(on ? t('Won’t be suggested again') : t('Will be suggested again'),
+    on && onSwap ? { action: t('Swap now'), onAction: onSwap, icon: 'swap' } : undefined)
+}
+/** The menuSheet item that flips it. */
+export function skipMenuItem(S, ex, opts) {
+  const on = isSkipped(S, ex.id)
+  return on
+    ? { icon: 'eye', label: t('Suggest again'), sub: t('Not suggested now'), onClick: () => toggleSkipExercise(ex, opts) }
+    : { icon: 'eyeSlash', label: t('Don’t suggest this exercise'), sub: t('Left out of one-tap workouts and swaps'), onClick: () => toggleSkipExercise(ex, opts) }
+}
+
+// Everything you asked not to be suggested (Settings › Equipment), each one tap from coming back.
+function SkippedList() {
+  const st = useStore(s => s.S)
+  const list = skipIds(st).map(id => exOr(id))
+  return <>
+    <h3>{t('Not suggested')}</h3>
+    <div className="muted small" style={{ marginTop: -8, marginBottom: 10 }}>{t('Left out of one-tap workouts, swaps and Add exercise suggestions. Search still finds them.')}</div>
+    {list.length ? <div className="list">{list.map(ex => <div key={ex.id} className="item" {...tappable(() => exerciseDetailSheet(ex))}>
+      <Thumb ex={ex} />
+      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
+        {!ex.missing && <div className="ss capitalize">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)} · {t(ex.eq)}</div>}</div>
+      <Button size="sm" variant="tinted" icon="eye" onClick={ev => { ev.stopPropagation(); toggleSkipExercise(ex) }}>{t('Suggest again')}</Button>
+    </div>)}</div>
+      : <div className="empty"><div className="ico"><Icon name="eyeSlash" /></div>{t('Nothing here. Choose “Don’t suggest this exercise” from an exercise’s menu to leave it out of suggestions.')}</div>}
+  </>
+}
+export const skippedListSheet = () => ui().openSheet(() => <SkippedList />)
+
 function ExerciseDetail({ ex, close }) {
   useLang() // the description and steps arrive in their own chunk the first time a sheet asks
   const st = useStore(s => s.S)
   const last = lastEntryFor(st, ex.id)
   const best = bestWeightFor(st, ex.id, currentDbLoad(st, ex.id))
   const fav = isFav(st, ex.id)
+  const skipped = isSkipped(st, ex.id)
   const flipFav = () => {
     let on = false
     update(s => { on = toggleFav(s, ex.id) })
@@ -1009,6 +1045,7 @@ function ExerciseDetail({ ex, close }) {
     {best > 0 && <div className="small row" style={{ marginBottom: 6, gap: 5 }}><Icon name="trophy" style={{ fontSize: 14, color: 'var(--yellow)' }} />{t('Best:')} <b className="accent" style={{ whiteSpace: 'nowrap' }}>{fmtNum(best)} {st.unit}</b>{last ? ` · ${t('last')} ${fmtDate(last.d)}: ${last.sets.map(s => setLabel(ex.id, s, last.target, speedUnitOf(st))).join(', ')}` : ''}</div>}
     <Button variant="primary" icon="plus" style={{ margin: '10px 0 4px' }} onClick={() => addToRoutineSheet(ex)}>{t('Add to my plan')}</Button>
     {last && <Button icon="history" style={{ marginTop: 4 }} onClick={() => exerciseHistorySheet(ex.id)}>{t('History')}</Button>}
+    <Button icon={skipped ? 'eye' : 'eyeSlash'} style={{ marginTop: 4 }} onClick={() => toggleSkipExercise(ex)}>{skipped ? t('Suggest again') : t('Don’t suggest')}</Button>
     {isCustomEx(ex) && <div className="row" style={{ gap: 8, marginTop: 8 }}>
       <Button icon="pencil" style={{ flex: 1 }} onClick={() => { close(); customExSheet(ex) }}>{t('Edit')}</Button>
       <Button variant="danger" icon="trash" style={{ flex: 1 }} onClick={() => deleteCustomEx(ex, close)}>{t('Delete')}</Button>
@@ -1269,6 +1306,7 @@ export function deleteCustomEx(ex, afterDelete) {
         s.routines.forEach(r => { r.ex = r.ex.filter(e => e.id !== ex.id); cleanupSg(r.ex) })
         delete s.exWeights[ex.id]
         s.favEx = (s.favEx || []).filter(id => id !== ex.id)
+        s.skipEx = (s.skipEx || []).filter(id => id !== ex.id)
       })
       toast(t('Exercise deleted'))
       afterDelete && afterDelete()
@@ -1349,6 +1387,8 @@ function ExercisePicker({ onPick, title, close, like }) {
         <Thumb ex={e} /><div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(st, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t(MUSCLE_NAME[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
         {/* Accent tag = already in a routine/log ("Chosen"); the yellow star by the name = favourite. */}
         {usage[e.id] && <span className="tag acc"><Icon name="starFill" /></span>}
+        {/* Search still finds what you asked not to be suggested, marked so it is no surprise. */}
+        {isSkipped(st, e.id) && <span className="tag nocap">{t('Not suggested')}</span>}
         {/* A "+" glyph reads as "add this now" — it used to just open the same detail sheet as
             tapping the row, so it added nothing until you'd scrolled past the sets/reps config
             and found the real button. Now it does what it looks like: adds with the default
@@ -3046,6 +3086,12 @@ function GenSetup({ type, close }) {
               <Thumb ex={ex} />
               <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
               {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
+              {/* Not one you want: never suggested again, and the list rebuilds without it. */}
+              <button type="button" className="iconbtn" aria-label={t('More')} style={{ padding: 8, margin: -8 }}
+                onClick={() => menuSheet({ title: exerciseNameFor(ex), titleClass: exerciseNameClass(ex), items: [
+                  { icon: 'info', label: t('How to do it'), onClick: () => exerciseDetailSheet(ex) },
+                  skipMenuItem(st, ex),
+                ] })}><Icon name="more" /></button>
             </div>
           })}</div>
         </>}

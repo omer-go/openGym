@@ -11,7 +11,7 @@
 // a reverse fly to other rear-delt work. An entry remembers where its swaps began in `swapOf`, a
 // live-session field only (finish-workout.js keeps a whitelist), so the order never drifts.
 import { EXIDX, allExercises, isCardio } from './exercises.js'
-import { exAvailable } from './equipment.js'
+import { suggestable } from './skipped.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { candidatesFor } from './generate.js'
 import { sameMuscleFirst, roleLikeness } from './similar-exercises.js'
@@ -33,13 +33,13 @@ export function swapCycle(S, fromId, rolesOf = muscleRolesOf) {
   const act = activityOf(from)
   if (act) {
     const g = activityGroup(act.group)
-    const area = all.filter(ex => g.of(ex) === act.area && exAvailable(S, ex))
+    const area = all.filter(ex => g.of(ex) === act.area && suggestable(S, ex))
     g.areas.find(a => a.id === act.area).staples.filter(id => area.some(ex => ex.id === id)).forEach(add)
     area.filter(ex => ex.tg === from.tg).forEach(ex => add(ex.id))
     area.forEach(ex => add(ex.id))
     return ids.slice(0, SWAP_CYCLE)
   }
-  const usable = ex => ex && !isCardio(ex) && !isStretch(ex) && exAvailable(S, ex)
+  const usable = ex => ex && !isCardio(ex) && !isStretch(ex) && suggestable(S, ex)
   const slug = primaryMuscleOf(from)?.slug
   if (slug) candidatesFor(S, slug).forEach(add)
   for (const ex of sameMuscleFirst(all, from, rolesOf)) if (usable(ex)) add(ex.id)

@@ -773,6 +773,30 @@ describe('added back means brought back by this change', () => {
   })
 })
 
+describe('exercises not suggested (skipEx) sync the way favourites do', () => {
+  const update = (S, now, mut) => { const n = clone(S); mut(n); stampDeletions(S, n, now); stampEdits(S, n, now); n._ts = now; return n }
+  const b0 = { unit: 'kg', skipEx: [], _ts: 1 }
+  it('a mark from either device survives the other copy', () => {
+    const phone = update(b0, 10, S => { S.skipEx = ['bench'] })
+    const tablet = update(b0, 20, S => { S.skipEx = ['squat'] })
+    expect(mergeStates(tablet, phone).skipEx).toEqual(['squat', 'bench'])
+  })
+  it('"Suggest again" on one device sticks against a copy that still has the mark', () => {
+    const marked = update(b0, 10, S => { S.skipEx = ['bench'] })
+    const phone = update(marked, 20, S => { S.skipEx = [] })
+    const tablet = update(marked, 30, S => { S.restSec = 120 })
+    expect(mergeStates(tablet, phone).skipEx || []).toEqual([])
+    expect(mergeStates(phone, tablet).skipEx || []).toEqual([])
+  })
+  it('a mark set again later wins over an earlier "Suggest again"', () => {
+    let phone = update(b0, 10, S => { S.skipEx = ['bench'] })
+    phone = update(phone, 20, S => { S.skipEx = [] })
+    const tablet = update(b0, 30, S => { S.skipEx = ['bench'] })
+    expect(mergeStates(tablet, phone).skipEx).toEqual(['bench'])
+    expect(mergeStates(phone, tablet).skipEx).toEqual(['bench'])
+  })
+})
+
 
 describe('a change is stamped after everything the copy it was made on carries (stampChange)', () => {
   const T = Date.UTC(2026, 9, 6, 12), DAY = 86400000
