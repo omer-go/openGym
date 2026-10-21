@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, withSessionRest } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest } from './generate.js'
+import { liftKind } from './coverage.js'
 import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -110,7 +111,7 @@ describe('generatedEntries', () => {
 
 describe('workout setup', () => {
   it('opens on the type’s own count and groups', () => {
-    expect(genDefaults('push')).toMatchObject({ count: 6, groups: ['chest', 'shoulders', 'triceps'], sets: 3, reps: 10 })
+    expect(genDefaults('push')).toMatchObject({ count: 6, groups: ['chest', 'shoulders', 'triceps'], byKind: true })
     expect(genDefaults('full').groups).not.toContain('forearms')
     expect(genDefaults('full').count).toBe(genCount('full'))
   })
@@ -153,8 +154,34 @@ describe('workout setup', () => {
   })
 })
 
+describe('sets and reps by the kind of lift', () => {
+  it('knows a compound from an isolation lift and a small group', () => {
+    expect([BENCH, SQUAT, OHP].map(liftKind)).toEqual(['compound', 'compound', 'compound'])
+    expect([CURL, PUSHDOWN, LEGCURL].map(liftKind)).toEqual(['isolation', 'isolation', 'isolation'])
+    expect(liftKind('0605')).toBe('small')  // a calf raise
+    expect(liftKind('no-such-id')).toBe('isolation')
+  })
+  it('heavy lifts take fewer reps than isolation, the small groups the most', () => {
+    const { compound, isolation, small } = GEN_SCHEME
+    expect(compound.reps).toBeLessThan(isolation.reps)
+    expect(isolation.reps).toBeLessThan(small.reps)
+    // a range that builds muscle when the sets are hard
+    for (const k of [compound, isolation, small]) expect(k.reps >= 6 && k.reps <= 20 && k.sets >= 2 && k.sets <= 4).toBe(true)
+  })
+  it('the default setup builds each lift on its kind', () => {
+    const picks = [{ id: SQUAT, muscle: 'quadriceps', last: null }, { id: CURL, muscle: 'biceps', last: null }, { id: '0605', muscle: 'calves', last: null }]
+    const entries = generatedEntries(state(), picks, genDefaults('full'))
+    expect(entries.map(e => [e.target.sets, e.target.reps])).toEqual([[3, 8], [3, 12], [3, 15]])
+    expect(entries[0].sets.filter(s => !isWarmupRow(s)).every(s => s.r === 8)).toBe(true)
+  })
+  it('a setup saved before the kinds still gets them; turned off, every lift takes its own', () => {
+    expect(genScheme(SQUAT, { sets: 3, reps: 10 })).toEqual(GEN_SCHEME.compound)
+    expect(genScheme(SQUAT, { byKind: false, sets: 5, reps: 5 })).toEqual({ sets: 5, reps: 5 })
+  })
+})
+
 describe('generatedEntries with a setup', () => {
-  const setup = { ...genDefaults('push'), sets: 4, reps: 8, restSec: 120, warmupSets: 1 }
+  const setup = { ...genDefaults('push'), byKind: false, sets: 4, reps: 8, restSec: 120, warmupSets: 1 }
   it('every lift takes the setup’s sets, reps, rest and warm-ups', () => {
     const [e] = generatedEntries(state(), [{ id: BENCH, muscle: 'chest', last: null }], setup)
     expect(e.target).toMatchObject({ sets: 4, reps: 8, restSec: 120, warmupSets: 1, mode: 'reps' })

@@ -52,7 +52,7 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, MAX_GEN_COUNT } from './lib/generate.js'
+import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { WEEKLY_TARGET, plannedSets } from './lib/coverage.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
@@ -2940,7 +2940,8 @@ function beginGenerated(type, entries, gen) {
 }
 
 // The setup before a one-tap workout: which muscle groups it covers, how many exercises, cardio
-// and stretches on top, and the sets, reps, rest and warm-ups every lift takes. The list previews
+// and stretches on top, the sets and reps (by the kind of lift, or the same for all), and the
+// rest and warm-ups every lift takes. The list previews
 // the session these build. One exercise's own numbers (its weight above all) are set in the
 // workout, from its name, in the sheet a freestyle add opens. The choices are kept per day type
 // (S.genSetup) for next time.
@@ -2990,12 +2991,21 @@ function GenSetup({ type, close }) {
       <h4 className="sec">{t('Sets and rest')}</h4>
       <div className="row cfgrow" style={{ marginBottom: 12 }}>
         <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
-        <Stepper label={t('Sets')} value={setup.sets} step={1} min={1} max={10} decimal={false} onChange={v => set({ sets: v })} />
-        <Stepper label={t('Reps')} value={setup.reps} step={1} min={1} max={50} decimal={false} onChange={v => set({ reps: v })} />
-      </div>
-      <div className="row cfgrow" style={{ marginBottom: 12 }}>
         <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
       </div>
+      {/* Sets and reps by the kind of lift (GEN_SCHEME), or the same for every one. */}
+      <div className="sect-b" style={{ marginBottom: 12 }}>
+        <Row icon="dumbbell" iconTint="var(--blue)" title={t('Sets and reps for muscle growth')}
+          subtitle={setup.byKind !== false
+            ? t('Big lifts {0}, single-muscle lifts {1}, calves, forearms and abs {2}.', ...['compound', 'isolation', 'small'].map(k => `${GEN_SCHEME[k].sets} × ${GEN_SCHEME[k].reps}`))
+            : t('Every exercise takes the sets and reps below.')}>
+          <Switch checked={setup.byKind !== false} onChange={v => set({ byKind: v })} />
+        </Row>
+      </div>
+      {setup.byKind === false && <div className="row cfgrow" style={{ marginBottom: 12 }}>
+        <Stepper label={t('Sets')} value={setup.sets} step={1} min={1} max={10} decimal={false} onChange={v => set({ sets: v })} />
+        <Stepper label={t('Reps')} value={setup.reps} step={1} min={1} max={50} decimal={false} onChange={v => set({ reps: v })} />
+      </div>}
       <div className="sect-b" style={{ marginBottom: 6 }}>
         <Row icon="timer" iconTint="var(--orange)" title={t('Rest between sets')} accessory="chevron"
           value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', fmtRest(st.restSec))}

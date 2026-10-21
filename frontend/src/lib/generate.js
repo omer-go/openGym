@@ -16,14 +16,15 @@
 // Shuffle in the workout is a shift + 1.
 //
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
-// which muscle groups it covers, add a run and stretches, and set the sets, reps, rest and
-// starting weight of every exercise; generatedEntries builds the session from it.
+// which muscle groups it covers, add a run and stretches, and set the rest and warm-ups of every
+// exercise. Sets and reps go by the kind of lift (GEN_SCHEME) unless the setup sets its own for
+// every exercise; generatedEntries builds the session from it.
 import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
 import { partGap } from './muscle-roles.js'
-import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage } from './coverage.js'
+import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { exAvailable } from './equipment.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, modeOf } from './history.js'
@@ -116,8 +117,17 @@ export const genGroupsOf = type => {
 /** What the setup sheet opens on for `type`, before anything is changed. */
 export const genDefaults = type => ({
   count: genCount(type), groups: genGroupsOf(type), cardio: false, stretch: false,
-  sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
+  byKind: true, sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
 })
+
+// Sets and reps for muscle growth, by the kind of lift (coverage.js liftKind), used unless the
+// setup turns `byKind` off and sets its own for every lift. Growth comes from sets taken close
+// to failure across a wide range of reps; the heavy multi-joint lifts sit at the low end, where
+// the weight builds strength too, and lifts for one muscle higher, where it is kinder to the
+// joints. Calves, forearms and abs take the most.
+export const GEN_SCHEME = { compound: { sets: 3, reps: 8 }, isolation: { sets: 3, reps: 12 }, small: { sets: 3, reps: 15 } }
+/** The sets and reps `setup` gives lift `id`: its kind's (GEN_SCHEME), or the setup's own. */
+export const genScheme = (id, setup) => (setup?.byKind === false ? { sets: setup.sets, reps: setup.reps } : GEN_SCHEME[liftKind(id)])
 export const MAX_GEN_COUNT = 15
 
 // Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
@@ -184,7 +194,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
 }
 
 /**
- * The target of one lift in a session built from `setup` (genDefaults): the setup's sets, reps,
+ * The target of one lift in a session built from `setup` (genDefaults): its sets and reps (genScheme),
  * rest and warm-ups on the exercise's own kind of set (a plank keeps its seconds). The weight is
  * last time's; an exercise's own numbers are set from its name in the workout once it starts.
  */
@@ -193,8 +203,9 @@ export function genConfig(S, id, setup) {
   const def = defaultConfig(id, modeOf({ ...base, id }))
   const keep = {}
   for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) keep[k] = base[k]
-  const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(setup.sets) || def.sets) }
-  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(setup.reps) || def.reps)
+  const want = genScheme(id, setup)
+  const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(want.sets) || def.sets) }
+  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(want.reps) || def.reps)
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true

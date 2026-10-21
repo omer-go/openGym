@@ -205,8 +205,18 @@ function itemOf(id, rank, on, rolesOf) {
     total: totalOf(full),
     // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
     // a fly or a curl has one helper at most. Isolation lifts rotate among themselves.
-    compound: !SMALL.has(g.id) && Object.values(full).filter(c => c >= 0.4).length >= 3,
+    compound: liftKind(id) === 'compound',
   }
+}
+/**
+ * What kind of lift `id` is, by the same measure the pickers use: 'small' for calves, forearms
+ * and abs, 'compound' for one that trains three groups or more in earnest, else 'isolation'.
+ */
+export function liftKind(id) {
+  const ex = EXIDX[id]
+  const g = ex && groupOf(primaryMuscleOf(ex)?.slug)
+  if (g && SMALL.has(g.id)) return 'small'
+  return g && Object.values(groupCredit(musclesOf(ex))).filter(c => c >= 0.4).length >= 3 ? 'compound' : 'isolation'
 }
 // Sorts `list` staler first, for the group: the part of the muscle, then the helpers, the tool
 // and the position last done longest ago, then the exercise you know best. A part, helper set or
