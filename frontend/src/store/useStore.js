@@ -123,10 +123,9 @@ export const DEF = {
   // One-time hints already shown to this profile, synced so each shows once per person rather
   // than once per device: { swipeSets: true } after the first swipe-on-sets nudge (Workout.jsx).
   hints: {},
-  // effort: which per-set effort scale is logged — 'none' | 'rir' | 'rpe'. null, not 'none', so
-  // that a profile which never chose (loaded state is overlaid on DEF, on every path: local,
-  // server pull, backup import) still falls back to the `showRir` boolean this replaced and
-  // keeps the column it had. See effortOf.
+  // effort: which per-set effort scale is logged — 'none' | 'rir' | 'rpe'. null, not 'rir', so
+  // a profile which never chose (loaded state is overlaid on DEF, on every path: local, server
+  // pull, backup import) reads as the current default rather than as a choice. See effortOf.
   // nudge/tone: the missed-workout nudge (lib/nudge.js), opt-in, rides on the reminder.
   reminder: { on: false, time: '08:00', tz: null, nudge: false, tone: 'friendly' }, effort: null, autoBackup: false,
   // Equipment profiles (issue: filter Library/picker/routines by what you actually own —

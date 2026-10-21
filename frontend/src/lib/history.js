@@ -124,12 +124,13 @@ export function stepEffort(kind, cur, dir) {
 // the first keystroke into the floor and fight the input.
 export const capEffort = (kind, v) =>
   (v == null || !EFFORT[kind] ? v : Math.min(EFFORT[kind].max, v))
-// Which scale a profile logs. `showRir` is the boolean this replaced and is only consulted
-// when the profile has no answer of its own — an explicit 'none' has to win over it, or a
-// backup or another device that still carries the old flag would switch the column back on.
+// Which scale a profile logs: its own choice, else RIR, so effort is logged from the first
+// workout and the stats have it to read back. An explicit 'none' wins. The old `showRir` flag
+// this replaced decides nothing: the defaults carried it as false, so a false there was never
+// a choice.
 export const effortOf = S => {
   const e = S && S.effort
-  return e === 'none' || EFFORT[e] ? e : (S && S.showRir ? 'rir' : 'none')
+  return e === 'none' || EFFORT[e] ? e : 'rir'
 }
 // The "(RIR 2)" / "(RPE 8)" tail on a set summary, empty when nothing was logged.
 const effortTail = s => {

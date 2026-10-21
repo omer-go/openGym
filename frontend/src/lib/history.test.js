@@ -169,15 +169,16 @@ describe('effortOf', () => {
     expect(effortOf({ effort: 'rpe' })).toBe('rpe')
     expect(effortOf({ effort: 'rir' })).toBe('rir')
     expect(effortOf({ effort: 'none' })).toBe('none')
-    expect(effortOf({})).toBe('none')
+    expect(effortOf({})).toBe('rir')
   })
 
-  it('keeps the column for a profile still carrying the old showRir flag', () => {
+  it('logs RIR until the profile chooses, whatever the old showRir flag said', () => {
     expect(effortOf({ showRir: true })).toBe('rir')
     // what a stored profile actually looks like once it is overlaid on DEF
     expect(effortOf({ effort: null, showRir: true })).toBe('rir')
-    expect(effortOf({ effort: null })).toBe('none')
-    expect(effortOf({ showRir: false })).toBe('none')
+    expect(effortOf({ effort: null })).toBe('rir')
+    // the old defaults carried showRir: false, so it was never a choice
+    expect(effortOf({ showRir: false })).toBe('rir')
     // once the new setting is chosen it wins, whatever the old flag said
     expect(effortOf({ showRir: true, effort: 'rpe' })).toBe('rpe')
     expect(effortOf({ showRir: true, effort: 'none' })).toBe('none')
@@ -185,16 +186,16 @@ describe('effortOf', () => {
 
   // The store cannot be imported here (it reaches for `navigator` at module load), so the
   // overlay it performs is reproduced literally: stored profile spread over the defaults.
-  // DEF.effort is null precisely so this lands on the showRir fallback rather than on 'none'.
+  // DEF.effort is null precisely so a profile that never chose lands on the default.
   const overlay = stored => ({ unit: 'kg', effort: null, ...stored })
 
   it('survives the overlay every load path performs', () => {
     // upgrading with the column on: local state, a server pull and a restored backup all
     // arrive as a stored object spread over the defaults, and all must keep the column
     expect(effortOf(overlay({ showRir: true }))).toBe('rir')
-    expect(effortOf(overlay({ showRir: false }))).toBe('none')
+    expect(effortOf(overlay({ showRir: false }))).toBe('rir')
     // a profile predating the RIR feature entirely
-    expect(effortOf(overlay({}))).toBe('none')
+    expect(effortOf(overlay({}))).toBe('rir')
     // and one written by this version
     expect(effortOf(overlay({ effort: 'rpe' }))).toBe('rpe')
     // an old backup restored over a profile that had already chosen: the file wins, because
@@ -202,13 +203,12 @@ describe('effortOf', () => {
     expect(effortOf(overlay({ showRir: true, effort: undefined }))).toBe('rir')
   })
 
-  it('is not fooled by a junk value', () => {
-    expect(effortOf({ effort: 'rpe10' })).toBe('none')
-    expect(effortOf({ effort: 'RIR' })).toBe('none')
-    expect(effortOf({ effort: 'f' })).toBe('none')
-    expect(effortOf(null)).toBe('none')
-    expect(effortOf(undefined)).toBe('none')
-    // a junk value with the old flag still set falls back rather than showing nothing
+  it('reads a junk value as never chosen', () => {
+    expect(effortOf({ effort: 'rpe10' })).toBe('rir')
+    expect(effortOf({ effort: 'RIR' })).toBe('rir')
+    expect(effortOf({ effort: 'f' })).toBe('rir')
+    expect(effortOf(null)).toBe('rir')
+    expect(effortOf(undefined)).toBe('rir')
     expect(effortOf({ effort: 'nope', showRir: true })).toBe('rir')
   })
 })
