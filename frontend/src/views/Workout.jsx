@@ -2231,7 +2231,7 @@ function ActiveWorkout() {
         session; the session note is in the ⋯ menu and Finish in the header. */}
     <div className="wfoot"><div className="wfoot-row">
       <Button onClick={addExercise} icon="plus">{t('Add exercise')}</Button>
-      <Button onClick={addCombo} icon="list" className="wfoot-combo">{t('Combo')}</Button>
+      <Button onClick={addCombo} icon="list">{t('Combo')}</Button>
     </div></div>
     <div className="workout-end-spacer" />
   </WorkoutScrollAnchor>

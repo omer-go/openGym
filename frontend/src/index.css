@@ -2279,10 +2279,12 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cov-g.sel .cov-l span{color:var(--label);font-weight:600}
 .cov-l b .dim{font-weight:500}
 
-/* The workout footer's two adds: Add exercise takes the row, Combo sits at its end. */
-.wfoot-row{display:flex;gap:8px;max-width:640px;margin:0 auto}
-.wfoot-row>.btn{display:flex;flex:1;min-width:0}
-.wfoot-row>.wfoot-combo{flex:none;width:auto}
+/* The workout footer's two adds, borderless: each takes half the row with its label centred
+   in it, so the pair sits symmetric under the page. A hairline between them marks the split. */
+.wfoot-row{display:flex;align-items:center;max-width:640px;margin:0 auto}
+.wfoot-row>.btn{display:flex;flex:1 1 0;min-width:0;padding-inline:8px}
+.wfoot-row>.btn+.btn{position:relative}
+.wfoot-row>.btn+.btn::before{content:'';position:absolute;left:0;top:28%;bottom:28%;width:1px;background:var(--sep)}
 
 /* A combo (components/ComboCard.jsx): a superset as one card, one round on screen. A row is a
    photo, the name and that round's numbers; the photos wear the accent, the combo's colour,
