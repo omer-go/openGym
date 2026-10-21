@@ -9,7 +9,7 @@ describe('a superset\'s name and rest between rounds (#292)', () => {
     expect(ex[0]).toMatchObject({ sgName: 'Arms finisher', sgRest: 75 })
     expect(ex[1]).toMatchObject({ sgName: 'Arms finisher', sgRest: 75 })
     expect(ex[2].sgName).toBeUndefined()
-    expect(supersetMeta(ex, [0, 1])).toEqual({ name: 'Arms finisher', rest: 75 })
+    expect(supersetMeta(ex, [0, 1])).toEqual({ name: 'Arms finisher', rest: 75, combo: false })
     setSupersetMeta(ex, 'g', { name: '', rest: 0 })
     expect(ex[0].sgName).toBeUndefined()
     expect(ex[0].sgRest).toBeUndefined()
@@ -26,5 +26,25 @@ describe('a superset\'s name and rest between rounds (#292)', () => {
     // On a single exercise a leftover value means nothing.
     expect(restSecFor(entries, [0], 90)).toBe(120)
     expect(restSecFor([{ target: { restSec: 120 } }, { target: {} }], [0, 1], 90)).toBe(120)
+  })
+  it('a combo is a superset laid out as one card: the flag follows the group like its name', () => {
+    const ex = [{ id: 'a', sg: 'g' }, { id: 'b', sg: 'g' }, { id: 'c', sg: 'g' }, { id: 'd' }]
+    setSupersetMeta(ex, 'g', { name: 'Core', rest: 60, combo: true })
+    expect(ex.slice(0, 3).every(e => e.sgCombo === true)).toBe(true)
+    expect(ex[3].sgCombo).toBeUndefined()
+    expect(supersetMeta(ex, [0, 1, 2])).toEqual({ name: 'Core', rest: 60, combo: true })
+    // A lone exercise left with the flag is no combo.
+    expect(supersetMeta(ex, [0]).combo).toBe(false)
+    // Read off a session entry's target too.
+    expect(supersetMeta([{ target: { sgCombo: true } }, { target: {} }], [0, 1], { onTarget: true }).combo).toBe(true)
+    // Leaving the group drops it; joining takes it.
+    delete ex[2].sg
+    ex[3].sg = 'g'
+    syncSupersetMeta(ex)
+    expect(ex[2].sgCombo).toBeUndefined()
+    // Not adjacent any more, but sync only reads the id: d takes the group's values.
+    expect(ex[3].sgCombo).toBe(true)
+    setSupersetMeta(ex, 'g', { name: 'Core', rest: 60 })
+    expect(ex[0].sgCombo).toBeUndefined()
   })
 })

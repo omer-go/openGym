@@ -2,29 +2,34 @@
 // (`sgName`, `sgRest` on a routine exercise, so on an entry's `target` once a session starts):
 // a reorder, a member taken out or the routine copied into a session keeps them without a second
 // structure to keep in step. The first member that has a value speaks for the group.
+// `sgCombo` marks a group laid out as a combo: one card, a photo per exercise and one round on
+// screen at a time (components/ComboCard.jsx). It changes the layout only; the flow, the rest
+// and everything read back from the sets are a superset's.
 export const SG_NAME_MAX = 40
 
 const fieldsOf = (item, onTarget) => (onTarget ? item?.target : item) || {}
 
-/** { name, rest } of the group of `unit` (indices into `list`); `onTarget` for session entries. */
+/** { name, rest, combo } of the group of `unit` (indices into `list`); `onTarget` for session entries. */
 export function supersetMeta(list, unit, { onTarget = false } = {}) {
-  let name = '', rest = 0
+  let name = '', rest = 0, combo = false
   for (const idx of unit || []) {
     const f = fieldsOf(list?.[idx], onTarget)
     if (!name && typeof f.sgName === 'string' && f.sgName.trim()) name = f.sgName.trim().slice(0, SG_NAME_MAX)
     if (!rest && Number(f.sgRest) > 0) rest = Math.round(Number(f.sgRest))
+    if (f.sgCombo === true) combo = true
   }
-  return { name, rest }
+  return { name, rest, combo: combo && (unit || []).length > 1 }
 }
 
-/** Writes name and rest onto every member of group `sg` in a routine's `ex`; empty clears. */
-export function setSupersetMeta(ex, sg, { name = '', rest = 0 } = {}) {
+/** Writes name, rest and combo onto every member of group `sg` in a routine's `ex`; empty clears. */
+export function setSupersetMeta(ex, sg, { name = '', rest = 0, combo = false } = {}) {
   const clean = String(name || '').trim().slice(0, SG_NAME_MAX)
   const sec = Number(rest) > 0 ? Math.round(Number(rest)) : 0
   for (const e of ex || []) {
     if (!e || !sg || e.sg !== sg) continue
     if (clean) e.sgName = clean; else delete e.sgName
     if (sec) e.sgRest = sec; else delete e.sgRest
+    if (combo) e.sgCombo = true; else delete e.sgCombo
   }
   return ex
 }
@@ -33,10 +38,11 @@ export function setSupersetMeta(ex, sg, { name = '', rest = 0 } = {}) {
 export function syncSupersetMeta(ex) {
   const groups = new Map()
   for (const e of ex || []) {
-    if (!e?.sg) { if (e) { delete e.sgName; delete e.sgRest }; continue }
-    const g = groups.get(e.sg) || { name: '', rest: 0 }
+    if (!e?.sg) { if (e) { delete e.sgName; delete e.sgRest; delete e.sgCombo }; continue }
+    const g = groups.get(e.sg) || { name: '', rest: 0, combo: false }
     if (!g.name && e.sgName) g.name = e.sgName
     if (!g.rest && Number(e.sgRest) > 0) g.rest = Number(e.sgRest)
+    if (e.sgCombo === true) g.combo = true
     groups.set(e.sg, g)
   }
   for (const [sg, g] of groups) setSupersetMeta(ex, sg, g)

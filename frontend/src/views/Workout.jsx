@@ -17,17 +17,20 @@ import { pinState } from '../lib/queue.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { api, beacon } from '../lib/api.js'
 import { pyramidRestFor, maxRecordAt, isPyramid, pyramidLabel } from '../lib/pyramid.js'
+import { uid } from '../lib/format.js'
 import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWater, supersetFlowStep, restAfterSet, restOnRecheck, restSecFor, warmupRestSecFor } from '../lib/supersetFlow.js'
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
 import { supersetMeta } from '../lib/superset-meta.js'
+import ComboCard from '../components/ComboCard.jsx'
+import { asComboMember } from '../lib/combo.js'
 import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { durationSheet } from '../components/DurationPicker.jsx'
 import { withSessionRest } from '../lib/generate.js'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
-import { startFlow, addExerciseSheet, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, quickSwapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, shuffleGenerated } from '../sheets.jsx'
+import { startFlow, addExerciseSheet, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, quickSwapActiveWorkoutExercise, barWeightSheet, menuSheet, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, shuffleGenerated, comboBuilderSheet } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
 import { effortColor } from '../lib/effort.js'
 import Elapsed from '../components/Elapsed.jsx'
@@ -1003,6 +1006,24 @@ function ActiveWorkout() {
     if (m.rest > 0) return t('{0} · back-to-back, {1} rest after each round', m.name || t('Superset'), fmtRest(m.rest))
     return m.name ? t('{0} · do these back-to-back, rest when done', m.name) : t('Superset · do these back-to-back, rest when done')
   }
+  // A combo draws its superset as one card, a round at a time (components/ComboCard.jsx).
+  // Its ⋯ can open it as the full superset for this session's screen — every set of every member,
+  // for the edits the round view has no room for — and the header there goes back.
+  const [comboAll, setComboAll] = useState(() => new Set())
+  const comboShowAll = (u, on) => setComboAll(prev => {
+    const next = new Set(prev)
+    if (on) next.add(u.join('-')); else next.delete(u.join('-'))
+    return next
+  })
+  const comboOf = u => {
+    const m = supersetMeta(A.entries, u, { onTarget: true })
+    return m.combo && !comboAll.has(u.join('-')) ? m : null
+  }
+  const comboCard = (u, m, inert = false) => <ComboCard entries={A.entries} unit={u} meta={m} propsFor={blockProps} inert={inert}
+    onShowAll={() => comboShowAll(u, true)} onUnpair={() => unpairAt(u[0])} />
+  // The superset header's way back to the combo card it was opened from.
+  const comboBack = u => supersetMeta(A.entries, u, { onTarget: true }).combo
+    ? <Button size="xs" variant="ghost" icon="list" onClick={() => comboShowAll(u, false)}>{t('Combo view')}</Button> : null
   // Collapse finished exercises in the list (#241). The current unit stays open, superset
   // members included, until you move on (ticking its last set does that, see toggle); an empty
   // exercise or a half-done warm-up or side stays open too.
@@ -1430,6 +1451,29 @@ function ActiveWorkout() {
   // Adds an exercise after the current unit: the button under the session and the ⋯ menu's Add.
   // It opens on the muscle groups (addExerciseSheet); its Search is the full picker, same handler.
   // One pick, then back to the session: the picker closes once the exercise is in.
+  // Where an added exercise lands, and what it is built from: see addExercise.
+  const addContext = () => {
+    const curEntry = A.entries[A.cur]
+    const curRid = curEntry?.rid
+    const routine = curRid ? S.routines.find(r => r.id === curRid) : null
+    const freestyle = !routine
+    return { curRid, routine, freestyle, noProg: !freestyle && builtOutOfProgression(curEntry, routine) }
+  }
+  // One added exercise's entry, inside an update: a planned session builds it the way its routine
+  // would (prescription, reps source, target); freestyle reproduces what you did last time.
+  const buildAdded = (s, id, cfg, { curRid, routine, freestyle, noProg }, typed = false) => {
+    const full = { ...cfg, id }
+    // Read from before the session's day when it is logged into the past (sessionHistory).
+    const past = sessionHistory(s)
+    // Freestyle stamps the meaning of a dumbbell weight and reads last time in it, the way
+    // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
+    const built = freestyle
+      ? { target: withMeaning(s, cfg, id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, id, dbLoadFor(s, full)), full, {
+        step: modeOf(full) === 'reps' ? (ownedWeightsFor(s, full) || weightIncrement(full, s.unit)) : defaultIncrement(id, s.unit), ...(typed ? { useTarget: true } : { preferLast: true }),
+      }), full, dropGrid(s, full)) }
+      : buildPlannedEntry(past, full, routine, { noProg })
+    return joinSessionNoProg(s.active, { id, ...built, ...(curRid ? { rid: curRid } : {}), ...(noProg ? { noProg: true } : {}) })
+  }
   const addExercise = () => { const picker = addExerciseSheet((ex, quick) => {
     // A freehand add inherits the current unit's routine (its `rid`) so it lands in that
     // routine's block in a combined session and gets a real prescription; a routine-less
@@ -1439,11 +1483,8 @@ function ActiveWorkout() {
     // never becomes the baseline the regular sessions progress from. An exercise kept out by
     // hand (its ⋯ menu) is that exercise's own choice for today and is not passed on; a session
     // kept out as a whole (the header ⋮) takes the new one with it (joinSessionNoProg).
-    const curEntry = A.entries[A.cur]
-    const curRid = curEntry?.rid
-    const routine = curRid ? S.routines.find(r => r.id === curRid) : null
-    const freestyle = !routine
-    const noProg = !freestyle && builtOutOfProgression(curEntry, routine)
+    const ctx = addContext()
+    const { routine, freestyle } = ctx
     // Freestyle has no routine prescription to apply: show the last target in the config
     // sheet and carry its completed rows forward. A planned session uses its configured
     // target when progression is off, while progression-enabled sessions keep their path.
@@ -1457,20 +1498,8 @@ function ActiveWorkout() {
       revealCur.current = true
       if (focusMode) focusPointerEpoch.current++
       update(s => {
-        const full = { ...cfg, id: ex.id }
-        // A planned session builds the exercise the way its routine would (prescription, reps
-        // source, target); freestyle reproduces what you did last time.
-        // Read from before the session's day when it is logged into the past (sessionHistory).
-        const past = sessionHistory(s)
-        // Freestyle stamps the meaning of a dumbbell weight and reads last time in it, the way
-        // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
-        const built = freestyle
-          ? { target: withMeaning(s, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(s, full)), full, {
-            step: modeOf(full) === 'reps' ? (ownedWeightsFor(s, full) || weightIncrement(full, s.unit)) : defaultIncrement(ex.id, s.unit), ...(typed ? { useTarget: true } : { preferLast: true }),
-          }), full, dropGrid(s, full)) }
-          : buildPlannedEntry(past, full, routine, { noProg })
         const insertAt = insertionIndexAfterCurrentUnit(supersetUnits(s.active.entries), s.active.cur, s.active.entries.length)
-        s.active.entries.splice(insertAt, 0, joinSessionNoProg(s.active, { id: ex.id, ...built, ...(curRid ? { rid: curRid } : {}), ...(noProg ? { noProg: true } : {}) }))
+        s.active.entries.splice(insertAt, 0, buildAdded(s, ex.id, cfg, ctx, typed))
         s.active.cur = insertAt
         useUI.getState().shiftRestOwner(insertAt, 1)
       })
@@ -1484,6 +1513,24 @@ function ActiveWorkout() {
     // The confirm names what it changes: this workout, never the routine behind it.
     else exConfigSheet(ex, null, cfg => commit(cfg, true), null, routine, seed, null, t('Add to this workout'))
   }) }
+  // A combo (lib/combo.js): its exercises built as Add exercise builds each, given the combo's
+  // rounds as their sets, and added after the current unit as one group.
+  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest }) => {
+    const ctx = addContext()
+    revealCur.current = true
+    if (focusMode) focusPointerEpoch.current++
+    update(s => {
+      const sg = 'sg' + uid()
+      const members = ids.map(id => {
+        const seed = ctx.freestyle ? withSessionRest(freestyleConfig(sessionHistory(s), { id, ...defaultConfig(id) }), s.active) : defaultConfig(id)
+        return asComboMember(buildAdded(s, id, { ...seed, sets: rounds }, ctx), { sg, rounds, name, rest }, { onTarget: true })
+      })
+      const insertAt = insertionIndexAfterCurrentUnit(supersetUnits(s.active.entries), s.active.cur, s.active.entries.length)
+      s.active.entries.splice(insertAt, 0, ...members)
+      s.active.cur = insertAt
+      useUI.getState().shiftRestOwner(insertAt, members.length)
+    })
+  })
   // Ending the session without saving it. The ⋯ menu's last item since the header's ✕ became the
   // ⌄ that only leaves the screen (v1.3.11).
   const discardWorkout = () => confirmSheet({
@@ -2069,11 +2116,12 @@ function ActiveWorkout() {
                 <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{exerciseNameFor(exOr(A.entries[idx].id))}</span>
                 <span className="tag acc nocap"><Icon name="check" />{t('{0} sets', A.entries[idx].sets.length)}</span>
               </span>)}
-            </button> : multi ? (
+            </button> : multi && comboOf(u) ? comboCard(u, comboOf(u)) : multi ? (
               <div className="ss-card">
                 <div className="ss-hd" style={{ justifyContent: 'space-between' }}>
                   <span className="row" style={{ gap: 5 }}><Icon name="link" />{ssTitle(u)}</span>
-                  <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(u[0])}>{t('Unpair')}</Button>
+                  <span className="row" style={{ gap: 4 }}>{comboBack(u)}
+                  <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(u[0])}>{t('Unpair')}</Button></span>
                 </div>
                 {u.map((idx, k) => {
                   const entry = A.entries[idx]
@@ -2109,11 +2157,12 @@ function ActiveWorkout() {
           // header's words moved over, or the card grew by a row, as it landed.
           const adjacent = units[unitIdx + direction] || []
           if (!adjacent.length) return null
-          return adjacent.length > 1 ? (
+          return adjacent.length > 1 && comboOf(adjacent) ? comboCard(adjacent, comboOf(adjacent), true) : adjacent.length > 1 ? (
             <div className="ss-card">
               <div className="ss-hd" style={{ justifyContent: 'space-between' }}>
                 <span className="row" style={{ gap: 5 }}><Icon name="link" />{ssTitle(adjacent)}</span>
-                <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(adjacent[0])}>{t('Unpair')}</Button>
+                <span className="row" style={{ gap: 4 }}>{comboBack(adjacent)}
+                <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(adjacent[0])}>{t('Unpair')}</Button></span>
               </div>
               {adjacent.map((idx, k) => <div key={idx} className="ss-ex" data-exidx={idx}>
                 {k > 0 && <div className="ss-amp">+</div>}
@@ -2130,11 +2179,12 @@ function ActiveWorkout() {
           onSelectEntry={selectFocusEntry} onAdvanceUnit={advanceFocusUnit} pointerEpoch={focusPointerEpoch.current}
           onPairPrev={onPairPrev} onPairNext={onPairNext} onUnpair={() => unpairAt(cur)}
           {...blockProps(cur)} />
-      ) : isSuperset ? (
+      ) : isSuperset && comboOf(unit) ? comboCard(unit, comboOf(unit)) : isSuperset ? (
         <div className="ss-card">
           <div className="ss-hd" style={{ justifyContent: 'space-between' }}>
             <span className="row" style={{ gap: 5 }}><Icon name="link" />{ssTitle(unit)}</span>
-            <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(cur)}>{t('Unpair')}</Button>
+            <span className="row" style={{ gap: 4 }}>{comboBack(unit)}
+            <Button size="xs" variant="ghost" icon="link" title={t('Unpair')} onClick={() => unpairAt(cur)}>{t('Unpair')}</Button></span>
           </div>
           {unit.map((idx, k) => {
             const entry = A.entries[idx]
@@ -2178,7 +2228,10 @@ function ActiveWorkout() {
     </>}
     {/* Add exercise rides in a footer pinned to the bottom edge, in reach from anywhere in the
         session; the session note is in the ⋯ menu and Finish in the header. */}
-    <div className="wfoot"><Button onClick={addExercise} icon="plus">{t('Add exercise')}</Button></div>
+    <div className="wfoot"><div className="wfoot-row">
+      <Button onClick={addExercise} icon="plus">{t('Add exercise')}</Button>
+      <Button onClick={addCombo} icon="list" className="wfoot-combo">{t('Combo')}</Button>
+    </div></div>
     <div className="workout-end-spacer" />
   </WorkoutScrollAnchor>
 }

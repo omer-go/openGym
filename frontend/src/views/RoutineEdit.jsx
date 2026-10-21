@@ -8,7 +8,8 @@ import { uid, exerciseNameText } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { supersetUnits, moveRoutineEntry, cleanupSg, exLine, defaultConfig } from '../lib/history.js'
 import { Thumb } from '../components/Media.jsx'
-import { glyphPicker, exercisePicker, addExerciseSheet, exConfigSheet, confirmSheet, supersetSheet } from '../sheets.jsx'
+import { glyphPicker, exercisePicker, addExerciseSheet, exConfigSheet, confirmSheet, supersetSheet, comboBuilderSheet } from '../sheets.jsx'
+import { asComboMember } from '../lib/combo.js'
 import { supersetMeta, setSupersetMeta } from '../lib/superset-meta.js'
 import { fmtRest } from '../lib/duration.js'
 import Icon from '../components/Icon.jsx'
@@ -449,6 +450,13 @@ export default function RoutineEdit() {
       exConfigSheet(ex, null, cfg => edit(x => { x.push({ id: ex.id, ...cfg }) }), null, r)
     }
   }, { routineId: id })
+  // A combo (lib/combo.js): its exercises at their usual numbers, the combo's rounds as their
+  // sets, one group at the end of the routine.
+  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest }) => {
+    const sg = 'sg' + uid()
+    edit(x => { x.push(...ids.map(exId => asComboMember({ id: exId, ...defaultConfig(exId) }, { sg, rounds, name, rest }))) })
+    toast(t('Combo added to {0}', r.name))
+  })
 
   const units = supersetUnits(r.ex)
   const unitFirst = new Set(units.filter(u => u.length > 1).map(u => u[0]))
@@ -512,7 +520,10 @@ export default function RoutineEdit() {
         had to be scrolled to the bottom before anything could be added. */}
     <div className="row between plan-sec-h routine-ex-h">
       <h4 className="sec">{t('Exercises')}</h4>
-      <Button size="sm" variant="tinted" icon="plus" onClick={addExercise}>{t('Add exercise')}</Button>
+      <span className="row" style={{ gap: 6 }}>
+        <Button size="sm" variant="tinted" icon="list" onClick={addCombo}>{t('Add combo')}</Button>
+        <Button size="sm" variant="tinted" icon="plus" onClick={addExercise}>{t('Add exercise')}</Button>
+      </span>
     </div>
     {r.ex.length ? <div ref={reorder.listRef} onClickCapture={reorder.onClickCapture}
       className={'list routine-list' + (reorder.drag ? ' is-reordering' : '')}>{r.ex.map((e, i) => {
@@ -531,7 +542,7 @@ export default function RoutineEdit() {
       // screen reader would lose inside one): the name is, a real <button> a click bubbles up
       // from. The long press treats it as the row (data-row-open, useRoutineReorder).
       const item = <div className={'item' + (inSS.has(i) ? ' in-ss' : '')} onClick={() => {
-          exConfigSheet(ex, e, cfg => edit(x => { x[i] = { id: x[i].id, sg: x[i].sg, ...(x[i].sg ? { sgName: x[i].sgName, sgRest: x[i].sgRest } : {}), ...cfg }; cleanupSg(x) }), removeHere, r, null, () => replace(i))
+          exConfigSheet(ex, e, cfg => edit(x => { x[i] = { id: x[i].id, sg: x[i].sg, ...(x[i].sg ? { sgName: x[i].sgName, sgRest: x[i].sgRest, sgCombo: x[i].sgCombo } : {}), ...cfg }; cleanupSg(x) }), removeHere, r, null, () => replace(i))
         }}>
           {/* Shown on pointer devices only (index.css .routine-grip); the Move buttons and the
               long press stay the way in for a keyboard and a finger. */}
@@ -555,7 +566,7 @@ export default function RoutineEdit() {
         {unitFirst.has(i) && (() => {
           const meta = supersetMeta(r.ex, unitOf.get(i))
           return <button type="button" className="ss-label ss-label-btn" onClick={() => editSuperset(i)} title={t('Name and rest of this superset')}>
-            <Icon name="link" /><span className="ss-label-name">{meta.name || t('Superset')}</span>
+            <Icon name={meta.combo ? 'list' : 'link'} /><span className="ss-label-name">{meta.name || (meta.combo ? t('Combo') : t('Superset'))}</span>
             {meta.rest > 0 && <span className="dim">· {t('{0} rest after each round', fmtRest(meta.rest))}</span>}
             <Icon name="pencil" />
           </button>
