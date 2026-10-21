@@ -256,6 +256,30 @@ describe('anchor: one compound from the named groups', () => {
   })
 })
 
+describe('one movement once', () => {
+  beforeAll(loadMuscleRoles)
+  // dumbbell romanian deadlift (a glutes exercise), barbell stiff legged deadlift (a hamstrings
+  // one), smith squat, dumbbell bulgarian split squat, lever lying leg curl, barbell hip thrust
+  const DB_RDL = '1459', SLDL = '1543', SMITH_SQUAT = '0770', SPLIT = '2290', CURL = '0586', THRUST = '1409'
+  const groups = ['quads', 'glutes', 'hamstrings']
+  // a week where squats covered the quads but no hinge was done yet
+  const need = { quads: 0.6, glutes: 0.32, hamstrings: 0.34 }
+  const ids = (cands, count = 3) => pickForCoverage(cands.map((id, rank) => ({ id, rank })), { count, groups, need }).map(p => p.id)
+
+  it('two hinges filed under different groups are still one movement', () => {
+    expect(muscleRolesOf(DB_RDL).target).toEqual(muscleRolesOf(SLDL).target)
+    const picks = ids([SMITH_SQUAT, DB_RDL, SLDL, CURL])
+    expect(picks.filter(id => id === DB_RDL || id === SLDL)).toHaveLength(1)
+    expect(picks).toContain(CURL)
+  })
+  it('nor two squats', () => {
+    expect(ids([SMITH_SQUAT, SPLIT, DB_RDL, CURL]).filter(id => id === SMITH_SQUAT || id === SPLIT)).toHaveLength(1)
+  })
+  it('the same movement again only when nothing else is left', () => {
+    expect(ids([DB_RDL, SLDL], 2)).toHaveLength(2)
+  })
+})
+
 describe('calves, forearms and abs', () => {
   // barbell standing, seated and floor calf raises, lever and dumbbell standing calf raises
   const CALF = ['1372', '0088', '1370', '0605', '0417']

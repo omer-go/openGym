@@ -14,7 +14,9 @@
 // Picking. One exercise at a time, the one that adds the most coverage, weighted by need squared
 // (a group with nothing this week beats two half-done ones). Coverage spreads before it stacks:
 // first every group gets one exercise that targets its main muscle, then a second, and so on;
-// groups that have had their week (need under 0.1) wait until every other group is served. Calves,
+// groups that have had their week (need under 0.1) wait until every other group is served. One
+// movement comes once: two compounds with the same targets (a romanian and a stiff-legged
+// deadlift, a squat and a split squat) only when nothing else is left. Calves,
 // forearms and abs take one exercise each until then: a legs day whose thighs are still tired
 // brings the thighs back before a second calf raise.
 //
@@ -241,6 +243,12 @@ const gainOf = (c, covered, cap, weight) => Object.entries(c.credit).reduce((s, 
   Math.min(cap, (covered[g] || 0) + a) - Math.min(cap, covered[g] || 0) - ((covered[g] || 0) >= cap ? OVER * a : 0)), 0)
 const weightFor = need => g => Math.max((need[g] || 0) ** 2, MIN_WEIGHT)
 
+// Two compounds with the same targets are one movement twice, whatever group each is filed
+// under: a romanian deadlift (glutes) and a stiff-legged one (hamstrings) both hinge, a squat
+// and a split squat both work glutes and quads.
+const sameMove = (a, b) => a.compound && b.compound && !!a.parts && !!b.parts
+  && a.parts.length === b.parts.length && a.parts.every(m => b.parts.includes(m))
+
 const distance = (a, b) => {
   let d = 0
   for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) d += Math.abs((a[k] || 0) - (b[k] || 0))
@@ -281,8 +289,11 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     const last = picks.length === count - 1 && !anchored()
     const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : covered[c.group] < cap
       && (relaxed || need[c.group] >= RESTED) && (cap > 1 || c.main) && !full(c)))
-    const distinct = open.filter(c => !picks.some(p => distance(p.credit, c.credit) < ALIKE))
-    const ok = distinct.length ? distinct : open
+    // A movement already in the session is out before a near twin is: a leg curl after a
+    // stiff-legged deadlift covers alike, a romanian deadlift is the same lift again.
+    const fresh = open.filter(c => !picks.some(p => sameMove(p, c)))
+    const distinct = fresh.filter(c => !picks.some(p => distance(p.credit, c.credit) < ALIKE))
+    const ok = distinct.length ? distinct : fresh.length ? fresh : open
     if (!ok.length) {
       if (cap < count) cap++
       else if (!relaxed) { relaxed = true; cap = 1 } else if (!spill) { spill = true; cap = 1 } else break
