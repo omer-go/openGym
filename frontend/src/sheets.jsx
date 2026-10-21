@@ -1286,9 +1286,7 @@ function usageMap(st) {
 }
 // The swap pickers' own scope (#473): exercises sharing the swapped exercise's target muscle.
 const SAME = '≈'
-// `picked` turns it into a multi-select (the combo builder): a tap adds the exercise to the list
-// or takes it off, and the row wears its place in the order instead of the "+".
-function ExercisePicker({ onPick, title, close, like, picked }) {
+function ExercisePicker({ onPick, title, close, like }) {
   const st = useStore(s => s.S)
   const usage = usageMap(st)
   const [q, setQ] = useState('')
@@ -1347,19 +1345,17 @@ function ExercisePicker({ onPick, title, close, like, picked }) {
   const similar = q.trim() && qLate === q && !special && f.length <= shown
     ? similarExercises((profile && !showAll ? all.filter(e => exAvailable(st, e)) : all).filter(e => bp === SAME || !bp || e.bp === bp), q, f, f.length ? 12 : 30)
     : []
-  const pickRow = e => <div key={e.id} className={'item' + (picked?.includes(e.id) ? ' picked' : '')} {...tappable(() => onPick(e))}
-    {...(picked ? { 'aria-pressed': picked.includes(e.id) } : {})}>
+  const pickRow = e => <div key={e.id} className="item" {...tappable(() => onPick(e))}>
         <Thumb ex={e} /><div className="grow"><div className={`tt ${exerciseNameClass(e)}`}>{isFav(st, e.id) && <Icon name="starFill" className="fav-star" />}{exerciseNameFor(e)}</div><div className="ss capitalize">{t(MUSCLE_NAME[e.tg] || e.tg || e.bp)} · {t(e.eq)}</div></div>
         {/* Accent tag = already in a routine/log ("Chosen"); the yellow star by the name = favourite. */}
-        {usage[e.id] && !picked && <span className="tag acc"><Icon name="starFill" /></span>}
-        {picked && <span className={'pick-n' + (picked.includes(e.id) ? ' on' : '')} aria-hidden="true">{picked.includes(e.id) ? picked.indexOf(e.id) + 1 : ''}</span>}
+        {usage[e.id] && <span className="tag acc"><Icon name="starFill" /></span>}
         {/* A "+" glyph reads as "add this now" — it used to just open the same detail sheet as
             tapping the row, so it added nothing until you'd scrolled past the sets/reps config
             and found the real button. Now it does what it looks like: adds with the default
             config right away. Tapping the row itself still opens the detail/config sheet, for
             when you want to set sets/reps before adding. */}
-        {!picked && <button className="iconbtn chev" aria-label={t('Add “{0}”', exerciseNameFor(e))} style={{ padding: 8, margin: -8 }}
-          onClick={ev => { ev.stopPropagation(); onPick(e, true) }}><Icon name="plus" /></button>}
+        <button className="iconbtn chev" aria-label={t('Add “{0}”', exerciseNameFor(e))} style={{ padding: 8, margin: -8 }}
+          onClick={ev => { ev.stopPropagation(); onPick(e, true) }}><Icon name="plus" /></button>
       </div>
   if (byMuscle) return <>
     <div className="row between" style={{ marginBottom: 10 }}><h3>{title || t('Add exercise')}</h3>
@@ -3427,38 +3423,42 @@ function SupersetSettings({ meta, onSave, close }) {
 }
 export const supersetSheet = (meta, onSave) => ui().openSheet(close => <SupersetSettings meta={meta} onSave={onSave} close={close} />)
 
-// A combo, built in two steps: the exercises, tapped in the order you will do them, then its
-// name, how many rounds and the rest between them. Every exercise gets the same number of rounds;
-// what each round asks of it starts from its usual numbers (Workout.jsx, RoutineEdit.jsx).
-// There is no rest between the exercises of a round: that is what makes it a combo.
-function ComboBuilder({ onDone, close }) {
-  const [step, setStep] = useState('pick')
+// A combo: its name, how many rounds and the rest between them, and its exercises, added one at
+// a time from the same Add exercise screen a workout adds from, in the order you will do them.
+// Every exercise gets the same number of rounds; what each round asks of it starts from its usual
+// numbers (Workout.jsx, RoutineEdit.jsx). There is no rest between the exercises of a round: that
+// is what makes it a combo. `routineId` is the routine editor's, for the screen's suggestions.
+function ComboBuilder({ onDone, routineId, close }) {
   const [ids, setIds] = useState([])
+  // Read by the Add exercise screen's pick, which outlives the render that opened it.
+  const idsRef = useRef(ids)
+  idsRef.current = ids
   const [name, setName] = useState('')
   const [rounds, setRounds] = useState(3)
   const [rest, setRest] = useState(0)
   const inputRef = useRef(null)
   const onFocus = useSheetKeyboard(inputRef)
-  const toggle = e => setIds(cur => cur.includes(e.id) ? cur.filter(id => id !== e.id) : [...cur, e.id])
+  const addOne = () => {
+    // One pick, then back here: the row and its "+" both add the exercise as it is.
+    const picker = addExerciseSheet(ex => {
+      picker.close()
+      if (idsRef.current.includes(ex.id)) { ui().toast(t('Already in this combo')); return }
+      setIds(cur => [...cur, ex.id])
+    }, { routineId })
+  }
+  // The first exercise is what a new combo needs first: its screen opens with the builder.
+  // Once: a re-run of the effect (StrictMode) must not stack a second screen.
+  const firstOpen = useRef(false)
+  useEffect(() => { if (!firstOpen.current) { firstOpen.current = true; addOne() } }, [])
   const move = (k, dir) => setIds(cur => {
     const next = [...cur], j = k + dir
     if (j < 0 || j >= next.length) return cur
     ;[next[k], next[j]] = [next[j], next[k]]
     return next
   })
-  if (step === 'pick') return <>
-    <ExercisePicker picked={ids} onPick={toggle} title={t('Pick the exercises, in order')} close={close} />
-    <div className="combo-foot">
-      <Button variant="primary" disabled={ids.length < 2} onClick={() => setStep('setup')}>
-        {ids.length < 2 ? t('Pick at least two') : t('{0} exercises · Next', ids.length)}</Button>
-    </div>
-  </>
   const done = () => { close(); onDone({ ids, name: name.trim().slice(0, SG_NAME_MAX), rounds, rest }) }
   return <>
-    <div className="row between" style={{ marginBottom: 10 }}>
-      <h3>{t('New combo')}</h3>
-      <Button size="sm" variant="ghost" icon="chevronLeft" onClick={() => setStep('pick')}>{t('Exercises')}</Button>
-    </div>
+    <h3 style={{ marginBottom: 10 }}>{t('New combo')}</h3>
     <input ref={inputRef} className="input" type="text" maxLength={SG_NAME_MAX} value={name}
       placeholder={t('Name, e.g. Abs finisher')} onFocus={onFocus} onChange={e => setName(e.target.value)} />
     <div style={{ height: 12 }} />
@@ -3472,7 +3472,7 @@ function ComboBuilder({ onDone, close }) {
           footer: t('Without one, the combo rests as long as its longest exercise rest.'), onDone: setRest })} />
       <Row icon="bolt" title={t('Rest between exercises')} value={t('None')} />
     </div>
-    <h4 className="sec">{t('Order')}</h4>
+    <h4 className="sec">{t('Exercises, in order')}</h4>
     <div className="list">
       {ids.map((id, k) => {
         const ex = exOr(id)
@@ -3485,12 +3485,17 @@ function ComboBuilder({ onDone, close }) {
           <button className="iconbtn" aria-label={t('Remove')} onClick={() => setIds(cur => cur.filter(x => x !== id))}><Icon name="xmark" /></button>
         </div>
       })}
+      <div className="item combo-order" {...tappable(addOne)}>
+        <span className="pick-n" aria-hidden="true"><Icon name="plus" /></span>
+        <div className="grow"><div className="tt" style={{ color: 'var(--acc)' }}>{t('Add exercise')}</div></div>
+      </div>
     </div>
     <div style={{ height: 18 }} />
-    <Button variant="primary" disabled={ids.length < 2} onClick={done}>{t('Add combo')}</Button>
+    <Button variant="primary" disabled={ids.length < 2} onClick={done}>
+      {ids.length < 2 ? t('Add at least two exercises') : t('Add combo')}</Button>
   </>
 }
-export const comboBuilderSheet = onDone => ui().openSheet(close => <ComboBuilder onDone={onDone} close={close} />)
+export const comboBuilderSheet = (onDone, { routineId } = {}) => ui().openSheet(close => <ComboBuilder onDone={onDone} routineId={routineId} close={close} />)
 
 /* Drop-set drops and rest-pause bursts are edited inline on the set row itself (Workout.jsx) —
    no sheet, no timer. A planned exercise (see the "Intensifier" config below) arrives with them

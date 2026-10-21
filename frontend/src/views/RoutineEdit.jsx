@@ -456,7 +456,7 @@ export default function RoutineEdit() {
     const sg = 'sg' + uid()
     edit(x => { x.push(...ids.map(exId => asComboMember({ id: exId, ...defaultConfig(exId) }, { sg, rounds, name, rest }))) })
     toast(t('Combo added to {0}', r.name))
-  })
+  }, { routineId: id })
 
   const units = supersetUnits(r.ex)
   const unitFirst = new Set(units.filter(u => u.length > 1).map(u => u[0]))
