@@ -20,5 +20,25 @@
     "Lower the bar back along the same path.",
     "Keep the bar close to your body throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductors",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

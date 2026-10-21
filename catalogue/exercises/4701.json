@@ -18,5 +18,19 @@
     "Squeeze your glute at the top.",
     "Lower slowly, repeat, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

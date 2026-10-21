@@ -18,5 +18,24 @@
     "Descend until your thighs are at least parallel.",
     "Drive through your heels to stand, keeping your chest up."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

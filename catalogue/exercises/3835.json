@@ -19,5 +19,17 @@
     "Lower down under control.",
     "Rest before the next hold."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "brachioradialis",
+      "wrist-extensors",
+      "rectus-abdominis"
+    ]
+  }
 }

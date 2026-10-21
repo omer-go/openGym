@@ -18,5 +18,16 @@
     "Repeat for the desired number of repetitions, then switch sides."
   ],
   "femaleVariant": "4657",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

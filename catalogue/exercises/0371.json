@@ -19,5 +19,21 @@
     "Immediately lower your body back into a squat position and repeat the jump, switching your feet again.",
     "Continue alternating the position of your feet with each jump for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

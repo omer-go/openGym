@@ -18,5 +18,18 @@
     "Pull yourself back up with your hamstrings and glutes, using the band to help.",
     "Keep your hips extended throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

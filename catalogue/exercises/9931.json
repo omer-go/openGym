@@ -18,5 +18,17 @@
     "Lower slowly until your arms are fully extended.",
     "Keep your chest on the pad and avoid swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

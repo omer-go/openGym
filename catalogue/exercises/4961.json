@@ -18,5 +18,17 @@
     "Lower slowly.",
     "Keep your upper arms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "rear-delt",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

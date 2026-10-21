@@ -17,5 +17,17 @@
     "Press back up until your arms are straight.",
     "Keep your shoulders away from your ears."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -18,5 +18,20 @@
     "Return the bar to the pins.",
     "Stand tall and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

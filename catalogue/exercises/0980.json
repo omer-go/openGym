@@ -20,5 +20,19 @@
     "Continue alternating legs for the desired number of repetitions."
   ],
   "textSource": "exercisedb",
-  "maleVariant": "4035"
+  "maleVariant": "4035",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

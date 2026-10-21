@@ -20,5 +20,34 @@
     "Keep your back flat, then pull the handle to your ribs.",
     "Lower the handle and stand tall again. Finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

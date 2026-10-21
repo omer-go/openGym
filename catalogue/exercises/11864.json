@@ -17,5 +17,20 @@
     "Finish the curl, then lower slowly.",
     "Complete your reps and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

@@ -18,5 +18,13 @@
     "Lower slowly, finish the reps, then switch legs."
   ],
   "femaleVariant": "2422",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

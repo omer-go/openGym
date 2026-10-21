@@ -19,5 +19,20 @@
     "Lower your hips slowly without letting the ball drift away.",
     "Repeat for the planned reps, keeping the ball steady."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

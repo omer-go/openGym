@@ -17,5 +17,17 @@
     "Repeat for the desired number of repetitions, then switch arms."
   ],
   "femaleVariant": "3042",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

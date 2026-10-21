@@ -25,5 +25,10 @@
     "secondaries": []
   },
   "femaleVariant": "3106",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

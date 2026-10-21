@@ -18,5 +18,19 @@
     "Pause briefly at full extension.",
     "Return with control and repeat, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

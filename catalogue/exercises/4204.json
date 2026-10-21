@@ -19,5 +19,18 @@
     "Pull back up.",
     "Keep hips extended."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

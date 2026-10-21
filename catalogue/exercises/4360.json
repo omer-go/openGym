@@ -17,5 +17,17 @@
     "Press back up.",
     "Keep your back close to the bench."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

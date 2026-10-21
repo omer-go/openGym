@@ -18,5 +18,24 @@
     "At the top, rise onto your toes for a calf raise.",
     "Lower your heels and repeat with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads",
+      "calves"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

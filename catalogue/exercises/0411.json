@@ -20,5 +20,26 @@
     "Repeat for the desired number of repetitions, then switch legs."
   ],
   "femaleVariant": "3521",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "hip-flexors",
+      "adductors"
+    ]
+  }
 }

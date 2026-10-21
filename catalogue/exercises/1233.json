@@ -17,5 +17,18 @@
     "Lower it slowly and repeat with the other arm.",
     "Keep your upper arms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

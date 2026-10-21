@@ -17,5 +17,19 @@
     "Straighten your arm back to the top.",
     "Switch sides after your set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

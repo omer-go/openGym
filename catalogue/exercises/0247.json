@@ -19,5 +19,10 @@
     "Pause for a moment at the top, then inhale and slowly lower the bar back to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

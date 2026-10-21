@@ -18,5 +18,17 @@
     "Continue alternating arms for the desired number of repetitions."
   ],
   "femaleVariant": "3039",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

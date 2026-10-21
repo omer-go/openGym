@@ -18,5 +18,19 @@
     "Squeeze your glutes at the top.",
     "Lower slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

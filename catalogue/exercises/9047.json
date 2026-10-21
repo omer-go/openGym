@@ -19,5 +19,17 @@
     "Extend the leg slowly back out.",
     "Finish the reps and switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

@@ -19,5 +19,16 @@
     "Repeat for the planned reps."
   ],
   "femaleVariant": "2820",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

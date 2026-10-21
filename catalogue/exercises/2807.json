@@ -20,5 +20,22 @@
     "Squeeze your glutes at the top."
   ],
   "textSource": "opengym",
-  "femaleVariant": "2808"
+  "femaleVariant": "2808",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductors",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

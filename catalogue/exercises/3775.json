@@ -19,5 +19,25 @@
     "Push through your front foot to rise.",
     "Finish your reps, then switch legs and anchor side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -17,5 +17,17 @@
     "Squeeze at the top, then lower slowly to the start.",
     "Repeat for the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

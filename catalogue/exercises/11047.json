@@ -17,5 +17,17 @@
     "Pause at the top, then lower with control.",
     "Finish your reps, then roll over and do the other side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

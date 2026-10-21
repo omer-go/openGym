@@ -27,5 +27,16 @@
     }
   },
   "femaleVariant": "3614",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

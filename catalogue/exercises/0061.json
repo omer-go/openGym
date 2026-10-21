@@ -17,5 +17,14 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2692",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

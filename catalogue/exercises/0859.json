@@ -18,5 +18,18 @@
     "Pause for a moment at the top, then slowly lower the weight back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ],
+    "synergists": [
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt"
+    ]
+  }
 }

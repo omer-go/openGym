@@ -20,5 +20,15 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "4032",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-max",
+      "calves"
+    ]
+  }
 }

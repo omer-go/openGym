@@ -17,5 +17,17 @@
     "Squeeze at the top, then lower slowly.",
     "Do not lift your elbows off the pad or let the weight drop."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -19,5 +19,18 @@
     "Hold for 20-60 seconds, then slide back up the wall to finish."
   ],
   "femaleVariant": "6696",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "calves"
+    ]
+  }
 }

@@ -19,5 +19,20 @@
     "Drive your hips forward to stand tall again.",
     "Keep your neck neutral all the way."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

@@ -18,5 +18,18 @@
     "Squeeze your glutes at the top.",
     "Lower with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

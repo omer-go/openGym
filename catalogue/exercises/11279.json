@@ -17,5 +17,19 @@
     "Squeeze your triceps at the top.",
     "Lower slowly, finish your reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

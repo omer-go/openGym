@@ -17,5 +17,14 @@
     "Release with control.",
     "Repeat for reps, then switch hands."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "brachioradialis",
+      "wrist-extensors"
+    ]
+  }
 }

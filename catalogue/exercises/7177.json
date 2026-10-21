@@ -17,5 +17,10 @@
     "Lower your heel slowly for a full stretch.",
     "Finish all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

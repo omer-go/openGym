@@ -18,5 +18,19 @@
     "Keep your hops small and rhythmic.",
     "Continue for 20-30 seconds."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "synergists": [
+      "glute-max",
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-med",
+      "tibialis-anterior"
+    ]
+  }
 }

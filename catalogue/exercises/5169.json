@@ -18,5 +18,16 @@
     "Return slowly to the start without leaning.",
     "Finish your reps, then turn around and switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

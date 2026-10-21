@@ -19,5 +19,19 @@
     "Rebound right away into the next hop.",
     "Complete your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "synergists": [
+      "glute-max",
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-med",
+      "tibialis-anterior"
+    ]
+  }
 }

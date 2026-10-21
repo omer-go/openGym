@@ -18,5 +18,18 @@
     "Catch yourself with your hands at the bottom.",
     "Push back up and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

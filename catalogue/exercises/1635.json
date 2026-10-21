@@ -20,5 +20,21 @@
     "Repeat for the desired number of repetitions.",
     "Switch arms and repeat the exercise."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps",
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

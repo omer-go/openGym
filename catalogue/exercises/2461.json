@@ -17,5 +17,17 @@
     "Pause at the top, then lower slowly.",
     "Do all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

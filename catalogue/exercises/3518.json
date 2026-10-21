@@ -19,5 +19,10 @@
     "Complete your reps, then switch legs."
   ],
   "femaleVariant": "3519",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

@@ -19,5 +19,21 @@
     "Drive your hips forward to stand, keeping your back flat."
   ],
   "textSource": "opengym",
-  "maleVariant": "3340"
+  "maleVariant": "3340",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

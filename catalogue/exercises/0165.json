@@ -18,5 +18,19 @@
     "Inhale and slowly begin to lower the cable rope attachment back to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

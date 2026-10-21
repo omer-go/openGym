@@ -17,5 +17,14 @@
     "Hold the press for 2-3 seconds.",
     "Repeat for reps, then switch hands."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "brachioradialis",
+      "wrist-extensors"
+    ]
+  }
 }

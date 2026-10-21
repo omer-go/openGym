@@ -19,5 +19,29 @@
     "Continue alternating sides for the desired number of repetitions."
   ],
   "femaleVariant": "2549",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

@@ -20,5 +20,25 @@
     "Repeat with the other leg.",
     "Keep your front knee over your ankle and the bag tight to your body."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

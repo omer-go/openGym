@@ -20,5 +20,25 @@
     "Continue for the desired number of repetitions."
   ],
   "textSource": "exercisedb",
-  "maleVariant": "2795"
+  "maleVariant": "2795",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

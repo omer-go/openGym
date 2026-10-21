@@ -18,5 +18,18 @@
     "Pause at the top.",
     "Lower slowly, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps",
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

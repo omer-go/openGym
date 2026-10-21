@@ -20,5 +20,36 @@
     "Pause for a moment at the top, then slowly release the tension and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

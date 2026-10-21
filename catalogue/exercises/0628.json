@@ -17,5 +17,18 @@
     "Follow with your left foot, stepping to the side to return to the starting position.",
     "Repeat for the desired number of repetitions, then switch sides."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads",
+      "calves"
+    ]
+  }
 }

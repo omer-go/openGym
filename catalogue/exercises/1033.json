@@ -16,5 +16,16 @@
     "Squeeze the triceps for a second.",
     "Return slowly without lifting your shoulders."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

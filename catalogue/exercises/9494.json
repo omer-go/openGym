@@ -18,5 +18,21 @@
     "Squeeze your glutes and drive your hips forward to stand.",
     "Repeat with smooth control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

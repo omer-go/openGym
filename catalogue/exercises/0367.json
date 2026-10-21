@@ -18,5 +18,10 @@
     "Repeat for the desired number of repetitions, then switch to the other arm."
   ],
   "femaleVariant": "2687",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -19,5 +19,10 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2676",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

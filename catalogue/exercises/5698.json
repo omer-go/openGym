@@ -18,5 +18,13 @@
     "Alternate steps, keeping your heels lifted.",
     "Walk for the set distance, then lower your heels."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

@@ -17,5 +17,11 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2632",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

@@ -18,5 +18,20 @@
     "Pause for a moment, then push yourself back up to the starting position by extending your elbows.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-minor",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

@@ -18,5 +18,20 @@
     "Lower it and lift the other foot, keeping your hips level.",
     "Continue alternating at a steady pace, then lower your hips."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

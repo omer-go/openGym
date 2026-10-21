@@ -19,5 +19,24 @@
     "Lower the dumbbell toward the floor with a flat back.",
     "Squeeze your glute to stand back up, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

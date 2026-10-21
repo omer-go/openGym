@@ -18,5 +18,15 @@
     "Lower back down with control.",
     "Keep your neck neutral."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus",
+      "hamstrings"
+    ]
+  }
 }

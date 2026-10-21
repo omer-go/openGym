@@ -19,5 +19,21 @@
     "Squeeze your biceps at the top of the movement, then slowly lower the rope handle back to the starting position.",
     "Repeat for the desired number of repetitions, then switch arms."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

@@ -18,5 +18,20 @@
     "Squeeze your glutes at the top.",
     "Lower slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

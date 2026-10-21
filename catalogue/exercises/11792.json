@@ -17,5 +17,20 @@
     "Squeeze your biceps and hold the position.",
     "Hold for 20-30 seconds, then rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

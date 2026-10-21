@@ -30,5 +30,20 @@
     ]
   },
   "femaleVariant": "2575",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-minor",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

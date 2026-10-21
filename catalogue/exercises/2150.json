@@ -19,5 +19,17 @@
     "Complete the reps, then switch sides."
   ],
   "femaleVariant": "5780",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

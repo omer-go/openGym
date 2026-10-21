@@ -18,5 +18,17 @@
     "Lower slowly without twisting your torso.",
     "Finish your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

@@ -18,5 +18,18 @@
     "Bring the trailing foot in without letting the feet touch.",
     "Take 10-15 steps one way, then walk back the other way."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads",
+      "calves"
+    ]
+  }
 }

@@ -18,5 +18,10 @@
     "Pause, then lower slowly.",
     "Use a light weight. Finish the reps, then switch feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "tibialis-anterior"
+    ]
+  }
 }

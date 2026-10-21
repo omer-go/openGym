@@ -18,5 +18,17 @@
     "Extend slowly.",
     "Repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

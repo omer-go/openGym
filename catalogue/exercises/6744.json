@@ -18,5 +18,18 @@
     "Take several steps one way, then return the other way.",
     "Keep your knees pushed out."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads",
+      "calves"
+    ]
+  }
 }

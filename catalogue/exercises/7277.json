@@ -19,5 +19,20 @@
     "Return slowly and repeat."
   ],
   "textSource": "opengym",
-  "femaleVariant": "3236"
+  "femaleVariant": "3236",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

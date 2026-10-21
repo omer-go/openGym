@@ -18,5 +18,25 @@
     "Lower back down with control to kneeling.",
     "Alternate the leading leg on each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

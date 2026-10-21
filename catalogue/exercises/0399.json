@@ -17,5 +17,17 @@
     "Pause for a moment at the top, then slowly rotate your forearm back to the starting position.",
     "Repeat for the desired number of repetitions, then switch to the other arm."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

@@ -18,5 +18,10 @@
     "Lower slowly under control.",
     "Complete your reps and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-extensors"
+    ]
+  }
 }

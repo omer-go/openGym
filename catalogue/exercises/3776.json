@@ -19,5 +19,19 @@
     "Step back in under control.",
     "Repeat for your set, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads",
+      "calves"
+    ]
+  }
 }

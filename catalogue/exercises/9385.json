@@ -19,5 +19,23 @@
     "Press the bar back up.",
     "Use a light weight and control the path."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular",
+      "pec-major-sternal"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors"
+    ]
+  }
 }

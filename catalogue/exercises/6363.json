@@ -17,5 +17,10 @@
     "Hold for a second.",
     "Lower under control and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-extensors"
+    ]
+  }
 }

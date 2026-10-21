@@ -19,5 +19,24 @@
     "Return to standing.",
     "Switch legs after the set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

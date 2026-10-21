@@ -20,5 +20,25 @@
     "Bring your hands back to your chest.",
     "Finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

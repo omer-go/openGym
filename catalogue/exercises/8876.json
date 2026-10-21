@@ -19,5 +19,17 @@
     "Lower your legs slowly until they are almost straight.",
     "Keep your lower back flat on the floor throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hip-flexors"
+    ],
+    "synergists": [
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

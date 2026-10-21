@@ -18,5 +18,16 @@
     "Repeat with the other arm.",
     "Keep your core braced."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

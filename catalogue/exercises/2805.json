@@ -31,5 +31,24 @@
     ]
   },
   "textSource": "exercisedb",
-  "maleVariant": "2806"
+  "maleVariant": "2806",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

@@ -17,5 +17,16 @@
     "Squeeze your inner thigh.",
     "Return slowly, finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

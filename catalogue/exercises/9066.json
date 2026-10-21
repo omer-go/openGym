@@ -19,5 +19,19 @@
     "Keep your chest up and your knee over your foot.",
     "Repeat the pattern, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "synergists": [
+      "glute-max",
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-med",
+      "tibialis-anterior"
+    ]
+  }
 }

@@ -18,5 +18,17 @@
     "Press back up to straight arms.",
     "Avoid shrugging your shoulders."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

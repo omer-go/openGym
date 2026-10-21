@@ -18,5 +18,10 @@
     "Hold briefly at full squeeze.",
     "Release slowly, finish your reps, then switch hands."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

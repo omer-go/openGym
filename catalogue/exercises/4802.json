@@ -18,5 +18,13 @@
     "Keep your core tight and your gaze forward.",
     "Walk for 20-30 steps, rest, and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

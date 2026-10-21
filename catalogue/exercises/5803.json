@@ -18,5 +18,19 @@
     "Pause at the top.",
     "Lower your legs slowly without swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

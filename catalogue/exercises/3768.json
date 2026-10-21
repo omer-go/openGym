@@ -19,5 +19,20 @@
     "Lower the weight slowly until your knees are bent about 90 degrees.",
     "Keep your hips down and your back flat on the pad."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "calves"
+    ]
+  }
 }

@@ -16,5 +16,20 @@
     "Pause for a moment at the top, then slowly lower the dumbbell back to the starting position.",
     "Repeat for the desired number of repetitions, then switch arms."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

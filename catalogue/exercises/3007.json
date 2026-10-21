@@ -17,5 +17,10 @@
     "Repeat for the desired number of repetitions, then switch legs."
   ],
   "femaleVariant": "3008",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

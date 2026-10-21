@@ -18,5 +18,16 @@
     "Hold the squeeze briefly at the top.",
     "Lower with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

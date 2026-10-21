@@ -18,5 +18,19 @@
     "Lower slowly until your arms are straight.",
     "Keep your upper arms still and avoid swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

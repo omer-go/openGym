@@ -17,5 +17,16 @@
     "Pause briefly.",
     "Open slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

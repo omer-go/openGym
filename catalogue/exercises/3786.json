@@ -20,5 +20,36 @@
     "Stand up and, at the top, pull the handle to your ribs with your elbow close to your body, then let it return slowly.",
     "Finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

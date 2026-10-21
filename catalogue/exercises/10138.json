@@ -17,5 +17,18 @@
     "Hold the position for 20-30 seconds, breathing steadily.",
     "Keep your shoulders relaxed and elbows pinned, then rest and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

@@ -16,5 +16,13 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2669",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

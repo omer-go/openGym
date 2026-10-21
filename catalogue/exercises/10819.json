@@ -18,5 +18,13 @@
     "Lower the heel slowly.",
     "Finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

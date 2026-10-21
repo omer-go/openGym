@@ -18,5 +18,20 @@
     "Drive your hips forward to stand.",
     "Keep your knees slightly bent throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

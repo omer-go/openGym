@@ -18,5 +18,17 @@
     "Hold for 5-10 seconds.",
     "Lower down and rest before the next hang."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "brachioradialis",
+      "wrist-extensors",
+      "rectus-abdominis"
+    ]
+  }
 }

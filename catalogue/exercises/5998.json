@@ -19,5 +19,16 @@
     "Lower slowly and repeat, then switch sides."
   ],
   "femaleVariant": "5999",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

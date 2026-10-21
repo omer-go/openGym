@@ -18,5 +18,17 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "11442",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

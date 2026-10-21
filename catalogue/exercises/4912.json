@@ -19,5 +19,17 @@
     "Extend your legs slowly back out.",
     "Keep your hips high throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

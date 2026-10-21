@@ -18,5 +18,17 @@
     "Return your leg to the starting position and repeat the push-up, alternating legs with each repetition.",
     "Continue alternating leg kicks and push-ups for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

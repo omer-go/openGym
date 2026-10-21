@@ -17,5 +17,14 @@
     "Hold the contraction for a second, then slowly release and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "brachioradialis",
+      "wrist-extensors"
+    ]
+  }
 }

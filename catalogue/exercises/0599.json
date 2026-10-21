@@ -28,5 +28,13 @@
     ]
   },
   "femaleVariant": "2257",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

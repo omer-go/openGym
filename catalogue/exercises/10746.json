@@ -18,5 +18,10 @@
     "Lower slowly.",
     "Switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

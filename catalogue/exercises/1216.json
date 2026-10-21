@@ -17,5 +17,10 @@
     "Press up as high as you can onto your toes.",
     "Pause, lower slowly, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

@@ -18,5 +18,18 @@
     "Lower slowly in that reverse grip.",
     "Rotate your palms back up at the bottom."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

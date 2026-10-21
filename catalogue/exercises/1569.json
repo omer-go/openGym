@@ -19,5 +19,24 @@
     "Stop when your torso is about parallel to the floor.",
     "Squeeze your glute to return upright, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

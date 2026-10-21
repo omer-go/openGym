@@ -19,5 +19,17 @@
     "Press up to straight arms.",
     "Make sure the chairs cannot slide."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

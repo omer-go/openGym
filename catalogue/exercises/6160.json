@@ -19,5 +19,20 @@
     "Lower slowly.",
     "Keep your ribs down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

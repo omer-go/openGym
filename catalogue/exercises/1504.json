@@ -17,5 +17,14 @@
     "Extend your arms back up against the band.",
     "Keep your upper arms still throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

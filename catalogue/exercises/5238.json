@@ -19,5 +19,29 @@
     "Push back to standing while lowering the ball.",
     "Alternate legs on each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

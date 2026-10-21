@@ -19,5 +19,25 @@
     "Stand back up while holding the band steady.",
     "Complete your reps, then turn around and repeat on the other side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -19,5 +19,17 @@
     "Pull the heel back toward your glutes.",
     "Complete your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

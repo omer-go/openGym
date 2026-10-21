@@ -18,5 +18,13 @@
     "Pause at the top.",
     "Lower slowly, then switch legs after your set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

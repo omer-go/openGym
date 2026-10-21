@@ -20,5 +20,21 @@
     "Alternate legs on each rep, keeping your chest tall."
   ],
   "textSource": "opengym",
-  "femaleVariant": "2798"
+  "femaleVariant": "2798",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

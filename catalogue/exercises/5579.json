@@ -17,5 +17,10 @@
     "Curl your wrists up as high as you can.",
     "Keep your forearms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

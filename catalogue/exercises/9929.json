@@ -19,5 +19,21 @@
     "Press back up through the working leg.",
     "Do your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

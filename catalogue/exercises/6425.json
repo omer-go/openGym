@@ -18,5 +18,20 @@
     "Lower until you feel your hamstrings stretch.",
     "Squeeze your glutes to return upright."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

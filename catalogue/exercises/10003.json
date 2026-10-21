@@ -18,5 +18,10 @@
     "Pause, then return slowly.",
     "Complete all reps, then switch feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "tibialis-anterior"
+    ]
+  }
 }

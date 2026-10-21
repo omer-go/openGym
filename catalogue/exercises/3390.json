@@ -19,5 +19,13 @@
     "Lower slowly into the deep stretch.",
     "Keep your knees almost straight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

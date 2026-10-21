@@ -19,5 +19,19 @@
     "Lower slowly until your arms are straight."
   ],
   "femaleVariant": "2953",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps",
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

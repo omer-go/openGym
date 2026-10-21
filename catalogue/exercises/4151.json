@@ -18,5 +18,14 @@
     "Extend your elbows to press the weights back up.",
     "Keep your elbows pointed forward and avoid flaring them."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

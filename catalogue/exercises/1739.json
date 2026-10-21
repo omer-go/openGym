@@ -16,5 +16,18 @@
     "Pause for a moment at the top, then slowly lower the dumbbells back to the starting position.",
     "Repeat with the other arm, alternating sides with each repetition."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "rear-delt",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

@@ -19,5 +19,19 @@
     "Lower slowly without swinging.",
     "Keep your hands planted and your core tight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

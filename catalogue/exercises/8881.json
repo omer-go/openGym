@@ -18,5 +18,17 @@
     "Keep your elbow still and move only the forearm.",
     "Complete your reps and switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

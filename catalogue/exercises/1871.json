@@ -17,5 +17,20 @@
     "Squeeze your triceps.",
     "Return slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-minor",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

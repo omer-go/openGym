@@ -19,5 +19,17 @@
     "Repeat smoothly.",
     "Keep your elbows pinned."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

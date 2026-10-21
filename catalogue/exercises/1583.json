@@ -18,5 +18,21 @@
     "Keep your chest pressed against the pad.",
     "Drive through your heels to stand back up."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

@@ -24,5 +24,10 @@
     ],
     "secondaries": []
   },
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

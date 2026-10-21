@@ -20,5 +20,21 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "3067",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ]
+  }
 }

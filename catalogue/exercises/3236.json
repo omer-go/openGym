@@ -20,5 +20,20 @@
     "Repeat for the desired number of repetitions."
   ],
   "textSource": "exercisedb",
-  "maleVariant": "7277"
+  "maleVariant": "7277",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

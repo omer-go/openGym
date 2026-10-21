@@ -20,5 +20,24 @@
     "As you press the dumbbells up, twist your wrists back to the starting position with palms facing away from you.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular",
+      "pec-major-sternal",
+      "obliques"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors"
+    ]
+  }
 }

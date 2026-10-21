@@ -17,5 +17,10 @@
     "Pause briefly at the top.",
     "Lower your toes slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "tibialis-anterior"
+    ]
+  }
 }

@@ -19,5 +19,10 @@
     "Lower slowly.",
     "Finish the reps, then switch feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "tibialis-anterior"
+    ]
+  }
 }

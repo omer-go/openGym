@@ -19,5 +19,24 @@
     "Squeeze the glute to stand back up.",
     "Finish your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

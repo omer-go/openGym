@@ -17,5 +17,14 @@
     "Repeat with the other arm, alternating sides for the desired number of repetitions."
   ],
   "femaleVariant": "3940",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

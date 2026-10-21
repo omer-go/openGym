@@ -18,5 +18,19 @@
     "Land softly.",
     "Repeat quickly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "synergists": [
+      "glute-max",
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-med",
+      "tibialis-anterior"
+    ]
+  }
 }

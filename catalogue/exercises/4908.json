@@ -18,5 +18,10 @@
     "Pause at the top, then lower slowly.",
     "Keep your forearms still on the bench."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-extensors"
+    ]
+  }
 }

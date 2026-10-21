@@ -18,5 +18,19 @@
     "Complete your reps, then switch arms or alternate."
   ],
   "femaleVariant": "4337",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "wrist-extensors",
+      "erector-spinae"
+    ]
+  }
 }

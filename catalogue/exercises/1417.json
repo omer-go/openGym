@@ -20,5 +20,13 @@
     "Repeat the movement with your left leg, alternating sides for the desired number of repetitions."
   ],
   "femaleVariant": "2825",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

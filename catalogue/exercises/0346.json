@@ -17,5 +17,14 @@
     "Repeat for the desired number of repetitions, then switch arms."
   ],
   "femaleVariant": "2587",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

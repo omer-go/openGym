@@ -16,5 +16,10 @@
     "Hold for a second and squeeze your thigh.",
     "Lower slowly, then switch legs after your reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

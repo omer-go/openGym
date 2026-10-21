@@ -26,5 +26,10 @@
       "hamstring": 0
     }
   },
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

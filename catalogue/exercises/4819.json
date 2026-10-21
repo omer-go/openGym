@@ -18,5 +18,17 @@
     "Keep your hips high the whole time.",
     "Extend your legs slowly to return."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

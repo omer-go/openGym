@@ -17,5 +17,14 @@
     "Repeat for the desired number of repetitions, then switch to the other hand."
   ],
   "femaleVariant": "3076",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "brachioradialis",
+      "wrist-extensors"
+    ]
+  }
 }

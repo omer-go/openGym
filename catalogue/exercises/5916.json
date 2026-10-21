@@ -17,5 +17,16 @@
     "Slowly bend your elbows to lower it behind your head.",
     "Keep your torso upright and your upper arms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Seeds "muscleRoles" from the templates in roles/patterns.mjs:
 //
-//   node scripts/catalogue/seed-roles.mjs            write roles into the shoulder, chest and back exercises
+//   node scripts/catalogue/seed-roles.mjs            write roles into the exercises in scope below
 //   node scripts/catalogue/seed-roles.mjs --dry      only print what it would do
 //
 // An exercise that already has "muscleRoles" is never touched: once a person has edited one, the
@@ -16,13 +16,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const DIR = path.join(ROOT, 'catalogue/exercises')
 const dry = process.argv.includes('--dry')
 
-// Exercises that are lifted, not stretched: the shoulders (the pilot), then the chest and back,
-// where jumping and throwing work (plyometrics) is a push-up or a press too. Neck work has its
-// own templates still to write.
+// Exercises that are lifted, not stretched: the shoulders (the pilot), then the chest, back, arms
+// and legs, where jumping and throwing work (plyometrics) is a push-up, a press or a squat too.
+// Neck work has its own templates still to write.
 const LIFTED = ['strength', 'calisthenics', 'olympic', 'isometric', 'rehab']
 const inScope = e => !e.variantOf && !/\bneck\b/.test(e.name) && (
   ((e.bodyPart === 'shoulders' || ['delts', 'traps'].includes(e.target)) && LIFTED.includes(e.category)) ||
-  (['chest', 'back'].includes(e.bodyPart) && [...LIFTED, 'plyometrics'].includes(e.category)))
+  (['chest', 'back', 'upper arms', 'lower arms', 'upper legs', 'lower legs'].includes(e.bodyPart) && [...LIFTED, 'plyometrics'].includes(e.category)))
 
 const review = [], look = []
 let written = 0, kept = 0

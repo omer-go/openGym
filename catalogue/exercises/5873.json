@@ -18,5 +18,14 @@
     "Keep your elbows from flaring."
   ],
   "femaleVariant": "3646",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

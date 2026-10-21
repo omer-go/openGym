@@ -19,5 +19,19 @@
     "Keep your chest up and arms moving naturally.",
     "Work at a fast but controlled pace for the set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "synergists": [
+      "glute-max",
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-med",
+      "tibialis-anterior"
+    ]
+  }
 }

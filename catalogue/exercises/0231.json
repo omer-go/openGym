@@ -18,5 +18,19 @@
     "Repeat for the desired number of repetitions, then switch sides and perform the exercise with your left arm."
   ],
   "femaleVariant": "2696",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum"
+    ]
+  }
 }

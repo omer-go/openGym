@@ -19,5 +19,14 @@
     "Lower under control and repeat, then switch hands."
   ],
   "femaleVariant": "3756",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "brachioradialis",
+      "wrist-extensors"
+    ]
+  }
 }

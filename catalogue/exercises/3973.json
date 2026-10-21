@@ -18,5 +18,13 @@
     "Pause for a moment at the top.",
     "Lower your heel slowly below the step level, then repeat and switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

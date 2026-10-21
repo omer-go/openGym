@@ -18,5 +18,22 @@
     "Lower it behind your head for a triceps extension.",
     "Extend, return to the front, and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

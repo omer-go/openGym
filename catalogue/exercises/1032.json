@@ -18,5 +18,17 @@
     "Keep your shoulders relaxed and avoid swinging."
   ],
   "femaleVariant": "11658",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

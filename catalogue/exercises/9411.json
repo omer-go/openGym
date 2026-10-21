@@ -19,5 +19,13 @@
     "Raise the other heel.",
     "Keep alternating without locking your knees."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

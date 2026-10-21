@@ -17,5 +17,17 @@
     "Slowly return to the starting position by sliding your foot back to the initial position.",
     "Repeat the movement for the desired number of repetitions, then switch legs."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

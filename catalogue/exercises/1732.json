@@ -19,5 +19,28 @@
     "Pause for a moment, then straighten your arms to return to the starting position.",
     "Repeat the movement for the desired number of repetitions, then switch legs and repeat."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "triceps",
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

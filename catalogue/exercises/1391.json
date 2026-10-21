@@ -25,5 +25,10 @@
     }
   },
   "femaleVariant": "2212",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ]
+  }
 }

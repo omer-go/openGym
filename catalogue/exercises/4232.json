@@ -18,5 +18,10 @@
     "Lower slowly.",
     "Keep your forearms still on your thighs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-extensors"
+    ]
+  }
 }

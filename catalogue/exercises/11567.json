@@ -18,5 +18,20 @@
     "Squeeze your glutes to raise your legs until they line up with your torso.",
     "Lower slowly and avoid swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "adductor-magnus",
+      "calves"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

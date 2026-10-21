@@ -19,5 +19,23 @@
     "Push the barbell back up to the starting position, fully extending your arms.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-clavicular",
+      "pec-major-sternal"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "rhomboids",
+      "wrist-flexors"
+    ]
+  }
 }

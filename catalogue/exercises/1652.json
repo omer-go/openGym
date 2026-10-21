@@ -18,5 +18,20 @@
     "While performing the bicep curl, raise one leg off the ground and hold it in the air for the duration of the exercise.",
     "Repeat for the desired number of repetitions, then switch legs and repeat."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

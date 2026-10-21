@@ -18,5 +18,10 @@
     "Lower slowly.",
     "Keep your arms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

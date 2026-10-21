@@ -17,5 +17,10 @@
     "Squeeze at the top.",
     "Lower with control and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ]
+  }
 }

@@ -18,5 +18,13 @@
     "Press up onto your toes as high as you can.",
     "Lower slowly, finish the reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

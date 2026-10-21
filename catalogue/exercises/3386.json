@@ -17,5 +17,10 @@
     "Lower slowly back to the start.",
     "Avoid swinging or lifting your hips."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

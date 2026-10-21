@@ -115,6 +115,68 @@ export const PATTERNS = {
   'reverse-hyper': { ...P('glute-max, erector-spinae', 'hamstrings, adductor-magnus, quadratus-lumborum', '', 'wrist-flexors'), trunk: 'none' },
   'good-morning': { ...P('erector-spinae', 'glute-max, hamstrings, adductor-magnus, quadratus-lumborum', '', 'rectus-abdominis, obliques'), trunk: 'none' },
   'hinge': { ...P('hamstrings, glute-max', 'adductor-magnus, erector-spinae', '', 'quadratus-lumborum, rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
+
+  // Legs. A squat, lunge or press is for the quads and glutes together; a knee bent under load
+  // (hack squat, leg extension) leans to the quads, a hip driven through (bridge, kickback) to
+  // the glutes. The hamstrings and calves cross two joints and steady the knee in a squat.
+  'squat': { ...P('quads, glute-max', 'adductor-magnus, calves', 'hamstrings', 'erector-spinae, rectus-abdominis, obliques, glute-med'), trunk: 'none' },
+  'lunge': { ...P('quads, glute-max', 'adductor-magnus, glute-med, calves', 'hamstrings', 'adductors, erector-spinae, obliques, quadratus-lumborum'), trunk: 'none' },
+  'leg-press': { ...P('quads, glute-max', 'adductor-magnus', 'hamstrings', 'calves'), trunk: 'none' },
+  'hack-squat': { ...P('quads', 'glute-max, adductor-magnus', 'hamstrings', 'calves, erector-spinae'), trunk: 'none' },
+  'leg-extension': { ...P('quads'), trunk: 'none' },
+  // Knees forward, hips straight: the thighs take the whole lean back.
+  'sissy-squat': { ...P('quads', '', '', 'glute-max, rectus-abdominis, calves'), trunk: 'none' },
+  'wall-sit': { ...P('quads', 'glute-max, adductor-magnus', '', 'calves, rectus-abdominis'), trunk: 'none' },
+  'jump': { ...P('quads, glute-max', 'calves, adductor-magnus, hamstrings', '', 'rectus-abdominis, obliques, erector-spinae'), trunk: 'none' },
+  // Pushing a sled or a wall, leaning in: the legs drive, the arms and trunk only hold.
+  'sled-push': { ...P('quads, glute-max', 'calves, hamstrings, adductor-magnus', '', 'triceps, front-delt, rectus-abdominis, obliques, erector-spinae'), trunk: 'none' },
+  'leg-curl': { ...P('hamstrings', 'calves'), trunk: 'none' },
+  // Curling the body up or lowering it from the knees: the hips are held straight throughout.
+  'nordic': { ...P('hamstrings', 'calves', '', 'glute-max, erector-spinae, rectus-abdominis'), trunk: 'none' },
+  'deadlift': { ...P('glute-max, hamstrings', 'quads, adductor-magnus, erector-spinae', '', 'upper-trap, middle-trap, lats, rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
+  'hip-thrust': { ...P('glute-max', 'hamstrings, adductor-magnus', '', 'quads, rectus-abdominis, obliques, glute-med'), trunk: 'none' },
+  'glute-kickback': { ...P('glute-max', 'hamstrings', '', 'glute-med, erector-spinae, rectus-abdominis, obliques'), trunk: 'none' },
+  // A back extension rounded at the hips rather than the spine, as the glute versions are done.
+  'glute-hyper': { ...P('glute-max', 'hamstrings, erector-spinae, adductor-magnus'), trunk: 'none' },
+  'swing': { ...P('glute-max, hamstrings', 'adductor-magnus, erector-spinae, quads', '', 'front-delt, rectus-abdominis, obliques, wrist-flexors'), trunk: 'none' },
+  'abduction': { ...P('glute-med', 'glute-max', '', 'obliques, quadratus-lumborum'), trunk: 'none' },
+  // Stepping sideways against a band, knees bent: the standing leg holds a quarter squat.
+  'side-walk': { ...P('glute-med', 'glute-max', '', 'quads, calves, obliques'), trunk: 'none' },
+  'leg-adduction': { ...P('adductors', 'adductor-magnus', '', 'obliques'), trunk: 'none' },
+  'hip-flexion': { ...P('hip-flexors', 'quads', '', 'rectus-abdominis, obliques'), trunk: 'none' },
+  'calf-raise': { ...P('calves'), trunk: 'light' },
+  // On a machine or a leg press the body is held, nothing else balances.
+  'calf-press': { ...P('calves'), trunk: 'none' },
+  // Springing off the balls of the feet: the knees and hips stay nearly straight.
+  'hop': { ...P('calves', 'quads, glute-max', '', 'tibialis-anterior, rectus-abdominis, glute-med'), trunk: 'none' },
+  'tibialis-raise': { ...P('tibialis-anterior'), trunk: 'none' },
+
+  // Arms. A curl with the palms up is for the biceps; with the thumbs up (hammer) for the
+  // brachialis and brachioradialis, which take over further still with the palms down (reverse).
+  // Arms braced on a pad or a thigh, nothing else holds the body.
+  'preacher-curl': { ...P('biceps', 'brachialis, brachioradialis', '', 'wrist-flexors'), trunk: 'none' },
+  'hammer-curl': { ...P('brachialis, brachioradialis', 'biceps', '', 'wrist-flexors, wrist-extensors'), trunk: 'light' },
+  'reverse-curl': { ...P('brachioradialis, brachialis', 'biceps, wrist-extensors', '', 'wrist-flexors'), trunk: 'light' },
+  // With the arm overhead the long head is stretched and does most of the work; lying, it shares
+  // it; with the elbow at the side (pushdown, kickback) the other heads lead.
+  'overhead-extension': { ...P('triceps-long-head', 'triceps', '', 'wrist-flexors'), trunk: 'light' },
+  'lying-extension': { ...P('triceps-long-head, triceps', '', '', 'wrist-flexors'), trunk: 'none' },
+  'pushdown': { ...P('triceps', 'triceps-long-head', '', 'wrist-flexors'), trunk: 'light' },
+  'kickback': { ...P('triceps', 'triceps-long-head, rear-delt', '', 'wrist-flexors'), trunk: 'light', leans: true },
+  // Hands behind on a bench or a chair: the shoulders reach back, the chest barely helps.
+  'bench-dip': { ...P('triceps', 'front-delt, pec-major-sternal', '', 'wrist-flexors'), trunk: 'none' },
+  // Upright on bars, the body straight down: the triceps lead, the chest less than in a lean.
+  'triceps-dip': { ...P('triceps', 'pec-major-sternal, front-delt, pec-minor', '', 'lower-trap, rectus-abdominis, wrist-flexors'), trunk: 'none' },
+  // A body held in a plank, the elbows bending to lower it: a triceps extension with the floor.
+  'body-up': { ...P('triceps', 'triceps-long-head', '', 'rectus-abdominis, obliques, transverse-abdominis, quads, glute-max, wrist-flexors', 'erector-spinae'), trunk: 'none' },
+  'wrist-curl': { ...P('wrist-flexors'), trunk: 'none' },
+  'reverse-wrist-curl': { ...P('wrist-extensors'), trunk: 'none' },
+  // Thumb up, the hand tilted up and down: flexors and extensors on the thumb side together.
+  'wrist-tilt': { ...P('wrist-flexors, wrist-extensors'), trunk: 'none' },
+  'forearm-rotation': { ...P('brachioradialis', 'biceps', '', 'wrist-flexors, wrist-extensors'), trunk: 'none' },
+  'wrist-roller': { ...P('wrist-flexors, wrist-extensors', 'brachioradialis', '', 'front-delt, side-delt'), trunk: 'none' },
+  'grip': { ...P('wrist-flexors', '', '', 'brachioradialis, wrist-extensors'), trunk: 'none' },
+  'hang': { ...P('wrist-flexors', '', '', 'brachioradialis, wrist-extensors, lats, lower-trap, rectus-abdominis'), trunk: 'none' },
 }
 
 // Names no template describes: written by hand in the exercise file (the seeder never touches an
@@ -276,7 +338,124 @@ const BACK_RULES = [
   [/lying back extension|lying hyperextension|floor hyperextension|superman|swimmer|cobra|opposite arm and leg|snow angel/, 'superman'],
   [/hyperextension|back extension|lower back curl/, 'back-extension'],
 ]
-const BODY_RULES = { chest: CHEST_RULES, back: BACK_RULES }
+// Arms and legs. SHARED hands the name to the shoulder rules above (a clean, a carry); the last
+// rule leaves whatever is left for a person, so "press" never turns into an overhead press here.
+const SHARED = { shared: true }
+const REST = [/./, { review: 'no template matches the name' }]
+const curlKind = name => /hammer|neutral|rope|cross body/.test(name) ? 'hammer-curl' : /revers/.test(name) ? 'reverse-curl'
+  : /preacher|concentration|spider|chest support|arm blaster/.test(name) ? 'preacher-curl' : 'curl'
+const ONE_LEG = 'glute-med, adductors, calves, obliques, quadratus-lumborum'
+
+const ARM_RULES = [
+  [/clean|snatch|farmers carry|thruster/, SHARED],
+  [/cable rear drive|wall pulse|reverse push up|stalder|hands torsion|tiger tail/, ODD],
+  [/handstand push|handstand (shoulder )?press/, 'pike-press'],
+  [/^handstand$/, 'handstand-hold'],
+  [/climbing monkey bars/, 'climb'],
+  [/curl press extension/, ['curl', 'overhead-press', 'overhead-extension']],
+  [/curl (to|and) (shoulder )?press|curl to arnold/, e => [curlKind(e.name), 'overhead-press']],
+  [/curl with overhead extension/, ['curl', 'overhead-extension']],
+  [/lunge|step up/, e => ['lunge', /extension/.test(e.name) ? 'overhead-extension' : curlKind(e.name)]],
+  [/curl squat|squatting curl|squat hold/, e => ({ p: curlKind(e.name), add: { stabilizers: 'quads, glute-max, adductor-magnus' } })],
+  // Finger and grip work, then the wrist, before the curls: "neutral wrist curl" is a wrist tilt.
+  [/fingers? extension|thumb extension|isometric wrist extension/, 'reverse-wrist-curl'],
+  [/wrist rol/, 'wrist-roller'],
+  [/neutral wrist curl/, 'wrist-tilt'],
+  // Behind the back the bar rolls into the fingers and the palms curl up: still the flexors.
+  [/(revers|reverse) wrist|wrist reverse|palms down wrist/, 'reverse-wrist-curl'],
+  [/wrist curl|back wrist/, 'wrist-curl'],
+  [/arm wrestler/, { p: 'curl', add: { synergists: 'wrist-flexors, brachioradialis' } }],
+  [/finger curl|hand squeeze|pinch|gripper|fingers press|hand spring/, 'grip'],
+  [/handboard|one handed hang/, 'hang'],
+  [/zottman/, ['curl', 'reverse-curl']],
+  [/inverted chin curl|curl under table|suspen(der|sion).*curl|ring .*curl|biceps clutch/, e => ({ p: curlKind(e.name), add: { stabilizers: PLANK } })],
+  [/curls?\b|21s|biceps hold|bicep swing|bent arm iso hold/, e => curlKind(e.name)],
+  [/pronation|supination|rotate|rotation/, 'forearm-rotation'],
+  [/pull-ups?|\bchin[- ]?ups?\b/, 'pull-up'],
+  [/pull ?down/, 'pulldown'],
+  [/close grip to skull press/, ['close-press', 'lying-extension']],
+  [/tate press|elbow press|face press/, 'lying-extension'],
+  [/twisting bench press/, { p: 'close-press', add: { synergists: 'obliques' } }],
+  [/jm (bench )?press|close[- ]?grip.*press|close press|pin presses|neutral grip bench press|palms in .*press|hammer press|reverse[- ]grip.*press|reverse close-grip|squeeze bench press|floor press/, 'close-press'],
+  [/body-up|lower arms|from plank|triceps press|impossible dips|elbow dips|side push-up|suspen(der|sion) triceps extension|bodyweight .*triceps extension|half triceps extension/, 'body-up'],
+  [/push[- ]?up/, 'close-push-up'],
+  [/(bench|chair|floor|ball|reverse) dip|dips? (on|between|floor|back)|dip.*(bench|chair|floor|ball)|three bench/, 'bench-dip'],
+  [/\bdips?\b/, 'triceps-dip'],
+  [/kickback|kick back|bent over .*extension/, 'kickback'],
+  [/pushdown|pressdown|push down|high cross|horizontal triceps extension|side triceps|concentration extension/, 'pushdown'],
+  [/lying|skull|incline|decline|supine|on floor|across face|on bench|behind head/, 'lying-extension'],
+  [/extension|french press/, 'overhead-extension'],
+  [/chest throw/, 'chest-pass'],
+  REST,
+]
+
+const LEG_RULES = [
+  [/kneeling hold to stand|kneel(ing)? to stand/, 'lunge'],
+  [/farmers walk|carry/, 'carry'],
+  [/clean|snatch|thruster|yoke/, SHARED],
+  // Calves and shins.
+  [/eversion|inversion|foot external rotation|towel foot|balance board|dot drill/, ODD],
+  [/toe (side )?walk/, 'calf-raise'],
+  [/tibialis|toe raise|dorsi ?flexion|heel walk/, 'tibialis-raise'],
+  [/(leg press|sled|hack|lever|bench press machine|smith seated).*calf|calf press/, 'calf-press'],
+  [/seated.*calf|calf.*seated/, 'calf-press'],
+  [/calf jump|pogo|toe jump|hop\b|hops\b|hopping|lateral speed step|jump down/, e => e.bodyPart === 'lower legs' ? 'hop' : 'jump'],
+  [/squat.*calf raise|calf raise.*squat/, ['squat', 'calf-raise']],
+  [/calf|calves|plantar flexion/, 'calf-raise'],
+  // Two movements in one name.
+  [/curl to press|curl and press/, ['squat', 'curl', 'overhead-press']],
+  [/pallof/, e => ({ p: /side step/.test(e.name) ? 'side-walk' : 'squat', add: { stabilizers: 'obliques, transverse-abdominis' } })],
+  [/(lunge|squat|step up).*(curl|press|raise|\brow)|(curl|press|raise|\brow).*(lunge|squat|step up)/, e => {
+    const legs = /lunge|step up|split/.test(e.name) ? 'lunge' : 'squat'
+    const arms = /curl/.test(e.name) ? curlKind(e.name) : /upright row/.test(e.name) ? 'upright-row' : /\brow/.test(e.name) ? 'row'
+      : /front raise/.test(e.name) ? 'front-raise' : /lateral raise/.test(e.name) ? 'lateral-raise' : /calf raise/.test(e.name) ? 'calf-raise'
+      : /press/.test(e.name) && !/leg press/.test(e.name) ? 'overhead-press' : null
+    return arms ? [legs, arms] : legs
+  }],
+  [/(deadlift|\brdl).*\brow/, e => [/stiff|\brdl|romanian/.test(e.name) ? 'hinge' : 'deadlift', 'row']],
+  // The hamstrings.
+  [/glute[- ]ham raise|nordic|inverse leg curl|assisted prone hamstring|kneeling single hamstring/, 'nordic'],
+  [/bridge curl|leg curl.*(ball|towel|floor)|sliding leg curl|(ball|suspension|ring|towel).*leg curl|hamstring runner|platform slide|heel slide|straight hip.*curl/, { p: 'leg-curl', add: { stabilizers: 'glute-max, erector-spinae' } }],
+  [/leg curl to reverse hyper/, ['leg-curl', 'reverse-hyper']],
+  [/leg curl|legs curl|hamstring curl|femoral|knee flexion|batwing/, 'leg-curl'],
+  [/good morning/, 'good-morning'],
+  [/single leg (rdl|deadlift|romanian)|one leg(ged)? (stiff leg )?deadlift|single (stiff|leg).*deadlift|single leg landmine rdl|one leg stiff|deadlift pass/, { p: 'hinge', add: { stabilizers: ONE_LEG } }],
+  [/romanian|\brdl|stiff|straight leg(s)? deadlift|pull through|hinge/, 'hinge'],
+  [/deadlift|rack pull|mid thighs pull/, 'deadlift'],
+  [/swing/, 'swing'],
+  // The glutes, and the side and inside of the hip.
+  [/copenhagen|side plank hip adduction/, { p: 'leg-adduction', add: { stabilizers: 'quadratus-lumborum, glute-med, rectus-abdominis' } }],
+  [/adduction|adductor|reduction triangle|side lying feet raise|scissors cross/, 'leg-adduction'],
+  [/side walk|lateral walk|band walk|monster walk|resistance band walk|side step|shuttle/, 'side-walk'],
+  [/side plank (leg raise|clamshell)|side bridge hip abduction/, { p: 'abduction', add: { stabilizers: 'quadratus-lumborum, rectus-abdominis' } }],
+  [/side kick squat/, ['squat', 'abduction']],
+  [/side leg kick|abduction|abductor|clam|fire hydrant|side leg raise|side lying leg raise|side kick|knee kick|lying hip leg raise|lying leg raise|lift(ing)? \(on hip\)|side lying scissors|incline side leg raise/, 'abduction'],
+  [/hamstring bridge/, { p: 'hip-thrust', add: { target: 'hamstrings' } }],
+  [/glute march|single leg thrust/, { p: 'hip-thrust', add: { stabilizers: ONE_LEG } }],
+  [/hip thrust|glute bridge|hip bridge|frog pump|\bbridge|hip lift|pelvic lift/, 'hip-thrust'],
+  [/front leg kick/, 'hip-flexion'],
+  [/leg half circle/, ['glute-kickback', 'abduction']],
+  [/kickback|kick back|donkey kick|hip extension|glute kick|rear leg raise|leg kick|rear kick|back kick|side leg to kick|glute press|frog kick|reverse leg extension/, 'glute-kickback'],
+  [/reverse hyper/, 'reverse-hyper'],
+  [/hyperextension|back extension/, 'glute-hyper'],
+  [/knee raise|hip flexion|marching|knee drive|hip flexor|straight leg raise/, 'hip-flexion'],
+  [/single leg (raise|lift)|leg lift/, e => e.target === 'glutes' ? 'glute-kickback' : 'hip-flexion'],
+  // The quads.
+  [/sissy|reverse nordic/, 'sissy-squat'],
+  [/leg extension|knee extension/, 'leg-extension'],
+  [/wall sit|wall squat hold|sit \(wall\)/, 'wall-sit'],
+  [/hack|pendulum|belt squat/, 'hack-squat'],
+  [/leg press|sled.*press/, 'leg-press'],
+  [/sled|prowler/, 'sled-push'],
+  [/split jump|jump lunge|lunge jump|skater/, { p: 'jump', add: { stabilizers: ONE_LEG } }],
+  [/jump|bound|burpee|plyo|box drop/, 'jump'],
+  [/cossack|side lunge|lateral lunge/, { p: 'lunge', add: { synergists: 'adductors' } }],
+  [/pistol|single leg squat|one leg squat/, { p: 'lunge', add: { stabilizers: 'hip-flexors' } }],
+  [/lunge|split squat|bulgarian|step[- ]?up|curtsey|curtsy|split stance squat|patrick step|poliquin step|peterson step|step over box|get up/, 'lunge'],
+  [/squat|deep knee bend|stand up|duck walk/, 'squat'],
+  REST,
+]
+const BODY_RULES = { chest: CHEST_RULES, back: BACK_RULES, 'upper arms': ARM_RULES, 'lower arms': ARM_RULES, 'upper legs': LEG_RULES, 'lower legs': LEG_RULES }
 
 const RANK = Object.fromEntries(ROLES.map((r, i) => [r, i]))
 
@@ -330,7 +509,8 @@ const STANCE = {
 
 export function rolesFor(e) {
   const name = e.name
-  const rule = (BODY_RULES[e.bodyPart] || []).find(([r]) => r.test(name)) || (() => {
+  const own = (BODY_RULES[e.bodyPart] || []).find(([r]) => r.test(name))
+  const rule = own && !own[1].shared ? own : (() => {
     const skip = REVIEW.find(([r]) => r.test(name))
     return skip ? [null, { review: skip[1] }] : RULES.find(([r]) => r.test(name))
   })()
@@ -381,7 +561,10 @@ export function rolesFor(e) {
 export const TARGET_OF = {
   'front-delt': 'delts', 'side-delt': 'delts', 'rear-delt': 'delts', supraspinatus: 'delts', infraspinatus: 'delts', 'teres-minor': 'delts', subscapularis: 'delts',
   'upper-trap': 'traps', 'middle-trap': 'traps, upper back', 'lower-trap': 'traps, upper back', rhomboids: 'upper back', lats: 'lats', 'pec-minor': 'pectorals',
-  biceps: 'biceps', triceps: 'triceps', 'glute-max': 'glutes', quads: 'quads', 'adductor-magnus': 'adductors',
+  biceps: 'biceps', triceps: 'triceps', 'glute-max': 'glutes', quads: 'quads', 'adductor-magnus': 'adductors, hamstrings',
   'pec-major-sternal': 'pectorals', 'pec-major-clavicular': 'pectorals', 'serratus-anterior': 'serratus anterior',
   'erector-spinae': 'spine', 'teres-major': 'lats',
+  hamstrings: 'hamstrings', 'glute-med': 'abductors, glutes', adductors: 'adductors', calves: 'calves', 'tibialis-anterior': 'calves',
+  brachialis: 'biceps', brachioradialis: 'forearms, biceps', 'triceps-long-head': 'triceps', 'wrist-flexors': 'forearms', 'wrist-extensors': 'forearms',
+  'hip-flexors': 'abs, quads',
 }

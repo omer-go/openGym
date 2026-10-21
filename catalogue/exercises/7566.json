@@ -18,5 +18,21 @@
     "Stay tall.",
     "Drive up through your feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

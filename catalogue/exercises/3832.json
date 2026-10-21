@@ -19,5 +19,17 @@
     "Hold for 5-10 seconds.",
     "Rest fully, then repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "brachioradialis",
+      "wrist-extensors",
+      "rectus-abdominis"
+    ]
+  }
 }

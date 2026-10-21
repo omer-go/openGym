@@ -17,5 +17,18 @@
     "Inhale as you slowly begin to lower the barbells back to the starting position.",
     "Repeat for the desired number of repetitions, alternating arms."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

@@ -17,5 +17,13 @@
     "Repeat for the desired number of repetitions, then switch to the other leg."
   ],
   "femaleVariant": "2624",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

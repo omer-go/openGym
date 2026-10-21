@@ -20,5 +20,24 @@
     "Switch the dumbbell hand halfway through if needed."
   ],
   "textSource": "opengym",
-  "femaleVariant": "2803"
+  "femaleVariant": "2803",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

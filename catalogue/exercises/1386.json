@@ -18,5 +18,13 @@
     "Pause for a moment at the top, then slowly lower your heel back down.",
     "Repeat for the desired number of repetitions, then switch legs."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

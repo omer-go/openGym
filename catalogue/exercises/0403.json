@@ -17,5 +17,18 @@
     "Inhale and slowly lower the dumbbell back to the starting position.",
     "Repeat for the desired number of repetitions, then switch arms."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "biceps",
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

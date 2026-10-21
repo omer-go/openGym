@@ -18,5 +18,17 @@
     "Hold for 10-20 seconds.",
     "Lower yourself carefully and switch hands."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "brachioradialis",
+      "wrist-extensors",
+      "rectus-abdominis"
+    ]
+  }
 }

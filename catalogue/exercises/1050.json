@@ -18,5 +18,13 @@
     "Rise onto your toes as high as you can.",
     "Pause at the top, then lower slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

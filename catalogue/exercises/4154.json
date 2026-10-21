@@ -18,5 +18,11 @@
     "Lower slowly until your wrist is extended.",
     "Complete all reps, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ]
+  }
 }

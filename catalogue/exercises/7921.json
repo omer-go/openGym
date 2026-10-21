@@ -17,5 +17,18 @@
     "Squeeze at the top.",
     "Lower slowly and switch arms after your set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques"
+    ]
+  }
 }

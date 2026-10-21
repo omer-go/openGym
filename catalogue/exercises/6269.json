@@ -19,5 +19,18 @@
     "Repeat smoothly.",
     "Keep your arms still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ],
+    "synergists": [
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt"
+    ]
+  }
 }

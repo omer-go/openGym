@@ -18,5 +18,13 @@
     "Pause at the top, then lower slowly.",
     "Keep your ankles straight and avoid rolling out."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

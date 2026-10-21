@@ -19,5 +19,21 @@
     "Press through your whole foot to stand back up."
   ],
   "femaleVariant": "2554",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

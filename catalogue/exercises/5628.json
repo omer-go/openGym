@@ -18,5 +18,21 @@
     "Drive through your heels to stand.",
     "Keep the bar close."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "glute-max",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

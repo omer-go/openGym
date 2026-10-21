@@ -17,5 +17,13 @@
     "Hold the position steadily.",
     "Slowly extend your legs again."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

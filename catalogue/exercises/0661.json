@@ -19,5 +19,17 @@
     "Lower your leg back down and repeat the push-up, then switch to the other leg.",
     "Continue alternating leg kicks with each push-up repetition."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

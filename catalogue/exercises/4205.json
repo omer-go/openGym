@@ -18,5 +18,20 @@
     "Press back up until your arms are straight.",
     "Use a thinner band as you get stronger."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-minor",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

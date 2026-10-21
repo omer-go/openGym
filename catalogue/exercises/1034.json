@@ -18,5 +18,17 @@
     "Keep your torso upright. Finish the reps, then switch legs."
   ],
   "femaleVariant": "2759",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

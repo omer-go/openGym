@@ -19,5 +19,21 @@
     "Drive your hips forward to stand tall."
   ],
   "textSource": "opengym",
-  "femaleVariant": "3894"
+  "femaleVariant": "3894",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

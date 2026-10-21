@@ -18,5 +18,17 @@
     "Keep your core braced.",
     "Finish your reps, then switch to the right arm."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps-long-head"
+    ],
+    "synergists": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques"
+    ]
+  }
 }

@@ -18,5 +18,23 @@
     "Keep squeezing your glutes the whole time.",
     "Continue alternating for 10-20 marches."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "quads",
+      "calves"
+    ]
+  }
 }

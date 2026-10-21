@@ -16,5 +16,13 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2210",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

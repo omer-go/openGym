@@ -18,5 +18,24 @@
     "Land softly in a lunge with the opposite leg forward.",
     "Keep your torso upright and move fluidly from rep to rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors"
+    ]
+  }
 }

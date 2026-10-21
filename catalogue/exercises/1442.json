@@ -18,5 +18,20 @@
     "Keep your elbows near your sides.",
     "Hold for 15-30 seconds and step down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-minor",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

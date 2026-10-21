@@ -19,5 +19,18 @@
     "Bring the trailing foot in without letting your feet touch.",
     "Walk the set distance, then return the other way."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads",
+      "calves"
+    ]
+  }
 }

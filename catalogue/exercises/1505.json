@@ -18,5 +18,13 @@
     "Pause and squeeze your calves.",
     "Lower slowly until your heels are back on the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

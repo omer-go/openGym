@@ -20,5 +20,18 @@
     "Shuffle back the other way under control.",
     "Stay low throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads",
+      "calves"
+    ]
+  }
 }

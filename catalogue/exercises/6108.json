@@ -18,5 +18,13 @@
     "Lower your feet slowly back to the floor.",
     "Keep your hips pressed down throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings"
+    ],
+    "synergists": [
+      "calves"
+    ]
+  }
 }

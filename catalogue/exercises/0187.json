@@ -18,5 +18,14 @@
     "Press back up by straightening your arms.",
     "Keep your elbows pointing at the ceiling and don't flare them."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors"
+    ]
+  }
 }

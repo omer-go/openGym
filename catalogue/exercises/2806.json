@@ -20,5 +20,24 @@
     "Complete all reps, then switch legs."
   ],
   "textSource": "opengym",
-  "femaleVariant": "2805"
+  "femaleVariant": "2805",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "quadratus-lumborum",
+      "glute-med",
+      "adductors",
+      "calves"
+    ]
+  }
 }

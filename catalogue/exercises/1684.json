@@ -20,5 +20,29 @@
     "Repeat the movement on the opposite side, stepping up with your left foot and curling the dumbbells.",
     "Continue alternating sides for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }

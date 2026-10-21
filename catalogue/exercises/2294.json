@@ -16,5 +16,19 @@
     "Slowly lower the dumbbells back down to the starting position, rotating your wrists back to the starting position as you do so.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "synergists": [
+      "wrist-extensors"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

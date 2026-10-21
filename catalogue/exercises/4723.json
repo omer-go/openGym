@@ -18,5 +18,15 @@
     "Lower as far as you can control.",
     "Press back up."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-max",
+      "calves"
+    ]
+  }
 }
