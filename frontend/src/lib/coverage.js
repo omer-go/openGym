@@ -40,7 +40,7 @@
 // by what the session in progress still lacks (rankForGaps).
 import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
-import { musclesOf } from './muscles.js'
+import { musclesOf, weeklyPlanRoutines } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { fatigueOf } from './recovery.js'
@@ -64,20 +64,26 @@ export function entryWeights(entry) {
   const ex = EXIDX[entry?.id]
   if (ex) return musclesOf(ex)
   const snap = entry?.muscleSnapshot?.muscleWeights || entry?.muscleWeights
-  return snap && typeof snap === 'object' ? snap : {}
+  if (snap && typeof snap === 'object') return snap
+  return entry?.exercise ? musclesOf(entry.exercise) : {}   // a custom exercise logged with its muscles
 }
 /** Completed work sets of a logged entry, warm-ups left out. */
 export const workSets = entry => (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s)).length
 
-/** Group id -> credit, from a muscle -> weight map. */
-export function groupCredit(weights) {
+/** Group id -> [credit, the muscle that earned it], from a muscle -> weight map. */
+function creditBy(weights) {
   const out = {}
   for (const g of ADD_GROUPS) {
-    let best = 0
-    g.m.forEach((m, i) => { if (weights[m] > 0) best = Math.max(best, weights[m] * (i ? OTHER_MUSCLE : 1)) })
-    if (best > 0) out[g.id] = best
+    let best = 0, by = null
+    g.m.forEach((m, i) => { const c = weights[m] > 0 ? weights[m] * (i ? OTHER_MUSCLE : 1) : 0; if (c > best) { best = c; by = m } })
+    if (best > 0) out[g.id] = [best, by]
   }
   return out
+}
+
+/** Group id -> credit, from a muscle -> weight map. */
+export function groupCredit(weights) {
+  return Object.fromEntries(Object.entries(creditBy(weights)).map(([g, [c]]) => [g, c]))
 }
 
 const groupOf = slug => ADD_GROUPS.find(g => g.m.includes(slug)) || null
@@ -109,34 +115,89 @@ export function sessionCredit(entries) {
 }
 
 /**
- * Effective sets per group the logged workouts did: credit × completed work sets. `keep` narrows
- * the sets counted (Stats passes the hard-set test).
+ * Group id -> { muscle: effective sets }: the logged workouts' credit × completed work sets, each
+ * set's credit under the muscle of the group that earned it, so the parts add up to the group
+ * (Stats splits a group's bar with it). `keep` narrows the sets counted (Stats passes the
+ * hard-set test).
  */
-export function groupSetsOf(workouts, keep = null) {
+export function groupSplitOf(workouts, keep = null) {
   const out = {}
   for (const w of workouts || []) {
     for (const entry of w?.entries || []) {
       const n = keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry)
       if (!n) continue
-      for (const [g, c] of Object.entries(groupCredit(entryWeights(entry)))) out[g] = (out[g] || 0) + c * n
+      for (const [g, [c, m]] of Object.entries(creditBy(entryWeights(entry)))) {
+        const parts = out[g] || (out[g] = {})
+        parts[m] = (parts[m] || 0) + c * n
+      }
     }
   }
   return out
 }
 
+/** Group id -> effective sets, from a split (groupSplitOf). */
+export const splitTotals = split =>
+  Object.fromEntries(Object.entries(split).map(([g, parts]) => [g, Object.values(parts).reduce((a, b) => a + b, 0)]))
+
 /**
- * Effective sets per group a week, averaged over the `days` before `now` (0: all of it). A period
- * longer than the training is cut to the first workout in it, so a fortnight of training read
- * over 90 days is not a third of what it was. Never less than a week.
+ * A split's parts in whole sets that add up to the group's own rounded number, the one its bar
+ * shows: each part rounded down, then the leftover sets to the parts that lost the most.
  */
-export function groupSetsPerWeek(workouts, days, now = Date.now(), keep = null) {
+export function roundSplit(parts) {
+  const entries = Object.entries(parts || {})
+  const total = Math.round(entries.reduce((a, [, v]) => a + v, 0))
+  const out = Object.fromEntries(entries.map(([m, v]) => [m, Math.floor(v)]))
+  let left = total - Object.values(out).reduce((a, b) => a + b, 0)
+  for (const [m] of entries.slice().sort((a, b) => (b[1] % 1) - (a[1] % 1))) {
+    if (left <= 0) break
+    out[m]++; left--
+  }
+  return out
+}
+
+/** Effective sets per group the logged workouts did: groupSplitOf added up. */
+export const groupSetsOf = (workouts, keep = null) => splitTotals(groupSplitOf(workouts, keep))
+
+/**
+ * The workouts in the `days` before `now` (0: all of them) and how many weeks they span: the
+ * period, cut to the first workout in it, never less than a week (groupSplitPerWeek).
+ */
+export function weeksOf(workouts, days, now = Date.now()) {
   const from = days ? now - days * 864e5 : -Infinity
   const inWin = (workouts || []).filter(w => { const at = workoutAt(w); return at > from && at <= now })
-  if (!inWin.length) return {}
+  if (!inWin.length) return { inWin, weeks: 1 }
   const first = Math.min(...inWin.map(workoutAt))
-  const weeks = Math.max(1, (now - Math.max(from, first)) / (7 * 864e5))
-  const total = groupSetsOf(inWin, keep)
-  return Object.fromEntries(Object.entries(total).map(([g, v]) => [g, v / weeks]))
+  return { inWin, weeks: Math.max(1, (now - Math.max(from, first)) / (7 * 864e5)) }
+}
+
+/**
+ * groupSplitOf a week, averaged over the `days` before `now` (0: all of it). A period longer
+ * than the training is cut to the first workout in it, so a fortnight of training read over 90
+ * days is not a third of what it was. Never less than a week.
+ */
+export function groupSplitPerWeek(workouts, days, now = Date.now(), keep = null) {
+  const { inWin, weeks } = weeksOf(workouts, days, now)
+  if (!inWin.length) return {}
+  return Object.fromEntries(Object.entries(groupSplitOf(inWin, keep)).map(([g, parts]) =>
+    [g, Object.fromEntries(Object.entries(parts).map(([m, v]) => [m, v / weeks]))]))
+}
+
+/** Effective sets per group a week over the `days` before `now`: groupSplitPerWeek added up. */
+export const groupSetsPerWeek = (workouts, days, now = Date.now(), keep = null) =>
+  splitTotals(groupSplitPerWeek(workouts, days, now, keep))
+
+/**
+ * Effective sets per group the recurring week plans (muscles.js weeklyPlanRoutines: every weekday
+ * routine once, plus a running rotation's sessions), counted as plannedSets counts a routine.
+ */
+export function groupSetsOfWeeklyPlan(S) {
+  const custom = Object.fromEntries((S?.customEx || []).map(ex => [ex.id, ex]))
+  const out = {}
+  for (const routine of weeklyPlanRoutines(S)) {
+    const adds = plannedSets((routine.ex || []).map(c => ({ id: c.id, sets: c.sets || 1, exercise: custom[c.id] || c })))
+    for (const [g, v] of Object.entries(adds)) out[g] = (out[g] || 0) + v
+  }
+  return out
 }
 
 /** Effective sets per group over the 7 days up to `now` (today counts as one of them). */

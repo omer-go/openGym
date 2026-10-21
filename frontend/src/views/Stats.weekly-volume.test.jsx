@@ -3,6 +3,7 @@ import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MUSCLES } from '../lib/muscles.js'
+import { ADD_GROUPS } from '../lib/add-exercise.js'
 import Stats from './Stats.jsx'
 
 const NOW = new Date(2026, 8, 30, 12).getTime()
@@ -20,8 +21,9 @@ vi.mock('../components/LineChart.jsx', () => ({ default: () => React.createEleme
 vi.mock('../components/BodyMap.jsx', () => ({
   default: props => {
     mocks.bodyMaps.push(props)
-    return React.createElement('div', { 'data-body-map': true, 'data-selected': props.selected || '' },
-      React.createElement('button', { 'aria-label': 'Chest', onClick: () => props.onMuscle?.('chest') }, 'Chest'))
+    const sel = props.selected
+    return React.createElement('div', { 'data-body-map': true, 'data-selected': Array.isArray(sel) ? sel.join(',') : sel || '' },
+      ['chest', 'lower-back'].map(slug => React.createElement('button', { key: slug, 'aria-label': `map ${slug}`, onClick: () => props.onMuscle?.(slug) }, slug)))
   },
   BodyMapLegend: () => React.createElement('div', { 'data-body-map-legend': true }),
 }))
@@ -49,234 +51,126 @@ afterEach(() => { act(() => root.unmount()); host.remove(); vi.useRealTimers() }
 const mount = () => act(() => root.render(<Stats />))
 const comparison = () => host.querySelector('[data-weekly-volume-comparison]')
 const button = label => host.querySelector(`button[aria-label="${label}"]`)
-const weeklyToggle = () => comparison().querySelector('.weekly-volume-toggle')
-const row = muscle => comparison().querySelector(`[data-muscle-volume="${muscle}"]`)
-const value = muscle => row(muscle).querySelector('.v')
-const bar = muscle => row(muscle).querySelector('.bar i')
-const renderedMuscles = () => [...comparison().querySelectorAll('[data-muscle-volume]')].map(item => item.dataset.muscleVolume)
-const missedHeading = () => [...comparison().querySelectorAll('h4')].find(item => item.textContent === 'Not trained in this period') || null
+const groupBar = id => comparison().querySelector(`[data-group="${id}"]`)
+const number = id => groupBar(id).querySelector('.cov-l b').textContent
+const split = () => comparison().querySelector('[data-group-split]')
+const regions = () => [...split().querySelectorAll('[data-group-region]')].map(r => [r.dataset.groupRegion, r.querySelector('.v').textContent])
+const selected = () => host.querySelector('[data-body-map]').dataset.selected
+const mapLoad = () => mocks.bodyMaps.at(-1).load
+const missed = () => [...comparison().querySelectorAll('.mchip.miss')].map(item => item.textContent)
 const isBefore = (first, second) => Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING)
 
-describe('Stats — weekly planned vs completed volume', () => {
-  it('shows completed/planned progress with completed first for the current week', () => {
+describe('Stats — muscle balance by group', () => {
+  it('reads the current week as done/planned per group and colours the map by its group', () => {
     mocks.S = state({
       routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
       workouts: [completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 3)],
     })
     mount()
     expect(button('Previous week')).toBeTruthy()
-    expect(host.querySelector('[data-body-map]')).toBeTruthy()
     expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
-    expect(mocks.bodyMaps.at(-1).load).toEqual({ chest: 8, biceps: 3 })
-    expect([...comparison().querySelectorAll('[data-muscle-volume]')].map(item => item.dataset.muscleVolume))
-      .toEqual(['chest', 'biceps', 'triceps'])
-    expect(value('chest').textContent).toBe('8/12 · 67%')
-    expect(value('chest').getAttribute('aria-label')).toBe('Completed 8 sets · Planned 12 sets')
-    expect(bar('chest').style.width).toBe('67%')
-    expect(value('triceps').textContent).toBe('0/4.8 · 0%')
-    expect(bar('triceps').style.width).toBe('0%')
-    expect(value('biceps').textContent).toBe('3/0')
-    expect(value('biceps').getAttribute('aria-label')).toBe('Completed 3 sets · Planned 0 sets')
-    expect(bar('biceps').style.width).toBe('100%')
+    expect(number('chest')).toBe('8/12')
+    expect(number('triceps')).toBe('0/5')
+    expect(number('biceps')).toBe('3')
+    expect(groupBar('chest').querySelector('.cov-bar').getAttribute('aria-label')).toBe('Chest: 8 of 10 sets, 12 planned')
+    expect(mapLoad()).toEqual(Object.fromEntries(MUSCLES.map(m => [m, m === 'chest' ? 8 : m === 'biceps' ? 3 : 0])))
+    expect(comparison().querySelector('[data-muscle-volume]')).toBeNull()
     expect(button('Next week').disabled).toBe(true)
   })
 
-  it('orders the current week by completed then planned volume and expands planned-only rows', () => {
+  it('gives every region of a group the group number, so the map and the bars agree', () => {
+    mocks.S = state({ workouts: [completed('2026-09-30', 'upper-back', 6), completed('2026-09-30', 'lower-back', 4)] })
+    mount()
+    expect(number('back')).toBe('7')
+    expect(mapLoad()['upper-back']).toBe(7)
+    expect(mapLoad()['lower-back']).toBe(7)
+    expect(mapLoad().trapezius).toBe(7)
+  })
+
+  it('opens a group from its bar: the map highlights its regions and the split adds up', () => {
+    mocks.S = state({ workouts: [completed('2026-09-30', 'upper-back', 6), completed('2026-09-30', 'lower-back', 4)] })
+    mount()
+    expect(split()).toBeNull()
+    expect(groupBar('back').getAttribute('role')).toBe('button')
+    act(() => groupBar('back').click())
+    expect(selected()).toBe('upper-back,lower-back,trapezius')
+    expect(groupBar('back').getAttribute('aria-pressed')).toBe('true')
+    expect(split().dataset.groupSplit).toBe('back')
+    expect(split().querySelector('.mrow .v').textContent).toBe('7 sets')
+    expect(regions()).toEqual([['upper-back', '6'], ['lower-back', '1'], ['trapezius', '0']])
+    act(() => groupBar('back').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })))
+    expect(selected()).toBe('')
+    expect(split()).toBeNull()
+  })
+
+  it('opens the same group from a region on the map', () => {
+    mocks.S = state({ workouts: [completed('2026-09-30', 'lower-back', 4)] })
+    mount()
+    act(() => button('map lower-back').click())
+    expect(selected()).toBe('upper-back,lower-back,trapezius')
+    expect(groupBar('back').classList.contains('sel')).toBe(true)
+    act(() => button('map chest').click())
+    expect(selected()).toBe('chest')
+    expect(split().dataset.groupSplit).toBe('chest')
+    expect(split().querySelector('[data-group-region]')).toBeNull()  // one region: no region rows
+  })
+
+  it('shows a planned group as done of planned when opened', () => {
     mocks.S = state({
       routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
-      workouts: [
-        completed('2026-09-30', 'biceps', 8),
-        completed('2026-09-30', 'upper-back', 6),
-        completed('2026-09-30', 'chest', 4),
-        completed('2026-09-30', 'calves', 4),
-        completed('2026-09-30', 'deltoids', 2),
-      ],
+      workouts: [completed('2026-09-30', 'chest', 8)],
     })
     mount()
-
-    expect(renderedMuscles()).toEqual(['biceps', 'upper-back', 'chest', 'calves'])
-    expect(row('triceps')).toBeNull()
-    expect(weeklyToggle().textContent).toBe('Show more')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('false')
-    expect(weeklyToggle().querySelector('[data-icon="chevronDown"]')).toBeTruthy()
-    expect(isBefore(weeklyToggle(), missedHeading())).toBe(true)
-    expect([...comparison().querySelectorAll('.mchip.miss')].map(item => item.textContent)).toContain('Triceps')
-
-    act(() => weeklyToggle().click())
-    expect(renderedMuscles()).toEqual(['biceps', 'upper-back', 'chest', 'calves', 'deltoids', 'triceps'])
-    expect(weeklyToggle().textContent).toBe('Show less')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('true')
-    expect(weeklyToggle().querySelector('[data-icon="chevronDown"]')).toBeTruthy()
-    expect(isBefore(weeklyToggle(), missedHeading())).toBe(true)
-    expect(value('triceps').textContent).toBe('0/4.8 · 0%')
-    expect(isBefore(row('triceps'), missedHeading())).toBe(true)
-    expect([...comparison().querySelectorAll('.mchip.miss')].map(item => item.textContent)).toContain('Triceps')
-
-    act(() => weeklyToggle().click())
-    expect(renderedMuscles()).toEqual(['biceps', 'upper-back', 'chest', 'calves'])
-    expect(weeklyToggle().textContent).toBe('Show more')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('false')
+    act(() => groupBar('chest').click())
+    expect(split().querySelector('.mrow .v').textContent).toBe('8 of 12 planned sets')
   })
 
-  it('shows the completed-all-muscles summary after current-week rows', () => {
-    mocks.S = state({ workouts: MUSCLES.map(muscle => completed('2026-09-30', muscle, 1)) })
+  it('lists the groups the period missed, after the bars', () => {
     mount()
-    const summary = [...comparison().querySelectorAll('.muted.small')]
-      .find(item => item.textContent === 'Every muscle group got some work in this period.')
-    expect(summary).toBeTruthy()
-    expect(isBefore(row(renderedMuscles().at(-1)), summary)).toBe(true)
+    expect(missed()).toContain('Triceps')
+    expect(missed()).toContain('Back')
+    expect(missed()).not.toContain('Biceps')
+    expect(isBefore(groupBar('calves'), comparison().querySelector('.mchip.miss'))).toBe(true)
   })
 
-  it('shows the selected muscle completed/planned ratio below the completed map', () => {
-    mocks.S = state({
-      routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
-      workouts: [
-        completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 7),
-        completed('2026-09-30', 'upper-back', 6), completed('2026-09-30', 'calves', 5),
-        completed('2026-09-30', 'deltoids', 4),
-      ],
-    })
+  it('says every group got work when none is missed', () => {
+    mocks.S = state({ workouts: ADD_GROUPS.map(g => completed('2026-09-30', g.m[0], 1)) })
     mount()
-    expect(weeklyToggle()).toBeTruthy()
-    act(() => host.querySelector('[data-body-map] button[aria-label="Chest"]').click())
-    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('chest')
-    expect(comparison().querySelectorAll('[data-muscle-volume]')).toHaveLength(1)
-    expect(value('chest').textContent).toBe('8/12 · 67%')
-    expect(value('chest').getAttribute('aria-label')).toBe('Completed 8 sets · Planned 12 sets')
-    expect(weeklyToggle()).toBeNull()
+    expect(missed()).toEqual([])
+    expect(comparison().textContent).toContain('Every muscle group got some work in this period.')
   })
 
-  it('selects a muscle by its row as the map does, this week and a past one', () => {
-    mocks.S = state({
-      workouts: [
-        completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 7),
-        completed('2026-09-22', 'calves', 6), completed('2026-09-22', 'upper-back', 5),
-      ],
-    })
-    mount()
-    expect(row('biceps').getAttribute('role')).toBe('button')
-    act(() => row('biceps').click())
-    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('biceps')
-    expect(renderedMuscles()).toEqual(['biceps'])
-    expect(row('biceps').getAttribute('aria-pressed')).toBe('true')
-    act(() => row('biceps').click())
-    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('')
-    expect(renderedMuscles()).toEqual(['chest', 'biceps', 'triceps'])  // triceps: planned only
-
-    act(() => button('Previous week').click())
-    act(() => row('upper-back').click())
-    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('upper-back')
-    expect(renderedMuscles()).toEqual(['upper-back'])
-    act(() => row('upper-back').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })))
-    expect(renderedMuscles()).toEqual(['calves', 'upper-back'])
-  })
-
-  it('shows the real percentage while capping only over-plan bar fill', () => {
-    mocks.S = state({
-      routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
-      workouts: [completed('2026-09-30', 'chest', 14)],
-    })
-    mount()
-    expect(value('chest').textContent).toBe('14/12 · 117%')
-    expect(bar('chest').style.width).toBe('100%')
-  })
-
-  it('navigates previous weeks as completed-only and respects a Sunday week start', () => {
+  it('navigates previous weeks without the plan and respects a Sunday week start', () => {
     mocks.S = state({
       weekStart: 0,
       workouts: [completed('2026-09-27', 'biceps', 1), completed('2026-09-20', 'quadriceps', 4)],
     })
     mount()
     expect(comparison().dataset.week).toBe('2026-09-27')
+    act(() => groupBar('quads').click())
     act(() => button('Previous week').click())
     expect(comparison().dataset.week).toBe('2026-09-20')
-    expect(host.querySelector('[data-body-map]')).toBeTruthy()
-    expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
-    expect(mocks.bodyMaps.at(-1).load).toEqual({ quadriceps: 4 })
-    expect(value('quadriceps').textContent).toBe('4 sets')
-    expect(row('quadriceps').querySelector('.bar i').style.width).toBe('100%')
-    expect(comparison().textContent).not.toContain('/')
-    expect(comparison().textContent).not.toContain('Planned')
-    expect(comparison().querySelector('[aria-label*="Planned"]')).toBeNull()
-    expect([...comparison().querySelectorAll('.mchip.miss')].map(item => item.textContent)).toContain('Chest')
-    expect(button('Next week').disabled).toBe(false)
+    expect(selected()).toBe('')
+    expect(number('quads')).toBe('4')
+    expect(number('chest')).toBe('0')
+    expect(mapLoad().quadriceps).toBe(4)
+    expect(comparison().querySelector('.cov-l .dim')).toBeNull()
+    expect(missed()).toContain('Chest')
     act(() => button('Next week').click())
     expect(comparison().dataset.week).toBe('2026-09-27')
     expect(button('Next week').disabled).toBe(true)
   })
 
-  it('shows four completed muscles for a previous week, then expands without planned semantics', () => {
-    mocks.S = state({
-      workouts: [
-        completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 7),
-        completed('2026-09-30', 'upper-back', 6), completed('2026-09-30', 'calves', 5),
-        completed('2026-09-30', 'deltoids', 4),
-        completed('2026-09-22', 'quadriceps', 9), completed('2026-09-22', 'hamstring', 8),
-        completed('2026-09-22', 'gluteal', 7), completed('2026-09-22', 'calves', 6),
-        completed('2026-09-22', 'upper-back', 5), completed('2026-09-22', 'biceps', 4),
-      ],
-    })
-    mount()
-    act(() => weeklyToggle().click())
-    expect(renderedMuscles()).toHaveLength(6)
-
-    act(() => button('Previous week').click())
-    expect(renderedMuscles()).toEqual(['quadriceps', 'hamstring', 'gluteal', 'calves'])
-    expect(weeklyToggle().textContent).toBe('Show more')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('false')
-    expect(weeklyToggle().querySelector('[data-icon="chevronDown"]')).toBeTruthy()
-
-    act(() => weeklyToggle().click())
-    expect(renderedMuscles()).toEqual(['quadriceps', 'hamstring', 'gluteal', 'calves', 'upper-back', 'biceps'])
-    expect(weeklyToggle().textContent).toBe('Show less')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('true')
-    expect(weeklyToggle().querySelector('[data-icon="chevronDown"]')).toBeTruthy()
-    expect(isBefore(weeklyToggle(), missedHeading())).toBe(true)
-    expect(comparison().textContent).not.toContain('/')
-    expect(comparison().textContent).not.toContain('Planned')
-    expect(comparison().querySelector('[aria-label*="Planned"]')).toBeNull()
-
-    act(() => weeklyToggle().click())
-    expect(renderedMuscles()).toEqual(['quadriceps', 'hamstring', 'gluteal', 'calves'])
-    expect(weeklyToggle().textContent).toBe('Show more')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('false')
-
-    act(() => weeklyToggle().click())
-    act(() => button('Next week').click())
-    expect(renderedMuscles()).toEqual(['chest', 'biceps', 'upper-back', 'calves'])
-    expect(weeklyToggle().textContent).toBe('Show more')
-    expect(weeklyToggle().getAttribute('aria-expanded')).toBe('false')
-  })
-
-  it('omits Show more when the weekly list has four or fewer rows', () => {
-    mocks.S = state({ workouts: [
-      completed('2026-09-30', 'chest', 4),
-      completed('2026-09-30', 'biceps', 3),
-      completed('2026-09-22', 'quadriceps', 2),
-      completed('2026-09-22', 'hamstring', 1),
-    ] })
-    mount()
-    expect(renderedMuscles()).toEqual(['chest', 'biceps', 'triceps'])
-    expect(weeklyToggle()).toBeNull()
-    act(() => button('Previous week').click())
-    expect(renderedMuscles()).toEqual(['quadriceps', 'hamstring'])
-    expect(weeklyToggle()).toBeNull()
-  })
-
-  it('keeps the completed map, legend, navigator, and empty state for an empty previous week', () => {
+  it('keeps the map, bars and empty state for an empty previous week', () => {
     mount()
     act(() => button('Previous week').click())
-    expect(button('Previous week')).toBeTruthy()
-    expect(button('Next week').disabled).toBe(false)
-    expect(host.querySelector('[data-body-map]')).toBeTruthy()
     expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
-    expect(mocks.bodyMaps.at(-1).load).toEqual({})
+    expect(Object.values(mapLoad()).every(v => v === 0)).toBe(true)
+    expect(groupBar('chest')).toBeTruthy()
     expect(comparison().textContent).toContain('No workouts in this period yet.')
-    expect(comparison().textContent).not.toContain('Planned')
-    expect(comparison().querySelector('[aria-label*="Planned"]')).toBeNull()
   })
 
-  it('omits 0/0 mappings while retaining planned-positive completed-zero rows', () => {
+  it('leaves a group the plan gives no credit out of the planned numbers', () => {
     const zeroPress = { id: 'zero-press', n: 'Zero press', muscleWeights: { chest: 1, biceps: 0 }, custom: true }
     const plannedOnly = { id: 'planned-only', n: 'Planned only', muscleWeights: { triceps: 1 }, custom: true }
     mocks.S = state({
@@ -292,10 +186,8 @@ describe('Stats — weekly planned vs completed volume', () => {
       }],
     })
     mount()
-
-    expect(mocks.bodyMaps.at(-1).load).toEqual({ chest: 2 })
-    expect(value('chest').textContent).toBe('2/2 · 100%')
-    expect(value('triceps').textContent).toBe('0/1 · 0%')
-    expect(row('biceps')).toBeNull()
+    expect(number('chest')).toBe('2/2')
+    expect(number('triceps')).toBe('0/1')
+    expect(number('biceps')).toBe('0')
   })
 })

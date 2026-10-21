@@ -302,23 +302,25 @@ export const loadOfRoutine = (routine, exercises = {}) =>
  * beside your own weekday routines — the same split the Home streak card tallies (weekTally).
  */
 export function loadOfWeeklyPlan(S) {
-  const routines = new Map((S?.routines || []).map(routine => [routine.id, routine]))
   const exercises = Object.fromEntries((S?.customEx || []).map(exercise => [exercise.id, exercise]))
-  const q = queueOf(S)
-  const queued = new Set(q ? (S.queue.ids || []) : [])
-  const ids = [
-    ...Object.values(S?.week || {}).flatMap(value => [].concat(value || [])).filter(id => !queued.has(id)),
-    ...(q ? q.ids : []),
-  ]
   const load = {}
-  for (const id of ids) {
-    const routine = routines.get(id)
-    if (!routine) continue
+  for (const routine of weeklyPlanRoutines(S)) {
     for (const [slug, sets] of Object.entries(loadOfRoutine(routine, exercises))) {
       load[slug] = (load[slug] || 0) + sets
     }
   }
   return load
+}
+
+/** The routines the recurring week runs, each as often as it runs (loadOfWeeklyPlan). */
+export function weeklyPlanRoutines(S) {
+  const routines = new Map((S?.routines || []).map(routine => [routine.id, routine]))
+  const q = queueOf(S)
+  const queued = new Set(q ? (S.queue.ids || []) : [])
+  return [
+    ...Object.values(S?.week || {}).flatMap(value => [].concat(value || [])).filter(id => !queued.has(id)),
+    ...(q ? q.ids : []),
+  ].map(id => routines.get(id)).filter(Boolean)
 }
 
 /** Load for a workout still in progress — the sets ticked so far. */

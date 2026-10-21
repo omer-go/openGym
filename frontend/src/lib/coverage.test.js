@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps } from './coverage.js'
+import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -76,6 +76,46 @@ describe('group sets over a period (Stats)', () => {
     expect(groupSetsPerWeek([session('2026-09-28', [BENCH], sets(4))], 30, NOW).chest).toBe(4)
     expect(groupSetsPerWeek([session('2026-06-01', [BENCH])], 30, NOW)).toEqual({})
     expect(groupSetsPerWeek([session('2026-10-01', [BENCH])], 30, NOW)).toEqual({})
+  })
+  it('splits each group under the muscle that earned its credit, adding up to the group', () => {
+    // a row: the upper back; a deadlift: the lower back at a quarter; shrugs: the traps at a quarter
+    const ws = [session('2026-09-14', ['1323', DEADLIFT, SHRUG], sets(4))]
+    const split = groupSplitOf(ws)
+    expect(split.back).toEqual({ 'upper-back': 4, 'lower-back': 1, trapezius: 1 })
+    expect(groupSetsOf(ws).back).toBe(6)
+    const total = g => Object.values(split[g]).reduce((a, b) => a + b, 0)
+    for (const g of Object.keys(split)) expect(groupSetsOf(ws)[g]).toBeCloseTo(total(g))
+  })
+  it('a set counts once for a group even when it works several of its muscles', () => {
+    // a squat works quads, glutes and adductors: glutes & hips gets 1, under the glutes
+    expect(groupSplitOf([session('2026-09-14', [SQUAT], sets(2))]).glutes).toEqual({ gluteal: 2 })
+  })
+  it('averages the split over the period as the totals are', () => {
+    const NOW = at(2026, 9, 29)
+    const ws = [session('2026-09-15', [DEADLIFT], sets(8)), session('2026-09-22', [DEADLIFT], sets(8))]
+    expect(groupSplitPerWeek(ws, 90, NOW).back['lower-back']).toBeCloseTo(2)
+    expect(groupSetsPerWeek(ws, 90, NOW).back).toBeCloseTo(2)
+  })
+  it('counts a logged custom exercise by the muscles saved with it', () => {
+    const w = { id: 'c', d: '2026-09-14', entries: [{ id: 'custom-1', exercise: { primaries: ['biceps'], secondaries: [] }, sets: sets(3) }] }
+    expect(groupSetsOf([w])).toEqual({ biceps: 3 })
+  })
+})
+
+describe('group sets the weekly plan programs (Stats)', () => {
+  const routine = (id, ex) => ({ id, name: id, ex })
+  it('counts each weekday routine as often as it runs, as plannedSets counts a routine', () => {
+    const push = routine('push', [{ id: BENCH, sets: 3 }]), pull = routine('pull', [{ id: '1323', sets: 4 }, { id: DEADLIFT, sets: 2 }])
+    const plan = groupSetsOfWeeklyPlan(state({ routines: [push, pull], week: { 1: ['push'], 3: 'pull', 5: 'push' } }))
+    const once = plannedSets(push.ex), pulls = plannedSets(pull.ex)
+    expect(Object.keys(plan).sort()).toEqual([...new Set([...Object.keys(once), ...Object.keys(pulls)])].sort())
+    for (const g of Object.keys(plan)) expect(plan[g]).toBeCloseTo(2 * (once[g] || 0) + (pulls[g] || 0))
+    expect(plan.back).toBeCloseTo(4 + 0.5)  // the row's upper back, the deadlift's lower back at a quarter
+  })
+  it('reads a custom exercise from the profile, and nothing from a missing routine', () => {
+    const S = state({ customEx: [{ id: 'mine', n: 'Mine', primaries: ['calves'], secondaries: [], custom: true }],
+      routines: [routine('r', [{ id: 'mine', sets: 5 }])], week: { 2: ['r', 'gone'] } })
+    expect(groupSetsOfWeeklyPlan(S)).toEqual({ calves: 5 })
   })
 })
 
@@ -359,5 +399,14 @@ describe('rotation order: part, helpers, tool, then position', () => {
   it('on the same tool, the position done longest ago comes back', () => {
     expect(pick([STANDING, SEATED], [session('2026-09-08', [STANDING])])).toBe(SEATED)
     expect(pick([STANDING, SEATED], [session('2026-09-08', [SEATED])])).toBe(STANDING)
+  })
+})
+
+describe('roundSplit', () => {
+  it('rounds the parts to whole sets that add up to the rounded total', () => {
+    expect(roundSplit({ 'upper-back': 10, 'lower-back': 1, trapezius: 0.47 })).toEqual({ 'upper-back': 10, 'lower-back': 1, trapezius: 0 })
+    expect(roundSplit({ a: 3.4, b: 3.4, c: 3.4 })).toEqual({ a: 4, b: 3, c: 3 })
+    expect(roundSplit({ a: 2.6, b: 0.3 })).toEqual({ a: 3, b: 0 })
+    expect(roundSplit({})).toEqual({})
   })
 })

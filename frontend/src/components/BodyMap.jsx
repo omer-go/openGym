@@ -27,6 +27,7 @@ export function useBodyPaths() {
 }
 
 function View({ view, levels, onMuscle, selected }) {
+  const isSel = slug => (Array.isArray(selected) ? selected.includes(slug) : selected === slug)
   const activate = (event, slug) => {
     if (event.key !== 'Enter' && event.key !== ' ') return
     if (event.key === ' ') event.preventDefault()
@@ -39,14 +40,14 @@ function View({ view, levels, onMuscle, selected }) {
       {MUSCLES.map(slug => (view.p[slug] || []).map((d, i) =>
         <path
           key={slug + i}
-          className={'bm-m l' + (levels[slug] || 0) + (selected === slug ? ' sel' : '')}
+          className={'bm-m l' + (levels[slug] || 0) + (isSel(slug) ? ' sel' : '')}
           d={d}
           onClick={onMuscle ? () => onMuscle(slug) : undefined}
           onKeyDown={onMuscle ? event => activate(event, slug) : undefined}
           role={onMuscle ? 'button' : undefined}
           tabIndex={onMuscle ? 0 : undefined}
           aria-label={onMuscle ? t(MUSCLE_NAME[slug]) : undefined}
-          aria-pressed={onMuscle ? selected === slug : undefined}
+          aria-pressed={onMuscle ? isSel(slug) : undefined}
         >
           <title>{t(MUSCLE_NAME[slug])}</title>
         </path>))}
@@ -57,7 +58,8 @@ function View({ view, levels, onMuscle, selected }) {
 /**
  * <BodyMap load={{ chest: 12, … }} body="male" />
  * `load` is effective sets per muscle (see lib/muscles.js); shading is relative to
- * the hardest-worked muscle in that same load, so it always reads as a balance. Pass ordered
+ * the hardest-worked muscle in that same load, so it always reads as a balance. `selected` is
+ * a muscle or a list of them (Muscle balance selects a whole group). Pass ordered
  * `{ at, level, exclusive? }` `thresholds` for a fixed absolute scale (recovery views use this
  * to keep their semantic bands stable); omitting it preserves the balance behavior.
  */

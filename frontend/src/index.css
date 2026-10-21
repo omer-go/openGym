@@ -2278,3 +2278,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cov-strip.over .cov-bar::after{content:'';position:absolute;top:0;bottom:0;left:var(--goal);width:2px;margin-left:-1px;background:var(--label-2);opacity:.7}
 .cov-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
 .cov-key{margin-top:10px}
+.cov-g.tap{cursor:pointer;border-radius:6px;padding:4px 6px;margin:-4px -6px}
+.cov-g.tap:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.cov-g.sel{background:color-mix(in srgb,var(--mc,var(--acc)) 14%,transparent)}
+.cov-g.sel .cov-l span{color:var(--label);font-weight:600}
+.cov-l b .dim{font-weight:500}
