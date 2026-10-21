@@ -2197,26 +2197,18 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 }
 .ax-legend{display:flex;justify-content:center;gap:16px;margin:16px 0 4px;font-size:12px;color:var(--label-2)}
 .ax-legend span{display:inline-flex;align-items:center;gap:6px}
-.ax-subs{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px;scrollbar-width:none}
-.ax-subs::-webkit-scrollbar{display:none}
-.ax-sub{flex:none;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--label-2);font-size:12.5px}
-.ax-sub.on{color:var(--label);font-weight:600}
-.ax-sub.on .ava{box-shadow:0 0 0 2px var(--bg-el),0 0 0 4px var(--mc,var(--acc))}
-.ax-aw{position:relative;padding:3px}
-.ax-aw .ax-dot{position:absolute;inset-inline-end:3px;bottom:3px;width:12px;height:12px;border:2px solid var(--bg-el);box-sizing:content-box}
-.ax-aw .ax-dot:not(.wk):not(.td){background:var(--surface-2)}
-.ax-sl{text-align:center;line-height:1.2}
-.ax-area{margin-top:16px}
-.ax-ahd{display:flex;align-items:center;gap:10px;margin:0 2px 8px}
-.ax-ahd b{display:block;font-size:15px;font-weight:600}
-.ax-ahd small{display:block;font-size:12.5px;color:var(--label-2)}
-.ax-gap{display:flex;align-items:center;gap:6px;margin:-2px 2px 8px;font-size:12.5px;color:var(--mc,var(--acc));font-weight:500}
-.ax-gap svg{width:15px;height:15px;flex:none}
 .ax-fills{text-transform:none;font-weight:600;color:var(--mc,var(--acc))}
 .ax-last{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:12px;color:var(--label-2);white-space:nowrap;margin-inline-end:4px}
 .ax-last b{font-size:14px;font-weight:600;color:var(--label);font-variant-numeric:tabular-nums}
 .ax-new{font-size:12px;color:var(--acc);font-weight:600}
 .ax-more{display:block;width:100%;padding:10px;color:var(--acc);font-size:14px;font-weight:500}
+/* "Something else": the answers so far, each a step back, and the question with its options. */
+.ax-crumbs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 4px}
+.ax-crumb{padding:5px 11px;border-radius:999px;background:var(--surface-2);color:var(--label-2);font-size:13px;font-weight:500}
+.ax-crumb.on{background:color-mix(in srgb,var(--mc,var(--acc)) 18%,var(--surface-2));color:var(--label)}
+.ax-q{margin:16px 2px 8px;font-size:15px;font-weight:600}
+.ax-any{grid-column:1/-1;min-height:0}
+.ax-else{color:var(--acc);font-weight:500}
 /* The exercise name in the workout card opens its settings: looks like the title, acts like a button. */
 .exttl{flex:1;min-width:0;font-weight:600;letter-spacing:-.02em;line-height:1.2;text-align:start;background:none;border:0;padding:0;margin:0;color:inherit;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .exttl:active{opacity:.6}

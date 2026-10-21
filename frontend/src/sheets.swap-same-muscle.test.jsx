@@ -72,7 +72,7 @@ describe('swap picker opens on the same muscle', () => {
     expect(groups.querySelector('h3').textContent).toBe('Triceps')
     expect(groups.textContent).toContain('Swap exercise')
     expect([...groups.querySelectorAll('.item .tt')].map(x => x.textContent)).not.toContain(CABLE_TRI.n)
-    act(() => [...groups.querySelectorAll('button')].find(b => b.textContent === 'Search all exercises').click())
+    act(() => [...groups.querySelectorAll('button')].find(b => b.textContent === 'Search').click())
     const host = renderTop()
 
     const chip = sameChip(host)

@@ -9,7 +9,7 @@
 // of a group's exercises, go by the week's coverage (lib/coverage.js), as the one-tap workouts do.
 import { EXIDX, allExercises, isCardio } from './exercises.js'
 import { exAvailable } from './equipment.js'
-import { musclesOf } from './muscles.js'
+import { musclesOf, MUSCLE_NAME } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { lastEntryFor } from './history.js'
 import { trainingIndex, candidatesFor } from './generate.js'
@@ -17,6 +17,7 @@ import { todayISO, isoOf } from './format.js'
 import { rankForGaps, sessionCredit } from './coverage.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { ACTIVITY_GROUPS, activityGroup, isStretch } from './activities.js'
+import { KIT_FACET, MOVE_FACET, ANGLE_FACET, isTail, rareWords, kitOf } from './exercise-facets.js'
 
 // English names are i18n keys where shown. `low` puts a group under Lower body.
 export const ADD_GROUPS = [
@@ -127,13 +128,17 @@ export function lastTopSet(S, id) {
 
 const STATUS_RANK = { '': 0, wk: 1, td: 2 }
 const byName = (a, b) => exerciseNameFor(a).localeCompare(exerciseNameFor(b))
+// Past what is ranked, the plain version before its variations: the long tail last (a form-check
+// clip, a numbered copy), then a name of common words before a named variant ("Svend press"),
+// then the shorter name — "dumbbell fly" before "dumbbell incline twisted fly".
+const byCommon = (a, b) => isTail(a) - isTail(b) || rareWords(a) - rareWords(b) || (a.n || '').length - (b.n || '').length || byName(a, b)
 
 /**
  * The exercises of a group, as the sheet lists them. `sort`:
  * - 'suggested': one section per area, areas not trained in the last 7 days first and the
  *   longest-rested of those first; within an area what you have logged and the staple lifts,
  *   ranked by what they add to the session for the week (`gaps`: { need, history }, see
- *   coverage.js rankForGaps; without it, generate.js's order), then the rest by name.
+ *   coverage.js rankForGaps; without it, generate.js's order), then the rest plain versions first.
  * - 'az': one section per area in the group's order, exercises by name.
  * - 'recent': one section of everything you have logged in the group, most recent first.
  * Exercises already in the session (`have`, else the workout in progress) are left out and
@@ -167,7 +172,7 @@ export function groupExercises(S, groupId, { sort = 'suggested', area = '', have
       let first = candidatesFor(S, m)
       if (gaps) first = rankForGaps(first.map((id, rank) => ({ id, rank })), { groups: ADD_GROUPS.map(x => x.id), have: session, ...gaps })
       const at = id => { const i = first.indexOf(id); return i < 0 ? Infinity : i }
-      list.sort((a, b) => at(a.id) - at(b.id) || byName(a, b))
+      list.sort((a, b) => at(a.id) - at(b.id) || byCommon(a, b))
     }
     return { m, st: status[m]?.st || '', last: status[m]?.last || null, list }
   }).filter(x => x.list.length)
@@ -176,6 +181,55 @@ export function groupExercises(S, groupId, { sort = 'suggested', area = '', have
     sections = sections.sort((a, b) => STATUS_RANK[a.st] - STATUS_RANK[b.st] || (a.last || '').localeCompare(b.last || ''))
   }
   return { sections, hidden }
+}
+
+// How many of your own a group's shortlist shows, and how many new ones beside them.
+export const YOURS = 6
+const WORTH_ADDING = 2
+const STARTERS = 5
+
+/**
+ * A group's first screen: the exercises you do there (`yours`: your most-logged, up to YOURS, in
+ * the Suggested order), a couple worth adding that you have not done (`picks`: the ones `fills`
+ * the week's gap first, then the ranking's best), and `all`, the whole group in Suggested order,
+ * which "Something else" narrows step by step (`groupFacets`). With nothing logged in the group,
+ * `picks` are a few starting points instead, one per kind of equipment as far as they go.
+ * The long tail (exercise-facets.js isTail) is never picked.
+ */
+export function shortlist(S, groupId, { fills = () => false, ...opts } = {}) {
+  const { sections, hidden } = groupExercises(S, groupId, { ...opts, sort: 'suggested' })
+  const all = sections.flatMap(x => x.list)
+  const { exercises } = trainingIndex(S)
+  const logged = all.filter(ex => exercises[ex.id])
+  const most = [...logged].sort((a, b) => exercises[b.id].n - exercises[a.id].n || (exercises[b.id].d < exercises[a.id].d ? -1 : exercises[b.id].d > exercises[a.id].d ? 1 : 0))
+  const top = new Set(most.slice(0, YOURS).map(ex => ex.id))
+  const yours = logged.filter(ex => top.has(ex.id))
+  const fresh = all.filter(ex => !exercises[ex.id] && !isTail(ex))
+  let picks
+  if (yours.length) picks = [...fresh.filter(ex => fills(ex)), ...fresh.filter(ex => !fills(ex))].slice(0, WORTH_ADDING)
+  else if (activityGroup(groupId)) picks = fresh.slice(0, STARTERS)
+  else {
+    // The best-ranked of each kind of equipment, in the order they rank (not for cardio or a
+    // stretch, where the kit is beside the point).
+    const seen = new Set()
+    picks = fresh.filter(ex => !seen.has(kitOf(ex)) && seen.add(kitOf(ex))).slice(0, STARTERS)
+    if (picks.length < STARTERS) picks = [...picks, ...fresh.filter(ex => !picks.includes(ex)).slice(0, STARTERS - picks.length)]
+  }
+  return { yours, picks, all, hidden }
+}
+
+/**
+ * The questions "Something else" asks of a group, in order (exercise-facets.js narrow): which of
+ * its areas when it has more than one (a part of the body, or Cardio's and Stretching's own
+ * kinds), what equipment, which movement, which angle.
+ */
+export function groupFacets(groupId) {
+  const act = activityGroup(groupId)
+  const g = !act && ADD_GROUPS.find(x => x.id === groupId)
+  const area = act
+    ? { id: 'area', of: ex => act.of(ex) || null, name: id => act.areas.find(a => a.id === id)?.n || id, order: act.areas.map(a => a.id) }
+    : g && g.m.length > 1 ? { id: 'area', of: ex => primaryMuscleOf(ex)?.slug || null, name: id => MUSCLE_NAME[id] || id, order: g.m } : null
+  return [area, KIT_FACET, MOVE_FACET, ANGLE_FACET].filter(Boolean)
 }
 
 /**

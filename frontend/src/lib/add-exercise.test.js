@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { ADD_GROUPS, MUSCLE_VIEW, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet } from './add-exercise.js'
+import { ADD_GROUPS, MUSCLE_VIEW, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet, shortlist, groupFacets } from './add-exercise.js'
+import { narrow, isTail, kitOf } from './exercise-facets.js'
 import { MUSCLES } from './muscles.js'
 import { STAPLES } from './generate.js'
 import { EXIDX } from './exercises.js'
@@ -146,5 +147,58 @@ describe('lastTopSet', () => {
     expect(lastTopSet(S, BENCH)).toEqual({ w: 80, r: 5, d: '2026-10-13' })
     expect(lastTopSet(S, SQUAT)).toBeNull()
     expect(EXIDX[BENCH]).toBeTruthy()
+  })
+})
+
+describe('shortlist', () => {
+  it('without history, offers a few starters of different kit and no long tail', () => {
+    const { yours, picks, all } = shortlist(state(), 'chest')
+    expect(yours).toEqual([])
+    expect(picks.length).toBe(5)
+    expect(new Set(picks.slice(0, 3).map(kitOf)).size).toBe(3)
+    expect(picks.some(isTail)).toBe(false)
+    expect(all.length).toBeGreaterThan(50)
+  })
+  it('with history, puts what you do first and two you have not done after it', () => {
+    const S = state({ workouts: [session('2026-10-10', [BENCH, DBBENCH]), session('2026-10-12', [BENCH])] })
+    const { yours, picks } = shortlist(S, 'chest')
+    expect(yours.map(x => x.id).sort()).toEqual([BENCH, DBBENCH].sort())
+    expect(picks).toHaveLength(2)
+    expect(picks.some(x => x.id === BENCH || x.id === DBBENCH)).toBe(false)
+  })
+  it('puts what fills a gap ahead among the picks', () => {
+    const S = state({ workouts: [session('2026-10-10', [BENCH])] })
+    const plain = shortlist(S, 'chest').picks
+    const want = shortlist(S, 'chest').all.filter(x => x.id !== BENCH && !isTail(x)).at(-1)
+    const { picks } = shortlist(S, 'chest', { fills: x => x.id === want.id })
+    expect(picks[0].id).toBe(want.id)
+    expect(plain[0].id).not.toBe(want.id)
+  })
+  it('leaves out what is already in the session', () => {
+    const { all, hidden } = shortlist(state(), 'chest', { have: [{ id: BENCH }] })
+    expect(all.some(x => x.id === BENCH)).toBe(false)
+    expect(hidden).toBe(1)
+  })
+})
+
+describe('group questions', () => {
+  it('asks the part only of a group with more than one', () => {
+    expect(groupFacets('chest').map(f => f.id)).toEqual(['kit', 'move', 'angle'])
+    expect(groupFacets('back')[0].id).toBe('area')
+    expect(groupFacets('cardio')[0].id).toBe('area')
+  })
+  it("every group's questions end on a short list, whatever you answer", () => {
+    // Taking the biggest answer each time is the longest way down; it must still get somewhere.
+    for (const id of [...ALL, 'cardio', 'stretching']) {
+      const { all } = shortlist(state(), id)
+      const facets = groupFacets(id)
+      let picks = {}, r = narrow(all, facets, picks), n = 0
+      while (r.step && n++ < 5) {
+        picks = { ...picks, [r.step.facet]: [...r.step.options].sort((a, b) => b.count - a.count)[0].values }
+        r = narrow(all, facets, picks)
+      }
+      expect(r.step, id).toBe(null)
+      expect(r.list.length, id).toBeGreaterThan(0)
+    }
   })
 })
