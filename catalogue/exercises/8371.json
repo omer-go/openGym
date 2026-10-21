@@ -19,5 +19,17 @@
     "Rotate to the other side in a controlled way.",
     "Keep your feet down or lifted if you can stay stable."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

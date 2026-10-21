@@ -19,5 +19,18 @@
     "Repeat without letting your back arch."
   ],
   "femaleVariant": "7118",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads"
+    ]
+  }
 }

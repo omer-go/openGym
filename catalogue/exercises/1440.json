@@ -19,5 +19,25 @@
     "Place it back down with control and lift the other.",
     "Keep your neck neutral and alternate arms for the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "serratus-anterior",
+      "glute-max",
+      "glute-med",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

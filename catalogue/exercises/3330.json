@@ -18,5 +18,14 @@
     "Hold briefly, then lower with control.",
     "Alternate sides through the set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

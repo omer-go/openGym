@@ -18,5 +18,14 @@
     "Keep your lower back pressed to the floor.",
     "Move at a steady pace without pulling on your neck."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

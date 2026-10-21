@@ -19,5 +19,14 @@
     "Keep your movement smooth.",
     "Do your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

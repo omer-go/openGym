@@ -18,5 +18,15 @@
     "Return and switch legs.",
     "Avoid swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

@@ -18,5 +18,14 @@
     "Pause at the top and keep your neck relaxed.",
     "Lower back slowly under control and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

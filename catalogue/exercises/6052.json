@@ -18,5 +18,13 @@
     "Pause at the top.",
     "Lower slowly without dropping your head."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

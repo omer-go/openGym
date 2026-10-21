@@ -19,5 +19,22 @@
     "Lower the leg with control.",
     "Finish the reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "glute-med"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "quadratus-lumborum",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "rectus-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

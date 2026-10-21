@@ -19,5 +19,21 @@
     "Hold the position for a few seconds, then slowly bring the band back towards your chest.",
     "Repeat for the desired number of repetitions, then switch sides."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

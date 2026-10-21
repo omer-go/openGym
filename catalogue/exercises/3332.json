@@ -18,5 +18,13 @@
     "Curl up until your upper back clears the ball.",
     "Lower slowly back into the stretch and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

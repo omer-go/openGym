@@ -18,5 +18,15 @@
     "Lower slowly to the bench.",
     "Keep your movements controlled."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ]
+  }
 }

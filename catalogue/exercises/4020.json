@@ -18,5 +18,16 @@
     "Switch the cross.",
     "Keep your lower back down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

@@ -18,5 +18,16 @@
     "Keep your lower back pressed to the floor.",
     "Breathe steadily throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

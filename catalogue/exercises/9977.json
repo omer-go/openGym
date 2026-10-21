@@ -18,5 +18,10 @@
     "Let your belly lower gently.",
     "Continue for 1 to 2 minutes."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "transverse-abdominis"
+    ]
+  }
 }

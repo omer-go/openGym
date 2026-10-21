@@ -17,5 +17,16 @@
     "Pause for a moment at the top, then slowly lower your upper body back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "front-delt",
+      "triceps",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

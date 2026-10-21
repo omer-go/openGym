@@ -19,5 +19,17 @@
     "Lower back down slowly without dropping your legs."
   ],
   "femaleVariant": "3446",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "quads"
+    ]
+  }
 }

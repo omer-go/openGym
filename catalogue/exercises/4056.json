@@ -20,5 +20,15 @@
     "Alternate sides slowly."
   ],
   "femaleVariant": "8508",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

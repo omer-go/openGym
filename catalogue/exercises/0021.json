@@ -18,5 +18,14 @@
     "Lower slowly back over the ball.",
     "Keep your feet planted and your neck relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

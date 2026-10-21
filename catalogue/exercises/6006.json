@@ -20,5 +20,17 @@
     "Keep your chest up."
   ],
   "femaleVariant": "5937",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

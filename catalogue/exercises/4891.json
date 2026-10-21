@@ -20,5 +20,20 @@
     "Keep the swing small and your shoulders active.",
     "Repeat, alternating the direction."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -20,5 +20,37 @@
     "Lower it back to the floor with control.",
     "Row with the other arm and keep alternating at a steady pace."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "obliques"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "wrist-flexors",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

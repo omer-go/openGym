@@ -16,5 +16,20 @@
     "Once your knees are at chest level, explosively throw your legs down towards the ground, extending them fully.",
     "Allow your legs to swing back up and repeat the movement for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

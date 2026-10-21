@@ -19,5 +19,22 @@
     "Pull the rings back toward your knees by contracting your abs.",
     "Do not let your lower back sag at any point."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "lats",
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "hip-flexors"
+    ]
+  }
 }

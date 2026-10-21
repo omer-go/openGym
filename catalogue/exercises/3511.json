@@ -18,5 +18,21 @@
     "Pause, then return under control.",
     "Do all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "obliques",
+      "transverse-abdominis",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

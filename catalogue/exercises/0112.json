@@ -19,5 +19,21 @@
     "Continue alternating twists for the desired number of repetitions."
   ],
   "femaleVariant": "2320",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quads"
+    ]
+  }
 }

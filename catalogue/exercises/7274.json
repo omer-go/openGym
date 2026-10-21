@@ -20,5 +20,22 @@
     "Lower back to plank with control."
   ],
   "femaleVariant": "1085",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

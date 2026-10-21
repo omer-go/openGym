@@ -20,5 +20,21 @@
     "Switch sides."
   ],
   "femaleVariant": "10441",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

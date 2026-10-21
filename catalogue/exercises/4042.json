@@ -18,5 +18,17 @@
     "Pause, then return slowly.",
     "Keep your hips still, finish the reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

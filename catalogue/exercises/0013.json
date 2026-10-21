@@ -20,5 +20,18 @@
     "Raise your legs back up to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

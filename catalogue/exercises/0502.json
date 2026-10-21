@@ -18,5 +18,17 @@
     "Lower with control until arms and legs hover just above the floor.",
     "Keep your movement smooth and avoid swinging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "quads"
+    ]
+  }
 }

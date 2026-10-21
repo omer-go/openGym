@@ -18,5 +18,13 @@
     "Lower slowly back to the start.",
     "Repeat for the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

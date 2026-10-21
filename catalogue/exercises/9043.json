@@ -19,5 +19,27 @@
     "Hold for 5-15 seconds.",
     "Lower back down with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "lower-trap",
+      "rhomboids",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "glute-max",
+      "hip-flexors",
+      "quads"
+    ]
+  }
 }

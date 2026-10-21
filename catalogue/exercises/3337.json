@@ -20,5 +20,21 @@
     "Lower, then repeat on the other side."
   ],
   "femaleVariant": "2739",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

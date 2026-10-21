@@ -16,5 +16,14 @@
     "Pause for a moment, then lower your shoulder blades back down to the floor.",
     "Repeat on the other side, alternating sides with each repetition."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

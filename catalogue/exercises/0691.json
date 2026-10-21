@@ -18,5 +18,14 @@
     "Repeat on the other side.",
     "Continue alternating sides for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

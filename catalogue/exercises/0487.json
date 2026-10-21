@@ -19,5 +19,17 @@
     "Lower with control.",
     "Avoid using momentum."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

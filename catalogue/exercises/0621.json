@@ -18,5 +18,16 @@
     "Keep your lower back pressed down.",
     "Switch which leg crosses on top each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

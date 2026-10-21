@@ -16,5 +16,14 @@
     "Lower slowly.",
     "Alternate sides, keeping your neck relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

@@ -18,5 +18,20 @@
     "Lift as high as you can without swinging.",
     "Lower slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -19,5 +19,31 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2651",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "pec-minor",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "obliques",
+      "hip-flexors"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

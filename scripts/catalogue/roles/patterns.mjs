@@ -177,6 +177,44 @@ export const PATTERNS = {
   'wrist-roller': { ...P('wrist-flexors, wrist-extensors', 'brachioradialis', '', 'front-delt, side-delt'), trunk: 'none' },
   'grip': { ...P('wrist-flexors', '', '', 'brachioradialis, wrist-extensors'), trunk: 'none' },
   'hang': { ...P('wrist-flexors', '', '', 'brachioradialis, wrist-extensors, lats, lower-trap, rectus-abdominis'), trunk: 'none' },
+
+  // Core. Curling the ribs toward the hips is for the six-pack (rectus abdominis); the hips
+  // toward the ribs, or the legs lifted, brings in the hip flexors. Turning or bending sideways is
+  // for the obliques; holding the trunk still against a pull (planks, pallof presses) for the
+  // obliques and the deep corset under them (transverse abdominis).
+  'crunch': { ...P('rectus-abdominis', 'obliques'), trunk: 'none' },
+  'twist-crunch': { ...P('rectus-abdominis, obliques', 'hip-flexors'), trunk: 'none' },
+  'side-crunch': { ...P('obliques', 'rectus-abdominis, quadratus-lumborum'), trunk: 'none' },
+  'sit-up': { ...P('rectus-abdominis', 'hip-flexors, obliques'), trunk: 'none' },
+  'reverse-crunch': { ...P('rectus-abdominis', 'obliques, hip-flexors', '', 'transverse-abdominis'), trunk: 'none' },
+  'leg-raise': { ...P('rectus-abdominis, hip-flexors', 'obliques', '', 'transverse-abdominis, quads'), trunk: 'none' },
+  // Legs kept low and moving: the hip flexors move them, the abs keep the low back down.
+  'flutter': { ...P('hip-flexors, rectus-abdominis', '', '', 'obliques, transverse-abdominis, quads'), trunk: 'none' },
+  'v-up': { ...P('rectus-abdominis', 'hip-flexors, obliques', '', 'quads'), trunk: 'none' },
+  'hanging-raise': { ...P('rectus-abdominis', 'hip-flexors, obliques', '', 'transverse-abdominis, lats, lower-trap, wrist-flexors'), trunk: 'none' },
+  // From a plank, the knees or hips drawn in under the body.
+  'jackknife': { ...P('rectus-abdominis', 'hip-flexors, obliques', '', 'transverse-abdominis, front-delt, triceps, serratus-anterior, quads, wrist-flexors'), trunk: 'none' },
+  'mountain-climber': { ...P('rectus-abdominis', 'hip-flexors, obliques', '', 'transverse-abdominis, front-delt, triceps, serratus-anterior, glute-max, quads, wrist-flexors'), trunk: 'none' },
+  'plank': { ...P('rectus-abdominis, transverse-abdominis', 'obliques', '', 'front-delt, serratus-anterior, glute-max, quads', 'erector-spinae'), trunk: 'none' },
+  'side-plank': { ...P('obliques', 'quadratus-lumborum, transverse-abdominis', '', 'rectus-abdominis, erector-spinae, glute-med, side-delt, serratus-anterior'), trunk: 'none' },
+  // Face up, the body held straight off the floor: the back of the body holds it.
+  'reverse-plank': { ...P('glute-max, erector-spinae', 'hamstrings', '', 'rear-delt, triceps, rectus-abdominis'), trunk: 'none' },
+  'hollow': { ...P('rectus-abdominis', 'transverse-abdominis, hip-flexors', '', 'obliques, quads'), trunk: 'none' },
+  'dead-bug': { ...P('transverse-abdominis, rectus-abdominis', 'obliques, hip-flexors'), trunk: 'none' },
+  'bird-dog': { ...P('erector-spinae', 'glute-max', '', 'transverse-abdominis, obliques, quadratus-lumborum, glute-med, rear-delt, middle-trap'), trunk: 'none' },
+  'rollout': { ...P('rectus-abdominis', 'lats, transverse-abdominis, obliques', '', 'triceps, front-delt, serratus-anterior, hip-flexors, wrist-flexors'), trunk: 'none' },
+  'dragon-flag': { ...P('rectus-abdominis', 'obliques, transverse-abdominis, hip-flexors', '', 'lats, triceps-long-head, glute-max, wrist-flexors'), trunk: 'none' },
+  'l-sit': { ...P('rectus-abdominis, hip-flexors', 'quads', '', 'triceps, front-delt, lower-trap, wrist-flexors'), trunk: 'none' },
+  // Sitting or lying, the trunk or the legs turning side to side.
+  'twist': { ...P('obliques', 'rectus-abdominis, transverse-abdominis', '', 'hip-flexors'), trunk: 'none' },
+  'wiper': { ...P('obliques', 'rectus-abdominis, hip-flexors', '', 'transverse-abdominis, lats'), trunk: 'none' },
+  // Standing or kneeling, turning against a cable, a band or a weight: the hips and arms pass it on.
+  'chop': { ...P('obliques', 'rectus-abdominis, transverse-abdominis, front-delt, glute-max', '', 'erector-spinae, quads, wrist-flexors'), trunk: 'none' },
+  'pallof': { ...P('obliques, transverse-abdominis', 'rectus-abdominis', '', 'pec-major-sternal, front-delt, triceps, glute-max, glute-med'), trunk: 'none' },
+  'side-bend': { ...P('obliques', 'quadratus-lumborum', '', 'erector-spinae, rectus-abdominis'), trunk: 'none' },
+  'windmill': { ...P('obliques', 'quadratus-lumborum, glute-max, hamstrings', '', 'side-delt, supraspinatus, infraspinatus, teres-minor, triceps, serratus-anterior, erector-spinae, glute-med'), trunk: 'none' },
+  'suitcase-carry': { ...P('obliques, quadratus-lumborum', '', '', 'upper-trap, wrist-flexors, erector-spinae, transverse-abdominis, glute-med'), trunk: 'none' },
+  'vacuum': { ...P('transverse-abdominis'), trunk: 'none' },
 }
 
 // Names no template describes: written by hand in the exercise file (the seeder never touches an
@@ -455,7 +493,83 @@ const LEG_RULES = [
   [/squat|deep knee bend|stand up|duck walk/, 'squat'],
   REST,
 ]
-const BODY_RULES = { chest: CHEST_RULES, back: BACK_RULES, 'upper arms': ARM_RULES, 'lower arms': ARM_RULES, 'upper legs': LEG_RULES, 'lower legs': LEG_RULES }
+// The waist. Combinations and odd stances first, then holds, then the moving exercises; a
+// crunch with a twist in its name is a twisting crunch, a sit-up with one a sit-up for the obliques.
+const HANG = 'lats, lower-trap, wrist-flexors'
+const WAIST_RULES = [
+  [/^flag$|maltese|slingshot|figure 8|bent press|side kick through|snow angel|stick assisted|potty squat|bend alternating toe touch|abdominal 4 points|toe tap leg lift|under knee tap|crab twist|twist turn lift|uppercut|one arm slam|smith hip raise|half kneeling push pull|legs side pull in|pendulum|side jump twist|side hip|side lean|sideways lifts|bridge \((on knees|straight arm)\)|jack split|reverse flutter kick/, ODD],
+  [/suitcase carry/, 'suitcase-carry'],
+  [/gorilla chin/, ['pull-up', 'hanging-raise']],
+  [/planche/, 'planche-hold'],
+  [/front lever/, 'front-lever'],
+  [/elbow push up/, 'body-up'],
+  [/rotate push up/, { p: 'knee-push-up', add: { synergists: 'obliques' } }],
+  [/push[- ]up to side plank/, ['push-up', 'side-plank']],
+  [/star push up/, 'push-up'],
+  [/push up with knee drive/, ['push-up', 'mountain-climber']],
+  [/renegade|plank alternating row|bear plank alternating row/, ['plank', 'row']],
+  [/side plank row/, ['side-plank', 'row']],
+  [/front plank with kicked leg/, ['plank', 'glute-kickback']],
+  [/side plank glute raise/, ['side-plank', 'abduction']],
+  [/lateral raise plank|plank lateral raise/, ['plank', 'lateral-raise']],
+  [/bird dog plank/, ['plank', 'bird-dog']],
+  [/bird dog/, 'bird-dog'],
+  [/front to side plank/, ['plank', 'side-plank']],
+  [/pallof press with glute bridge/, { p: 'pallof', add: { stabilizers: 'hamstrings' } }],
+  [/adductor pallof/, { p: 'pallof', add: { stabilizers: 'adductors' } }],
+  [/pallof|anti rotation|push pull/, 'pallof'],
+  [/hyperextension twist|twisting hyperextension/, { p: 'back-extension', add: { synergists: 'obliques' } }],
+  [/twist superman/, { p: 'superman', add: { synergists: 'obliques' } }],
+  [/superman/, 'superman'],
+  [/lunge with twist/, ['lunge', 'chop']],
+  [/squat twist|wood ?chop squat/, ['squat', 'chop']],
+  [/front raise twist/, ['chop', 'front-raise']],
+  [/windmill/, e => /hanging/.test(e.name) ? { p: 'hanging-raise', add: { target: 'obliques' } } : 'windmill'],
+  // Holds and planks.
+  [/reverse plank|supine plank|chinese plank/, 'reverse-plank'],
+  [/leg bench side bridge/, { p: 'side-plank', add: { stabilizers: 'adductors' } }],
+  [/side plank leg lift|side plank (bent leg lift|with raised leg)/, { p: 'side-plank', add: { synergists: 'glute-med' } }],
+  [/side plank|side bridge|star plank|side floor tap|side plank twist/, 'side-plank'],
+  [/body saw|rollout|rollerout|fallout|inchworm|walkout/, e => /oblique/.test(e.name) ? { p: 'rollout', add: { target: 'obliques' } } : 'rollout'],
+  [/mountain climber|spider plank|leg lift to chest|plank knee tap/, 'mountain-climber'],
+  [/plank pike|jack ?knife on ball|pull-in|butt-ups|suspension (jackknife|trainer pike)|suspension jackknife pike|suspen(sion|der|ded).*(crunch|jackknife)|roller reverse crunch/,
+    e => /twist/.test(e.name) ? { p: 'jackknife', add: { target: 'obliques' } } : 'jackknife'],
+  [/plank with arm|plank arm|plank with leg|arm leg raise|arm raise|single arm pulldown/, { p: 'plank', add: { stabilizers: 'glute-med, side-delt' } }],
+  [/plank|shoulder tap|wall press heel/, e => /wall press/.test(e.name) ? 'dead-bug' : 'plank'],
+  [/dragon flag/, 'dragon-flag'],
+  [/hanging hollow/, { p: 'hollow', add: { stabilizers: HANG } }],
+  [/hanging l sit/, { p: 'l-sit', add: { stabilizers: HANG } }],
+  [/\bl[- ]sit|v-sit on floor/, 'l-sit'],
+  [/hollow|dish hold|6 inch hold|crunch hold|raise and hold|v up hold|lean back on a chair/, 'hollow'],
+  [/vacuum|draw in|breathing/, 'vacuum'],
+  [/dead ?bug/, e => /pullover/.test(e.name) ? { p: 'dead-bug', add: { synergists: 'lats' } } : 'dead-bug'],
+  [/lying straight leg marches|lying toe tap/, 'dead-bug'],
+  // Hanging or on a captain's chair.
+  [/hanging oblique|hanging .*twisting|hanging knee circle|twisted leg raise/, { p: 'hanging-raise', add: { target: 'obliques' } }],
+  [/hanging|captain|stall bar|parallel bars|arm slingers|assisted hanging/, 'hanging-raise'],
+  // Turning.
+  [/sit[- ]?up and russian twist|russian twist sit up|russian twist close grip/, ['sit-up', 'twist']],
+  [/military press russian twist/, { p: 'twist', add: { stabilizers: 'front-delt, triceps' } }],
+  [/twisting crunch|leg raise crunch/, e => /twisting/.test(e.name) ? 'twist-crunch' : /side/.test(e.name) ? 'side-crunch' : 'v-up'],
+  [/wipers?\b|lying twist|leg raise to side|leg hip side raise|bent knee lying twist|prone twist|lever twist|lying woodchop/, 'wiper'],
+  [/chop|lift and chop|thor lift|standing lift|judo flip|sledge hammer|spell caster|rotational throw|landmine|side swing|torso twist|torso rotation|trunk rotation|standing twist|band twist|cable twist|up down twist|down up|twist \((down|up)|band down to up|suspen.*twist|kneeling twist/, 'chop'],
+  [/twist sit|twisting sit|cross twisting sit|straight arm twisting sit|elbow to knee sit/, { p: 'sit-up', add: { target: 'obliques' } }],
+  [/russian twist|seated twist|seated cross arm twist|oblique twist|glute ham twist|cross punch|twist on floor/, 'twist'],
+  // Bending sideways.
+  [/side bend|side bent|side reach/, 'side-bend'],
+  [/oblique v up|side crunch|side sit up|side stretch crunch|heel touch|oblique crunch|leg raise oblique|side to side leg raise/, 'side-crunch'],
+  // Curling up, the legs or both.
+  [/bicycle|air bike|air cycles|twisting crunch|twist crunch|cross body|opposite crunch|opposite knee|elbow[- ]to[- ]knee|knee to elbow|knees to elbows|standing air bike|cross standing crunch|tuck twisting/, 'twist-crunch'],
+  [/flutter|scissor|criss cross|leg cross|figure eight|reverse air cycling|alternate leg raise|alternating (straight )?leg raise|seated leg raise|sitting floor leg raise|sitted alternate|leg raise on floor/, e => /military|press/.test(e.name) ? { p: 'flutter', add: { stabilizers: 'front-delt, triceps' } } : 'flutter'],
+  [/v[- ]?up|v crunch|jack ?knife|tuck|frog (crunch|sit)|crunchy frog|cocoons|starfish|sprinter|roll overs|8 leg|in out|leg extension crunch|total abdominal|toe tap$|leg raise crunch|alternate crunch|toes? to bar/, 'v-up'],
+  [/reverse crunch|hip raise|hip lift|knee raise|bent legs? raise|bent knee raise|leg pull in|bottoms-up|pulse up|ab swing|ab coaster|hip crunch|leg and hip raise|leg-hip raise|leg hip raise/, 'reverse-crunch'],
+  [/leg raise/, 'leg-raise'],
+  [/press sit[- ]?up|sit[- ]?up press|shoulder press sit/, { p: 'sit-up', add: { synergists: 'front-delt, triceps' } }],
+  [/sit[- ]?up|sit up|otis/, 'sit-up'],
+  [/crunch|curl-up|ab press|toe touch|roll up/, e => /leg (raise|lift)|leg up/.test(e.name) ? { p: 'crunch', add: { synergists: 'hip-flexors' } } : 'crunch'],
+  REST,
+]
+const BODY_RULES = { chest: CHEST_RULES, back: BACK_RULES, 'upper arms': ARM_RULES, 'lower arms': ARM_RULES, 'upper legs': LEG_RULES, 'lower legs': LEG_RULES, waist: WAIST_RULES }
 
 const RANK = Object.fromEntries(ROLES.map((r, i) => [r, i]))
 
@@ -566,5 +680,5 @@ export const TARGET_OF = {
   'erector-spinae': 'spine', 'teres-major': 'lats',
   hamstrings: 'hamstrings', 'glute-med': 'abductors, glutes', adductors: 'adductors', calves: 'calves', 'tibialis-anterior': 'calves',
   brachialis: 'biceps', brachioradialis: 'forearms, biceps', 'triceps-long-head': 'triceps', 'wrist-flexors': 'forearms', 'wrist-extensors': 'forearms',
-  'hip-flexors': 'abs, quads',
+  'hip-flexors': 'abs, quads', 'rectus-abdominis': 'abs', obliques: 'abs', 'transverse-abdominis': 'abs', 'quadratus-lumborum': 'spine',
 }

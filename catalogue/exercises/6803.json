@@ -18,5 +18,17 @@
     "Extend them straight in front and pull back in.",
     "Repeat the pattern on the other side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "quads"
+    ]
+  }
 }

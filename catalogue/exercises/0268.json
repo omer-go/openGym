@@ -19,5 +19,18 @@
     "Lift your legs slightly higher at the top for extra work.",
     "Keep your lower back pressed down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

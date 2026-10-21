@@ -19,5 +19,19 @@
     "Hold for 20-30 seconds.",
     "Lower under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

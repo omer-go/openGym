@@ -19,5 +19,22 @@
     "Rock back to the start in a slow, smooth motion.",
     "Keep your hips level and avoid sagging."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "lats",
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "hip-flexors"
+    ]
+  }
 }

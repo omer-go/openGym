@@ -18,5 +18,25 @@
     "Lower them back to the floor with control.",
     "Switch to the other arm and leg and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "serratus-anterior",
+      "glute-max",
+      "glute-med",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

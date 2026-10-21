@@ -18,5 +18,22 @@
     "Pause briefly at the top.",
     "Slide your feet back to the plank without letting your hips drop."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

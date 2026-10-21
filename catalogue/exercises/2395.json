@@ -19,5 +19,14 @@
     "Keep your lower back pressed down.",
     "Continue for the planned reps or time."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

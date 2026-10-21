@@ -20,5 +20,27 @@
     "To release, slowly lower your legs back down and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "lower-trap",
+      "rhomboids",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "glute-max",
+      "hip-flexors",
+      "quads"
+    ]
+  }
 }

@@ -18,5 +18,23 @@
     "Keep your neck neutral and your hips from sagging or rising.",
     "Hold for 20-40 seconds, then lower to the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

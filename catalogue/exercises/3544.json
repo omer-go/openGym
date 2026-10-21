@@ -17,5 +17,21 @@
     "Hold this position for the desired amount of time.",
     "Lower your hips back down to the ground and repeat on the other side."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

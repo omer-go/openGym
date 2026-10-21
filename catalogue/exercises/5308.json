@@ -20,5 +20,15 @@
     "Alternate sides each rep.",
     "Keep the weight light enough to move smoothly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ]
+  }
 }

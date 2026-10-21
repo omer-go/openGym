@@ -19,5 +19,20 @@
     "Keep your swing minimal.",
     "Continue for the set time or reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -17,5 +17,16 @@
     "Raise the other leg.",
     "Keep your lower back pressed down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

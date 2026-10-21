@@ -19,5 +19,20 @@
     "Move slowly and avoid sagging your lower back.",
     "Alternate sides for the full set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "lower-trap"
+    ]
+  }
 }

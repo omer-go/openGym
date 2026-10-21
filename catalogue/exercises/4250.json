@@ -19,5 +19,17 @@
     "Lower slowly with control.",
     "Keep your lower back pressed down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "quads"
+    ]
+  }
 }

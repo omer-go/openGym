@@ -19,5 +19,19 @@
     "Repeat with the other leg.",
     "Continue alternating legs for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

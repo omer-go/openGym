@@ -19,5 +19,17 @@
     "Finish your reps, then switch sides."
   ],
   "femaleVariant": "1019",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

@@ -16,5 +16,16 @@
     "Continue alternating legs for the desired number of repetitions."
   ],
   "textSource": "exercisedb",
-  "femaleVariant": "2800"
+  "femaleVariant": "2800",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

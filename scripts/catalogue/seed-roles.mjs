@@ -16,13 +16,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const DIR = path.join(ROOT, 'catalogue/exercises')
 const dry = process.argv.includes('--dry')
 
-// Exercises that are lifted, not stretched: the shoulders (the pilot), then the chest, back, arms
-// and legs, where jumping and throwing work (plyometrics) is a push-up, a press or a squat too.
+// Exercises that are lifted, not stretched: the shoulders (the pilot), then the chest, back, arms,
+// legs and waist, where jumping and throwing work (plyometrics) is a push-up, a press or a squat too.
 // Neck work has its own templates still to write.
 const LIFTED = ['strength', 'calisthenics', 'olympic', 'isometric', 'rehab']
 const inScope = e => !e.variantOf && !/\bneck\b/.test(e.name) && (
   ((e.bodyPart === 'shoulders' || ['delts', 'traps'].includes(e.target)) && LIFTED.includes(e.category)) ||
-  (['chest', 'back', 'upper arms', 'lower arms', 'upper legs', 'lower legs'].includes(e.bodyPart) && [...LIFTED, 'plyometrics'].includes(e.category)))
+  (['chest', 'back', 'upper arms', 'lower arms', 'upper legs', 'lower legs', 'waist'].includes(e.bodyPart) && [...LIFTED, 'plyometrics'].includes(e.category)))
 
 const review = [], look = []
 let written = 0, kept = 0

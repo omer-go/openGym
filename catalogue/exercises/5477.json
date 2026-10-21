@@ -18,5 +18,20 @@
     "Lower them slowly without swinging.",
     "Repeat for the target reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

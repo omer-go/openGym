@@ -18,5 +18,14 @@
     "Keep your lower back on the floor.",
     "Do not pull on your neck."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

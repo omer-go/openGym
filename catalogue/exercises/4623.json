@@ -17,5 +17,17 @@
     "Extend your legs again without touching the floor.",
     "Keep your back long and breathe steadily."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "quads"
+    ]
+  }
 }

@@ -17,5 +17,13 @@
     "Pause and squeeze your abs.",
     "Lower slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

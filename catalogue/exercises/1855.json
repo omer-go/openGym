@@ -17,5 +17,17 @@
     "Push your hips a little off the floor, lifting your feet toward the ceiling.",
     "Lower your hips and legs slowly with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

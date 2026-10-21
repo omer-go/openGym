@@ -19,5 +19,14 @@
     "Keep your lower back flat.",
     "Continue for the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

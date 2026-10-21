@@ -18,5 +18,14 @@
     "Lower slowly back down.",
     "Keep your arms reaching forward the whole time."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

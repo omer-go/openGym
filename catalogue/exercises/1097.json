@@ -18,5 +18,17 @@
     "Do all reps, then switch sides.",
     "Keep your hips still."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

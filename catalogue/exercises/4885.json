@@ -18,5 +18,17 @@
     "Lower your hips slowly.",
     "Avoid swinging your legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

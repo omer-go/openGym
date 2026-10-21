@@ -18,5 +18,22 @@
     "Once your hands reach your feet, stand back up to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "lats",
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "hip-flexors"
+    ]
+  }
 }

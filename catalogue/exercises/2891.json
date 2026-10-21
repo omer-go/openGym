@@ -18,5 +18,16 @@
     "Kick your legs up and down in small alternating pulses.",
     "Keep your lower back pressed down and breathe steadily."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

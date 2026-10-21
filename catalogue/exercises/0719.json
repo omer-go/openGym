@@ -18,5 +18,14 @@
     "Return to the stretch.",
     "Switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

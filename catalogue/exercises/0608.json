@@ -18,5 +18,18 @@
     "Return to the centre and rotate to the other side.",
     "Move slowly and avoid using momentum."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "transverse-abdominis"
+    ]
+  }
 }

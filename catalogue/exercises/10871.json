@@ -18,5 +18,13 @@
     "Lower slowly without dropping your head back."
   ],
   "femaleVariant": "10872",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

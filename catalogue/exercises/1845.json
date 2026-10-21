@@ -18,5 +18,17 @@
     "Keep the movement controlled throughout."
   ],
   "femaleVariant": "3072",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

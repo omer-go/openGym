@@ -17,5 +17,21 @@
     "Return to centre and rotate to the other side.",
     "Move smoothly without jerking."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quads"
+    ]
+  }
 }

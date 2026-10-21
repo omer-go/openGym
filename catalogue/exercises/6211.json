@@ -20,5 +20,14 @@
     "Keep your lower back pressed down."
   ],
   "femaleVariant": "6212",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

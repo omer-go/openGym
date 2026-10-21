@@ -19,5 +19,23 @@
     "Bring the foot back to the start.",
     "Repeat on the other leg and keep alternating."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

@@ -19,5 +19,25 @@
     "Keep both legs mostly straight.",
     "Return to standing and finish the set, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "serratus-anterior",
+      "triceps",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -20,5 +20,21 @@
     "Bend your knees to return to the start, then repeat."
   ],
   "femaleVariant": "5264",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "triceps-long-head",
+      "wrist-flexors",
+      "glute-max"
+    ]
+  }
 }

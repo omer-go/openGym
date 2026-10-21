@@ -18,5 +18,15 @@
     "Return to the middle and lower back down.",
     "Alternate the twist side each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ]
+  }
 }

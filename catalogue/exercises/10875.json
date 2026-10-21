@@ -18,5 +18,17 @@
     "Avoid twisting. Finish your reps and switch sides."
   ],
   "femaleVariant": "10876",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

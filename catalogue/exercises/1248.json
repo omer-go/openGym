@@ -18,5 +18,18 @@
     "Bring them back to the middle and go to the other side.",
     "Keep your shoulders on the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -18,5 +18,21 @@
     "Hold for a second without letting your torso twist.",
     "Return the handle to your chest, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

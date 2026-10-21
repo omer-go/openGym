@@ -17,5 +17,13 @@
     "Squeeze your abs hard.",
     "Return slowly to standing."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

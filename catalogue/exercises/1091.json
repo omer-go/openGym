@@ -19,5 +19,22 @@
     "Pull back to the start.",
     "Do not let your hips sag."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "lats",
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "hip-flexors"
+    ]
+  }
 }

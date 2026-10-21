@@ -19,5 +19,14 @@
     "Avoid pulling on your neck."
   ],
   "femaleVariant": "7028",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

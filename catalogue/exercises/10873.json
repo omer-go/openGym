@@ -18,5 +18,13 @@
     "Lower slowly and repeat."
   ],
   "femaleVariant": "10874",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

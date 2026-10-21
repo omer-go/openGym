@@ -19,5 +19,17 @@
     "Rotate to the other side.",
     "Keep the movement slow and controlled."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

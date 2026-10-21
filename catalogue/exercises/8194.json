@@ -17,5 +17,17 @@
     "Pause briefly.",
     "Lower slowly without arching."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

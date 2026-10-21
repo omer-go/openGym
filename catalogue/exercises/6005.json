@@ -17,5 +17,13 @@
     "Lower slowly without pulling on your neck."
   ],
   "femaleVariant": "6004",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

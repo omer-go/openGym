@@ -19,5 +19,21 @@
     "Extend back out to the straight position.",
     "Repeat for reps, then do the other side."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

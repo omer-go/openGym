@@ -18,5 +18,14 @@
     "Return and repeat to the other side.",
     "Move with control instead of pulling on your neck."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

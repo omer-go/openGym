@@ -19,5 +19,23 @@
     "Return and switch legs.",
     "Keep your hips level and your core tight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "glute-max",
+      "quads"
+    ]
+  }
 }

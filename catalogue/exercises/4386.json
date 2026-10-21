@@ -19,5 +19,23 @@
     "Lower it with control.",
     "Repeat on the other leg and alternate."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

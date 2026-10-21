@@ -19,5 +19,22 @@
     "Pull back to the start using your abs.",
     "Alternate sides each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "lats",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "hip-flexors"
+    ]
+  }
 }

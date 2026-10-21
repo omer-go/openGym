@@ -18,5 +18,16 @@
     "Lower it back to your chest.",
     "Roll back down slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "front-delt",
+      "triceps",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

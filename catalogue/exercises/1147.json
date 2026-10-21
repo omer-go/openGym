@@ -19,5 +19,22 @@
     "Lower slowly to the start.",
     "Do not swing the legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

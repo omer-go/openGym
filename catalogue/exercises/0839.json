@@ -17,5 +17,18 @@
     "Return to centre and lower to the other side.",
     "Move slowly and keep control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "transverse-abdominis"
+    ]
+  }
 }

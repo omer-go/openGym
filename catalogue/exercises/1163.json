@@ -18,5 +18,18 @@
     "Keep your back from arching throughout."
   ],
   "femaleVariant": "3262",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

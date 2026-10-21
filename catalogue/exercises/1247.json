@@ -18,5 +18,17 @@
     "Rotate to the other side.",
     "Keep your chest tall and move with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

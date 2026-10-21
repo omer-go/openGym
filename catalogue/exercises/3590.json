@@ -18,5 +18,18 @@
     "Alternate without arching your back."
   ],
   "femaleVariant": "0008",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

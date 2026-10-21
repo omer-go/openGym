@@ -20,5 +20,13 @@
     "Repeat for reps."
   ],
   "femaleVariant": "4460",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

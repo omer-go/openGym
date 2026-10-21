@@ -19,5 +19,18 @@
     "Lower slowly without touching the floor.",
     "Complete reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "transverse-abdominis"
+    ]
+  }
 }

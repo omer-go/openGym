@@ -17,5 +17,18 @@
     "Pause briefly at the top.",
     "Lower slowly until you feel tension, then repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

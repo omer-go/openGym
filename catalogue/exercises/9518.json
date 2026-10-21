@@ -19,5 +19,16 @@
     "Return to the start under control.",
     "Switch sides and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "lats",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

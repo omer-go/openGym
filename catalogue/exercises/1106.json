@@ -19,5 +19,22 @@
     "Alternate sides each rep.",
     "Keep your hips from sagging as you return."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

@@ -18,5 +18,17 @@
     "Rotate your torso to one side, then to the other.",
     "Move with control and keep your chest lifted."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

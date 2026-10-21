@@ -19,5 +19,27 @@
     "Stand up as you swing your arms back up.",
     "Finish all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -17,5 +17,21 @@
     "As you swing down, pivot your hips and transfer the force to the hammer.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quads"
+    ]
+  }
 }

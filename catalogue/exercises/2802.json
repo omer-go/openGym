@@ -20,5 +20,20 @@
     "Continue alternating sides for the desired number of repetitions."
   ],
   "textSource": "exercisedb",
-  "femaleVariant": "2801"
+  "femaleVariant": "2801",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -19,5 +19,18 @@
     "Keep your chest open and back from rounding.",
     "Lower with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads"
+    ]
+  }
 }

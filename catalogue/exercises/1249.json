@@ -18,5 +18,18 @@
     "Lift them back to the middle and lower to the other side.",
     "Keep your shoulders flat on the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "transverse-abdominis"
+    ]
+  }
 }

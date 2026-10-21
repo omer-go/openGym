@@ -21,5 +21,25 @@
     "Breathe steadily."
   ],
   "femaleVariant": "2898",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "serratus-anterior",
+      "glute-max",
+      "glute-med",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

@@ -19,5 +19,20 @@
     "Keep your shoulders pressed down and your core tight.",
     "Hold for as long as you can with good form, then lower."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "quads"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "lower-trap",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

@@ -19,5 +19,21 @@
     "Return the ball overhead with control.",
     "Complete the reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quads"
+    ]
+  }
 }

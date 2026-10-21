@@ -17,5 +17,14 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "3261",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

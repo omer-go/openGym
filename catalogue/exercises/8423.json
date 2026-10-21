@@ -17,5 +17,18 @@
     "Lean back slowly while keeping your back straight.",
     "Stop where you can still hold your form, then return to upright using your abs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads"
+    ]
+  }
 }

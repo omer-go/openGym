@@ -19,5 +19,25 @@
     "Hold for a few seconds.",
     "Return and switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "erector-spinae"
+    ],
+    "synergists": [
+      "obliques",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "rear-delt",
+      "middle-trap",
+      "serratus-anterior",
+      "quadratus-lumborum",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

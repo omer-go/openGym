@@ -16,5 +16,20 @@
     "Hold this position for a few seconds, then slowly lower your upper body and legs back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "quads"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "lower-trap",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

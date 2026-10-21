@@ -21,5 +21,25 @@
     "Pause for a moment, then engage your core and push through your left heel to return to the starting position.",
     "Repeat for the desired number of repetitions, then switch sides."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "serratus-anterior",
+      "triceps",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

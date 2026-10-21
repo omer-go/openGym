@@ -19,5 +19,21 @@
     "Hold for 20-30 seconds.",
     "Breathe steadily and do not sag."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

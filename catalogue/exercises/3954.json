@@ -18,5 +18,24 @@
     "Return to the front plank.",
     "Alternate sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "serratus-anterior",
+      "erector-spinae",
+      "glute-max",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

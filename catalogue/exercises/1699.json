@@ -19,5 +19,21 @@
     "Catch it on the rebound and repeat.",
     "Switch sides after the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quads"
+    ]
+  }
 }

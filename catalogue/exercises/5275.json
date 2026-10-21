@@ -17,5 +17,13 @@
     "Lower your shoulders slowly.",
     "Keep your legs steady."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

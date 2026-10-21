@@ -19,5 +19,13 @@
     "Exhale as you crunch and avoid arching your back.",
     "Repeat with smooth control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

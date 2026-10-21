@@ -19,5 +19,25 @@
     "Return the arm slowly to the start.",
     "Alternate arms and keep your body in one straight line."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "serratus-anterior",
+      "glute-max",
+      "glute-med",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

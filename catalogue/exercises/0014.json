@@ -18,5 +18,17 @@
     "Pause for a moment, then twist your torso to the left, bringing the medicine ball towards the left side of your body.",
     "Continue alternating sides for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "stabilizers": [
+      "hip-flexors"
+    ]
+  }
 }

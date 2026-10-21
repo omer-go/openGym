@@ -17,5 +17,30 @@
     "Avoid twisting your hips.",
     "Lower and alternate arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "front-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "obliques"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "wrist-extensors",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

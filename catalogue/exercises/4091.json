@@ -19,5 +19,21 @@
     "Return to the center, then rotate to the other side.",
     "Lower down with control and keep your neck neutral."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "obliques",
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "lower-trap"
+    ]
+  }
 }

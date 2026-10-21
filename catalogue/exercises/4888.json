@@ -20,5 +20,25 @@
     "Reverse the movement to stand tall again.",
     "Keep the arm locked and stacked over your shoulder, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "serratus-anterior",
+      "triceps",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

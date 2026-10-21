@@ -19,5 +19,14 @@
     "Lower back down slowly."
   ],
   "femaleVariant": "10713",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

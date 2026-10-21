@@ -27,6 +27,19 @@
    "adductors"
   ]
  },
+ "1002": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "1003": {
   "target": [
    "middle-trap",
@@ -77,6 +90,14 @@
    "glute-med"
   ]
  },
+ "1005": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "1006": {
   "target": [
    "rear-delt"
@@ -97,6 +118,15 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "1007": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "1008": {
@@ -151,6 +181,18 @@
    "quadratus-lumborum"
   ]
  },
+ "1011": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "1012": {
   "target": [
    "front-delt"
@@ -202,6 +244,34 @@
    "glute-max"
   ]
  },
+ "1014": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "1015": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "1016": {
   "target": [
    "wrist-flexors"
@@ -237,6 +307,15 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "1020": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "1022": {
@@ -744,6 +823,22 @@
    "erector-spinae"
   ]
  },
+ "1069": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "1070": {
   "target": [
    "biceps"
@@ -951,6 +1046,40 @@
    "hamstrings"
   ]
  },
+ "1081": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1082": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "1083": {
   "target": [
    "hamstrings"
@@ -961,6 +1090,24 @@
   "stabilizers": [
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "1084": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
   ]
  },
  "1086": {
@@ -1048,6 +1195,23 @@
    "glute-max"
   ]
  },
+ "1091": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "1093": {
   "target": [
    "pec-major-sternal"
@@ -1117,6 +1281,34 @@
    "lower-trap",
    "rhomboids",
    "wrist-extensors"
+  ]
+ },
+ "1097": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "1098": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "1099": {
@@ -1226,6 +1418,39 @@
    "erector-spinae"
   ]
  },
+ "1105": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "1106": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "1107": {
   "target": [
    "side-delt",
@@ -1282,6 +1507,23 @@
    "hamstrings"
   ]
  },
+ "1110": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "1111": {
   "target": [
    "triceps"
@@ -1302,6 +1544,23 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "1112": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "1113": {
@@ -1442,6 +1701,23 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "1122": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "lats",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
   ]
  },
  "1123": {
@@ -1692,6 +1968,42 @@
    "glute-max"
   ]
  },
+ "1134": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "1135": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "1136": {
   "target": [
    "glute-max",
@@ -1711,6 +2023,15 @@
    "quadratus-lumborum",
    "hip-flexors",
    "adductors"
+  ]
+ },
+ "1137": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "1138": {
@@ -1799,6 +2120,96 @@
    "glute-med"
   ]
  },
+ "1144": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "1145": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "1146": {
+  "target": [
+   "pec-major-sternal"
+  ],
+  "synergists": [
+   "front-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "1147": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1148": {
+  "target": [
+   "erector-spinae",
+   "glute-max"
+  ],
+  "synergists": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "triceps",
+   "rectus-abdominis"
+  ]
+ },
  "1149": {
   "target": [
    "triceps"
@@ -1832,6 +2243,38 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "1151": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "1152": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "1154": {
@@ -1919,6 +2362,19 @@
    "glute-max"
   ]
  },
+ "1163": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "1164": {
   "target": [
    "calves"
@@ -1978,6 +2434,20 @@
    "erector-spinae",
    "adductor-magnus",
    "hamstrings"
+  ]
+ },
+ "1171": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "obliques",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "quadratus-lumborum"
   ]
  },
  "1172": {
@@ -2112,6 +2582,41 @@
    "erector-spinae"
   ]
  },
+ "1179": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1180": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1181": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "1182": {
   "target": [
    "pec-major-sternal"
@@ -2175,6 +2680,58 @@
    "hamstrings"
   ]
  },
+ "1186": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1187": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "1188": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "1189": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "1190": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "1191": {
   "target": [
    "triceps"
@@ -2187,6 +2744,24 @@
    "rectus-abdominis",
    "obliques",
    "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "1193": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
    "glute-max",
    "quads"
   ],
@@ -2339,6 +2914,22 @@
    "erector-spinae"
   ]
  },
+ "1202": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "1203": {
   "target": [
    "biceps"
@@ -2417,6 +3008,38 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "1207": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "1208": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "1209": {
@@ -2517,6 +3140,22 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "1213": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
   ]
  },
  "1214": {
@@ -2939,6 +3578,123 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "1241": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "glute-max"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "obliques",
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "1242": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "1243": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "1244": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1245": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
+ "1246": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
+ "1247": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "1248": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "1249": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "1250": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "1253": {
@@ -5022,6 +5778,21 @@
    "hip-flexors"
   ]
  },
+ "1402": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "quads"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "lower-trap",
+   "triceps",
+   "wrist-flexors"
+  ]
+ },
  "1408": {
   "target": [
    "glute-max"
@@ -5423,6 +6194,26 @@
    "levator-scapulae"
   ]
  },
+ "1440": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "1441": {
   "target": [
    "wrist-extensors"
@@ -5579,6 +6370,26 @@
    "lower-trap",
    "wrist-flexors",
    "rectus-abdominis"
+  ]
+ },
+ "1452": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "1453": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "1454": {
@@ -5840,6 +6651,55 @@
    "erector-spinae"
   ]
  },
+ "1469": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "1470": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "1471": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "1472": {
   "target": [
    "glute-max",
@@ -5891,6 +6751,24 @@
    "quadratus-lumborum",
    "hip-flexors",
    "adductors"
+  ]
+ },
+ "1478": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "1479": {
@@ -5956,6 +6834,31 @@
    "erector-spinae"
   ]
  },
+ "1495": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "1496": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "1497": {
   "target": [
    "pec-major-sternal"
@@ -5973,6 +6876,15 @@
    "middle-trap",
    "rhomboids",
    "wrist-flexors"
+  ]
+ },
+ "1498": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "1500": {
@@ -8345,6 +9257,30 @@
    "glute-med"
   ]
  },
+ "1688": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-med",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "adductors"
+  ]
+ },
  "1692": {
   "target": [
    "front-delt",
@@ -8459,6 +9395,28 @@
    "adductors"
   ]
  },
+ "1697": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "1698": {
   "target": [
    "glute-max",
@@ -8473,6 +9431,22 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "1699": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "1700": {
@@ -8525,6 +9499,22 @@
    "erector-spinae"
   ]
  },
+ "1704": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "1705": {
   "target": [
    "glute-max",
@@ -8542,6 +9532,37 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "1706": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "1707": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
   ]
  },
  "1717": {
@@ -9093,6 +10114,15 @@
    "calves"
   ]
  },
+ "1758": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "1759": {
   "target": [
    "glute-max",
@@ -9131,6 +10161,21 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "1761": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "1762": {
@@ -9176,6 +10221,21 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "1764": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "1765": {
@@ -9339,6 +10399,18 @@
    "glute-med"
   ]
  },
+ "1845": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "1851": {
   "target": [
    "pec-major-clavicular"
@@ -9356,6 +10428,77 @@
    "middle-trap",
    "rhomboids",
    "wrist-flexors"
+  ]
+ },
+ "1852": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "1854": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1855": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "1856": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "1857": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "1858": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "1859": {
@@ -9441,6 +10584,15 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "1864": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "1865": {
@@ -9674,6 +10826,29 @@
    "quads"
   ]
  },
+ "2127": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "2130": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "2133": {
   "target": [
    "upper-trap"
@@ -9689,6 +10864,24 @@
    "erector-spinae",
    "quadratus-lumborum",
    "glute-med"
+  ]
+ },
+ "2135": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "2136": {
@@ -9878,6 +11071,24 @@
    "wrist-extensors"
   ]
  },
+ "2152": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "synergists": [
+   "obliques",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "erector-spinae",
+   "glute-med",
+   "quads"
+  ]
+ },
  "2153": {
   "target": [
    "glute-max",
@@ -9910,6 +11121,22 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "2155": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "2157": {
@@ -9980,6 +11207,22 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "2164": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "2165": {
@@ -10085,6 +11328,40 @@
    "quads"
   ]
  },
+ "2204": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "2206": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "2224": {
   "target": [
    "glute-max",
@@ -10178,6 +11455,30 @@
   ],
   "stabilizers": [
    "calves"
+  ]
+ },
+ "2268": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "2269": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "2276": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "2277": {
@@ -10374,6 +11675,31 @@
    "erector-spinae"
   ]
  },
+ "2296": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "2297": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "2298": {
   "target": [
    "middle-trap",
@@ -10426,6 +11752,23 @@
    "glute-max",
    "adductor-magnus",
    "hamstrings"
+  ]
+ },
+ "2312": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "2314": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "2315": {
@@ -10656,6 +11999,21 @@
    "glute-max"
   ]
  },
+ "2333": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "2334": {
   "target": [
    "calves"
@@ -10831,6 +12189,14 @@
    "obliques"
   ]
  },
+ "2344": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "2345": {
   "target": [
    "quads"
@@ -10859,6 +12225,24 @@
    "wrist-flexors"
   ]
  },
+ "2347": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "2348": {
   "target": [
    "biceps"
@@ -10869,6 +12253,22 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "2349": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "2350": {
@@ -10967,6 +12367,21 @@
    "obliques"
   ]
  },
+ "2355": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "2357": {
   "target": [
    "glute-max",
@@ -10984,6 +12399,24 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "2358": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "2359": {
@@ -11154,6 +12587,18 @@
    "adductors"
   ]
  },
+ "2371": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "2375": {
   "target": [
    "glute-max",
@@ -11244,6 +12689,15 @@
    "hamstrings"
   ]
  },
+ "2395": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "2396": {
   "target": [
    "biceps"
@@ -11303,6 +12757,18 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "2399": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "2400": {
@@ -11494,6 +12960,15 @@
    "glute-med"
   ]
  },
+ "2420": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "2423": {
   "target": [
    "erector-spinae"
@@ -11537,6 +13012,18 @@
    "erector-spinae"
   ]
  },
+ "2429": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "2431": {
   "target": [
    "glute-max",
@@ -11575,6 +13062,18 @@
    "wrist-flexors"
   ]
  },
+ "2434": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "2461": {
   "target": [
    "glute-med"
@@ -11605,6 +13104,14 @@
    "rectus-abdominis"
   ]
  },
+ "2463": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "2464": {
   "target": [
    "lats"
@@ -11627,6 +13134,24 @@
    "glute-max"
   ]
  },
+ "2466": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ]
+ },
  "2468": {
   "target": [
    "glute-max",
@@ -11645,6 +13170,18 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "2469": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "2470": {
@@ -11839,6 +13376,33 @@
    "erector-spinae"
   ]
  },
+ "2523": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "2526": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "2527": {
   "target": [
    "glute-max",
@@ -11925,6 +13489,24 @@
    "erector-spinae"
   ]
  },
+ "2564": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "2566": {
   "target": [
    "pec-major-sternal"
@@ -11959,6 +13541,18 @@
    "obliques",
    "erector-spinae",
    "quadratus-lumborum"
+  ]
+ },
+ "2572": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "2589": {
@@ -12993,6 +14587,58 @@
    "erector-spinae"
   ]
  },
+ "2799": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "2800": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "2801": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "2802": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "2803": {
   "target": [
    "glute-max",
@@ -13199,6 +14845,18 @@
    "quadratus-lumborum"
   ]
  },
+ "2815": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "2830": {
   "target": [
    "glute-max",
@@ -13327,6 +14985,46 @@
    "adductors"
   ]
  },
+ "2850": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "2887": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "2889": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "2890": {
   "target": [
    "pec-major-sternal"
@@ -13351,6 +15049,104 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "2891": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "2892": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "2894": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "2895": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "2897": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "2899": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "2900": {
@@ -13653,6 +15449,19 @@
    "glute-med"
   ]
  },
+ "2918": {
+  "target": [
+   "obliques",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "2919": {
   "target": [
    "pec-major-sternal"
@@ -13904,6 +15713,33 @@
    "glute-max"
   ]
  },
+ "2937": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "2938": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "2940": {
   "target": [
    "side-delt",
@@ -14125,6 +15961,21 @@
    "levator-scapulae"
   ]
  },
+ "2963": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "2964": {
   "target": [
    "glute-max"
@@ -14196,6 +16047,24 @@
    "middle-trap",
    "rhomboids",
    "wrist-flexors"
+  ]
+ },
+ "2978": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "2980": {
@@ -14513,6 +16382,14 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "3016": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "3017": {
@@ -14999,6 +16876,22 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "3141": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "glute-max"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "obliques",
+   "transverse-abdominis",
+   "quadratus-lumborum",
    "glute-med"
   ]
  },
@@ -15570,6 +17463,42 @@
    "wrist-flexors"
   ]
  },
+ "3201": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "3202": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "3203": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "3204": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "3211": {
   "target": [
    "pec-major-sternal"
@@ -15852,6 +17781,42 @@
    "erector-spinae"
   ]
  },
+ "3238": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3239": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "3240": {
   "target": [
    "calves"
@@ -15870,6 +17835,19 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "3263": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "3264": {
@@ -15906,6 +17884,55 @@
    "erector-spinae"
   ]
  },
+ "3266": {
+  "target": [
+   "triceps"
+  ],
+  "synergists": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3268": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "3279": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "3280": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "3281": {
   "target": [
    "glute-max",
@@ -15923,6 +17950,23 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "3282": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "3283": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "3286": {
@@ -16099,6 +18143,104 @@
    "glute-max",
    "hip-flexors",
    "quads"
+  ]
+ },
+ "3296": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "3298": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
+  ]
+ },
+ "3299": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
+  ]
+ },
+ "3300": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
+  ]
+ },
+ "3301": {
+  "target": [
+   "front-delt"
+  ],
+  "synergists": [
+   "serratus-anterior",
+   "pec-minor",
+   "pec-major-clavicular",
+   "biceps"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "triceps",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "glute-max"
   ]
  },
  "3302": {
@@ -16436,6 +18578,41 @@
    "glute-max"
   ]
  },
+ "3329": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "3330": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "3331": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "3332": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "3333": {
   "target": [
    "pec-major-sternal"
@@ -16485,6 +18662,34 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "3336": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3337": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "3338": {
@@ -17171,6 +19376,15 @@
    "hamstrings"
   ]
  },
+ "3389": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "3390": {
   "target": [
    "calves"
@@ -17196,6 +19410,18 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "3393": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "3394": {
@@ -17468,6 +19694,44 @@
    "quads"
   ]
  },
+ "3419": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "quads"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "lower-trap",
+   "triceps",
+   "wrist-flexors"
+  ]
+ },
+ "3420": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "quads"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "lower-trap",
+   "triceps",
+   "wrist-flexors"
+  ]
+ },
+ "3422": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "3428": {
   "target": [
    "front-delt"
@@ -17515,6 +19779,18 @@
    "rear-delt",
    "middle-trap",
    "lower-trap"
+  ]
+ },
+ "3438": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "3440": {
@@ -17588,6 +19864,18 @@
    "quadratus-lumborum"
   ]
  },
+ "3449": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "3452": {
   "target": [
    "pec-major-sternal"
@@ -17618,6 +19906,18 @@
    "rear-delt",
    "middle-trap",
    "lower-trap"
+  ]
+ },
+ "3459": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "3460": {
@@ -17732,6 +20032,15 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "3484": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "3485": {
@@ -17982,6 +20291,16 @@
    "hamstrings"
   ]
  },
+ "3496": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "3497": {
   "target": [
    "lats"
@@ -18016,6 +20335,42 @@
   "stabilizers": [
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "3501": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3503": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "3506": {
@@ -18067,6 +20422,55 @@
    "calves"
   ]
  },
+ "3509": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "3510": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3511": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "glute-max"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "obliques",
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
+ "3512": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "3514": {
   "target": [
    "hamstrings"
@@ -18077,6 +20481,15 @@
   "stabilizers": [
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "3515": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "3518": {
@@ -18330,6 +20743,22 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "3544": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "3545": {
@@ -18834,6 +21263,22 @@
    "quads"
   ]
  },
+ "3584": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "3585": {
   "target": [
    "glute-max",
@@ -18853,6 +21298,17 @@
    "calves"
   ]
  },
+ "3586": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "3587": {
   "target": [
    "glute-max"
@@ -18865,6 +21321,35 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "3590": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "3591": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "3593": {
@@ -18884,6 +21369,18 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "3606": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "3616": {
@@ -18916,6 +21413,42 @@
    "calves"
   ]
  },
+ "3621": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "3622": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3623": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "3635": {
   "target": [
    "glute-max",
@@ -18934,6 +21467,14 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "3640": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "3641": {
@@ -19099,6 +21640,20 @@
    "wrist-flexors"
   ]
  },
+ "3663": {
+  "target": [
+   "erector-spinae",
+   "glute-max"
+  ],
+  "synergists": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "triceps",
+   "rectus-abdominis"
+  ]
+ },
  "3664": {
   "target": [
    "rear-delt"
@@ -19124,6 +21679,24 @@
   ],
   "antagonistStabilizers": [
    "rectus-abdominis"
+  ]
+ },
+ "3665": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "3667": {
@@ -19154,6 +21727,24 @@
    "middle-trap",
    "rhomboids",
    "wrist-flexors"
+  ]
+ },
+ "3670": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "3679": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "3680": {
@@ -19476,6 +22067,41 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "3698": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "3699": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "3702": {
@@ -20277,6 +22903,24 @@
    "hamstrings"
   ]
  },
+ "3750": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "3752": {
   "target": [
    "biceps"
@@ -20341,6 +22985,14 @@
   ],
   "stabilizers": [
    "rectus-abdominis",
+   "obliques"
+  ]
+ },
+ "3760": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
    "obliques"
   ]
  },
@@ -20598,6 +23250,35 @@
    "transverse-abdominis",
    "quads",
    "calves"
+  ]
+ },
+ "3777": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3778": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "3780": {
@@ -20882,6 +23563,35 @@
    "calves"
   ]
  },
+ "3791": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3792": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "3793": {
   "target": [
    "glute-max",
@@ -21045,6 +23755,44 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "3813": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3814": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3821": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "3822": {
@@ -21251,6 +23999,26 @@
    "rectus-abdominis"
   ]
  },
+ "3838": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "3841": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "3845": {
   "target": [
    "middle-trap",
@@ -21271,6 +24039,22 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "3847": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "3848": {
@@ -21328,6 +24112,31 @@
    "erector-spinae"
   ]
  },
+ "3852": {
+  "target": [
+   "side-delt",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "obliques"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "3853": {
   "target": [
    "glute-med"
@@ -21338,6 +24147,23 @@
   "stabilizers": [
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "3854": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
   ]
  },
  "3856": {
@@ -21468,6 +24294,23 @@
    "obliques"
   ]
  },
+ "3861": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "3862": {
   "target": [
    "glute-max",
@@ -21498,6 +24341,34 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "3865": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3866": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
   ]
  },
  "3867": {
@@ -21710,6 +24581,32 @@
    "erector-spinae"
   ]
  },
+ "3881": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "3882": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "3883": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "3887": {
   "target": [
    "glute-max",
@@ -21751,6 +24648,48 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "3889": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "3890": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "3891": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "3892": {
@@ -22297,6 +25236,24 @@
    "quadratus-lumborum"
   ]
  },
+ "3930": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "3935": {
   "target": [
    "pec-major-sternal"
@@ -22330,6 +25287,15 @@
    "erector-spinae"
   ]
  },
+ "3942": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "3943": {
   "target": [
    "rear-delt"
@@ -22345,6 +25311,18 @@
   "stabilizers": [
    "triceps",
    "wrist-extensors"
+  ]
+ },
+ "3944": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "3945": {
@@ -22436,6 +25414,70 @@
    "glute-med"
   ]
  },
+ "3951": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "3954": {
+  "target": [
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "erector-spinae",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ]
+ },
+ "3958": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3959": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "3961": {
   "target": [
    "glute-max",
@@ -22454,6 +25496,17 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "3962": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "3963": {
@@ -22552,6 +25605,18 @@
    "wrist-flexors"
   ]
  },
+ "3969": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "3971": {
   "target": [
    "rear-delt"
@@ -22638,6 +25703,15 @@
    "erector-spinae"
   ]
  },
+ "3978": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "3979": {
   "target": [
    "pec-major-sternal"
@@ -22701,6 +25775,42 @@
    "rectus-abdominis",
    "obliques",
    "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "3982": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ]
+ },
+ "3983": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
    "glute-max",
    "quads"
   ],
@@ -22930,6 +26040,15 @@
    "erector-spinae"
   ]
  },
+ "3999": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "4000": {
   "target": [
    "glute-max",
@@ -22948,6 +26067,67 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "4001": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "4002": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4003": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4007": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "4008": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4009": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "4010": {
@@ -23100,6 +26280,71 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "4018": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4019": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4020": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "4022": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4023": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "4029": {
@@ -23262,6 +26507,30 @@
    "adductors"
   ]
  },
+ "4041": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "4042": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "4043": {
   "target": [
    "middle-trap",
@@ -23333,6 +26602,16 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "4047": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4048": {
@@ -23446,6 +26725,16 @@
    "erector-spinae"
   ]
  },
+ "4056": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "4057": {
   "target": [
    "front-delt",
@@ -23464,6 +26753,22 @@
    "upper-trap",
    "lower-trap",
    "triceps",
+   "wrist-flexors",
+   "glute-max"
+  ]
+ },
+ "4058": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "triceps-long-head",
    "wrist-flexors",
    "glute-max"
   ]
@@ -23907,6 +27212,46 @@
    "glute-max"
   ]
  },
+ "4080": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "4081": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4082": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "4083": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "4084": {
   "target": [
    "biceps"
@@ -24011,6 +27356,22 @@
    "glute-med"
   ]
  },
+ "4091": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "obliques",
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "lower-trap"
+  ]
+ },
  "4092": {
   "target": [
    "triceps-long-head"
@@ -24020,6 +27381,23 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "4093": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
   ]
  },
  "4094": {
@@ -24046,6 +27424,35 @@
    "adductor-magnus",
    "hamstrings",
    "calves"
+  ]
+ },
+ "4095": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4096": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4097": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4098": {
@@ -24100,6 +27507,14 @@
   "stabilizers": [
    "erector-spinae",
    "calves"
+  ]
+ },
+ "4101": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "4102": {
@@ -24186,6 +27601,22 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "4106": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
   ]
  },
  "4107": {
@@ -24473,6 +27904,16 @@
    "glute-med"
   ]
  },
+ "4124": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "4125": {
   "target": [
    "side-delt",
@@ -24520,6 +27961,16 @@
   "antagonistStabilizers": [
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "4127": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4128": {
@@ -24638,6 +28089,28 @@
   "stabilizers": [
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "4137": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "4138": {
@@ -24948,6 +28421,28 @@
    "calves"
   ]
  },
+ "4156": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "4158": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "4159": {
   "target": [
    "pec-major-sternal"
@@ -25146,6 +28641,24 @@
   "stabilizers": [
    "rectus-abdominis",
    "obliques",
+   "erector-spinae"
+  ]
+ },
+ "4170": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
    "erector-spinae"
   ]
  },
@@ -25491,6 +29004,51 @@
    "glute-med"
   ]
  },
+ "4188": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4189": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "4190": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "4191": {
   "target": [
    "side-delt"
@@ -25535,6 +29093,22 @@
    "erector-spinae"
   ]
  },
+ "4193": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "4194": {
   "target": [
    "infraspinatus"
@@ -25570,6 +29144,40 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "4196": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med",
+   "adductors"
+  ]
+ },
+ "4197": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med",
+   "hamstrings"
   ]
  },
  "4198": {
@@ -25989,6 +29597,22 @@
    "glute-med"
   ]
  },
+ "4224": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "4225": {
   "target": [
    "side-delt"
@@ -26167,6 +29791,22 @@
    "wrist-extensors"
   ]
  },
+ "4240": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "4241": {
   "target": [
    "glute-med"
@@ -26268,6 +29908,63 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "4248": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "4249": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "4250": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4251": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "4252": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "4253": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "4254": {
@@ -26434,6 +30131,18 @@
    "rectus-abdominis"
   ]
  },
+ "4322": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "4326": {
   "target": [
    "pec-major-sternal"
@@ -26488,6 +30197,80 @@
    "quads"
   ],
   "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "4330": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4331": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4332": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
+ "4333": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4334": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4335": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -26720,6 +30503,15 @@
    "wrist-flexors"
   ]
  },
+ "4354": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "4355": {
   "target": [
    "triceps"
@@ -26730,6 +30522,22 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "4356": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
   ]
  },
  "4357": {
@@ -26857,6 +30665,15 @@
    "wrist-flexors"
   ]
  },
+ "4366": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "4367": {
   "target": [
    "lats"
@@ -26950,6 +30767,16 @@
    "middle-trap",
    "rhomboids",
    "wrist-flexors"
+  ]
+ },
+ "4373": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4374": {
@@ -27061,6 +30888,59 @@
    "adductors"
   ]
  },
+ "4384": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "4385": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "4386": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "4388": {
   "target": [
    "glute-max",
@@ -27149,6 +31029,30 @@
   ],
   "stabilizers": [
    "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4393": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "4396": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -27373,6 +31277,22 @@
    "obliques"
   ]
  },
+ "4416": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "glute-max"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "obliques",
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ]
+ },
  "4417": {
   "target": [
    "glute-max",
@@ -27391,6 +31311,19 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "4419": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "4421": {
@@ -27865,6 +31798,64 @@
    "glute-max"
   ]
  },
+ "4457": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4458": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4459": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "4506": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "4521": {
   "target": [
    "pec-major-sternal"
@@ -27997,6 +31988,15 @@
    "erector-spinae",
    "quadratus-lumborum",
    "glute-med"
+  ]
+ },
+ "4535": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4536": {
@@ -28405,6 +32405,38 @@
    "erector-spinae"
   ]
  },
+ "4572": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "4573": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "4574": {
   "target": [
    "front-delt",
@@ -28602,6 +32634,129 @@
    "wrist-flexors",
    "wrist-extensors",
    "erector-spinae"
+  ]
+ },
+ "4620": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "4621": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4622": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "4623": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4624": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "4625": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ]
+ },
+ "4626": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "4627": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "4628": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "4646": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "4658": {
@@ -28834,6 +32989,18 @@
    "wrist-flexors"
   ]
  },
+ "4685": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "4686": {
   "target": [
    "front-delt"
@@ -29000,6 +33167,22 @@
    "quadratus-lumborum"
   ]
  },
+ "4696": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "4697": {
   "target": [
    "lats"
@@ -29046,6 +33229,15 @@
   "antagonistStabilizers": [
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "4699": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "4700": {
@@ -29226,6 +33418,14 @@
    "rectus-abdominis"
   ]
  },
+ "4720": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "4721": {
   "target": [
    "biceps"
@@ -29331,6 +33531,14 @@
    "obliques"
   ]
  },
+ "4727": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "4728": {
   "target": [
    "triceps"
@@ -29433,6 +33641,37 @@
   ],
   "synergists": [
    "calves"
+  ]
+ },
+ "4734": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4735": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4737": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
   ]
  },
  "4739": {
@@ -29565,6 +33804,48 @@
    "glute-max"
   ]
  },
+ "4746": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4747": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "4748": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "4749": {
   "target": [
    "middle-trap",
@@ -29592,6 +33873,18 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "4750": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "4751": {
@@ -29662,6 +33955,15 @@
    "quads"
   ]
  },
+ "4756": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "4757": {
   "target": [
    "glute-max",
@@ -29708,6 +34010,30 @@
    "glute-med"
   ]
  },
+ "4763": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ]
+ },
+ "4764": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "obliques",
+   "glute-max",
+   "adductor-magnus",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "quadratus-lumborum"
+  ]
+ },
  "4765": {
   "target": [
    "glute-max"
@@ -29716,6 +34042,47 @@
    "erector-spinae",
    "adductor-magnus",
    "hamstrings"
+  ]
+ },
+ "4766": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "4767": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "4768": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "4769": {
@@ -29858,6 +34225,22 @@
    "erector-spinae"
   ]
  },
+ "4776": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "4777": {
   "target": [
    "glute-max"
@@ -29866,6 +34249,18 @@
    "erector-spinae",
    "adductor-magnus",
    "hamstrings"
+  ]
+ },
+ "4778": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "4780": {
@@ -30029,6 +34424,15 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "4787": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "4788": {
@@ -30196,6 +34600,38 @@
    "glute-med"
   ]
  },
+ "4798": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "lower-trap"
+  ]
+ },
+ "4799": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "4800": {
   "target": [
    "glute-max"
@@ -30341,6 +34777,56 @@
    "erector-spinae"
   ]
  },
+ "4808": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "4810": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "4811": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4812": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "4816": {
   "target": [
    "glute-max",
@@ -30414,6 +34900,23 @@
    "glute-max"
   ]
  },
+ "4820": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "4821": {
   "target": [
    "glute-max",
@@ -30432,6 +34935,17 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "4826": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "4830": {
@@ -30631,6 +35145,26 @@
    "obliques",
    "erector-spinae",
    "quadratus-lumborum"
+  ]
+ },
+ "4839": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4840": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "4841": {
@@ -30864,6 +35398,18 @@
    "quadratus-lumborum"
   ]
  },
+ "4854": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "4856": {
   "target": [
    "triceps"
@@ -30964,6 +35510,33 @@
    "erector-spinae"
   ]
  },
+ "4860": {
+  "target": [
+   "pec-major-sternal",
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "obliques",
+   "hip-flexors"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "4861": {
   "target": [
    "glute-max",
@@ -30990,6 +35563,22 @@
   ],
   "stabilizers": [
    "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "4863": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -31109,6 +35698,17 @@
    "rectus-abdominis"
   ]
  },
+ "4880": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "4881": {
   "target": [
    "glute-med"
@@ -31133,6 +35733,15 @@
    "quadratus-lumborum"
   ]
  },
+ "4883": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "4884": {
   "target": [
    "glute-med"
@@ -31143,6 +35752,30 @@
   "stabilizers": [
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "4885": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "4886": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "4887": {
@@ -31160,6 +35793,26 @@
    "quads"
   ]
  },
+ "4888": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "4890": {
   "target": [
    "hamstrings"
@@ -31171,6 +35824,21 @@
    "rectus-abdominis",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "4891": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "4892": {
@@ -31211,6 +35879,22 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "4894": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "4895": {
@@ -31272,6 +35956,26 @@
    "calves"
   ]
  },
+ "4901": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "4902": {
   "target": [
    "glute-max"
@@ -31320,6 +36024,31 @@
    "rectus-abdominis",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "4906": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "4907": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae"
   ]
  },
  "4908": {
@@ -31613,6 +36342,20 @@
    "rear-delt",
    "middle-trap",
    "lower-trap"
+  ]
+ },
+ "4934": {
+  "target": [
+   "erector-spinae",
+   "glute-max"
+  ],
+  "synergists": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "triceps",
+   "rectus-abdominis"
   ]
  },
  "4935": {
@@ -32016,6 +36759,16 @@
    "calves"
   ]
  },
+ "4972": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ]
+ },
  "4973": {
   "target": [
    "biceps"
@@ -32054,6 +36807,68 @@
    "hamstrings"
   ]
  },
+ "4975": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "4977": {
+  "target": [
+   "erector-spinae"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "middle-trap",
+   "lower-trap"
+  ]
+ },
+ "4978": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "4979": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "4981": {
   "target": [
    "biceps"
@@ -32065,6 +36880,22 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "4982": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "triceps-long-head",
+   "wrist-flexors",
+   "glute-max"
   ]
  },
  "4983": {
@@ -32145,6 +36976,17 @@
    "adductors"
   ]
  },
+ "4987": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "4988": {
   "target": [
    "hamstrings"
@@ -32156,6 +36998,63 @@
    "rectus-abdominis",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "4989": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "4990": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "4991": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "4992": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "4994": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "5001": {
@@ -32412,6 +37311,17 @@
    "glute-med"
   ]
  },
+ "5023": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "5024": {
   "target": [
    "serratus-anterior"
@@ -32484,6 +37394,28 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "5031": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "5032": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "5033": {
@@ -32635,6 +37567,48 @@
    "wrist-extensors"
   ]
  },
+ "5045": {
+  "target": [
+   "erector-spinae",
+   "glute-max"
+  ],
+  "synergists": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "triceps",
+   "rectus-abdominis"
+  ]
+ },
+ "5046": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "5047": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "5048": {
   "target": [
    "erector-spinae"
@@ -32663,6 +37637,26 @@
    "rear-delt",
    "middle-trap",
    "lower-trap"
+  ]
+ },
+ "5050": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "5051": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "5052": {
@@ -32735,6 +37729,30 @@
    "wrist-flexors"
   ]
  },
+ "5069": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-med",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quadratus-lumborum",
+   "adductors"
+  ]
+ },
  "5070": {
   "target": [
    "glute-max",
@@ -32773,6 +37791,17 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "5072": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "hip-flexors"
   ]
  },
  "5073": {
@@ -33125,6 +38154,43 @@
    "glute-max"
   ]
  },
+ "5107": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "5108": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "5110": {
   "target": [
    "triceps"
@@ -33135,6 +38201,22 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "5118": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "5119": {
@@ -33438,6 +38520,78 @@
    "obliques"
   ]
  },
+ "5156": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ]
+ },
+ "5157": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "5158": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "5159": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "5160": {
   "target": [
    "triceps"
@@ -33458,6 +38612,23 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "5165": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "5166": {
@@ -33621,6 +38792,22 @@
    "erector-spinae"
   ]
  },
+ "5202": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "5203": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "5204": {
   "target": [
    "front-delt"
@@ -33676,6 +38863,14 @@
    "glute-max"
   ]
  },
+ "5206": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "5223": {
   "target": [
    "upper-trap"
@@ -33726,6 +38921,14 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "5228": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "5232": {
@@ -33802,6 +39005,15 @@
    "obliques"
   ]
  },
+ "5237": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "5238": {
   "target": [
    "biceps",
@@ -33876,6 +39088,11 @@
    "wrist-flexors"
   ]
  },
+ "5242": {
+  "target": [
+   "transverse-abdominis"
+  ]
+ },
  "5243": {
   "target": [
    "triceps",
@@ -33883,6 +39100,15 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "5250": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "5261": {
@@ -33906,6 +39132,44 @@
   "stabilizers": [
    "upper-trap",
    "levator-scapulae"
+  ]
+ },
+ "5265": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "5266": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "5274": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "5275": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "5277": {
@@ -34108,6 +39372,27 @@
    "glute-med",
    "adductors",
    "calves"
+  ]
+ },
+ "5308": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ]
+ },
+ "5309": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "hip-flexors"
   ]
  },
  "5310": {
@@ -34361,6 +39646,31 @@
    "wrist-flexors"
   ]
  },
+ "5333": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "5334": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "5336": {
   "target": [
    "glute-max",
@@ -34379,6 +39689,19 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "5344": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
   ]
  },
  "5349": {
@@ -34433,6 +39756,11 @@
    "obliques",
    "erector-spinae",
    "quadratus-lumborum"
+  ]
+ },
+ "5445": {
+  "target": [
+   "transverse-abdominis"
   ]
  },
  "5447": {
@@ -34558,6 +39886,26 @@
    "erector-spinae"
   ]
  },
+ "5466": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "side-delt",
+   "serratus-anterior",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "5469": {
   "target": [
    "biceps"
@@ -34593,6 +39941,18 @@
    "erector-spinae",
    "adductor-magnus",
    "hamstrings"
+  ]
+ },
+ "5472": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "5473": {
@@ -34656,6 +40016,21 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "5477": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "5478": {
@@ -34747,6 +40122,24 @@
    "glute-med"
   ]
  },
+ "5497": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "5513": {
   "target": [
    "triceps"
@@ -34757,6 +40150,24 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "5514": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "5515": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "5516": {
@@ -35054,6 +40465,18 @@
    "adductors"
   ]
  },
+ "5583": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "5606": {
   "target": [
    "rear-delt"
@@ -35328,6 +40751,19 @@
    "erector-spinae"
   ]
  },
+ "5649": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
  "5656": {
   "target": [
    "rear-delt"
@@ -35346,6 +40782,18 @@
   ],
   "stabilizers": [
    "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "5657": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -35705,6 +41153,18 @@
    "erector-spinae"
   ]
  },
+ "5699": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "5700": {
   "target": [
    "calves"
@@ -35879,6 +41339,14 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "5741": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "5745": {
@@ -36299,6 +41767,15 @@
    "obliques"
   ]
  },
+ "5846": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "5853": {
   "target": [
    "rear-delt"
@@ -36589,6 +42066,22 @@
    "erector-spinae"
   ]
  },
+ "5879": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "5880": {
   "target": [
    "glute-max",
@@ -36604,6 +42097,28 @@
   "stabilizers": [
    "rectus-abdominis",
    "obliques",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "5882": {
+  "target": [
+   "obliques",
+   "glute-max",
+   "quads"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "adductor-magnus",
+   "calves"
+  ],
+  "dynamicStabilizers": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
    "erector-spinae",
    "glute-med"
   ]
@@ -36763,6 +42278,22 @@
    "erector-spinae"
   ]
  },
+ "5938": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "5943": {
   "target": [
    "front-delt"
@@ -36803,6 +42334,15 @@
    "obliques",
    "erector-spinae",
    "quadratus-lumborum"
+  ]
+ },
+ "5963": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "5988": {
@@ -36891,6 +42431,45 @@
    "quads"
   ]
  },
+ "6002": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "6005": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "6006": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "6016": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "6017": {
   "target": [
    "lats"
@@ -36952,6 +42531,22 @@
    "glute-med"
   ]
  },
+ "6026": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "6032": {
   "target": [
    "middle-trap",
@@ -36972,6 +42567,18 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "6033": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "6034": {
@@ -37246,6 +42853,50 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "6052": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "6053": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "6054": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "6055": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "6057": {
@@ -37609,6 +43260,24 @@
    "glute-max"
   ]
  },
+ "6092": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
+  ]
+ },
  "6108": {
   "target": [
    "hamstrings"
@@ -37727,6 +43396,14 @@
    "upper-trap",
    "levator-scapulae",
    "wrist-extensors",
+   "obliques"
+  ]
+ },
+ "6144": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
    "obliques"
   ]
  },
@@ -37964,6 +43641,38 @@
    "erector-spinae"
   ]
  },
+ "6207": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "6208": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "6209": {
   "target": [
    "glute-max"
@@ -37978,6 +43687,31 @@
    "glute-med"
   ]
  },
+ "6210": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "6211": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "6214": {
   "target": [
    "adductors"
@@ -37987,6 +43721,23 @@
   ],
   "stabilizers": [
    "obliques"
+  ]
+ },
+ "6215": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
   ]
  },
  "6218": {
@@ -38627,6 +44378,30 @@
    "wrist-flexors"
   ]
  },
+ "6418": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "6419": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "6423": {
   "target": [
    "triceps"
@@ -38674,6 +44449,15 @@
   "stabilizers": [
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "6428": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "6435": {
@@ -38802,6 +44586,22 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "6466": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-med"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae"
   ]
  },
  "6485": {
@@ -39137,6 +44937,34 @@
    "quads"
   ]
  },
+ "6547": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "obliques",
+   "quads"
+  ]
+ },
+ "6548": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "6549": {
   "target": [
    "front-delt",
@@ -39240,6 +45068,24 @@
    "calves"
   ]
  },
+ "6554": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "6555": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "6558": {
   "target": [
    "quads"
@@ -39256,6 +45102,18 @@
  "6559": {
   "target": [
    "tibialis-anterior"
+  ]
+ },
+ "6561": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "6570": {
@@ -39400,6 +45258,15 @@
    "obliques"
   ]
  },
+ "6693": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "6698": {
   "target": [
    "biceps"
@@ -39411,6 +45278,19 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "6705": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
   ]
  },
  "6733": {
@@ -39456,6 +45336,23 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "6737": {
+  "target": [
+   "obliques",
+   "glute-med"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae"
   ]
  },
  "6738": {
@@ -39553,6 +45450,14 @@
    "glute-max"
   ]
  },
+ "6752": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "6754": {
   "target": [
    "infraspinatus"
@@ -39625,6 +45530,22 @@
  "6759": {
   "target": [
    "tibialis-anterior"
+  ]
+ },
+ "6760": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "6776": {
@@ -39715,6 +45636,132 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "6799": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "6800": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "triceps",
+   "hip-flexors"
+  ]
+ },
+ "6801": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "6802": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "6803": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "6804": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "6805": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "6806": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "triceps",
+   "hip-flexors"
+  ]
+ },
+ "6809": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "6810": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "6813": {
@@ -39988,6 +46035,23 @@
    "erector-spinae"
   ]
  },
+ "7019": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "7056": {
   "target": [
    "brachialis",
@@ -40144,6 +46208,19 @@
    "quadratus-lumborum"
   ]
  },
+ "7201": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "7202": {
   "target": [
    "glute-max",
@@ -40281,6 +46358,24 @@
    "quadratus-lumborum"
   ]
  },
+ "7210": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "7211": {
   "target": [
    "glute-med"
@@ -40291,6 +46386,15 @@
   "stabilizers": [
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "7212": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "7213": {
@@ -40369,6 +46473,24 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "7229": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "7230": {
@@ -40466,6 +46588,28 @@
    "obliques"
   ]
  },
+ "7251": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
  "7252": {
   "target": [
    "rear-delt"
@@ -40481,6 +46625,50 @@
   "stabilizers": [
    "triceps",
    "wrist-extensors"
+  ]
+ },
+ "7255": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "7274": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "7275": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "7276": {
@@ -40655,6 +46843,24 @@
    "erector-spinae"
   ]
  },
+ "7342": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "7374": {
   "target": [
    "glute-max",
@@ -40714,6 +46920,24 @@
    "obliques"
   ]
  },
+ "7389": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "7411": {
   "target": [
    "glute-max",
@@ -40768,6 +46992,14 @@
    "quads"
   ]
  },
+ "7414": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "7415": {
   "target": [
    "triceps"
@@ -40799,6 +47031,15 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "7417": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "7418": {
@@ -40865,6 +47106,24 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "7463": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
   ]
  },
  "7469": {
@@ -41360,6 +47619,22 @@
    "glute-max"
   ]
  },
+ "7584": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "7586": {
   "target": [
    "glute-max",
@@ -41665,6 +47940,15 @@
    "calves"
   ]
  },
+ "7693": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "7743": {
   "target": [
    "rear-delt"
@@ -41780,6 +48064,61 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques",
+   "erector-spinae"
+  ]
+ },
+ "7839": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "7850": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "7854": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "7859": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
    "erector-spinae"
   ]
  },
@@ -41967,6 +48306,38 @@
    "glute-med"
   ]
  },
+ "8002": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
+ "8025": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "8075": {
   "target": [
    "glute-max"
@@ -42068,6 +48439,11 @@
    "wrist-flexors"
   ]
  },
+ "8146": {
+  "target": [
+   "transverse-abdominis"
+  ]
+ },
  "8189": {
   "target": [
    "lats"
@@ -42124,6 +48500,50 @@
    "obliques"
   ]
  },
+ "8193": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "8194": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "8199": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "8200": {
   "target": [
    "pec-major-sternal"
@@ -42131,6 +48551,18 @@
   "synergists": [
    "front-delt",
    "pec-major-clavicular"
+  ]
+ },
+ "8203": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "8220": {
@@ -42150,6 +48582,159 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "8221": {
+  "target": [
+   "side-delt",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "supraspinatus",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "obliques"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-extensors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "8222": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "8223": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "8224": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "8225": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "8274": {
@@ -42332,6 +48917,34 @@
    "glute-max"
   ]
  },
+ "8366": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "8371": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "8374": {
   "target": [
    "glute-max",
@@ -42364,6 +48977,43 @@
   ],
   "stabilizers": [
    "calves"
+  ]
+ },
+ "8399": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "8423": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
+ "8434": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "8479": {
@@ -42410,6 +49060,22 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "8505": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "8533": {
@@ -42475,6 +49141,20 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "8610": {
+  "target": [
+   "erector-spinae",
+   "glute-max"
+  ],
+  "synergists": [
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "rear-delt",
+   "triceps",
+   "rectus-abdominis"
   ]
  },
  "8613": {
@@ -42870,6 +49550,18 @@
    "wrist-extensors"
   ]
  },
+ "8873": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "8875": {
   "target": [
    "hip-flexors"
@@ -43163,6 +49855,26 @@
    "quadratus-lumborum"
   ]
  },
+ "9002": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "erector-spinae"
+  ],
+  "synergists": [
+   "obliques",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "rear-delt",
+   "middle-trap",
+   "serratus-anterior",
+   "quadratus-lumborum",
+   "glute-med",
+   "quads"
+  ]
+ },
  "9009": {
   "target": [
    "erector-spinae",
@@ -43175,6 +49887,41 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "9010": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "9024": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "9025": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "9041": {
@@ -43217,6 +49964,72 @@
    "adductors"
   ]
  },
+ "9043": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "9044": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "9045": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
  "9047": {
   "target": [
    "hamstrings"
@@ -43227,6 +50040,18 @@
   "stabilizers": [
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "9049": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "9066": {
@@ -43376,6 +50201,23 @@
    "erector-spinae"
   ]
  },
+ "9313": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "9314": {
   "target": [
    "glute-max"
@@ -43462,6 +50304,38 @@
    "obliques"
   ]
  },
+ "9318": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "triceps-long-head",
+   "wrist-flexors",
+   "glute-max"
+  ]
+ },
+ "9319": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "triceps-long-head",
+   "wrist-flexors",
+   "glute-max"
+  ]
+ },
  "9320": {
   "target": [
    "lats"
@@ -43484,6 +50358,33 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "9321": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "9322": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "triceps-long-head",
+   "wrist-flexors",
+   "glute-max"
   ]
  },
  "9323": {
@@ -43634,6 +50535,19 @@
    "erector-spinae"
   ]
  },
+ "9451": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
  "9484": {
   "target": [
    "glute-max",
@@ -43664,6 +50578,30 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "9486": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "quads"
+  ]
+ },
+ "9487": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "9490": {
@@ -43936,6 +50874,27 @@
    "erector-spinae"
   ]
  },
+ "9517": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "9518": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "9601": {
   "target": [
    "glute-max",
@@ -44156,6 +51115,24 @@
   ],
   "synergists": [
    "calves"
+  ]
+ },
+ "9677": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
   ]
  },
  "9690": {
@@ -44460,6 +51437,39 @@
  "9803": {
   "target": [
    "tibialis-anterior"
+  ]
+ },
+ "9819": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "9821": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
   ]
  },
  "9848": {
@@ -44943,6 +51953,11 @@
    "obliques"
   ]
  },
+ "9977": {
+  "target": [
+   "transverse-abdominis"
+  ]
+ },
  "9988": {
   "target": [
    "quads"
@@ -44986,6 +52001,24 @@
  "9996": {
   "target": [
    "wrist-extensors"
+  ]
+ },
+ "9999": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "glute-max",
+   "quads"
   ]
  },
  "10003": {
@@ -45033,6 +52066,22 @@
    "levator-scapulae",
    "wrist-extensors",
    "erector-spinae"
+  ]
+ },
+ "10041": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "10042": {
@@ -45284,6 +52333,22 @@
    "quads"
   ]
  },
+ "10065": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "10092": {
   "target": [
    "glute-max",
@@ -45301,6 +52366,22 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "10093": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "10094": {
@@ -45706,6 +52787,79 @@
    "glute-med"
   ]
  },
+ "10183": {
+  "target": [
+   "front-delt",
+   "obliques"
+  ],
+  "synergists": [
+   "side-delt",
+   "middle-trap",
+   "lower-trap",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "upper-trap",
+   "levator-scapulae",
+   "wrist-flexors",
+   "wrist-extensors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "10184": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
+ "10185": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "obliques"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "10186": {
   "target": [
    "glute-max"
@@ -45759,6 +52913,38 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "10192": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "10195": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "10196": {
@@ -45836,6 +53022,18 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "10327": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "10328": {
@@ -46249,6 +53447,49 @@
    "wrist-flexors"
   ]
  },
+ "10552": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "10554": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "10558": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "10559": {
   "target": [
    "front-delt"
@@ -46395,6 +53636,15 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "10639": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "10646": {
@@ -46751,6 +54001,14 @@
    "erector-spinae"
   ]
  },
+ "10710": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "10730": {
   "target": [
    "glute-max",
@@ -46802,6 +54060,21 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "10735": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "10738": {
@@ -47252,6 +54525,50 @@
    "quads"
   ]
  },
+ "10871": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "10873": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "10875": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "10877": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "10879": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "10882": {
   "target": [
    "pec-major-sternal"
@@ -47643,6 +54960,21 @@
    "erector-spinae"
   ]
  },
+ "10951": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "quads"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "lower-trap",
+   "triceps",
+   "wrist-flexors"
+  ]
+ },
  "10977": {
   "target": [
    "erector-spinae"
@@ -47750,6 +55082,18 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "11010": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "11014": {
@@ -48039,6 +55383,59 @@
    "quadratus-lumborum"
   ]
  },
+ "11090": {
+  "target": [
+   "lats"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "lower-trap",
+   "rhomboids",
+   "pec-major-sternal",
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "obliques",
+   "transverse-abdominis",
+   "glute-max",
+   "hip-flexors",
+   "quads"
+  ]
+ },
+ "11091": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "11092": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "11093": {
   "target": [
    "glute-max",
@@ -48077,6 +55474,22 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "11251": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "11252": {
@@ -48258,6 +55671,18 @@
    "erector-spinae"
   ]
  },
+ "11262": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "11263": {
   "target": [
    "middle-trap",
@@ -48387,6 +55812,30 @@
    "rectus-abdominis"
   ]
  },
+ "11270": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "11271": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "11272": {
   "target": [
    "front-delt"
@@ -48457,6 +55906,36 @@
    "glute-max"
   ]
  },
+ "11275": {
+  "target": [
+   "middle-trap",
+   "rhomboids",
+   "lats",
+   "obliques"
+  ],
+  "synergists": [
+   "rear-delt",
+   "infraspinatus",
+   "teres-minor",
+   "teres-major",
+   "lower-trap",
+   "brachialis",
+   "brachioradialis",
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "11276": {
   "target": [
    "hamstrings"
@@ -48484,6 +55963,18 @@
    "erector-spinae"
   ]
  },
+ "11278": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "11279": {
   "target": [
    "triceps-long-head"
@@ -48496,6 +55987,15 @@
    "obliques",
    "erector-spinae",
    "quadratus-lumborum"
+  ]
+ },
+ "11282": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "11284": {
@@ -49191,6 +56691,37 @@
    "quadratus-lumborum"
   ]
  },
+ "11877": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "quads"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "lower-trap",
+   "lats",
+   "triceps",
+   "wrist-flexors"
+  ]
+ },
+ "11878": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "11879": {
   "target": [
    "glute-max",
@@ -49233,6 +56764,36 @@
    "wrist-flexors"
   ]
  },
+ "0001": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0002": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "0003": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "0005": {
   "target": [
    "biceps"
@@ -49244,6 +56805,15 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "0006": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "0007": {
@@ -49286,6 +56856,74 @@
    "lower-trap",
    "wrist-flexors",
    "rectus-abdominis"
+  ]
+ },
+ "0010": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0011": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0012": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0013": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0014": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
   ]
  },
  "0015": {
@@ -49374,6 +57012,15 @@
    "lower-trap",
    "wrist-flexors",
    "rectus-abdominis"
+  ]
+ },
+ "0021": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "0022": {
@@ -50288,6 +57935,17 @@
    "wrist-flexors"
   ]
  },
+ "0071": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "front-delt",
+   "triceps",
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "0072": {
   "target": [
    "biceps"
@@ -50467,6 +58125,40 @@
    "wrist-extensors"
   ]
  },
+ "0083": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "0084": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "0085": {
   "target": [
    "glute-max",
@@ -50595,6 +58287,30 @@
    "wrist-flexors"
   ]
  },
+ "0093": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "0094": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "0095": {
   "target": [
    "upper-trap"
@@ -50605,6 +58321,18 @@
   ],
   "stabilizers": [
    "wrist-flexors",
+   "erector-spinae"
+  ]
+ },
+ "0096": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -50727,6 +58455,23 @@
    "glute-med"
   ]
  },
+ "0103": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "0104": {
   "target": [
    "wrist-flexors"
@@ -50831,6 +58576,22 @@
   ],
   "stabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0112": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "0113": {
@@ -51130,6 +58891,35 @@
    "glute-med"
   ]
  },
+ "0131": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "0133": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "0134": {
   "target": [
    "pec-major-sternal"
@@ -51168,6 +58958,18 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0138": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "0139": {
@@ -51231,6 +59033,15 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "0147": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "0148": {
@@ -51695,6 +59506,30 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "0174": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
+ "0175": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0176": {
@@ -52286,6 +60121,26 @@
    "wrist-extensors"
   ]
  },
+ "0211": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "0212": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "0213": {
   "target": [
    "rear-delt",
@@ -52426,6 +60281,39 @@
    "erector-spinae"
   ]
  },
+ "0221": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "0222": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "0223": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "0224": {
   "target": [
    "wrist-flexors"
@@ -52447,6 +60335,14 @@
    "triceps",
    "wrist-extensors",
    "erector-spinae"
+  ]
+ },
+ "0226": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0227": {
@@ -52495,6 +60391,22 @@
   "stabilizers": [
    "wrist-flexors",
    "erector-spinae"
+  ]
+ },
+ "0230": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "0231": {
@@ -52705,6 +60617,34 @@
    "erector-spinae"
   ]
  },
+ "0242": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "0243": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0245": {
   "target": [
    "lats"
@@ -52869,6 +60809,18 @@
    "erector-spinae"
   ]
  },
+ "0260": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "0261": {
   "target": [
    "pec-major-sternal"
@@ -52893,6 +60845,112 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0262": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "0263": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "0267": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0268": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0269": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0271": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0272": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0273": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0274": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0275": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0276": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0277": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0278": {
@@ -52945,6 +61003,24 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0281": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0282": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "0283": {
@@ -54943,6 +63019,18 @@
    "erector-spinae"
   ]
  },
+ "0407": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
  "0408": {
   "target": [
    "side-delt"
@@ -55492,6 +63580,15 @@
    "erector-spinae"
   ]
  },
+ "0443": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "0445": {
   "target": [
    "front-delt"
@@ -55641,6 +63738,24 @@
    "wrist-extensors"
   ]
  },
+ "0456": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0457": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "0458": {
   "target": [
    "pec-major-sternal"
@@ -55677,6 +63792,42 @@
    "glute-med"
   ]
  },
+ "0463": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "0464": {
+  "target": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "glute-max",
+   "quads"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
  "0466": {
   "target": [
    "lats"
@@ -55699,6 +63850,32 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "0467": {
+  "target": [
+   "lats",
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "rear-delt",
+   "teres-major",
+   "middle-trap",
+   "lower-trap",
+   "rhomboids",
+   "pec-minor",
+   "biceps",
+   "brachialis",
+   "brachioradialis",
+   "obliques",
+   "hip-flexors"
+  ],
+  "dynamicStabilizers": [
+   "triceps-long-head"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "0468": {
@@ -55725,6 +63902,23 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0469": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0470": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "0471": {
@@ -55755,6 +63949,81 @@
    "quads"
   ]
  },
+ "0472": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0473": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0474": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0475": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
+ "0476": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "0479": {
   "target": [
    "glute-max",
@@ -55773,6 +64042,30 @@
    "erector-spinae",
    "quadratus-lumborum",
    "adductors"
+  ]
+ },
+ "0482": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "0484": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "0485": {
@@ -55803,6 +64096,18 @@
    "obliques",
    "glute-med",
    "quads"
+  ]
+ },
+ "0487": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "0488": {
@@ -55851,6 +64156,18 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0491": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "0492": {
@@ -55929,6 +64246,15 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0495": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "0496": {
@@ -56054,6 +64380,56 @@
    "erector-spinae"
   ]
  },
+ "0502": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "0503": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0507": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "0508": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "0513": {
   "target": [
    "glute-max",
@@ -56084,6 +64460,26 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "0517": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "0518": {
@@ -56377,6 +64773,26 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "0530": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
   ]
  },
  "0531": {
@@ -56926,6 +65342,26 @@
    "glute-max"
   ]
  },
+ "0554": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum",
+   "glute-max",
+   "hamstrings"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "supraspinatus",
+   "infraspinatus",
+   "teres-minor",
+   "serratus-anterior",
+   "triceps",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "0558": {
   "target": [
    "lats"
@@ -56948,6 +65384,22 @@
    "rectus-abdominis",
    "obliques",
    "hip-flexors"
+  ]
+ },
+ "0562": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
   ]
  },
  "0564": {
@@ -56996,6 +65448,23 @@
    "erector-spinae"
   ]
  },
+ "0568": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med",
+   "adductors"
+  ]
+ },
  "0569": {
   "target": [
    "hamstrings"
@@ -57006,6 +65475,18 @@
   "stabilizers": [
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "0570": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
   ]
  },
  "0571": {
@@ -57227,6 +65708,22 @@
    "calves"
   ]
  },
+ "0583": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0584": {
   "target": [
    "side-delt"
@@ -57402,6 +65899,14 @@
    "calves"
   ]
  },
+ "0595": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
  "0596": {
   "target": [
    "pec-major-sternal"
@@ -57448,6 +65953,18 @@
   ],
   "synergists": [
    "calves"
+  ]
+ },
+ "0600": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "0601": {
@@ -57557,6 +66074,19 @@
    "wrist-flexors"
   ]
  },
+ "0608": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
  "0612": {
   "target": [
    "glute-max",
@@ -57615,6 +66145,52 @@
    "obliques"
   ]
  },
+ "0620": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "synergists": [
+   "obliques"
+  ],
+  "stabilizers": [
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0621": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0622": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0623": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
  "0624": {
   "target": [
    "quads"
@@ -57626,6 +66202,15 @@
   "stabilizers": [
    "rectus-abdominis",
    "calves"
+  ]
+ },
+ "0625": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "0627": {
@@ -57704,6 +66289,23 @@
    "quads"
   ]
  },
+ "0634": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0635": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
  "0636": {
   "target": [
    "brachialis",
@@ -57769,6 +66371,15 @@
    "rectus-abdominis"
   ]
  },
+ "0641": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
  "0642": {
   "target": [
    "glute-med"
@@ -57821,6 +66432,23 @@
    "rectus-abdominis",
    "obliques",
    "erector-spinae"
+  ]
+ },
+ "0650": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "0651": {
@@ -58113,6 +66741,33 @@
    "erector-spinae"
   ]
  },
+ "0664": {
+  "target": [
+   "pec-major-sternal",
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "dynamicStabilizers": [
+   "biceps"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "wrist-flexors",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-max",
+   "glute-med",
+   "quads"
+  ]
+ },
  "0665": {
   "target": [
    "pec-major-sternal"
@@ -58376,6 +67031,51 @@
    "hip-flexors"
   ]
  },
+ "0681": {
+  "target": [
+   "pec-major-sternal"
+  ],
+  "synergists": [
+   "front-delt",
+   "serratus-anterior",
+   "pec-major-clavicular",
+   "coracobrachialis",
+   "triceps",
+   "obliques"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "rectus-abdominis",
+   "glute-max"
+  ],
+  "antagonistStabilizers": [
+   "erector-spinae"
+  ]
+ },
+ "0686": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "0687": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "0688": {
   "target": [
    "lower-trap"
@@ -58388,6 +67088,26 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "0689": {
+  "target": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "obliques",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0691": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "0696": {
@@ -58469,6 +67189,50 @@
    "erector-spinae"
   ]
  },
+ "0700": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
+   "erector-spinae"
+  ]
+ },
+ "0701": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "0702": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "0703": {
   "target": [
    "glute-med"
@@ -58479,6 +67243,56 @@
   "stabilizers": [
    "rectus-abdominis",
    "obliques",
+   "quadratus-lumborum"
+  ]
+ },
+ "0705": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "0706": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "0707": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "0708": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
    "quadratus-lumborum"
   ]
  },
@@ -58505,6 +67319,38 @@
    "obliques"
   ]
  },
+ "0714": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "0715": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
  "0717": {
   "target": [
    "triceps"
@@ -58522,6 +67368,24 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0718": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
+  ]
+ },
+ "0719": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "quadratus-lumborum"
   ]
  },
  "0720": {
@@ -58673,6 +67537,24 @@
   "stabilizers": [
    "rectus-abdominis",
    "calves"
+  ]
+ },
+ "0735": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ]
+ },
+ "0736": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "0738": {
@@ -59306,6 +68188,22 @@
    "erector-spinae"
   ]
  },
+ "0777": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0781": {
   "target": [
    "glute-max",
@@ -59447,6 +68345,23 @@
    "calves"
   ]
  },
+ "0796": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "0801": {
   "target": [
    "glute-max",
@@ -59493,6 +68408,23 @@
    "erector-spinae"
   ]
  },
+ "0805": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
  "0806": {
   "target": [
    "pec-major-sternal"
@@ -59517,6 +68449,23 @@
   ],
   "antagonistStabilizers": [
    "erector-spinae"
+  ]
+ },
+ "0807": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
   ]
  },
  "0808": {
@@ -59693,6 +68642,31 @@
    "glute-max"
   ]
  },
+ "0820": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "transverse-abdominis",
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "side-delt",
+   "serratus-anterior",
+   "rectus-abdominis",
+   "erector-spinae",
+   "glute-med"
+  ]
+ },
+ "0821": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
  "0822": {
   "target": [
    "glute-max",
@@ -59712,6 +68686,30 @@
    "glute-med"
   ]
  },
+ "0823": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
+  ]
+ },
+ "0826": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
+  ]
+ },
  "0830": {
   "target": [
    "triceps"
@@ -59722,6 +68720,22 @@
   ],
   "stabilizers": [
    "wrist-flexors"
+  ]
+ },
+ "0831": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
+  ]
+ },
+ "0832": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0833": {
@@ -59764,6 +68778,18 @@
    "quadratus-lumborum"
   ]
  },
+ "0836": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "0837": {
   "target": [
    "glute-med"
@@ -59774,6 +68800,27 @@
   "stabilizers": [
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "0839": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lats",
+   "transverse-abdominis"
+  ]
+ },
+ "0840": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0841": {
@@ -59852,6 +68899,30 @@
    "obliques"
   ]
  },
+ "0845": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "0846": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
  "0847": {
   "target": [
    "biceps"
@@ -59864,6 +68935,30 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques",
+   "erector-spinae"
+  ]
+ },
+ "0849": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "rectus-abdominis",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "hip-flexors"
+  ]
+ },
+ "0850": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "quadratus-lumborum"
+  ],
+  "stabilizers": [
+   "rectus-abdominis",
    "erector-spinae"
   ]
  },
@@ -59918,6 +69013,22 @@
    "wrist-extensors"
   ]
  },
+ "0855": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0856": {
   "target": [
    "pec-major-sternal"
@@ -59933,6 +69044,23 @@
    "obliques",
    "erector-spinae",
    "glute-max"
+  ]
+ },
+ "0857": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
   ]
  },
  "0859": {
@@ -59983,6 +69111,22 @@
    "wrist-flexors"
   ]
  },
+ "0862": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0863": {
   "target": [
    "infraspinatus"
@@ -60011,6 +69155,33 @@
    "lower-trap",
    "rhomboids",
    "wrist-extensors"
+  ]
+ },
+ "0865": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "0866": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "lower-trap",
+   "lats",
+   "wrist-flexors",
+   "transverse-abdominis"
   ]
  },
  "0868": {
@@ -60047,6 +69218,67 @@
   "stabilizers": [
    "upper-trap",
    "levator-scapulae"
+  ]
+ },
+ "0870": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "transverse-abdominis",
+   "quads"
+  ]
+ },
+ "0871": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
+ "0872": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "0873": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
+ "0874": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques"
   ]
  },
  "0878": {
@@ -60402,6 +69634,18 @@
    "adductors"
   ]
  },
+ "0910": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "transverse-abdominis"
+  ]
+ },
  "0911": {
   "target": [
    "hamstrings"
@@ -60607,6 +69851,22 @@
    "erector-spinae"
   ]
  },
+ "0931": {
+  "target": [
+   "obliques"
+  ],
+  "synergists": [
+   "front-delt",
+   "rectus-abdominis",
+   "transverse-abdominis",
+   "glute-max"
+  ],
+  "stabilizers": [
+   "wrist-flexors",
+   "erector-spinae",
+   "quads"
+  ]
+ },
  "0934": {
   "target": [
    "side-delt"
@@ -60697,6 +69957,18 @@
    "erector-spinae"
   ]
  },
+ "0969": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
+  ]
+ },
  "0970": {
   "target": [
    "lats"
@@ -60719,6 +69991,32 @@
    "wrist-flexors",
    "rectus-abdominis",
    "obliques"
+  ]
+ },
+ "0971": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "lats",
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "serratus-anterior",
+   "triceps",
+   "wrist-flexors",
+   "hip-flexors"
+  ]
+ },
+ "0972": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "0973": {
@@ -60824,6 +70122,22 @@
    "erector-spinae"
   ]
  },
+ "0979": {
+  "target": [
+   "obliques",
+   "transverse-abdominis"
+  ],
+  "synergists": [
+   "rectus-abdominis"
+  ],
+  "stabilizers": [
+   "front-delt",
+   "pec-major-sternal",
+   "triceps",
+   "glute-max",
+   "glute-med"
+  ]
+ },
  "0980": {
   "target": [
    "glute-max"
@@ -60836,6 +70150,18 @@
    "obliques",
    "erector-spinae",
    "glute-med"
+  ]
+ },
+ "0981": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
+  ],
+  "stabilizers": [
+   "quads"
   ]
  },
  "0983": {
@@ -60862,6 +70188,15 @@
    "erector-spinae",
    "quadratus-lumborum",
    "glute-max"
+  ]
+ },
+ "0985": {
+  "target": [
+   "rectus-abdominis",
+   "obliques"
+  ],
+  "synergists": [
+   "hip-flexors"
   ]
  },
  "0986": {
@@ -60985,6 +70320,15 @@
    "rectus-abdominis",
    "obliques",
    "quadratus-lumborum"
+  ]
+ },
+ "0992": {
+  "target": [
+   "rectus-abdominis"
+  ],
+  "synergists": [
+   "obliques",
+   "hip-flexors"
   ]
  },
  "0993": {

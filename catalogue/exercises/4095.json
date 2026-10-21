@@ -18,5 +18,14 @@
     "Hold for a moment, then lower slowly.",
     "Keep your lower back pressed into the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

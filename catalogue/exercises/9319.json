@@ -19,5 +19,21 @@
     "Stop just above the floor.",
     "Reset and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques",
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "triceps-long-head",
+      "wrist-flexors",
+      "glute-max"
+    ]
+  }
 }

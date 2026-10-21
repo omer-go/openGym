@@ -19,5 +19,21 @@
     "Hold the position for as long as you can with good form.",
     "Lower down under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "lats",
+      "wrist-flexors",
+      "obliques",
+      "quads"
+    ]
+  }
 }

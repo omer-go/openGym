@@ -18,5 +18,14 @@
     "Keep your chest lifted and your core tight."
   ],
   "femaleVariant": "1185",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

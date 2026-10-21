@@ -21,5 +21,21 @@
     "Slowly bring your hands back to your chest, resisting the pull of the band.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

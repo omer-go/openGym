@@ -18,5 +18,23 @@
     "Return the leg with control.",
     "Alternate legs, keeping your hips level throughout."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ],
+    "synergists": [
+      "obliques",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "erector-spinae",
+      "glute-med",
+      "quads"
+    ]
+  }
 }

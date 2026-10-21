@@ -17,5 +17,14 @@
     "Switch sides in a smooth pedalling motion.",
     "Keep your lower back pressed down."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ]
+  }
 }

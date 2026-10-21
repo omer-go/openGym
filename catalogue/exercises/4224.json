@@ -19,5 +19,21 @@
     "Hold a second, then bring the handle back to your chest.",
     "Finish your reps and switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

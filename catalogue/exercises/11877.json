@@ -18,5 +18,21 @@
     "Avoid swinging.",
     "Hold for 10-20 seconds, then lower."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "quads"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "lower-trap",
+      "lats",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

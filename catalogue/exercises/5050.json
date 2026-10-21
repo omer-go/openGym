@@ -18,5 +18,13 @@
     "Keep your legs steady."
   ],
   "femaleVariant": "6091",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

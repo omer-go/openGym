@@ -17,5 +17,10 @@
     "Hold for 10-20 seconds without breathing in deeply.",
     "Relax and breathe normally, then repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "transverse-abdominis"
+    ]
+  }
 }

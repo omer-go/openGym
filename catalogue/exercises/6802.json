@@ -19,5 +19,18 @@
     "Lower it and raise the other leg.",
     "Keep alternating, then lower the weights."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "triceps",
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

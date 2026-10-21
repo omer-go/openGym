@@ -20,5 +20,21 @@
     "Repeat on the other side and alternate."
   ],
   "femaleVariant": "0135",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "obliques",
+      "transverse-abdominis",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

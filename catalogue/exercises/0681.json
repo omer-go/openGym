@@ -19,5 +19,26 @@
     "Return the arm to the floor.",
     "Alternate sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps",
+      "obliques"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "glute-max"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

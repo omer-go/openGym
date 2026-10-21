@@ -19,5 +19,27 @@
     "Hold for as long as you can with good form.",
     "Lower down slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "lower-trap",
+      "rhomboids",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "glute-max",
+      "hip-flexors",
+      "quads"
+    ]
+  }
 }

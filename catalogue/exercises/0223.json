@@ -18,5 +18,14 @@
     "Repeat for the desired number of repetitions, then switch sides."
   ],
   "femaleVariant": "2577",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "quadratus-lumborum"
+    ]
+  }
 }

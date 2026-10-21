@@ -18,5 +18,18 @@
     "Keep your body rigid.",
     "Continue for reps or time."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads"
+    ]
+  }
 }

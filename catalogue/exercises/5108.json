@@ -19,5 +19,27 @@
     "Rotate your torso and pivot your back foot as you go.",
     "Return and repeat, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

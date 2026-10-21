@@ -17,5 +17,18 @@
     "Hold the top position for 20-30 seconds, breathing steadily.",
     "Lower down with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quads"
+    ]
+  }
 }

@@ -18,5 +18,13 @@
     "Lower with control.",
     "Keep your chin off your chest and your lower back on the floor."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

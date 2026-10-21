@@ -19,5 +19,21 @@
     "Return to the start in a controlled way.",
     "Complete your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "obliques",
+      "transverse-abdominis",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

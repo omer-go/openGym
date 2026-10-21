@@ -18,5 +18,15 @@
     "Lower them to your shoulders and roll back down.",
     "Alternate sides each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "transverse-abdominis",
+      "hip-flexors"
+    ]
+  }
 }

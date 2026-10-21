@@ -19,5 +19,27 @@
     "Hold for 5-10 seconds.",
     "Lower down slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "lower-trap",
+      "rhomboids",
+      "pec-major-sternal",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "glute-max",
+      "hip-flexors",
+      "quads"
+    ]
+  }
 }

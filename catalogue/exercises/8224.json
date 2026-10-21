@@ -19,5 +19,37 @@
     "Keep your hips level.",
     "Return slowly and alternate arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "obliques"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "wrist-flexors",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

@@ -19,5 +19,35 @@
     "Keep your hips high and stable.",
     "Extend slowly, finish your reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "obliques"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "brachialis",
+      "brachioradialis",
+      "transverse-abdominis",
+      "quadratus-lumborum"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "serratus-anterior",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

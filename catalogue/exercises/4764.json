@@ -18,5 +18,19 @@
     "Raise up to a straight line and rotate your torso to one side.",
     "Untwist, lower, and alternate sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae"
+    ],
+    "synergists": [
+      "obliques",
+      "glute-max",
+      "adductor-magnus",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

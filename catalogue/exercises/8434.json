@@ -19,5 +19,13 @@
     "Roll back up slowly to a tall position.",
     "Keep the motion smooth and controlled."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ]
+  }
 }

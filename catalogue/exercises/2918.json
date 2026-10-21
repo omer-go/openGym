@@ -20,5 +20,18 @@
     "Cover the set distance, then lower the bar carefully.",
     "Switch hands and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -18,5 +18,19 @@
     "Breathe steadily and hold for 20-40 seconds.",
     "Lower down to rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

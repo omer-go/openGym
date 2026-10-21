@@ -19,5 +19,24 @@
     "Slowly lower your feet back to the ground and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "pec-minor",
+      "pec-major-clavicular",
+      "biceps"
+    ],
+    "stabilizers": [
+      "lower-trap",
+      "triceps",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "glute-max"
+    ]
+  }
 }

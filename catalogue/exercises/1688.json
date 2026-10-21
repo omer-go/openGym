@@ -19,5 +19,29 @@
     "Repeat on the other side, stepping forward with your left foot and twisting your torso to the left.",
     "Continue alternating sides for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "front-delt",
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-med",
+      "adductor-magnus",
+      "calves"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors"
+    ]
+  }
 }
