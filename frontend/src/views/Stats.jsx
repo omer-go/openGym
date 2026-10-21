@@ -164,7 +164,7 @@ function MuscleBalance({ S }) {
   const rated = inWin.some(w => w.entries.some(e => e.sets.some(s => s.done && isHardSet(s))))
   const on = !weekly && hard && rated
   const load = loadOfWorkouts(inWin, on ? isHardSet : null)
-  // A tapped muscle split into its parts (front, side, rear delt…), from the exercises the
+  // A muscle tapped on the map or by its row below it, split into its parts (front, side, rear delt…), from the exercises the
   // catalogue has muscle roles for; the line under it says how many of its sets that covers.
   const parts = sel ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null), sel) : null
   const partsMax = parts ? Math.max(...parts.rows.map(r => r.sets)) : 0
@@ -199,7 +199,8 @@ function MuscleBalance({ S }) {
     const fill = target > 0 ? Math.round(Math.min(completed / target, 1) * 100) : completed > 0 ? 100 : 0
     const completedSets = t('{0} sets', fmtNum(completed))
     const plannedSets = t('{0} sets', fmtNum(target))
-    return <div className="mrow" data-muscle-volume={muscle} key={muscle}>
+    return <div className="mrow" data-muscle-volume={muscle} key={muscle} style={{ cursor: 'pointer' }}
+      aria-pressed={sel === muscle} {...tappable(() => toggleSel(muscle))}>
       <span className="nm">{sel === muscle ? <b>{t(MUSCLE_NAME[muscle])}</b> : t(MUSCLE_NAME[muscle])}</span>
       <span className="bar"><i style={{ width: fill + '%' }} /></span>
       <span className="v" style={{ textAlign: 'end' }}
@@ -240,12 +241,14 @@ function MuscleBalance({ S }) {
     </Button>
   </>
   const completedRows = <>
-    {sel && <div className="mrow" data-muscle-volume={sel} style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
+    {sel && <div className="mrow" data-muscle-volume={sel} aria-pressed
+      style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10, cursor: 'pointer' }} {...tappable(() => toggleSel(sel))}>
       <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
       <span className="v">{sets(sel) ? t('{0} sets', sets(sel)) : on ? t('no hard sets') : t('not trained')}</span>
     </div>}
     {breakdown}
-    {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m}>
+    {!sel && completedMuscles.map(m => <div key={m} className="mrow" data-muscle-volume={m} style={{ cursor: 'pointer' }}
+      aria-pressed={false} {...tappable(() => toggleSel(m))}>
       <span className="nm">{t(MUSCLE_NAME[m])}</span>
       <span className="bar"><i style={{ width: Math.round(load[m] / max * 100) + '%', background: on ? 'var(--yellow)' : undefined }} /></span>
       <span className="v">{t('{0} sets', sets(m))}</span>

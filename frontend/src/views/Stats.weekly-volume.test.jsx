@@ -146,6 +146,31 @@ describe('Stats — weekly planned vs completed volume', () => {
     expect(weeklyToggle()).toBeNull()
   })
 
+  it('selects a muscle by its row as the map does, this week and a past one', () => {
+    mocks.S = state({
+      workouts: [
+        completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 7),
+        completed('2026-09-22', 'calves', 6), completed('2026-09-22', 'upper-back', 5),
+      ],
+    })
+    mount()
+    expect(row('biceps').getAttribute('role')).toBe('button')
+    act(() => row('biceps').click())
+    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('biceps')
+    expect(renderedMuscles()).toEqual(['biceps'])
+    expect(row('biceps').getAttribute('aria-pressed')).toBe('true')
+    act(() => row('biceps').click())
+    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('')
+    expect(renderedMuscles()).toEqual(['chest', 'biceps', 'triceps'])  // triceps: planned only
+
+    act(() => button('Previous week').click())
+    act(() => row('upper-back').click())
+    expect(host.querySelector('[data-body-map]').dataset.selected).toBe('upper-back')
+    expect(renderedMuscles()).toEqual(['upper-back'])
+    act(() => row('upper-back').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })))
+    expect(renderedMuscles()).toEqual(['calves', 'upper-back'])
+  })
+
   it('shows the real percentage while capping only over-plan bar fill', () => {
     mocks.S = state({
       routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
