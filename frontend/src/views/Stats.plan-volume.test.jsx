@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 // Weekly muscle volume, as planned: it lived on Plan until v1.3.11 and is analysis, so it moved to
 // Stats, right after Muscle balance (Plan keeps a row that links here, /stats?focus=weekly-volume).
-// What it counts did not change: every weekday routine once, plus a running rotation's sessions.
+// It counts every weekday routine once, plus a running rotation's sessions, by muscle group in
+// whole sets, as Muscle balance's group bars do.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -41,13 +42,23 @@ describe('Stats — weekly muscle volume from the plan', () => {
     render(state())
     expect(card().textContent).toContain('Weekly muscle volume')
     expect(card().textContent).toContain('Chest2 sets')
-    expect(card().textContent).toContain('Triceps0.8 sets')
+    expect(card().textContent).toContain('Triceps1 sets')
+    expect([...card().querySelectorAll('[data-plan-group]')].map(r => r.dataset.planGroup)).toEqual(['chest', 'triceps'])
+  })
+
+  it('counts by group: one lift credits a group once, by the muscle it works most', () => {
+    const row = { id: 'row', n: 'Row', primaries: ['upper-back'], secondaries: ['lower-back', 'biceps'], custom: true }
+    render(state({ customEx: [row], routines: [{ id: 'pull', name: 'Pull', ex: [{ id: row.id, sets: 5 }] }], week: { 1: ['pull'] } }))
+    expect([...card().querySelectorAll('[data-plan-group]')].map(r => r.dataset.planGroup)).toEqual(['back', 'biceps'])
+    expect(card().textContent).toContain('Back5 sets')
+    expect(card().textContent).toContain('Biceps2 sets')
+    expect(card().textContent).not.toContain('Upper back')
   })
 
   it('follows the weekly schedule: a routine on two days counts twice', () => {
     render(state({ week: { 1: ['push'], 3: 'push' } }))
     expect(card().textContent).toContain('Chest4 sets')
-    expect(card().textContent).toContain('Triceps1.6 sets')
+    expect(card().textContent).toContain('Triceps2 sets')
   })
 
   it('counts the sessions of a running rotation too', () => {

@@ -436,24 +436,25 @@ function EffortCard({ S }) {
 
 // Stats = the analytics hub: all charts, progress and history live here.
 // The muscle volume your plan programs in a week: every weekday routine once, plus each session
-// of a running rotation (lib/muscles.js loadOfWeeklyPlan). It used to sit on Plan; it is analysis,
+// of a running rotation (lib/coverage.js groupSetsOfWeeklyPlan), by muscle group and in whole
+// sets, as the group bars in Muscle balance count it. It used to sit on Plan; it is analysis,
 // so it lives here now, next to Muscle balance, and Plan links to it (/stats?focus=weekly-volume).
 const PLAN_VOLUME_ROWS = 5
 export function WeeklyPlanVolume({ S }) {
   const [all, setAll] = useState(false)
-  const load = loadOfWeeklyPlan(S)
-  const muscles = rankOf(load).worked
-  const shown = all ? muscles : muscles.slice(0, PLAN_VOLUME_ROWS)
-  const max = muscles.length ? load[muscles[0]] : 0
+  const sets = groupSetsOfWeeklyPlan(S)
+  const groups = ADD_GROUPS.filter(g => sets[g.id] > 0).sort((a, b) => sets[b.id] - sets[a.id])
+  const visible = all ? groups : groups.slice(0, PLAN_VOLUME_ROWS)
+  const max = groups.length ? sets[groups[0].id] : 0
   return <div className="card" id="weekly-volume" data-weekly-muscle-volume>
     <h2 style={{ marginBottom: 2 }}>{t('Weekly muscle volume')}</h2>
     <div className="muted small" style={{ marginBottom: 10 }}>{t('Planned sets per week, from your plan.')}</div>
-    {muscles.length ? shown.map(muscle => <div className="mrow" key={muscle}>
-      <span className="nm">{t(MUSCLE_NAME[muscle])}</span>
-      <span className="bar"><i style={{ width: Math.round(load[muscle] / max * 100) + '%' }} /></span>
-      <span className="v">{t('{0} sets', fmtNum(Math.round(load[muscle] * 10) / 10))}</span>
+    {groups.length ? visible.map(g => <div className="mrow" key={g.id} data-plan-group={g.id}>
+      <span className="nm">{t(g.n)}</span>
+      <span className="bar"><i style={{ width: Math.round(sets[g.id] / max * 100) + '%' }} /></span>
+      <span className="v">{t('{0} sets', shown(sets[g.id]))}</span>
     </div>) : <div className="muted small">{t('No muscle volume planned.')}</div>}
-    {muscles.length > PLAN_VOLUME_ROWS && <>
+    {groups.length > PLAN_VOLUME_ROWS && <>
       <div style={{ height: 8 }} />
       <Button className="weekly-plan-toggle" trailingIcon={all ? 'chevronUp' : 'chevronDown'} aria-expanded={all}
         onClick={() => setAll(v => !v)}>{t(all ? 'Show less' : 'Show more')}</Button>
