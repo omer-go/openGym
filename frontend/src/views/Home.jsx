@@ -14,6 +14,9 @@ import { glyphOf } from '../lib/glyphs.js'
 import { dayNoteOf } from '../lib/day-notes.js'
 import { GEN_NAME } from '../lib/generate.js'
 import { KIND_COLOR, workoutsOn } from '../lib/workout-kind.js'
+import { NextDayCard, WeekGoalCard, PROGRAM_SHORT } from '../components/Program.jsx'
+import { programLayout } from '../lib/program.js'
+import { PLAN_VIEW_KEY } from './Plan.jsx'
 
 // A day's label in the week strip: the day type, short, or the routine's own name.
 const SHORT = { full: 'Full', pull: 'Pull', push: 'Push', legs: 'Legs', free: 'Free' }
@@ -77,27 +80,35 @@ export default function Home() {
   wkStart.setDate(today.getDate() - weekDayOffset(today.getDay(), ws) + weekOffset * 7)
   const strip = []
   let doneInWeek = 0
+  // With a program chosen, the days it has left this week show as a forecast (lib/program.js).
+  const layout = programLayout(S, isoOf(wkStart))
   for (let i = 0; i < 7; i++) {
     const d = new Date(wkStart); d.setDate(wkStart.getDate() + i)
     const iso = isoOf(d)
     // Each session that day is a dot in its kind's colour, and the first one names the day.
     const day = workoutsOn(S.workouts, iso)
     doneInWeek += day.length
+    const ahead = !day.length && layout?.[i].items.find(it => it.state !== 'done')
     strip.push(<div key={i} className={'wday' + (iso === todayISO() ? ' today' : '')} {...tappable(() => daySheet(iso))}>
       <div className="lbl">{t(DAYS[d.getDay()])}</div><div className="num">{d.getDate()}</div>
       <div className="dots">
         {day.length ? day.slice(0, 3).map((x, j) => <span key={j} className="dot" style={{ background: KIND_COLOR[x.kind] }} />)
+          : ahead ? <span className="dot planned" style={{ '--kind': KIND_COLOR[ahead.type] }} />
           // A day off with a note (#261) reads as excused.
           : <span className={'dot' + (dayNoteOf(S, iso) ? ' noted' : '')} />}
       </div>
-      <div className="wk-name" style={day.length ? { color: KIND_COLOR[day[0].kind] } : undefined}>
-        {day.length ? shortName(day[0]) + (day.length > 1 ? ' +' + (day.length - 1) : '') : '\u00a0'}
+      <div className={'wk-name' + (ahead ? ' planned' : '')} style={day.length ? { color: KIND_COLOR[day[0].kind] } : ahead ? { color: KIND_COLOR[ahead.type] } : undefined}>
+        {day.length ? shortName(day[0]) + (day.length > 1 ? ' +' + (day.length - 1) : '') : ahead ? t(PROGRAM_SHORT[ahead.type]) : '\u00a0'}
       </div>
     </div>)
   }
   const wkEnd = new Date(wkStart); wkEnd.setDate(wkStart.getDate() + 6)
   const wkLabel = weekOffset === 0 ? t('This week') : `${wkStart.getDate()} ${wkStart.toLocaleDateString(dateLocale(), { month: 'short' })} – ${wkEnd.getDate()} ${wkEnd.toLocaleDateString(dateLocale(), { month: 'short' })}`
   const editingSaved = !!S.active?.editingWorkoutId
+  const openPrograms = () => {
+    try { localStorage.setItem(PLAN_VIEW_KEY, 'schedule') } catch { /* the view just isn't remembered */ }
+    nav('/plan', { state: { programs: true } })
+  }
 
   // Each tile wears its kind's colour, the one its sessions get in the week strip.
   const tile = (key, icon, title, sub, onClick) => <div key={key} className="gen-tile kind" style={{ '--kind': KIND_COLOR[key] }} role="button" aria-label={title} {...tappable(onClick)}>
@@ -132,13 +143,18 @@ export default function Home() {
         </div>
         <span className="tag" style={{ color: 'var(--orange)', background: 'color-mix(in srgb,var(--orange) 16%,transparent)' }}>{editingSaved ? t('Edit') : t('Resume')}</span>
       </div>
-    </div> : <div className="card">
+    </div> : <>
+    {/* The next day: the program's, or the one-tap day the week's goal needs most (lib/program.js). */}
+    <NextDayCard onPrograms={openPrograms} />
+    <div className="card">
       <h2 style={{ marginBottom: 10 }}>{t('Start workout')}</h2>
       <div className="gen-grid">
         {GEN_TILES.map(({ type, glyph, what }) => tile(type, glyphOf(glyph), t(GEN_NAME[type]), t(what), () => startGenerated(type)))}
         {tile('free', 'shuffle', t('Freestyle'), t('Pick exercises as you go'), () => startFlow([]))}
         {tile('routine', 'clipboard', t('Saved routines'), tn('{0} routine', '{0} routines', S.routines.length), () => routinesSheet(S, nav))}
       </div>
-    </div>}
+    </div>
+    </>}
+    <WeekGoalCard />
   </div>
 }

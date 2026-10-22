@@ -26,7 +26,7 @@ vi.mock('../store/useStore.js', () => {
   useStore.getState = mocks.snapshot
   return { useStore, DEF: { reminder: { time: '17:30' } }, hasData: () => false }
 })
-vi.mock('react-router-dom', () => ({ useNavigate: () => () => {} }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => () => {}, useLocation: () => ({ state: null }) }))
 vi.mock('../lib/mobile.js', () => ({ MOBILE: false, isAndroid: () => Promise.resolve(false), shareExport: vi.fn(), syncReminder: vi.fn() }))
 vi.mock('../sheets.jsx', () => ({
   starterPlanSheet: vi.fn(), dayAssignSheet: vi.fn(),
@@ -34,6 +34,7 @@ vi.mock('../sheets.jsx', () => ({
 
 let host, root
 beforeEach(() => {
+  localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   mocks.S = {
     unit: 'kg', workouts: [], exWeights: {}, week: {}, dayPlan: {},
     routines: [{ id: 'r1', name: 'Push', emoji: null, ex: [] }, { id: 'r2', name: 'Pull', emoji: null, ex: [] }],

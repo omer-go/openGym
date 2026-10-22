@@ -54,7 +54,9 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
-import { WEEKLY_TARGET, plannedSets } from './lib/coverage.js'
+import { plannedSets } from './lib/coverage.js'
+import { weeklyTargets } from './lib/goals.js'
+import { isProgram, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -2985,10 +2987,14 @@ function beginGenerated(type, entries, gen) {
 // rest and warm-ups every lift takes. The list previews
 // the session these build. One exercise's own numbers (its weight above all) are set in the
 // workout, from its name, in the sheet a freestyle add opens. The choices are kept per day type
-// (S.genSetup) for next time.
+// (S.genSetup) for next time. A day of the program running (lib/program.js) opens on as many
+// exercises as its share of the week's goal takes.
 function GenSetup({ type, close }) {
   const st = useStore(s => s.S)
-  const [setup, setSetup] = useState(() => ({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
+  const inProgram = isProgram(st.program) && st.program.days.includes(type)
+  const sized = base => (inProgram ? { ...base, count: sizeDay(st, type, { groups: base.groups, setup: base }) } : base)
+  const [setup, setSetup] = useState(() => sized({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
+  const pw = inProgram ? programWeek(st) : null
   const [shift, setShift] = useState(0)
   const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
@@ -3011,8 +3017,10 @@ function GenSetup({ type, close }) {
   }
   return <div className="wd-fit">
     <div className="row between" style={{ alignItems: 'flex-start', flex: 'none' }}>
-      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{t('Choose what to train, then start.')}</div></div>
-      <Button size="sm" variant="plain" onClick={() => { setSetup(genDefaults(type)); setShift(0) }}>{t('Reset')}</Button>
+      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{pw
+        ? t('Program · week {0} of {1} · sized to your weekly goal.', pw.week, pw.weeks)
+        : t('Choose what to train, then start.')}</div></div>
+      <Button size="sm" variant="plain" onClick={() => { setSetup(sized(genDefaults(type))); setShift(0) }}>{t('Reset')}</Button>
     </div>
     <div className="wd-scroll sheet-scroll">
       <h4 className="sec">{t('Upper body')}</h4>
@@ -3022,7 +3030,7 @@ function GenSetup({ type, close }) {
       {/* What the workout adds to each ticked group's week (lib/coverage.js). */}
       {setup.groups.length > 0 && <>
         <h4 className="sec">{t('This workout')}</h4>
-        <CoverageStrip groups={setup.groups} adds={plannedSets(entries)} label={t('Sets per group in this workout, toward {0} a week', WEEKLY_TARGET)} />
+        <CoverageStrip groups={setup.groups} adds={plannedSets(entries)} goals={weeklyTargets(st)} label={t('Sets per group in this workout, toward your weekly goal')} />
       </>}
       <h4 className="sec">{t('Cardio & stretching')}</h4>
       <div className="gs-pills">

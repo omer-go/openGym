@@ -24,7 +24,7 @@ vi.mock('../store/useStore.js', () => {
   useStore.getState = mocks.snapshot
   return { useStore }
 })
-vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav, useLocation: () => ({ state: null }) }))
 vi.mock('../sheets.jsx', () => ({
   dayAssignSheet: vi.fn(), starterPlanSheet: vi.fn(), menuSheet: vi.fn(), confirmSheet: vi.fn(),
   planHasRoutines: () => true, exportPlanFile: vi.fn(), printWholePlan: vi.fn(), importPlanFile: vi.fn(),
@@ -48,7 +48,7 @@ const baseS = over => ({ routines, week: { 1: ['c'] }, dayPlan: {}, workouts: []
 
 let host, root
 beforeEach(() => {
-  localStorage.removeItem('gym_plan_view')
+  localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   host = document.createElement('div'); document.body.appendChild(host); root = createRoot(host)
   menuSheet.mockClear(); confirmSheet.mockClear(); mocks.nav = vi.fn()
 })

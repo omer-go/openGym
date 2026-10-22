@@ -13,7 +13,7 @@ import Plan, { deleteRoutineWithUndo, takeOutOfLoop } from './Plan.jsx'
 import { chooseFixedWeek, saveRotation, scheduleModeOf } from '../lib/rotation.js'
 
 const nav = vi.fn()
-vi.mock('react-router-dom', () => ({ useNavigate: () => nav }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => nav, useLocation: () => ({ state: null }) }))
 vi.mock('../lib/sound.js', () => ({ beep: vi.fn(), chime: vi.fn(), vibrate: vi.fn(), alertBuzz: vi.fn(), unlock: vi.fn() }))
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({})), beacon: vi.fn(), appBase: () => '/' }))
 const confirmSheet = vi.hoisted(() => vi.fn())

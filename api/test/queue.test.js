@@ -250,3 +250,14 @@ test('queue: a strict pass (the app\'s "Start new pass") ignores a same-named wo
   const after = { ...strict, workouts: [early, { ...early, start: 2000 }] };
   assert.equal(effectiveRoutineId(after, '2026-09-07'), 'r2');
 });
+
+test('program: pauses the weekdays and the queue from its start until it is ended', () => {
+  const program = { template: 'ppl-3', days: ['push', 'pull', 'legs'], startedAt: '2026-09-09', weeks: 2 };
+  const S = { ...base, week: { 1: 'r1' }, program, dayPlan: { '2026-09-15': 'r2' },
+    queue: { ids: ['r3'], since: 1000, startsOn: '2026-09-07', label: 'W1' } };
+  assert.equal(effectiveRoutineId(S, '2026-09-07'), 'r3'); // before it starts: the queue
+  assert.equal(effectiveRoutineId(S, '2026-09-14'), null); // a Monday inside it
+  assert.equal(effectiveRoutineId(S, '2026-09-15'), 'r2'); // a routine picked for the date stands
+  assert.equal(effectiveRoutineId(S, '2026-09-28'), null); // its weeks are done, still chosen
+  assert.equal(effectiveRoutineId({ ...S, queue: undefined, program: null }, '2026-09-28'), 'r1'); // ended
+});

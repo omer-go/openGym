@@ -35,7 +35,7 @@ vi.mock('../store/useUI.js', () => {
   useUI.getState = snap
   return { useUI }
 })
-vi.mock('react-router-dom', () => ({ useNavigate: () => () => {} }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => () => {}, useLocation: () => ({ state: null }) }))
 vi.mock('../lib/api.js', () => ({
   api: vi.fn(), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), IS_ANDROID: false,
 }))
@@ -53,6 +53,7 @@ globalThis.__APP_VERSION__ ??= 'test'
 
 let host, root
 beforeEach(() => {
+  localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   mocks.S = {
     unit: 'kg', restSec: 90, restPauseSec: 15, sound: false, effort: 'none',
     gifSize: 'full', workouts: [], routines: [], exWeights: {}, week: {}, dayPlan: {},

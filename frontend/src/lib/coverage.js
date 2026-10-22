@@ -8,8 +8,9 @@
 // shrugs (traps) are no back exercise. A squat credits quads and glutes 1, hamstrings, calves
 // and abs 0.4.
 //
-// Weekly need. Credit × completed work sets over the last 7 days is the group's week; 10 fills
-// it. What is left is scaled by how rested the group's main muscle is (recovery.js fatigueOf).
+// Weekly need. Credit × completed work sets over the goal's week (goals.js: the last 7 days, or
+// the calendar week while a program runs) is the group's week; its goal (goals.js, 10 unless
+// set) fills it. What is left is scaled by how rested the group's main muscle is (recovery.js fatigueOf).
 //
 // Picking. One exercise at a time, the one that adds the most coverage, weighted by need squared
 // (a group with nothing this week beats two half-done ones). Coverage spreads before it stacks:
@@ -44,12 +45,13 @@ import { musclesOf, weeklyPlanRoutines } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { fatigueOf } from './recovery.js'
-import { isoOf } from './format.js'
+import { weeklyTargetOf, windowWorkouts } from './goals.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
 import { muscleRolesOf } from './muscle-roles.js'
 import { isConditioning } from './conditioning.js'
 
+/** The default weekly goal; the one in use is goals.js weeklyTargetOf. */
 export const WEEKLY_TARGET = 10
 const OTHER_MUSCLE = 0.25 // a group's other muscles credit it at a quarter
 const RESTED = 0.1        // below this need, a group waits until the others are served
@@ -202,20 +204,20 @@ export function groupSetsOfWeeklyPlan(S) {
   return out
 }
 
-/** Effective sets per group over the 7 days up to `now` (today counts as one of them). */
+/** Effective sets per group over the goal's week up to `now` (goals.js goalWindow). */
 export function weeklyDone(S, now = Date.now()) {
-  const today = isoOf(new Date(now)), from = isoOf(new Date(now - 7 * 864e5))
-  return groupSetsOf((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d > from && w.d <= today))
+  return groupSetsOf(windowWorkouts(S, now))
 }
 
 /** Group id -> how much it still needs this week, 0–1, for the `groups` given. */
+const needOf = (done, target) => (target > 0 ? Math.max(0, 1 - done / target) : 0)
 export function weeklyNeed(S, groups, now = Date.now()) {
   const done = weeklyDone(S, now)
   const fatigue = fatigueOf(S?.workouts || [], now, { unit: S?.unit })
   const need = {}
   for (const id of groups) {
     const g = ADD_GROUPS.find(x => x.id === id)
-    if (g) need[id] = Math.max(0, 1 - (done[id] || 0) / WEEKLY_TARGET) * (1 - (fatigue[g.m[0]] || 0))
+    if (g) need[id] = needOf(done[id] || 0, weeklyTargetOf(S, id)) * (1 - (fatigue[g.m[0]] || 0))
   }
   return need
 }

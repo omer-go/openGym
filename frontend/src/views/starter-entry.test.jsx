@@ -9,7 +9,7 @@ import { useStore } from '../store/useStore.js'
 import { starterPlanSheet } from '../sheets.jsx'
 import Plan from './Plan.jsx'
 
-vi.mock('react-router-dom', () => ({ useNavigate: () => () => {} }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => () => {}, useLocation: () => ({ state: null }) }))
 vi.mock('../sheets.jsx', () => ({
   starterPlanSheet: vi.fn(), bwSheet: vi.fn(), goalSheet: vi.fn(), dayOverrideSheet: vi.fn(),
   calendarSheet: vi.fn(), startFlow: vi.fn(), bwDeltaColor: () => '', weighInsSheet: vi.fn(),
@@ -18,6 +18,7 @@ vi.mock('../sheets.jsx', () => ({
 
 let host, root
 beforeEach(() => {
+  localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
   starterPlanSheet.mockClear()
   useStore.setState(s => ({ S: { ...s.S, routines: [], week: {}, active: null }, user: null }))

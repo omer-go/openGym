@@ -96,6 +96,9 @@ export function effectiveRoutineId(S, iso) {
   const ov = S.dayPlan?.[iso];
   if (ov === 'rest') return null;
   const pin = pinState(S, ov);
+  // While a program is chosen its days have no weekday, so the schedule is paused: only a routine
+  // picked for that one date stands (frontend/src/lib/program-span.js).
+  if (programOn(S, iso)) return !pin && ov && S.routines?.some(r => r?.id === ov) ? ov : null;
   if (pin === 'open') return ov;
   if (!pin && ov && S.routines?.some(r => r?.id === ov)) return ov;
   const q = queueNext(S, iso);
@@ -112,4 +115,12 @@ export function effectiveRoutineId(S, iso) {
 export function queueLiveOn(S, iso) {
   const q = queueOf(S);
   return !!q && iso >= q.startsOn && q.ids.some(id => !queueDone(S, id, q.startsOn));
+}
+
+// From the day a program starts until it is ended: a program is a way of training, chosen like a
+// fixed week or a rotation. Hand-copied from frontend/src/lib/program-span.js.
+export function programOn(S, iso) {
+  const p = S?.program;
+  if (!p || !Array.isArray(p.days) || !p.days.length || typeof p.startedAt !== 'string') return false;
+  return iso >= p.startedAt;
 }

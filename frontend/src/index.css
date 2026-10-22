@@ -2270,7 +2270,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cov-l span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cov-l b{font-weight:600;color:var(--label);font-variant-numeric:tabular-nums}
 .cov-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;position:relative;background:color-mix(in srgb,var(--label) 9%,transparent)}
-.cov-strip.over .cov-bar::after{content:'';position:absolute;top:0;bottom:0;left:var(--goal);width:2px;margin-left:-1px;background:var(--label-2);opacity:.7}
+.cov-g.over .cov-bar::after{content:'';position:absolute;top:0;bottom:0;left:var(--goal);width:2px;margin-left:-1px;background:var(--label-2);opacity:.7}
 .cov-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
 .cov-key{margin-top:10px}
 .cov-g.tap{cursor:pointer;border-radius:6px;padding:4px 6px;margin:-4px -6px}
@@ -2324,3 +2324,31 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   box-shadow:inset 0 0 0 1.8px var(--label-4);font-size:13px;font-weight:700}
 .pick-n.on{background:var(--acc);box-shadow:none;color:var(--on-acc)}
 .combo-order{gap:10px}
+
+/* Programs and the weekly goal (components/Program.jsx). */
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--label-2)}
+.prog-chips{display:flex;flex-wrap:wrap;gap:6px}
+.prog-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--kind);background:color-mix(in srgb,var(--kind) 14%,transparent)}
+.prog-chip .ico,.prog-chip svg{width:12px;height:12px}
+.prog-chip.done{color:var(--on-acc,#fff);background:var(--kind)}
+.prog-chip.next{box-shadow:inset 0 0 0 1.5px var(--kind)}
+.next-tile{padding:12px 14px}
+.next-tile .tt{font-size:17px}
+.goal-big{display:flex;justify-content:center;margin:6px 0 12px}
+.goal-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.goal-preset{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:var(--r);border:0;
+  background:var(--surface-2);color:var(--label);cursor:pointer;font:inherit}
+.goal-preset b{font-size:20px;font-variant-numeric:tabular-nums}
+.goal-preset span{font-size:12px;color:var(--label-2)}
+.goal-preset.on{background:color-mix(in srgb,var(--acc) 18%,transparent);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.goal-est{margin-top:14px;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);font-weight:600;font-size:14px;text-align:center}
+.goal-groups .item{padding-top:6px;padding-bottom:6px}
+.linkish{border:0;background:none;padding:0;color:var(--acc);font:inherit;cursor:pointer}
+
+/* Plan → Schedule with Program chosen: the days left are a forecast, lighter than days done. */
+.prog-week .forecast .lrow-i, .prog-week .forecast .tt { opacity: .6; }
+.prog-week .prog-done { color: var(--green); flex: none; }
+/* Home's week strip: a program day still to come, as a ring in its kind's colour. */
+.wday .dot.planned { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--kind); }
+.wday .wk-name.planned { opacity: .6; }

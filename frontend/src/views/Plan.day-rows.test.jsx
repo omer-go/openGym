@@ -30,7 +30,7 @@ vi.mock('../store/useStore.js', () => {
   useStore.getState = mocks.snapshot
   return { useStore, DEF: { reminder: { time: '17:30' } }, hasData: () => false }
 })
-vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav }))
+vi.mock('react-router-dom', () => ({ useNavigate: () => mocks.nav, useLocation: () => ({ state: null }) }))
 vi.mock('../lib/mobile.js', () => ({ MOBILE: false, isAndroid: () => Promise.resolve(false), shareExport: vi.fn(), syncReminder: vi.fn() }))
 vi.mock('../lib/coach.js', () => ({ coachAvailable: () => mocks.coach }))
 vi.mock('../sheets.jsx', () => ({
@@ -41,7 +41,7 @@ vi.mock('../sheets.jsx', () => ({
 let host, root
 beforeEach(() => {
   vi.clearAllMocks()
-  localStorage.removeItem('gym_plan_view')
+  localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   mocks.coach = false
   mocks.nav = vi.fn()
   mocks.S = {

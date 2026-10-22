@@ -39,7 +39,7 @@ const todayCell = () => host.querySelector('.wday.today')
 describe('Home — starting a workout', () => {
   it('offers the four day types, freestyle and saved routines', () => {
     mount()
-    expect([...host.querySelectorAll('.gen-tile')].map(el => el.getAttribute('aria-label')))
+    expect([...host.querySelectorAll('.gen-grid .gen-tile')].map(el => el.getAttribute('aria-label')))
       .toEqual(['Full body', 'Pull day', 'Push day', 'Leg day', 'Freestyle', 'Saved routines'])
   })
 

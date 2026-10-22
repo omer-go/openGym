@@ -2,6 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { effectiveRoutineIds, effectiveRoutines } from '../lib/history.js'
 import { todayISO } from '../lib/format.js'
+import { programOn } from '../lib/program-span.js'
+import { programOver, programWeek } from '../lib/program.js'
+import { startGenerated } from '../sheets.jsx'
 import { t } from '../lib/i18n.js'
 import Icon from './Icon.jsx'
 import Elapsed from './Elapsed.jsx'
@@ -34,6 +37,14 @@ export default function TabBar({ onStart }) {
 
   const running = !!S.active && cur !== 'workout' && !S.active.editingWorkoutId && !S.active.backfill && S.active.start > 0
   const startWorkout = () => {
+    if (!S.active && programOn(S, todayISO())) {
+      // One plan in charge: with a program chosen, Start is its next day (sized to the week's
+      // goal in the setup), and the picker once the week's days, or all its weeks, are done. A
+      // weekday routine never starts in its place (lib/program-span.js).
+      const pw = programOver(S) ? null : programWeek(S)
+      if (pw?.next != null) { startGenerated(pw.items[pw.next].type); return }
+      nav('/workout'); return
+    }
     if (!S.active) {
       // A weekday can hold several routines; start the combined session if any of them has
       // exercises, otherwise fall through to the picker.

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { DAYN, DAYS, weekOrder, weekStartOf, uid, exCount, routineCount, todayISO, fmtDate } from '../lib/format.js'
@@ -11,6 +11,8 @@ import {
 import Icon from '../components/Icon.jsx'
 import { Button, Row, Section, Segmented } from '../components/ui.jsx'
 import SwipeRow from '../components/SwipeRow.jsx'
+import { ProgramMode, endProgram } from '../components/Program.jsx'
+import { isProgram } from '../lib/program.js'
 import { copyRoutine, deleteRoutine, restoreRoutine, routineSnapshot } from '../lib/routines.js'
 import { workoutControls } from '../lib/workout-controls.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
@@ -27,12 +29,13 @@ import {
   chooseRotation, chooseFixedWeek,
 } from '../lib/rotation.js'
 
-// Plan has two views (v1.3.11): Schedule (how you train, and when) and Routines (what you
-// train). The last one you looked at comes back: a per-device convenience, never synced, so it
+// Plan has two views: Schedule (how you train, and when: a program, a fixed week or a rotation)
+// and Routines (what you train). The last one you looked at comes back: a per-device convenience, never synced, so it
 // lives in this browser's storage and not in S.
 export const PLAN_VIEW_KEY = 'gym_plan_view'
+const PLAN_VIEWS = ['schedule', 'routines']
 const readView = () => {
-  try { return localStorage.getItem(PLAN_VIEW_KEY) === 'routines' ? 'routines' : 'schedule' } catch { return 'schedule' }
+  try { const v = localStorage.getItem(PLAN_VIEW_KEY); return PLAN_VIEWS.includes(v) ? v : 'schedule' } catch { return 'schedule' }
 }
 
 /* Undo for Plan's two removals (v1.3.11). Both go through the store's normal update, so sync
@@ -142,7 +145,7 @@ export default function Plan() {
   const showCoach = coachAvailable(config, user, { demo: DEMO, mobile: MOBILE, coachMode })
 
   // Share, print, import and starter plans: one menu behind the header button, so the
-  // two views below are only about the plan itself.
+  // views below are only about the plan itself.
   const openMenu = () => {
     const has = planHasRoutines(S)
     menuSheet({
@@ -162,7 +165,7 @@ export default function Plan() {
 
   return <div className="narrow plan">
     <div className="hdr">
-      <div><h1>{t('Plan')}</h1><div className="sub">{mode === 'rotation' ? t('Your routines in a loop') : t('Your weekly routine')}</div></div>
+      <div><h1>{t('Plan')}</h1><div className="sub">{isProgram(S.program) ? t('Your program') : mode === 'rotation' ? t('Your routines in a loop') : t('Your weekly routine')}</div></div>
       <div className="hdr-actions">
         {showCoach && <Button size="sm" variant="tinted" icon="sparkles" onClick={() => nav('/coach')}>{t('Coach')}</Button>}
         <button className="iconbtn" onClick={openMenu} aria-label={t('Plan options')} title={t('Plan options')}><Icon name="share" /></button>
@@ -171,8 +174,7 @@ export default function Plan() {
     <input ref={fileRef} type="file" accept="application/json,.json" onChange={pickFile} hidden />
     <Segmented className="plan-views" value={view} onChange={setView}
       options={[{ value: 'schedule', label: t('Schedule') }, { value: 'routines', label: t('Routines') }]} />
-    {view === 'routines'
-      ? <Routines S={S} update={update} nav={nav} />
+    {view === 'routines' ? <Routines S={S} update={update} nav={nav} />
       : <Schedule S={S} update={update} nav={nav} mode={mode} />}
   </div>
 }
@@ -201,7 +203,21 @@ function Schedule({ S, update, nav, mode }) {
   // "How you train" is the same switch as Settings' (lib/rotation.js chooseRotation /
   // chooseFixedWeek), on the same keys. Leaving a running loop asks first: its progress goes,
   // the loop itself and the weekdays stay. With nothing running there is nothing to lose.
+  // A program is the third way (components/Program.jsx): picking it shows the programs to choose
+  // from, and it is in charge once one starts. Leaving one for a week or a loop ends it first.
+  // Home's "Programs" opens Plan with the programs showing (Home.jsx openPrograms).
+  const loc = useLocation()
+  const [picking, setPicking] = useState(() => !!loc.state?.programs)
+  const inProgram = isProgram(S.program)
+  const shown = inProgram || picking ? 'program' : mode
   const setMode = v => {
+    if (v === shown) return
+    if (v === 'program') { setPicking(true); return }
+    if (inProgram) {
+      endProgram(() => { setPicking(false); update(s => { if (v === 'rotation') chooseRotation(s); else chooseFixedWeek(s) }) })
+      return
+    }
+    setPicking(false)
     if (v === mode) return
     if (v === 'rotation') { update(s => { chooseRotation(s) }); return }
     if (!liveQ) { update(s => { chooseFixedWeek(s) }); return }
@@ -276,18 +292,21 @@ function Schedule({ S, update, nav, mode }) {
   const editing = editLoop && !external
 
   return <>
-    <Section className="plan-mode" footer={mode === 'rotation'
+    <Section className="plan-mode" footer={shown === 'program'
+      ? t('One-tap days built for your weekly goal. Whatever is next stays next until you train it, whatever the day.')
+      : shown === 'rotation'
       ? t('Routines in a loop. Whatever is next stays next until you train it, whatever the day.')
       : t('The same routines on the same weekdays, every week.')}>
       <Row icon="repeat" iconTint="var(--orange)" title={t('How you train')}>
         {/* A planner's own queue is not this app's to switch off: text, not a control. */}
-        {external
+        {external && !inProgram
           ? <span className="small dim plan-mode-locked">{t('Rotation')} · {t('Externally managed')}</span>
-          : <Segmented className="seg-inline" value={mode} onChange={setMode}
-              options={[{ value: 'week', label: t('Fixed Week') }, { value: 'rotation', label: t('Rotation') }]} />}
+          : <Segmented className="seg-inline" value={shown} onChange={setMode}
+              options={[{ value: 'program', label: t('Program') }, { value: 'week', label: t('Fixed Week') }, { value: 'rotation', label: t('Rotation') }]} />}
       </Row>
     </Section>
 
+    {shown === 'program' ? <ProgramMode /> : <>
     {!S.routines.length && <div className="empty plan-empty">
       <div className="ico"><Icon name="clipboard" /></div>{t('No routines yet.')}<br />{t('Make one, or grab the starter plan to get going.')}
       <div style={{ marginTop: 12 }}><Button icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button></div>
@@ -365,6 +384,7 @@ function Schedule({ S, update, nav, mode }) {
         <p className="sect-f">{t('These count on top of the loop. Tap a day to change or clear it.')}</p>
       </>}
     </div>}
+    </>}
 
     {/* Weekly muscle volume is analysis: it moved to Stats, next to Muscle balance. Stats only
         shows that card once there is a routine, so the link waits for one too. */}

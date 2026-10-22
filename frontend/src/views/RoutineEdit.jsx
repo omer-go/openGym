@@ -27,7 +27,8 @@ import { POLICIES_FOR, POLICY_NAME, POLICY_DESC } from '../lib/progression.js'
 import BodyMap from '../components/BodyMap.jsx'
 import { loadOfRoutine, rankOf, MUSCLE_NAME } from '../lib/muscles.js'
 import { muscleColor, mcStyle } from '../lib/muscle-colors.js'
-import { WEEKLY_TARGET, plannedSets } from '../lib/coverage.js'
+import { plannedSets } from '../lib/coverage.js'
+import { weeklyTargets } from '../lib/goals.js'
 import CoverageStrip from '../components/CoverageStrip.jsx'
 
 export const ROUTINE_LONG_PRESS_MS = 380
@@ -598,7 +599,7 @@ export default function RoutineEdit() {
           {worked.slice(0, 6).map(m => <span key={m} className={'mchip' + (muscleColor(m) ? ' mg' : '')} style={mcStyle(muscleColor(m))}>{t(MUSCLE_NAME[m])}</span>)}
         </div>
         {/* Effective sets per group (lib/coverage.js), the numbers Add exercise suggests by. */}
-        <div style={{ marginTop: 14 }}><CoverageStrip adds={plannedSets(r.ex)} label={t('Sets per group in this routine, toward {0} a week', WEEKLY_TARGET)} /></div>
+        <div style={{ marginTop: 14 }}><CoverageStrip adds={plannedSets(r.ex)} goals={weeklyTargets(S)} label={t('Sets per group in this routine, toward your weekly goal')} /></div>
       </div>
     })()}
 

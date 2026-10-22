@@ -28,7 +28,8 @@ import {
 import { anchorsByWorkout, resolveSetRir } from '../lib/recovery.js'
 import { Button, Segmented, SelectRow } from '../components/ui.jsx'
 import CoverageStrip, { shown } from '../components/CoverageStrip.jsx'
-import { WEEKLY_TARGET, groupSplitOf, groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, weeksOf, roundSplit } from '../lib/coverage.js'
+import { weeklyTargets } from '../lib/goals.js'
+import { groupSplitOf, groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, weeksOf, roundSplit } from '../lib/coverage.js'
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
@@ -241,9 +242,9 @@ function MuscleBalance({ S }) {
   const condPerWeek = weekly ? condSets : condSets / Math.max(1, perWeek.weeks)
   const groupBars = <div data-group-sets style={{ margin: '14px 0 6px' }}>
     <h4 className="sec" style={{ marginTop: 0 }}>{t('Muscle groups')}</h4>
-    <CoverageStrip adds={groupSets} planned={plannedG} onGroup={toggleGrp} selected={grp} label={weekly
-      ? t('Sets per group in this week, toward {0}', WEEKLY_TARGET)
-      : t('Sets per group in an average week of this period, toward {0}', WEEKLY_TARGET)} />
+    <CoverageStrip adds={groupSets} goals={weeklyTargets(S)} planned={plannedG} onGroup={toggleGrp} selected={grp} label={weekly
+      ? t('Sets per group in this week, toward your weekly goal')
+      : t('Sets per group in an average week of this period, toward your weekly goal')} />
     {condPerWeek > 0 && <div className="muted small" data-conditioning-sets style={{ marginTop: 6 }}>
       {weekly ? t('+ {0} conditioning sets in combos, not counted here', shown(condPerWeek))
         : t('+ {0} conditioning sets a week in combos, not counted here', shown(condPerWeek))}</div>}
