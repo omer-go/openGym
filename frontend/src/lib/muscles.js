@@ -9,7 +9,6 @@
 
 import { isWarmupRow } from './workout-model.js'
 import { EXIDX, smOf } from './exercises.js'
-import { todayISO, weekKey, MONDAY } from './format.js'
 import { queueOf } from './queue.js'
 import { workoutAt } from './history.js'
 
@@ -279,17 +278,14 @@ export const doneSetItems = (workouts, pick) => (workouts || []).flatMap(w =>
   (w.entries || []).map(e => ({ id: e.id, ex: e.exercise || e, sets: (e.sets || []).filter(s => s.done && !isWarmupRow(s) && (!pick || pick(s))).length })))
 
 /**
- * Workouts in one existing Muscle balance range, with time injected for deterministic tests.
- *
- * The 7-day range is "this week", not "the last seven days", so it moves with the profile's
- * first weekday — the caller passes it since this takes workouts rather than the whole state.
+ * Workouts in one Muscle balance range: the `win` days up to `now` (0: all of them up to it),
+ * a rolling window rather than a calendar week. Time is injected for deterministic tests.
  */
-export function muscleBalanceWindow(workouts, win, now = Date.now(), today = todayISO(), ws = MONDAY) {
-  return (workouts || []).filter(workout => win === 0
-    ? true
-    : win === 7
-      ? weekKey(workout.d, ws) === weekKey(today, ws)
-      : workoutAt(workout) > now - win * 86400000)
+export function muscleBalanceWindow(workouts, win, now = Date.now()) {
+  return (workouts || []).filter(workout => {
+    const at = workoutAt(workout)
+    return at <= now && (win === 0 || at > now - win * 86400000)
+  })
 }
 
 /** Load a routine *would* produce, from its planned set counts. */

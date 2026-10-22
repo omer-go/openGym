@@ -258,10 +258,10 @@ describe('muscle balance windows and ranking', () => {
     { id: 'inside', d: '2026-07-29', start: now - 29 * 86400000 },
   ]
 
-  it('preserves calendar-week, strict trailing-day, and all-history semantics', () => {
-    expect(muscleBalanceWindow(workouts, 7, now, '2026-08-27').map(w => w.id)).toEqual(['monday'])
-    expect(muscleBalanceWindow(workouts, 30, now, '2026-08-27').map(w => w.id)).toEqual(['monday', 'sunday', 'inside'])
-    expect(muscleBalanceWindow(workouts, 0, now, '2026-08-27')).toEqual(workouts)
+  it('reads every range as the last days back from now, not a calendar week, and 0 as all history', () => {
+    expect(muscleBalanceWindow(workouts, 7, now).map(w => w.id)).toEqual(['monday', 'sunday'])
+    expect(muscleBalanceWindow(workouts, 30, now).map(w => w.id)).toEqual(['monday', 'sunday', 'inside'])
+    expect(muscleBalanceWindow(workouts, 0, now)).toEqual(workouts)
   })
 
   it('uses relative levels and canonical order to break load ties', () => {

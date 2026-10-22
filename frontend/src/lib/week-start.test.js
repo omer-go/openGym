@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { MONDAY, SUNDAY, weekStartOf, weekOrder, weekDayOffset, startOfWeek, weekKey, isoOf } from './format.js'
 import { streakWeeks } from './history.js'
-import { muscleBalanceWindow } from './muscles.js'
 import { effortWeeks } from './effort.js'
 
 // 2026-08-19 is a Wednesday. Its Monday-first week runs Mon 17th → Sun 23rd; its Sunday-first
@@ -102,17 +101,6 @@ describe('the week streak counts the profile’s own weeks', () => {
 
 describe('“this week” ranges follow the setting', () => {
   const workouts = [{ d: '2026-08-16' }, { d: WED }]   // Sunday, then Wednesday
-
-  it('muscle balance: the 7-day window is a week, not the last seven days', () => {
-    const mon = muscleBalanceWindow(workouts, 7, Date.now(), WED, MONDAY)
-    expect(mon.map(w => w.d)).toEqual([WED])
-    const sun = muscleBalanceWindow(workouts, 7, Date.now(), WED, SUNDAY)
-    expect(sun.map(w => w.d)).toEqual(['2026-08-16', WED])
-  })
-
-  it('muscle balance defaults to Monday when no start is passed', () => {
-    expect(muscleBalanceWindow(workouts, 7, Date.now(), WED).map(w => w.d)).toEqual([WED])
-  })
 
   it('the effort chart groups and positions its points by the same week', () => {
     // Four rated sets: two on the Sunday, two on the Wednesday. Monday-first that is two

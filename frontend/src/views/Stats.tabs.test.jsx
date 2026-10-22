@@ -51,7 +51,7 @@ describe('Stats tabs', () => {
     // four bench sets this week: 4 for chest, 0.4 × 4 for shoulders and triceps
     const bars = host.querySelector('[data-group-sets]')
     const chest = [...bars.querySelectorAll('.cov-g')].find(g => g.textContent.startsWith('Chest'))
-    expect(chest.querySelector('.cov-l b').textContent).toBe('4')
+    expect(chest.querySelector('.cov-l b').textContent).toBe('4/10')
   })
 
   it('moves the charts to Progress and the heatmap and recent workouts to Activity', () => {
@@ -82,40 +82,43 @@ describe('Stats tabs', () => {
     expect(tab('Muscles').getAttribute('aria-pressed')).toBe('true')
   })
 
-  it('keeps the All/Hard toggle in every period, so the card does not jump; it only works where it can', () => {
+  it('keeps the All/Hard toggle in every 7 days, so the card does not jump; it only works where it can', () => {
     window.location.hash = '#/stats?tab=muscles'
     const rated = { ...workout, entries: [{ ...workout.entries[0], sets: workout.entries[0].sets.map(x => ({ ...x, rir: 1 })) }] }
     mocks.S = state({ workouts: [rated] })
     render()
     const card = host.querySelector('[data-body-map]').closest('.card')
     const toggle = () => [...card.querySelectorAll('button')].find(b => b.textContent === 'All' && !b.closest('.seg'))
-    const range = name => [...card.querySelectorAll('.seg button')].find(b => b.textContent === name)
-    expect(toggle().disabled).toBe(true) // a week is held against the plan, which counts every set
-    act(() => range('30d').click())
+    expect(toggle().disabled).toBe(false)
+    act(() => card.querySelector('button[aria-label="Previous week"]').click())
+    expect(toggle().disabled).toBe(true) // nothing rated in the 7 days before
+    act(() => card.querySelector('button[aria-label="Next week"]').click())
     expect(toggle().disabled).toBe(false)
     mocks.S = state() // no ratings to read
     render()
     expect(toggle().disabled).toBe(true)
   })
 
-  it('lays every period out the same: the period row, the map and the bars, even with nothing in it', () => {
+  it('steps back and forth 7 days at a time, laid out the same even with nothing in it', () => {
     window.location.hash = '#/stats?tab=muscles'
     const old = { ...workout, id: 'old', d: '2020-01-06', start: new Date('2020-01-06T12:00:00').getTime() }
-    mocks.S = state({ workouts: [old] }) // nothing in the last 90 days
+    mocks.S = state({ workouts: [old] }) // nothing in the last 7 days
     render()
     const card = host.querySelector('[data-body-map]').closest('.card')
-    const range = name => [...card.querySelectorAll('.seg button')].find(b => b.textContent === name)
-    for (const name of ['Week', '30d', '90d', 'All']) {
-      act(() => range(name).click())
-      const row = card.querySelector('[data-period]')
-      expect(row, name).toBeTruthy()
-      expect(row.querySelectorAll('button').length).toBe(2)
-      expect(card.querySelector('[data-body-map]'), name).toBeTruthy()
-      expect(card.querySelector('[data-group-sets]'), name).toBeTruthy()
-    }
-    // a longer period names its dates; its arrows only hold the space
-    expect(card.querySelector('[data-period] span').textContent).toContain(' – ')
-    expect(card.querySelector('[data-period] button').style.visibility).toBe('hidden')
+    const arrow = label => card.querySelector(`[data-period] button[aria-label="${label}"]`)
+    const dates = () => card.querySelector('[data-period] span').textContent
+    // no 30d, 90d or All: sets per muscle are a weekly measure
+    expect([...card.querySelectorAll('.seg button')].map(b => b.textContent)).not.toContain('30d')
+    expect(arrow('Next week').disabled).toBe(true)
+    const today = dates()
+    expect(today).toContain(' – ')
+    act(() => arrow('Previous week').click())
+    expect(dates()).not.toBe(today)
+    expect(arrow('Next week').disabled).toBe(false)
+    expect(card.querySelector('[data-body-map]')).toBeTruthy()
+    expect(card.querySelector('[data-group-sets]')).toBeTruthy()
+    act(() => arrow('Next week').click())
+    expect(dates()).toBe(today)
   })
 
   it('gives Fatigue and Strength the same block above the map, held invisibly, so the map stays put', () => {

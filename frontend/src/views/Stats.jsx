@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { EXIDX, matchExercise, betterWeight, isAssisted } from '../lib/exercises.js'
 import { lastBW, streakWeeks, setLabel, modeOf, effortOf, entriesForExercise, metricEntriesForExercise, metricModeForEntry, bestWeightForEntry, completedRepsOf, workoutDay, workoutAt } from '../lib/history.js'
-import { fmtNum, fmtDate, fmtVol, todayISO, isoOf, weekKey, weekStartOf, exerciseNameText } from '../lib/format.js'
+import { fmtNum, fmtDate, fmtVol, todayISO, isoOf, exerciseNameText } from '../lib/format.js'
 import { speedUnitOf, speedLabel, toSpeed } from '../lib/speed.js'
 import { t, exerciseNameFor, exerciseNameClass, getLang } from '../lib/i18n.js'
 import { bwSheet, goalSheet, calendarSheet, dayOverrideSheet, workoutDetailSheet, exerciseHistorySheet, WorkoutRow, bwDeltaColor, weighInsSheet } from '../sheets.jsx'
@@ -29,7 +29,7 @@ import { anchorsByWorkout, resolveSetRir } from '../lib/recovery.js'
 import { Button, Segmented, SelectRow } from '../components/ui.jsx'
 import CoverageStrip, { shown } from '../components/CoverageStrip.jsx'
 import { weeklyTargets } from '../lib/goals.js'
-import { groupSplitOf, groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, weeksOf, roundSplit } from '../lib/coverage.js'
+import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit } from '../lib/coverage.js'
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
@@ -131,8 +131,7 @@ function profileBodyweightKg(S) {
 
 function MuscleBalance({ S }) {
   const [view, setView] = useState('balance')
-  const [win, setWin] = useState(7)
-  const [weekOffset, setWeekOffset] = useState(0)
+  const [back, setBack] = useState(0)  // 7-day windows back from today
   const [hard, setHard] = useState(false)
   const [sel, setSel] = useState(null)
   const [grp, setGrp] = useState(null)
@@ -155,39 +154,34 @@ function MuscleBalance({ S }) {
     return t('Weeks since training: {0}', weeks)
   }
   const toggleSel = m => setSel(s => (s === m ? null : m))
-  const ws = weekStartOf(S)
-  const currentWeek = weekKey(todayISO(), ws)
-  const selectedWeekDate = new Date(currentWeek + 'T12:00:00')
-  selectedWeekDate.setDate(selectedWeekDate.getDate() + weekOffset * 7)
-  const selectedWeek = isoOf(selectedWeekDate)
-  const weekly = win === 7
-  const inWin = weekly
-    ? sw.filter(workout => workoutDay(workout) && weekKey(workoutDay(workout), ws) === selectedWeek)
-    : muscleBalanceWindow(sw, win, now, todayISO(), ws)
+  // A week's dose: the 7 days up to today, or the 7 before that, and so on. Longer periods are
+  // not offered: sets per muscle are a weekly measure, and how training went over months is the
+  // Progress tab's question, not a number per group.
+  const end = now - back * 7 * 86400000
+  const inWin = muscleBalanceWindow(sw, 7, end)
   // Counting only the sets taken near failure turns the map from "where did the volume go"
   // into "where did the stimulus go" — a muscle can lead on sets and still never be trained
   // hard. Offered only when the window holds ratings at all, since with none the hard map
   // would just be empty and read as "you trained nothing".
   const rated = inWin.some(w => w.entries.some(e => e.sets.some(s => s.done && isHardSet(s))))
-  const on = !weekly && hard && rated
+  const on = hard && rated
   // The balance view reads by muscle group, the bars the one-tap setup and the routine editor
-  // draw (CoverageStrip): a week as it was, a longer period as its average week, both toward the
-  // week's 10. The map colours each region by its group's number, so the two always agree, and a
+  // draw (CoverageStrip): the 7 days as they were, each number read as done/goal as the bar is.
+  // The plan, the one in place now, shows in a group opened on the current 7 days only. The map
+  // colours each region by its group's number, so the two always agree, and a
   // group opens its number split into its regions (they add up to it) and, where the catalogue
   // has muscle roles, the main region into its parts.
-  const perWeek = weekly ? null : weeksOf(sw, win, now)
-  const split = weekly ? groupSplitOf(inWin) : groupSplitPerWeek(sw, win, now, on ? isHardSet : null)
+  const split = groupSplitPerWeek(sw, 7, end, on ? isHardSet : null)
   const groupSets = splitTotals(split)
-  const plannedG = weekly && weekOffset === 0 ? groupSetsOfWeeklyPlan(S) : null
+  const plannedG = on || back ? null : groupSetsOfWeeklyPlan(S)
   const mapLoad = Object.fromEntries(MUSCLES.map(m => [m, groupSets[groupOfMuscle(m)?.id] || 0]))
   const group = grp ? ADD_GROUPS.find(g => g.id === grp) : null
   const toggleGrp = id => setGrp(g => (g === id ? null : id))
   const bar = { background: on ? 'var(--yellow)' : undefined }
   // The group's main region split into its parts. It counts in full in its group, so the parts
-  // speak to the same sets; a longer period divides the sets by its weeks, as the bars do.
+  // speak to the same sets.
   const main = group?.m[0]
-  const parts = main ? regionBreakdown(doneSetItems(weekly ? inWin : perWeek.inWin, on ? isHardSet : null), main) : null
-  const scaleParts = v => (weekly ? v : v / perWeek.weeks)
+  const parts = main ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null), main) : null
   // Bars only: the parts are counted per exercise (a target 1, a helper 0.4) and overlap, so
   // their numbers would not add up to the muscle's. Their lengths say which part lags.
   const partRows = parts && (() => {
@@ -203,7 +197,7 @@ function MuscleBalance({ S }) {
         </div>
       })}
       {parts.covered < parts.total && <div className="muted small">
-        {t('Based on {0} of {1} sets.', shown(scaleParts(parts.covered)), shown(scaleParts(parts.total)))}</div>}
+        {t('Based on {0} of {1} sets.', shown(parts.covered), shown(parts.total))}</div>}
     </div>
   })()
   const groupSplit = group && (() => {
@@ -234,30 +228,24 @@ function MuscleBalance({ S }) {
       </> : partRows}
     </div>
   })()
-  // The conditioning layer: the combo sets of the same days, counted apart (a period, a week of it)
-  const condIn = conditioningWorkouts(weekly
-    ? workouts.filter(w => workoutDay(w) && weekKey(workoutDay(w), ws) === selectedWeek)
-    : muscleBalanceWindow(workouts, win, now, todayISO(), ws))
+  // The conditioning layer: the combo sets of the same days, counted apart
+  const condIn = conditioningWorkouts(muscleBalanceWindow(workouts, 7, end))
   const condSets = condIn.reduce((n, w) => n + w.entries.reduce((m, e) => m + (e.sets || []).filter(x => x.done && !isWarmupRow(x)).length, 0), 0)
-  const condPerWeek = weekly ? condSets : condSets / Math.max(1, perWeek.weeks)
   const groupBars = <div data-group-sets style={{ margin: '14px 0 6px' }}>
     <h4 className="sec" style={{ marginTop: 0 }}>{t('Muscle groups')}</h4>
-    <CoverageStrip adds={groupSets} goals={weeklyTargets(S)} planned={plannedG} onGroup={toggleGrp} selected={grp} label={weekly
-      ? t('Sets per group in this week, toward your weekly goal')
-      : t('Sets per group in an average week of this period, toward your weekly goal')} />
-    {condPerWeek > 0 && <div className="muted small" data-conditioning-sets style={{ marginTop: 6 }}>
-      {weekly ? t('+ {0} conditioning sets in combos, not counted here', shown(condPerWeek))
-        : t('+ {0} conditioning sets a week in combos, not counted here', shown(condPerWeek))}</div>}
+    <CoverageStrip adds={groupSets} goals={weeklyTargets(S)} ofGoal onGroup={toggleGrp} selected={grp} label={back
+      ? t('Sets per group in these 7 days, toward your weekly goal')
+      : t('Sets per group in the last 7 days, toward your weekly goal')} />
+    {condSets > 0 && <div className="muted small" data-conditioning-sets style={{ marginTop: 6 }}>
+      {t('+ {0} conditioning sets in combos, not counted here', shown(condSets))}</div>}
   </div>
   const missed = ADD_GROUPS.filter(g => !(groupSets[g.id] > 0))
   const volWin = sw.filter(w => workoutAt(w) > now - 90 * 86400000)
   const vol90 = loadOfWorkouts(volWin, null)
   const { worked: strengthOrder } = rankOf(strength)
   const detrained = strengthOrder.filter(slug => strength[slug] < 1)
-  // A longer period by its dates: 30 or 90 days back to today, All from the first workout.
-  const firstDay = S.workouts.map(workoutDay).filter(Boolean).sort()[0]
-  const periodFrom = win ? isoOf(new Date(now - (win - 1) * 86400000)) : firstDay || todayISO()
-  const periodLabel = fmtDate(periodFrom) + ' – ' + fmtDate(todayISO())
+  // The 7 days by their dates: six days back to the last one
+  const periodLabel = fmtDate(isoOf(new Date(end - 6 * 86400000))) + ' – ' + fmtDate(isoOf(new Date(end)))
   const completionSummary = <>
     {missed.length > 0 && <>
       <h4 className="sec" style={{ marginTop: 12 }}>{on ? t('No hard sets in this period') : t('Not trained in this period')}</h4>
@@ -276,22 +264,19 @@ function MuscleBalance({ S }) {
     <div className="row between" style={{ marginBottom: 8 }}>
       <h2 style={{ margin: 0 }}>{t('Muscle balance')} <span className="dim" style={{ textTransform: 'none', letterSpacing: 0 }}>· {on ? t('by hard sets') : t('by sets worked')}</span></h2>
       {/* Always there, so the row keeps its height from period to period; it only counts hard
-          sets where there are ratings to read, and never on a week (the plan it is held
-          against counts every set). */}
-      <Button size="sm" icon="gauge" style={on ? { color: 'var(--yellow)' } : undefined} disabled={weekly || !rated}
+          sets where there are ratings to read. Counting them sets the plan aside, which
+          counts every set. */}
+      <Button size="sm" icon="gauge" style={on ? { color: 'var(--yellow)' } : undefined} disabled={!rated}
         onClick={() => { setHard(h => !h); setGrp(null) }}>{on ? t('Hard') : t('All')}</Button>
     </div>
-    <Segmented className="seg-range" value={win} onChange={v => { setWin(v); setGrp(null) }}
-      options={[{ value: 7, label: t('Week') }, { value: 30, label: '30d' }, { value: 90, label: '90d' }, { value: 0, label: t('All') }]} />
-    {/* One layout for every period, so switching moves nothing: the period row (a week steps
-        back and forth, a longer period names its dates with the arrows kept as spacers), the
-        map, the group bars, then the rows. An empty period still draws its map and bars. */}
+    {/* The period row steps back and forth 7 days at a time, up to today. An empty stretch
+        still draws its map and bars, so stepping moves nothing. */}
     <div className="row between" data-period style={{ margin: '10px 0 6px' }}>
-      <button className="iconbtn sm" aria-label={t('Previous week')} style={weekly ? undefined : { visibility: 'hidden' }}
-        onClick={() => { setWeekOffset(offset => offset - 1); setGrp(null) }}><Icon name="chevronLeft" /></button>
-      <span className="small" style={{ fontWeight: 600 }}>{weekly ? t('Week of {0}', fmtDate(selectedWeek)) : periodLabel}</span>
-      <button className="iconbtn sm" aria-label={t('Next week')} disabled={weekOffset === 0} style={weekly ? undefined : { visibility: 'hidden' }}
-        onClick={() => { setWeekOffset(offset => Math.min(0, offset + 1)); setGrp(null) }}><Icon name="chevronRight" /></button>
+      <button className="iconbtn sm" aria-label={t('Previous week')}
+        onClick={() => { setBack(b => b + 1); setGrp(null) }}><Icon name="chevronLeft" /></button>
+      <span className="small" style={{ fontWeight: 600 }}>{periodLabel}</span>
+      <button className="iconbtn sm" aria-label={t('Next week')} disabled={back === 0}
+        onClick={() => { setBack(b => Math.max(0, b - 1)); setGrp(null) }}><Icon name="chevronRight" /></button>
     </div>
   </>
   const otherHead = (title, line) => <div style={{ display: 'grid' }}>
@@ -307,7 +292,7 @@ function MuscleBalance({ S }) {
       options={[{ value: 'balance', label: t('Muscle balance') }, { value: 'fatigue', label: t('Fatigue') }, { value: 'strength', label: t('Strength') }]} />
     {view === 'balance' ? <>
       {balanceHead}
-      <div data-weekly-volume-comparison={weekly ? '' : undefined} data-week={weekly ? selectedWeek : undefined}>
+      <div data-weekly-volume-comparison data-back={back}>
         <BodyMap className="tappable" load={mapLoad} body={S.body} selected={group ? group.m : null}
           onMuscle={slug => {
             // the region tapped carries over to Fatigue and Strength, which read by region

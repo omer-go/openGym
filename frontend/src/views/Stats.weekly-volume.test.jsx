@@ -61,27 +61,26 @@ const missed = () => [...comparison().querySelectorAll('.mchip.miss')].map(item 
 const isBefore = (first, second) => Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING)
 
 describe('Stats — muscle balance by group', () => {
-  it('reads the current week as done/planned per group and colours the map by its group', () => {
+  it('reads the last 7 days as done/goal per group, as the bar does, and colours the map by its group', () => {
     mocks.S = state({
       routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
       workouts: [completed('2026-09-30', 'chest', 8), completed('2026-09-30', 'biceps', 3)],
     })
     mount()
-    expect(button('Previous week')).toBeTruthy()
+    expect(button('Next week').disabled).toBe(true)
     expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
-    expect(number('chest')).toBe('8/12')
-    expect(number('triceps')).toBe('0/5')
-    expect(number('biceps')).toBe('3')
-    expect(groupBar('chest').querySelector('.cov-bar').getAttribute('aria-label')).toBe('Chest: 8 of 10 sets, 12 planned')
+    expect(number('chest')).toBe('8/10')
+    expect(number('triceps')).toBe('0/10')
+    expect(number('biceps')).toBe('3/10')
+    expect(groupBar('chest').querySelector('.cov-bar').getAttribute('aria-label')).toBe('Chest: 8 of 10 sets')
     expect(mapLoad()).toEqual(Object.fromEntries(MUSCLES.map(m => [m, m === 'chest' ? 8 : m === 'biceps' ? 3 : 0])))
     expect(comparison().querySelector('[data-muscle-volume]')).toBeNull()
-    expect(button('Next week').disabled).toBe(true)
   })
 
   it('gives every region of a group the group number, so the map and the bars agree', () => {
     mocks.S = state({ workouts: [completed('2026-09-30', 'upper-back', 6), completed('2026-09-30', 'lower-back', 4)] })
     mount()
-    expect(number('back')).toBe('7')
+    expect(number('back')).toBe('7/10')
     expect(mapLoad()['upper-back']).toBe(7)
     expect(mapLoad()['lower-back']).toBe(7)
     expect(mapLoad().trapezius).toBe(7)
@@ -140,30 +139,44 @@ describe('Stats — muscle balance by group', () => {
     expect(comparison().textContent).toContain('Every muscle group got some work in this period.')
   })
 
-  it('navigates previous weeks without the plan and respects a Sunday week start', () => {
+  it('reads the last 7 days back from today, across the week start, not the calendar week', () => {
+    // Wednesday the 30th, Monday-first: the Sunday before is last calendar week but within 7 days
     mocks.S = state({
-      weekStart: 0,
       workouts: [completed('2026-09-27', 'biceps', 1), completed('2026-09-20', 'quadriceps', 4)],
     })
     mount()
-    expect(comparison().dataset.week).toBe('2026-09-27')
-    act(() => groupBar('quads').click())
+    expect(comparison().dataset.back).toBe('0')
+    expect(host.querySelector('[data-period]').textContent).toContain('–')
+    expect(number('biceps')).toBe('1/10')
+    expect(number('quads')).toBe('0/10')
+    expect(mapLoad().quadriceps).toBe(0)
+    expect(missed()).toContain('Quads')
+  })
+
+  it('steps back 7 days at a time, without the plan, which is the one in place now', () => {
+    mocks.S = state({
+      routines: [{ id: 'push', name: 'Push', ex: [{ id: 'press', sets: 12 }] }],
+      workouts: [completed('2026-09-30', 'chest', 8), completed('2026-09-20', 'quadriceps', 4)],
+    })
+    mount()
+    act(() => groupBar('chest').click())
+    expect(split().querySelector('.mrow .v').textContent).toBe('8 of 12 planned sets')
     act(() => button('Previous week').click())
-    expect(comparison().dataset.week).toBe('2026-09-20')
+    expect(comparison().dataset.back).toBe('1')
+    expect(host.querySelector('[data-period] span').textContent).toContain('17')
     expect(selected()).toBe('')
-    expect(number('quads')).toBe('4')
-    expect(number('chest')).toBe('0')
-    expect(mapLoad().quadriceps).toBe(4)
-    expect(comparison().querySelector('.cov-l .dim')).toBeNull()
-    expect(missed()).toContain('Chest')
+    expect(number('quads')).toBe('4/10')
+    expect(number('chest')).toBe('0/10')
+    act(() => groupBar('chest').click())
+    expect(split().querySelector('.mrow .v').textContent).toBe('not trained')
     act(() => button('Next week').click())
-    expect(comparison().dataset.week).toBe('2026-09-27')
+    expect(number('chest')).toBe('8/10')
     expect(button('Next week').disabled).toBe(true)
   })
 
-  it('keeps the map, bars and empty state for an empty previous week', () => {
+  it('keeps the map, bars and empty state for an empty 7 days', () => {
+    mocks.S = state({ workouts: [completed('2026-09-10', 'biceps', 3)] })
     mount()
-    act(() => button('Previous week').click())
     expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
     expect(Object.values(mapLoad()).every(v => v === 0)).toBe(true)
     expect(groupBar('chest')).toBeTruthy()
@@ -186,8 +199,9 @@ describe('Stats — muscle balance by group', () => {
       }],
     })
     mount()
-    expect(number('chest')).toBe('2/2')
-    expect(number('triceps')).toBe('0/1')
-    expect(number('biceps')).toBe('0')
+    const opened = id => { act(() => groupBar(id).click()); return split().querySelector('.mrow .v').textContent }
+    expect(opened('chest')).toBe('2 of 2 planned sets')
+    expect(opened('triceps')).toBe('0 of 1 planned sets')
+    expect(opened('biceps')).toBe('not trained')
   })
 })

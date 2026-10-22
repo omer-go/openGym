@@ -199,10 +199,6 @@ function viewButton(text) {
   return buttonWithText(muscleCard(), text)
 }
 
-function balanceRangeButton(text) {
-  return buttonWithText(muscleCard().querySelectorAll('.seg')[1], text)
-}
-
 async function click(button) {
   expect(button, `expected a button named ${button?.textContent || 'unknown'}`).toBeTruthy()
   await act(async () => { button.dispatchEvent(new dom.MouseEvent('click', { bubbles: true })) })
@@ -232,9 +228,8 @@ describe('Stats muscle recovery view runtime', () => {
   it('dispatches real clicks through Balance, Fatigue, and Strength and preserves selection', async () => {
     await mountStats()
     expectPressed(viewButton('Muscle balance'))
-    expectPressed(balanceRangeButton('Week'))
+    expect(muscleCard().querySelector('[data-period]')).toBeTruthy()
 
-    await click(balanceRangeButton('30d'))
     await click(buttonWithText(muscleCard(), 'All'))
     await click(muscleCard().querySelector('[data-muscle="chest"]'))
     expect(buttonWithText(muscleCard(), 'Hard')).toBeTruthy()
@@ -251,20 +246,17 @@ describe('Stats muscle recovery view runtime', () => {
     expect(container.textContent).toContain('Strength shows retained muscle strength. Train again to reset it.')
 
     await click(viewButton('Muscle balance'))
-    expectPressed(balanceRangeButton('30d'))
     expect(buttonWithText(muscleCard(), 'Hard')).toBeTruthy()
     // Balance reads by group: the chest region carries over, the map highlights the whole group
-    // and colours it with the group's average week (7 sets over the 30 days' span of training).
+    // and colours it with the group's sets in the last 7 days (the 30-day-old set is outside them).
     expect(lastMap().selected).toEqual(['chest'])
     expect(container.querySelector('[data-selected-muscle="chest"]')).toBeTruthy()
-    expect(lastMap().load.chest).toBeCloseTo(groupSetsPerWeek(mocks.S.workouts, 30, Date.now()).chest, 6)
-    expect(lastMap().load.chest).toBeCloseTo(7 / (30 / 7), 2)
+    expect(lastMap().load.chest).toBeCloseTo(groupSetsPerWeek(mocks.S.workouts, 7, Date.now()).chest, 6)
+    expect(lastMap().load.chest).toBe(6)
   })
 
   it('updates the rendered Fatigue map and Balance window on the real 60-second interval', async () => {
     await mountStats()
-    await click(balanceRangeButton('30d'))
-    const balanceBefore = lastMap().load.chest
     await click(viewButton('Fatigue'))
     await click(muscleCard().querySelector('[data-muscle="chest"]'))
 
@@ -284,9 +276,8 @@ describe('Stats muscle recovery view runtime', () => {
     await click(viewButton('Strength'))
     expect(lastMap().load.quadriceps).toBeLessThan(1)
     await click(viewButton('Muscle balance'))
-    // the 30-day-old set drops out of the window, so chest loses a set and the span shrinks
-    expect(lastMap().load.chest).toBeCloseTo(groupSetsPerWeek(mocks.S.workouts, 30, Date.now()).chest, 6)
-    expect(lastMap().load.chest).not.toBeCloseTo(balanceBefore, 6)
+    // the window follows the clock: the 7 days up to the tick
+    expect(lastMap().load.chest).toBeCloseTo(groupSetsPerWeek(mocks.S.workouts, 7, Date.now()).chest, 6)
   })
 
   it('derives a pound-profile bodyweight in kg and passes it into the rendered Fatigue map', async () => {
