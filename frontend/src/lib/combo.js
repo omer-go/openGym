@@ -59,9 +59,10 @@ export function fitRounds(sets, rounds) {
  * to a routine (an exercise: on itself). Every member gets the combo's rounds as its sets and the
  * group's name, rest between rounds and combo flag (lib/superset-meta.js), under one group id.
  */
-export function asComboMember(item, { sg, rounds, name = '', rest = 0 }, { onTarget = false } = {}) {
+export function asComboMember(item, { sg, rounds, name = '', rest = 0, kind = '' }, { onTarget = false } = {}) {
   const n = Math.max(1, Math.round(Number(rounds) || 1))
   const meta = { sgCombo: true }
+  if (kind === 'strength') meta.sgKind = 'strength'
   const clean = String(name || '').trim()
   if (clean) meta.sgName = clean
   if (Number(rest) > 0) meta.sgRest = Math.round(Number(rest))

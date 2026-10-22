@@ -56,6 +56,7 @@ import { pickWorkoutView } from '../lib/workout-view.js'
 import { exerciseColor, muscleTagsOf, mcStyle } from '../lib/muscle-colors.js'
 import { roleChips } from '../lib/muscle-roles.js'
 import { useMuscleRoles } from '../components/MuscleRoles.jsx'
+import { KIND_STRENGTH, kindOfEntry } from '../lib/conditioning.js'
 
 // How long after a key starts a hold the same key is not yet its "Done" (#133). A USB button
 // that bounces, or a double press, sends two presses a moment apart: the first starts the hold,
@@ -211,7 +212,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   const H = sessionHistory(S)
   // The routine's own last session of this exercise (or any, for a routine that has none), the
   // same one the rows and the progression line were built from (#216).
-  const last = lastEntryFor(H, entry.id, entry.rid)
+  const last = lastEntryFor(H, entry.id, entry.rid, kindOfEntry(entry))
   const standingNote = exNoteFor(S, entry.id)
   // Only worth surfacing while there is still work left: once the exercise is finished, a note
   // telling you what to do in it is behind you, and the block is already long.
@@ -1516,15 +1517,18 @@ function ActiveWorkout() {
   }) }
   // A combo (lib/combo.js): its exercises built as Add exercise builds each, given the combo's
   // rounds as their sets, and added after the current unit as one group.
-  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest }) => {
+  // Its kind is in the seed, so its rows come from the exercise's last combo of that kind: a
+  // conditioning combo carries forward its own light numbers, never the strength sessions'.
+  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest, kind }) => {
     const ctx = addContext()
+    const kindSeed = { sgCombo: true, ...(kind === KIND_STRENGTH ? { sgKind: KIND_STRENGTH } : {}) }
     revealCur.current = true
     if (focusMode) focusPointerEpoch.current++
     update(s => {
       const sg = 'sg' + uid()
       const members = ids.map(id => {
-        const seed = ctx.freestyle ? withSessionRest(freestyleConfig(sessionHistory(s), { id, ...defaultConfig(id) }), s.active) : defaultConfig(id)
-        return asComboMember(buildAdded(s, id, { ...seed, sets: rounds }, ctx), { sg, rounds, name, rest }, { onTarget: true })
+        const seed = ctx.freestyle ? withSessionRest(freestyleConfig(sessionHistory(s), { id, ...defaultConfig(id), ...kindSeed }), s.active) : { ...defaultConfig(id), ...kindSeed }
+        return asComboMember(buildAdded(s, id, { ...seed, sets: rounds }, ctx), { sg, rounds, name, rest, kind }, { onTarget: true })
       })
       const insertAt = insertionIndexAfterCurrentUnit(supersetUnits(s.active.entries), s.active.cur, s.active.entries.length)
       s.active.entries.splice(insertAt, 0, ...members)

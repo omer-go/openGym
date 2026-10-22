@@ -5,24 +5,28 @@
 // `sgCombo` marks a group laid out as a combo: one card, a photo per exercise and one round on
 // screen at a time (components/ComboCard.jsx). It changes the layout only; the flow, the rest
 // and everything read back from the sets are a superset's.
+// `sgKind: 'strength'` rides with it on a combo counted as strength work; without it a combo is
+// conditioning, kept out of progression, records and hard sets (lib/conditioning.js).
 export const SG_NAME_MAX = 40
 
 const fieldsOf = (item, onTarget) => (onTarget ? item?.target : item) || {}
 
-/** { name, rest, combo } of the group of `unit` (indices into `list`); `onTarget` for session entries. */
+/** { name, rest, combo, kind } of the group of `unit` (indices into `list`); `onTarget` for session entries. */
 export function supersetMeta(list, unit, { onTarget = false } = {}) {
-  let name = '', rest = 0, combo = false
+  let name = '', rest = 0, combo = false, strength = false
   for (const idx of unit || []) {
     const f = fieldsOf(list?.[idx], onTarget)
     if (!name && typeof f.sgName === 'string' && f.sgName.trim()) name = f.sgName.trim().slice(0, SG_NAME_MAX)
     if (!rest && Number(f.sgRest) > 0) rest = Math.round(Number(f.sgRest))
     if (f.sgCombo === true) combo = true
+    if (f.sgKind === 'strength') strength = true
   }
-  return { name, rest, combo: combo && (unit || []).length > 1 }
+  const isCombo = combo && (unit || []).length > 1
+  return { name, rest, combo: isCombo, kind: isCombo && strength ? 'strength' : isCombo ? 'conditioning' : '' }
 }
 
-/** Writes name, rest and combo onto every member of group `sg` in a routine's `ex`; empty clears. */
-export function setSupersetMeta(ex, sg, { name = '', rest = 0, combo = false } = {}) {
+/** Writes name, rest, combo and its kind onto every member of group `sg` in a routine's `ex`; empty clears. */
+export function setSupersetMeta(ex, sg, { name = '', rest = 0, combo = false, kind = '' } = {}) {
   const clean = String(name || '').trim().slice(0, SG_NAME_MAX)
   const sec = Number(rest) > 0 ? Math.round(Number(rest)) : 0
   for (const e of ex || []) {
@@ -30,6 +34,7 @@ export function setSupersetMeta(ex, sg, { name = '', rest = 0, combo = false } =
     if (clean) e.sgName = clean; else delete e.sgName
     if (sec) e.sgRest = sec; else delete e.sgRest
     if (combo) e.sgCombo = true; else delete e.sgCombo
+    if (combo && kind === 'strength') e.sgKind = 'strength'; else delete e.sgKind
   }
   return ex
 }
@@ -38,11 +43,12 @@ export function setSupersetMeta(ex, sg, { name = '', rest = 0, combo = false } =
 export function syncSupersetMeta(ex) {
   const groups = new Map()
   for (const e of ex || []) {
-    if (!e?.sg) { if (e) { delete e.sgName; delete e.sgRest; delete e.sgCombo }; continue }
-    const g = groups.get(e.sg) || { name: '', rest: 0, combo: false }
+    if (!e?.sg) { if (e) { delete e.sgName; delete e.sgRest; delete e.sgCombo; delete e.sgKind }; continue }
+    const g = groups.get(e.sg) || { name: '', rest: 0, combo: false, kind: '' }
     if (!g.name && e.sgName) g.name = e.sgName
     if (!g.rest && Number(e.sgRest) > 0) g.rest = Number(e.sgRest)
     if (e.sgCombo === true) g.combo = true
+    if (e.sgKind === 'strength') g.kind = 'strength'
     groups.set(e.sg, g)
   }
   for (const [sg, g] of groups) setSupersetMeta(ex, sg, g)

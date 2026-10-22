@@ -11,6 +11,7 @@ import { insertChronological, backfillStart } from './backfill.js'
 import { bestWeightForEntry } from './history.js'
 import { beatsWeight } from './exercises.js'
 import { stampWorkout } from './sync-merge.js'
+import { isConditioning } from './conditioning.js'
 
 // Before ids existed a workout was keyed for sync by its day and start time
 // (`workoutKey` in sync-merge.js). That is exactly what this edit changes, so moving such a
@@ -68,6 +69,8 @@ export function rebuildPrHistory(workouts, exerciseIds, moved = null) {
     for (const e of w.entries || []) {
       if (!ids.has(e.id)) continue
       trains = true
+      // A conditioning combo holds no record and raises no bar (lib/conditioning.js)
+      if (isConditioning(e)) continue
       const top = bestWeightForEntry(e)
       // Leads everything dated before it. The running best grows whether or not a badge is
       // written, so a session that cannot gain one still raises the bar for the next. "Leads"

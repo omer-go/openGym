@@ -1,5 +1,6 @@
 // Pure helpers over the state object S (ported 1:1 from the vanilla app).
 import { syncSupersetMeta } from './superset-meta.js'
+import { KIND_STRENGTH, entryOfKind, isConditioning, kindOfCfg } from './conditioning.js'
 import { todayISO, isoOf, weekKey, weekStartOf, fmtNum } from './format.js'
 import { fmtSpeed } from './speed.js'
 import { hasIncline, inclineFrom } from './incline.js'
@@ -351,8 +352,9 @@ export function entryRoutineId(w, en) {
 
 // The entry for one exercise in one saved workout. With a routine id it is that routine's own
 // entry — a combined A+B day can hold the same exercise twice, and the second one is not the
-// first one's history. Without, the first one, as it always was.
-const entryIn = (w, exId, rid) => (w.entries || []).find(e => e && e.id === exId && (!rid || entryRoutineId(w, e) === rid))
+// first one's history. Without, the first one, as it always was. A conditioning combo and the
+// strength work are two histories (lib/conditioning.js): `kind` says which one is read.
+const entryIn = (w, exId, rid, kind = KIND_STRENGTH) => (w.entries || []).find(e => e && e.id === exId && (!rid || entryRoutineId(w, e) === rid) && entryOfKind(e, kind))
 
 /**
  * The last counting session of an exercise: `{ d, sets, target, rid?, planned? }`, or null.
@@ -361,20 +363,23 @@ const entryIn = (w, exId, rid) => (w.entries || []).find(e => e && e.id === exId
  * a heavy day and a light day is two lines of progress, not one that zigzags between them. A
  * routine that has never trained the exercise falls back to its last session anywhere, so a new
  * or copied routine starts from what you actually lift rather than from nothing.
+ *
+ * `kind` is the history read (lib/conditioning.js): a conditioning combo carries its own light
+ * numbers forward, and its sets are never the last time of the lift's strength work.
  */
-export function lastEntryFor(S, exId, rid) {
+export function lastEntryFor(S, exId, rid, kind = KIND_STRENGTH) {
   if (rid) {
-    const own = lastEntryIn(S, exId, rid)
+    const own = lastEntryIn(S, exId, rid, kind)
     if (own) return own
   }
-  return lastEntryIn(S, exId, null)
+  return lastEntryIn(S, exId, null, kind)
 }
 
-function lastEntryIn(S, exId, rid) {
+function lastEntryIn(S, exId, rid, kind) {
   const workouts = S.workouts || []
   for (let i = workouts.length - 1; i >= 0; i--) {
     const w = workouts[i]
-    const en = entryIn(w, exId, rid)
+    const en = entryIn(w, exId, rid, kind)
     if (!en) continue
     // A session that does not count — a planned deload, or a rehab block merged into a real
     // session — is not "last time" for the next regular prescription: its reps and durations
@@ -436,11 +441,13 @@ export const exNoteFor = (S, exId) => ((S?.exNotes || {})[exId] || '').trim() ||
 // built by buildSets(), which copies each completed set by position; only the target shape and
 // number of rows need to be seeded here so the config sheet and the rows agree.
 export function freestyleConfig(S, cfg) {
-  const last = lastEntryFor(S, cfg.id)
+  const last = lastEntryFor(S, cfg.id, undefined, kindOfCfg(cfg))
   if (!last) return { ...cfg }
   // What a dumbbell weight meant last time is that session's stamp, not a choice to copy: a
   // freestyle add follows the exercise's own setting as it is now (lib/dumbbells.js).
-  const { dbLoad: _meant, ...lastTarget } = last.target || {}
+  // The group it was done in last time (a superset's name and rest, a combo and its kind) is
+  // that session's; the add joins whatever group it is added to, or none.
+  const { dbLoad: _meant, sgName: _n, sgRest: _r, sgCombo: _c, sgKind: _k, ...lastTarget } = last.target || {}
   return {
     ...cfg,
     ...lastTarget,
@@ -456,7 +463,8 @@ export function bestWeightFor(S, exId, as) {
   // 0 means "nothing logged with a load yet" and must not win a min() for an assisted machine.
   let best = 0
   H.workouts.forEach(w => w.entries.forEach(e => {
-    if (e.id !== exId) return
+    // A conditioning combo's light sets are no record (lib/conditioning.js).
+    if (e.id !== exId || isConditioning(e)) return
     const entryBest = bestWeightForEntry(e)
     if (entryBest > 0) best = best > 0 ? betterWeight(exId, best, entryBest) : entryBest
   }))
@@ -563,7 +571,7 @@ function buildWorkSets(S, cfg, options = {}) {
   // block merged into a real session (entryExcluded) — so the rows seed from the last
   // *counting* session without this function pre-filtering the history itself. `options.rid`
   // is the routine the rows are for: its own last session of the exercise comes first (#216).
-  const last = lastEntryFor(S, cfg.id, options.rid)
+  const last = lastEntryFor(S, cfg.id, options.rid, kindOfCfg(cfg))
   const n = Math.max(1, cfg.sets || 1)
   const mode = modeOf(cfg)
   const sets = []

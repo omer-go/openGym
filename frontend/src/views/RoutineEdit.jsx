@@ -453,9 +453,9 @@ export default function RoutineEdit() {
   }, { routineId: id })
   // A combo (lib/combo.js): its exercises at their usual numbers, the combo's rounds as their
   // sets, one group at the end of the routine.
-  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest }) => {
+  const addCombo = () => comboBuilderSheet(({ ids, name, rounds, rest, kind }) => {
     const sg = 'sg' + uid()
-    edit(x => { x.push(...ids.map(exId => asComboMember({ id: exId, ...defaultConfig(exId) }, { sg, rounds, name, rest }))) })
+    edit(x => { x.push(...ids.map(exId => asComboMember({ id: exId, ...defaultConfig(exId) }, { sg, rounds, name, rest, kind }))) })
     toast(t('Combo added to {0}', r.name))
   }, { routineId: id })
 
@@ -543,7 +543,7 @@ export default function RoutineEdit() {
       // screen reader would lose inside one): the name is, a real <button> a click bubbles up
       // from. The long press treats it as the row (data-row-open, useRoutineReorder).
       const item = <div className={'item' + (inSS.has(i) ? ' in-ss' : '')} onClick={() => {
-          exConfigSheet(ex, e, cfg => edit(x => { x[i] = { id: x[i].id, sg: x[i].sg, ...(x[i].sg ? { sgName: x[i].sgName, sgRest: x[i].sgRest, sgCombo: x[i].sgCombo } : {}), ...cfg }; cleanupSg(x) }), removeHere, r, null, () => replace(i))
+          exConfigSheet(ex, e, cfg => edit(x => { x[i] = { id: x[i].id, sg: x[i].sg, ...(x[i].sg ? { sgName: x[i].sgName, sgRest: x[i].sgRest, sgCombo: x[i].sgCombo, sgKind: x[i].sgKind } : {}), ...cfg }; cleanupSg(x) }), removeHere, r, null, () => replace(i))
         }}>
           {/* Shown on pointer devices only (index.css .routine-grip); the Move buttons and the
               long press stay the way in for a keyboard and a finger. */}

@@ -48,6 +48,7 @@ import { isoOf } from './format.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
 import { muscleRolesOf } from './muscle-roles.js'
+import { isConditioning } from './conditioning.js'
 
 export const WEEKLY_TARGET = 10
 const OTHER_MUSCLE = 0.25 // a group's other muscles credit it at a quarter
@@ -124,6 +125,7 @@ export function groupSplitOf(workouts, keep = null) {
   const out = {}
   for (const w of workouts || []) {
     for (const entry of w?.entries || []) {
+      if (isConditioning(entry)) continue  // not a hard set (lib/conditioning.js)
       const n = keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry)
       if (!n) continue
       for (const [g, [c, m]] of Object.entries(creditBy(entryWeights(entry)))) {

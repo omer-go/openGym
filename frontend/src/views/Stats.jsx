@@ -32,6 +32,7 @@ import { WEEKLY_TARGET, groupSplitOf, groupSplitPerWeek, groupSetsOfWeeklyPlan, 
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
+import { conditioningWorkouts, strengthWorkouts } from '../lib/conditioning.js'
 
 // Set 1 to 5 on the per-set chart — system colours, so each line keeps its hue in dark mode.
 const SET_COLORS = ['var(--blue)', 'var(--green)', 'var(--orange)', 'var(--purple)', 'var(--pink)']
@@ -138,11 +139,15 @@ function MuscleBalance({ S }) {
   const lang = getLang()
   useMuscleRoles()  // the per-part breakdown under a tapped group reads them
   const workouts = S.workouts
+  // Conditioning combos tire the muscles (fatigue reads them, at a discount) but are not the
+  // hard sets a group's volume or strength is counted in: those read the strength workouts, and
+  // the week's conditioning sets show as a line of their own under the bars.
+  const sw = strengthWorkouts(workouts)
   const bodyweightKg = useMemo(() => profileBodyweightKg(S), [S.bodyweight, S.unit])
   const fatigue = useMemo(() => fatigueOf(workouts, now, { bodyweightKg, unit: S.unit }), [workouts, now, bodyweightKg, S.unit])
-  const strength = useMemo(() => strengthOf(workouts, now, { bodyweightKg, unit: S.unit }), [workouts, now, bodyweightKg, S.unit])
+  const strength = useMemo(() => strengthOf(sw, now, { bodyweightKg, unit: S.unit }), [sw, now, bodyweightKg, S.unit])
   const muscleExercises = useMemo(() => (sel ? strengthExerciseRowsForMuscle(S, now, sel) : []), [S, now, sel, lang])
-  const lastTrained = useMemo(() => latestMuscleTraining(workouts), [workouts])
+  const lastTrained = useMemo(() => latestMuscleTraining(sw), [sw])
   const strengthHint = slug => {
     if (lastTrained[slug] == null) return t('not trained')
     const weeks = weeksSinceTraining(now, lastTrained[slug])
@@ -156,8 +161,8 @@ function MuscleBalance({ S }) {
   const selectedWeek = isoOf(selectedWeekDate)
   const weekly = win === 7
   const inWin = weekly
-    ? S.workouts.filter(workout => workoutDay(workout) && weekKey(workoutDay(workout), ws) === selectedWeek)
-    : muscleBalanceWindow(S.workouts, win, now, todayISO(), ws)
+    ? sw.filter(workout => workoutDay(workout) && weekKey(workoutDay(workout), ws) === selectedWeek)
+    : muscleBalanceWindow(sw, win, now, todayISO(), ws)
   // Counting only the sets taken near failure turns the map from "where did the volume go"
   // into "where did the stimulus go" — a muscle can lead on sets and still never be trained
   // hard. Offered only when the window holds ratings at all, since with none the hard map
@@ -169,8 +174,8 @@ function MuscleBalance({ S }) {
   // week's 10. The map colours each region by its group's number, so the two always agree, and a
   // group opens its number split into its regions (they add up to it) and, where the catalogue
   // has muscle roles, the main region into its parts.
-  const perWeek = weekly ? null : weeksOf(S.workouts, win, now)
-  const split = weekly ? groupSplitOf(inWin) : groupSplitPerWeek(S.workouts, win, now, on ? isHardSet : null)
+  const perWeek = weekly ? null : weeksOf(sw, win, now)
+  const split = weekly ? groupSplitOf(inWin) : groupSplitPerWeek(sw, win, now, on ? isHardSet : null)
   const groupSets = splitTotals(split)
   const plannedG = weekly && weekOffset === 0 ? groupSetsOfWeeklyPlan(S) : null
   const mapLoad = Object.fromEntries(MUSCLES.map(m => [m, groupSets[groupOfMuscle(m)?.id] || 0]))
@@ -228,14 +233,23 @@ function MuscleBalance({ S }) {
       </> : partRows}
     </div>
   })()
+  // The conditioning layer: the combo sets of the same days, counted apart (a period, a week of it)
+  const condIn = conditioningWorkouts(weekly
+    ? workouts.filter(w => workoutDay(w) && weekKey(workoutDay(w), ws) === selectedWeek)
+    : muscleBalanceWindow(workouts, win, now, todayISO(), ws))
+  const condSets = condIn.reduce((n, w) => n + w.entries.reduce((m, e) => m + (e.sets || []).filter(x => x.done && !isWarmupRow(x)).length, 0), 0)
+  const condPerWeek = weekly ? condSets : condSets / Math.max(1, perWeek.weeks)
   const groupBars = <div data-group-sets style={{ margin: '14px 0 6px' }}>
     <h4 className="sec" style={{ marginTop: 0 }}>{t('Muscle groups')}</h4>
     <CoverageStrip adds={groupSets} planned={plannedG} onGroup={toggleGrp} selected={grp} label={weekly
       ? t('Sets per group in this week, toward {0}', WEEKLY_TARGET)
       : t('Sets per group in an average week of this period, toward {0}', WEEKLY_TARGET)} />
+    {condPerWeek > 0 && <div className="muted small" data-conditioning-sets style={{ marginTop: 6 }}>
+      {weekly ? t('+ {0} conditioning sets in combos, not counted here', shown(condPerWeek))
+        : t('+ {0} conditioning sets a week in combos, not counted here', shown(condPerWeek))}</div>}
   </div>
   const missed = ADD_GROUPS.filter(g => !(groupSets[g.id] > 0))
-  const volWin = S.workouts.filter(w => workoutAt(w) > now - 90 * 86400000)
+  const volWin = sw.filter(w => workoutAt(w) > now - 90 * 86400000)
   const vol90 = loadOfWorkouts(volWin, null)
   const { worked: strengthOrder } = rankOf(strength)
   const detrained = strengthOrder.filter(slug => strength[slug] < 1)

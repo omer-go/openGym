@@ -3,6 +3,7 @@ import { completedVolumeOf } from './workout-model.js'
 import { bestSetOf } from './onerm.js'
 import { beatsWeight } from './exercises.js'
 import { currentDbLoad, historyAs, volumeFactor, workoutAs } from './dumbbells.js'
+import { isConditioning } from './conditioning.js'
 
 // One exercise's past, read back for the history sheet (issue #43): a chart series and the
 // last few sessions, derived in a single pass over the log so the sheet can memoise the
@@ -123,7 +124,7 @@ export function bestSetFor(S, exId, mode = modeOf({ id: exId }), as) {
     const w = as ? workoutAs(stored, exId, as) : stored
     let t = null
     for (const en of w.entries || []) {
-      if (en.id !== exId) continue
+      if (en.id !== exId || isConditioning(en)) continue
       for (const set of metricRowsForEntry(en, mode)) {
         t ??= workoutAt(w)
         if (!best || better(set, best.set) || (!better(best.set, set) && t < best.t)) best = { d: w.d, set, target: en.target || null, t }

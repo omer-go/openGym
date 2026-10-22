@@ -2,6 +2,7 @@ import { isAssisted } from './exercises.js'
 import { isSideSet } from './workout-model.js'
 import { entriesForExercise, metricRowsForEntry, workoutAt } from './history.js'
 import { currentDbLoad, entryDbLoad, workoutAs } from './dumbbells.js'
+import { isConditioning } from './conditioning.js'
 // Estimated one-rep max (issue #18, extended issue #155).
 //
 // Deliberately knows nothing about the exercise database: an estimate needs a weight AND a
@@ -141,6 +142,8 @@ export function bestSetOf(entry, formula = DEFAULT_FORMULA) {
   // so Epley on it would rise as you got weaker and call that a record (issue #232). These
   // exercises stay out of the estimate, the curve and the strength list entirely.
   if (isAssisted(entry?.id ? { id: entry.id } : entry)) return null
+  // Light conditioning combo sets say nothing of a one-rep max (lib/conditioning.js).
+  if (isConditioning(entry)) return null
   let best = null
   metricRowsForEntry(entry, 'reps').forEach(s => {
     const sets = isSideSet(s)

@@ -79,6 +79,7 @@ import { copyText } from './lib/clipboard.js'
 import { queueRemaining, pinState } from './lib/queue.js'
 import { DAY_NOTE_TAGS, DAY_NOTE_LABEL, DAY_NOTE_ICON, dayNoteOf, dayNoteLine, canNoteDay, withDayNote } from './lib/day-notes.js'
 import { savedWorkoutView } from './lib/workout-view.js'
+import { KIND_CONDITIONING, KIND_STRENGTH, isConditioning } from './lib/conditioning.js'
 
 const S = () => useStore.getState().S
 const update = (...a) => useStore.getState().update(...a)
@@ -3439,6 +3440,21 @@ function RenameWorkout({ close }) {
 }
 export const renameWorkoutSheet = () => ui().openSheet(close => <RenameWorkout close={close} />)
 
+// What a combo counts as (lib/conditioning.js): conditioning by default — light, fast rounds kept
+// out of progression, records and the weekly hard sets — or strength work, counted like a superset.
+function ComboKind({ kind, onChange }) {
+  return <>
+    <h4 className="sec">{t('Counts as')}</h4>
+    <Segmented value={kind} onChange={onChange}
+      options={[{ value: KIND_CONDITIONING, label: t('Conditioning') }, { value: KIND_STRENGTH, label: t('Strength') }]} />
+    <div className="small dim" style={{ margin: '8px 0 4px' }}>
+      {kind === KIND_STRENGTH
+        ? t('Counted like any superset: progression, records and weekly sets.')
+        : t('Cardio with weights: kept out of progression, records and weekly hard sets.')}
+    </div>
+  </>
+}
+
 // A superset's own name and rest between rounds (#292), from the routine editor.
 function SupersetSettings({ meta, onSave, close }) {
   const inputRef = useRef(null)
@@ -3446,7 +3462,8 @@ function SupersetSettings({ meta, onSave, close }) {
   const [name, setName] = useState(meta.name || '')
   const [rest, setRest] = useState(meta.rest || 0)
   const [combo, setCombo] = useState(!!meta.combo)
-  const save = () => { onSave({ name: name.trim().slice(0, SG_NAME_MAX), rest, combo }); close() }
+  const [kind, setKind] = useState(meta.kind === KIND_STRENGTH ? KIND_STRENGTH : KIND_CONDITIONING)
+  const save = () => { onSave({ name: name.trim().slice(0, SG_NAME_MAX), rest, combo, kind: combo ? kind : '' }); close() }
   return <>
     <h3>{combo ? t('Combo') : t('Superset')}</h3>
     <input ref={inputRef} className="input" type="text" maxLength={SG_NAME_MAX} value={name}
@@ -3463,6 +3480,7 @@ function SupersetSettings({ meta, onSave, close }) {
         <Switch checked={combo} onChange={setCombo} aria-label={t('Show as combo')} />
       </Row>
     </div>
+    {combo && <ComboKind kind={kind} onChange={setKind} />}
     <div style={{ height: 18 }} />
     <Button variant="primary" onClick={save}>{t('Save')}</Button>
   </>
@@ -3482,6 +3500,7 @@ function ComboBuilder({ onDone, routineId, close }) {
   const [name, setName] = useState('')
   const [rounds, setRounds] = useState(3)
   const [rest, setRest] = useState(0)
+  const [kind, setKind] = useState(KIND_CONDITIONING)
   const inputRef = useRef(null)
   const onFocus = useSheetKeyboard(inputRef)
   const addOne = () => {
@@ -3502,7 +3521,7 @@ function ComboBuilder({ onDone, routineId, close }) {
     ;[next[k], next[j]] = [next[j], next[k]]
     return next
   })
-  const done = () => { close(); onDone({ ids, name: name.trim().slice(0, SG_NAME_MAX), rounds, rest }) }
+  const done = () => { close(); onDone({ ids, name: name.trim().slice(0, SG_NAME_MAX), rounds, rest, kind }) }
   return <>
     <h3 style={{ marginBottom: 10 }}>{t('New combo')}</h3>
     <input ref={inputRef} className="input" type="text" maxLength={SG_NAME_MAX} value={name}
@@ -3518,6 +3537,7 @@ function ComboBuilder({ onDone, routineId, close }) {
           footer: t('Without one, the combo rests as long as its longest exercise rest.'), onDone: setRest })} />
       <Row icon="bolt" title={t('Rest between exercises')} value={t('None')} />
     </div>
+    <ComboKind kind={kind} onChange={setKind} />
     <h4 className="sec">{t('Exercises, in order')}</h4>
     <div className="list">
       {ids.map((id, k) => {
@@ -3744,7 +3764,9 @@ function doFinishWorkout() {
   // saved one is (rebuildPrHistory, below): it gains a badge it leads with, and a later session
   // it outdoes loses its own. It used to report none at all while the editor's Save awarded them
   // (QA 1.3.9). The confirmed weights are left alone either way.
+  // A conditioning combo's light sets set no record and no working weight (lib/conditioning.js).
   if (!past) A.entries.forEach(e => {
+    if (isConditioning(e)) return
     const loads = e.sets.filter(s => s.done && !isWarmupRow(s)).map(s => s.w).filter(w => w > 0)
     const mx = loads.length ? loads.reduce((a, b) => betterWeight(e.id, a, b)) : 0
     // Held against history read the way this session logged a dumbbell weight (lib/dumbbells.js).
@@ -3773,6 +3795,7 @@ function doFinishWorkout() {
       prs.push(...[...(shown.prs || [])])
     } else {
       w.entries.forEach(e => {
+        if (isConditioning(e)) return
         const mx = bestWeightForEntry(e)
         if (mx > 0 && beatsWeight(e.id, mx, (s.exWeights[e.id] || {}).w || 0)) s.exWeights[e.id] = { w: mx, d: w.d }
       })

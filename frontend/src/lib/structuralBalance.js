@@ -4,6 +4,7 @@ import { isBw } from './history.js'
 import { EXIDX, isAssisted } from './exercises.js'
 import { isSideSet, isWarmupRow } from './workout-model.js'
 import { BALANCE_STATUSES, BORDERLINE_BAND_PCT, EVALUATION_MODES } from './structuralBalanceTemplates.js'
+import { isConditioning } from './conditioning.js'
 
 const kgOf = (n, unit) => (unit === 'lb' ? Number(n) * LB_TO_KG : Number(n))
 
@@ -124,7 +125,7 @@ export function resolveCurrent(S, exerciseIds, bodyweightKg, reps = null) {
   let best = null
   for (const exId of exerciseIds) {
     for (const workout of S.workouts || []) {
-      const entry = (workout.entries || []).find(e => e.id === exId)
+      const entry = (workout.entries || []).find(e => e.id === exId && !isConditioning(e))
       if (!entry) continue
       for (const set of entry.sets || []) {
         if (!set.done || isWarmupRow(set)) continue
@@ -170,7 +171,7 @@ export function resolveCurrentReps(S, exerciseIds) {
   let best = null
   for (const exId of exerciseIds) {
     for (const workout of S.workouts || []) {
-      const entry = (workout.entries || []).find(e => e.id === exId)
+      const entry = (workout.entries || []).find(e => e.id === exId && !isConditioning(e))
       const found = entry && !isAssistedEntry(entry) && bestRepsOf(entry)
       if (found && (!best || found.r > best.r)) best = { ...found, d: workout.d, t: workout.start, exId }
     }

@@ -17,6 +17,7 @@
 // So a session that fell apart can never advance the load as though it had succeeded.
 
 import { modeOf, repStep, rerampWarmups, isBw, isPerSide, entryExcluded, entryRoutineId } from './history.js'
+import { isConditioning, isConditioningCfg } from './conditioning.js'
 import { EXIDX, isAssisted, isLoadedEq, defaultIncrement } from './exercises.js'
 import { isWarmupRow, isSideSet, syncSideAggregate, makeSideSet } from './workout-model.js'
 import { normalizeRepRange } from './rep-range.js'
@@ -98,6 +99,9 @@ export const MAX_BW_SETS = 6
 export function policyFor(cfg, routine, mode) {
   // Pyramid sets are never progressed: the lifter picks every set's weight (CONTEXT.md).
   if (isPyramid(cfg)) return 'off'
+  // Nor is a conditioning combo: its numbers carry forward from its own last session as they
+  // were (lib/conditioning.js).
+  if (isConditioningCfg(cfg)) return 'off'
   const m = mode || modeOf(cfg || {})
   const allowed = POLICIES_FOR[m] || ['off']
   const pick = (cfg && cfg.prog) || (routine && routine.prog) || (m === 'reps' ? 'linear' : 'off')
@@ -340,7 +344,9 @@ export function sessionsFor(S, exId, fallback, rid) {
 function sessionsIn(S, exId, fallback, rid) {
   const out = []
   ;(S.workouts || []).forEach(w => {
-    const entry = (w.entries || []).find(e => e && e.id === exId && (!rid || entryRoutineId(w, e) === rid))
+    // A conditioning combo's light sets are not the lift's sessions (lib/conditioning.js): the
+    // same lift done for strength in the same workout is the one read.
+    const entry = (w.entries || []).find(e => e && e.id === exId && (!rid || entryRoutineId(w, e) === rid) && !isConditioning(e))
     if (!entry) return
     // A session that does not count for this exercise cannot become the baseline for its next
     // prescription. Exclusion is per-entry now (ENG-11): a legacy whole-workout

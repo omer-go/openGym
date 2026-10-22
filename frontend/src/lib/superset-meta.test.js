@@ -9,7 +9,7 @@ describe('a superset\'s name and rest between rounds (#292)', () => {
     expect(ex[0]).toMatchObject({ sgName: 'Arms finisher', sgRest: 75 })
     expect(ex[1]).toMatchObject({ sgName: 'Arms finisher', sgRest: 75 })
     expect(ex[2].sgName).toBeUndefined()
-    expect(supersetMeta(ex, [0, 1])).toEqual({ name: 'Arms finisher', rest: 75, combo: false })
+    expect(supersetMeta(ex, [0, 1])).toEqual({ name: 'Arms finisher', rest: 75, combo: false, kind: '' })
     setSupersetMeta(ex, 'g', { name: '', rest: 0 })
     expect(ex[0].sgName).toBeUndefined()
     expect(ex[0].sgRest).toBeUndefined()
@@ -32,7 +32,7 @@ describe('a superset\'s name and rest between rounds (#292)', () => {
     setSupersetMeta(ex, 'g', { name: 'Core', rest: 60, combo: true })
     expect(ex.slice(0, 3).every(e => e.sgCombo === true)).toBe(true)
     expect(ex[3].sgCombo).toBeUndefined()
-    expect(supersetMeta(ex, [0, 1, 2])).toEqual({ name: 'Core', rest: 60, combo: true })
+    expect(supersetMeta(ex, [0, 1, 2])).toEqual({ name: 'Core', rest: 60, combo: true, kind: 'conditioning' })
     // A lone exercise left with the flag is no combo.
     expect(supersetMeta(ex, [0]).combo).toBe(false)
     // Read off a session entry's target too.

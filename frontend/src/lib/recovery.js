@@ -4,6 +4,7 @@ import { MUSCLES, musclesOf } from './muscles.js'
 import { isWarmupRow, dropsOf, isSideSet } from './workout-model.js'
 import { estimate1RM, REP_CAP } from './onerm.js'
 import { rirOf, HARD_RIR } from './effort.js'
+import { CONDITIONING_FATIGUE, isConditioning } from './conditioning.js'
 
 // Fatigue stimulus in effective hard sets, not tonnage: hypertrophy dose-response
 // tracks sets near failure (~5-30 reps), while tonnage overweights heavy compounds
@@ -268,7 +269,10 @@ function sessionEffSets(workout, anchors, opts = {}) {
   }
   for (const entry of workout?.entries || []) {
     const ex = exerciseFor(entry)
-    const weights = musclesOf(ex)
+    // A conditioning combo's sets tire the muscles at a discount (lib/conditioning.js)
+    const scale = isConditioning(entry) ? CONDITIONING_FATIGUE : 1
+    const weights = scale === 1 ? musclesOf(ex)
+      : Object.fromEntries(Object.entries(musclesOf(ex)).map(([slug, w]) => [slug, w * scale]))
     for (const set of entry.sets || []) {
       score(set, set, entry, weights)
       // Drop-set drops carry their own load against the same anchor - extra work at
@@ -298,7 +302,7 @@ function sessionBests(workout, opts = {}) {
     }
   }
   for (const entry of workout?.entries || []) {
-    if (isAssisted(entry?.id ? { id: entry.id } : entry)) continue
+    if (isAssisted(entry?.id ? { id: entry.id } : entry) || isConditioning(entry)) continue
     const ex = exerciseFor(entry)
     for (const set of entry.sets || []) consider(ex, set, entry, entry.id)
   }
@@ -480,6 +484,7 @@ export function strengthOf(workouts, now, opts = {}) {
     const timestamp = workoutTimestamp(workout)
     if (!Number.isFinite(timestamp)) continue
     for (const entry of workout.entries || []) {
+      if (isConditioning(entry)) continue  // light combo sets keep no strength (lib/conditioning.js)
       if (!(entry.sets || []).some(set => set?.done === true && !isWarmupRow(set))) continue
       for (const slug of Object.keys(musclesOf(exerciseFor(entry)))) {
         if (Object.prototype.hasOwnProperty.call(MUSCLES_BY_SLUG, slug) && timestamp > latest[slug]) {

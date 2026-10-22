@@ -32,6 +32,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf } from './format.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
+import { isConditioning, strengthWorkouts } from './conditioning.js'
 
 export const GEN_TYPES = {
   full: [['chest', 1], ['upper-back', 1], ['deltoids', 1], ['quadriceps', 1], ['hamstring|gluteal', 1], ['biceps|triceps', 1], ['calves|abs', 1]],
@@ -79,6 +80,8 @@ export function trainingIndex(S) {
       const seen = exercises[entry.id] || (exercises[entry.id] = { d, n: 0 })
       seen.n++
       if (d > seen.d) seen.d = d
+      // A conditioning combo leaves its muscles due for a hard session (lib/conditioning.js)
+      if (isConditioning(entry)) continue
       for (const [slug, weight] of Object.entries(entryWeights(entry))) {
         if (weight >= TRAINED_AT && !(muscles[slug] >= d)) muscles[slug] = d
       }
@@ -157,7 +160,7 @@ export const GEN_STRETCHES = 2
  */
 export function partGaps(S, groups, now = Date.now()) {
   const today = isoOf(new Date(now)), from = isoOf(new Date(now - 13 * 864e5))
-  const items = doneSetItems((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= today))
+  const items = doneSetItems(strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= today))
   const gaps = {}
   for (const g of ADD_GROUPS) {
     if (!groups.includes(g.id)) continue
