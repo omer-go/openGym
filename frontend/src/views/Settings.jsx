@@ -974,8 +974,9 @@ const DownloadProgress = forwardRef(function DownloadProgress(_, ref) {
 // Settings → Sound (#306): every end-of-rest sound, each played as it is picked so you hear it
 // before the next rest does. The sheet stays open for the next one; Done closes it. Stored as
 // S.restSound, with S.classicChime kept for an app from before (lib/rest-sounds.js restSoundOf).
-const REST_SOUND_LABEL = { chime: 'Chime (louder)', classic: 'Classic beeps', bell: 'Bell', beep: 'Beep-beep', whistle: 'Whistle', soft: 'Soft' }
+const REST_SOUND_LABEL = { short: 'Short', chime: 'Chime (louder)', classic: 'Classic beeps', bell: 'Bell', beep: 'Beep-beep', whistle: 'Whistle', soft: 'Soft' }
 const REST_SOUND_HINT = {
+  short: 'Two quick notes that sit under your music.',
   classic: 'The quieter three-beep sound from before 1.3.9, instead of the louder chime.',
   bell: 'Ding-dong. Rest is over, class is in.',
   beep: 'Your sports watch, calling you back.',

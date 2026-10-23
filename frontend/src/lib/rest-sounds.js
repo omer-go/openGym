@@ -6,6 +6,10 @@ export const CHIME_PEAK = 0.9
 const CHIME = [[1319, 0.16, 0], [988, 0.16, 0.22], [1319, 0.5, 0.44]]
 const CLASSIC = [[880, 0.15, 0], [880, 0.15, 0.25], [1320, 0.4, 0.5]]
 export const REST_SOUNDS = {
+  // two quick, plucked notes a fourth apart, quiet enough to sit under music or a video instead
+  // of over it. The default. `tick` is its 3-2-1 before the end: one short, soft pluck on the
+  // first note's pitch, so the end reads as the countdown resolving.
+  short: { notes: [[1175, 0.12, 0], [1568, 0.22, 0.1]], peak: 0.4, hold: 0, tick: [1175, 0.06, 0.22] },
   chime: { notes: CHIME, peak: CHIME_PEAK, hold: 0.6, timbre: 'bright' },
   classic: { notes: CLASSIC },
   // ding-dong: two strikes a major third apart, left to ring out
@@ -24,11 +28,17 @@ export const REST_SOUND_IDS = Object.keys(REST_SOUNDS)
  * choice was stored before there were more than two, and an app from before #306 still writes
  * only that. So `classicChime: true` always means the classic beeps (this app clears it for any
  * other pick, so true can only be an older app's later choice), and a stored `restSound` of
- * 'classic' without it means that older app switched back to the chime.
+ * 'classic' without it means that older app switched back to the chime. A profile that never
+ * picked gets the short one; the louder chime was the default before.
  */
 export function restSoundOf(S) {
   if (S?.classicChime === true) return 'classic'
   const k = S?.restSound
-  return Object.hasOwn(REST_SOUNDS, k) && k !== 'classic' ? k : 'chime'
+  if (k === 'classic') return 'chime'
+  return Object.hasOwn(REST_SOUNDS, k) ? k : 'short'
 }
+
+/** The 3-2-1 tick before a rest or a hold ends, as [freq, dur, peak]: the sound's own, or the beep every sound had before. */
+export const DEFAULT_TICK = [660, 0.1, 0.35]
+export const tickOf = kind => REST_SOUNDS[kind]?.tick || DEFAULT_TICK
 

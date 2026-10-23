@@ -49,7 +49,7 @@ describe('RestTone.java plays what the page plays', () => {
   })
 
   it('has every other sound number for number', () => {
-    for (const k of ['bell', 'beep', 'whistle', 'soft']) {
+    for (const k of ['short', 'bell', 'beep', 'whistle', 'soft']) {
       const j = caseOf(k), page = REST_SOUNDS[k]
       expect(j.notes, k).toEqual(page.notes)
       expect([j.peak, j.hold, TIMBRE_OF[j.timbre]], k).toEqual([page.peak, page.hold, page.timbre])

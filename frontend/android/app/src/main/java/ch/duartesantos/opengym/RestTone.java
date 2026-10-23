@@ -9,7 +9,8 @@ package ch.duartesantos.opengym;
  * classic three beeps. Until v1.3.11 this side only knew the classic beeps, so a locked phone
  * played the quiet old sound however Settings → Sound was set. #306 added a bell, a beep-beep,
  * a whistle and a soft one; their notes, peaks, holds and timbres are copied from
- * frontend/src/lib/rest-sounds.js REST_SOUNDS and rendered the way the chime is.
+ * frontend/src/lib/rest-sounds.js REST_SOUNDS and rendered the way the chime is, as is the
+ * short one that is now the default.
  */
 final class RestTone {
     static final int RATE = 22050;
@@ -34,10 +35,11 @@ final class RestTone {
     private static final double[][] BELL_NOTES = {{1319, 0.9, 0}, {1047, 1.3, 0.4}};
     private static final double[][] BEEP_NOTES = {{1760, 0.08, 0}, {1760, 0.08, 0.13}, {1760, 0.08, 0.4}, {1760, 0.08, 0.53}};
     private static final double[][] WHISTLE_NOTES = {{1300, 0.16, 0, 2100}, {1500, 0.42, 0.22, 2500}};
+    private static final double[][] SHORT_NOTES = {{1175, 0.12, 0}, {1568, 0.22, 0.1}};
     private static final double[][] SOFT_NOTES = {{659, 0.4, 0}, {784, 0.4, 0.2}, {988, 0.8, 0.4}};
 
     /** Every name Settings → Sound can hand over (lib/rest-sounds.js REST_SOUND_IDS). */
-    static final String[] KINDS = {"chime", "classic", "bell", "beep", "whistle", "soft"};
+    static final String[] KINDS = {"short", "chime", "classic", "bell", "beep", "whistle", "soft"};
 
     private RestTone() {}
 
@@ -50,6 +52,7 @@ final class RestTone {
         String k = kind == null ? "chime" : kind;
         switch (k) {
             case "classic": return withTail(renderBeeps());
+            case "short": return withTail(renderNotes(SHORT_NOTES, 0.4, 0, SINE));
             case "bell": return withTail(renderNotes(BELL_NOTES, 0.55, 0, BELL));
             case "beep": return withTail(renderNotes(BEEP_NOTES, 0.8, 0.8, BRIGHT));
             case "whistle": return withTail(renderNotes(WHISTLE_NOTES, 0.7, 0.55, SINE));

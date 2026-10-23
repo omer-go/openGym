@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { uid } from '../lib/format.js'
-import { beep, chime, vibrate, alertBuzz } from '../lib/sound.js'
+import { chime, tick, vibrate, alertBuzz } from '../lib/sound.js'
 import { restSoundOf } from '../lib/rest-sounds.js'
 import { api } from '../lib/api.js'
 import { t } from '../lib/i18n.js'
@@ -132,7 +132,7 @@ const runWork = (set, get) => {
       if (done) done(wk.total - left, { chimed: seenLive && !wk.alerted })
       return
     }
-    if (left <= 3) beep(snd, 660, 0.1)
+    if (left <= 3) tick(snd, endSound)
     set({ work: { ...wk, left } })
   }
   workInt = setInterval(workTick, 1000)
@@ -209,7 +209,7 @@ const runRest = (set, get) => {
       set({ timer: { ...tm, left: 0, ready: true } })
       return
     }
-    if (left <= 3) beep(snd, 660, 0.1)
+    if (left <= 3) tick(snd, endSound)
     set({ timer: { ...tm, left } })
   }
   timerInt = setInterval(timerTick, 1000)

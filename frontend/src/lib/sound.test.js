@@ -345,8 +345,8 @@ describe('the end-of-rest sounds (Settings → Sound)', () => {
     return max
   }
 
-  it('offers the chime, the classic beeps and four more, each sounding different', () => {
-    expect(sound.REST_SOUND_IDS).toEqual(['chime', 'classic', 'bell', 'beep', 'whistle', 'soft'])
+  it('offers the short one, the chime, the classic beeps and four more, each sounding different', () => {
+    expect(sound.REST_SOUND_IDS).toEqual(['short', 'chime', 'classic', 'bell', 'beep', 'whistle', 'soft'])
     const shapes = new Set()
     for (const id of sound.REST_SOUND_IDS) {
       fresh()
@@ -387,10 +387,10 @@ describe('the end-of-rest sounds (Settings → Sound)', () => {
   })
 
   it('reads the profile\'s pick, with the old classic switch and an older app\'s later choice', () => {
-    expect(sound.restSoundOf({})).toBe('chime')
-    expect(sound.restSoundOf(undefined)).toBe('chime')
+    expect(sound.restSoundOf({})).toBe('short')
+    expect(sound.restSoundOf(undefined)).toBe('short')
     expect(sound.restSoundOf({ restSound: 'bell' })).toBe('bell')
-    expect(sound.restSoundOf({ restSound: 'kazoo' })).toBe('chime')
+    expect(sound.restSoundOf({ restSound: 'kazoo' })).toBe('short')
     expect(sound.restSoundOf({ classicChime: true })).toBe('classic')
     // an older app switched to Classic after this one picked the bell: classic it is
     expect(sound.restSoundOf({ restSound: 'bell', classicChime: true })).toBe('classic')
@@ -484,5 +484,25 @@ describe('alertBuzz', () => {
     await flush()
     expect(native).not.toHaveBeenCalled()
     expect(calls).toEqual([])
+  })
+
+})
+
+describe('the 3-2-1 tick before the end', () => {
+  const peakOf = events => Math.max(...events.map(([, v]) => v))
+  const fresh = () => { const c = ctx(); if (c) { c.tones = []; c.gains = []; c.oscs = [] } }
+  it('is the short sound\'s soft pluck by default, and the old beep for the other sounds', () => {
+    sound.tick(true, 'short')
+    expect(ctx().tones.map(tn => tn.freq)).toEqual([1175])
+    expect(ctx().gains.map(peakOf)).toEqual([0.22])
+    fresh()
+    sound.tick(true, 'chime')
+    expect(ctx().tones.map(tn => tn.freq)).toEqual([660])
+    expect(ctx().gains.map(peakOf)).toEqual([0.35])
+  })
+
+  it('stays silent with sounds off', () => {
+    sound.tick(false, 'short')
+    expect(FakeCtx.instances).toHaveLength(0)
   })
 })

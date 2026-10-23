@@ -19,7 +19,7 @@
 // The context is suspended again a second after the last tone: an idle context otherwise keeps
 // rendering silence for the rest of the page, and under 'playback' keeps the phone's audio
 // session busy. (Suspending does NOT hand the phone back to a paused music app — see 1.)
-import { REST_SOUNDS } from './rest-sounds.js'
+import { REST_SOUNDS, tickOf } from './rest-sounds.js'
 
 let audioCtx = null
 let idleTm = null
@@ -119,7 +119,7 @@ export function beep(enabled, freq, dur, when) {
 // the first millisecond, they still stay under 1 when they add up. RestTone.java mirrors every
 // one of these, number for number. The table itself is lib/rest-sounds.js, which has no audio in
 // it, so the store and the native alarm can read the choice without this module.
-export { CHIME_PEAK, REST_SOUNDS, REST_SOUND_IDS, restSoundOf } from './rest-sounds.js'
+export { CHIME_PEAK, REST_SOUNDS, REST_SOUND_IDS, restSoundOf, tickOf } from './rest-sounds.js'
 // `kind` is a REST_SOUNDS id; `true` (the old "classic" switch) still means the classic beeps.
 export function chime(enabled, kind) {
   if (!enabled) return
@@ -130,6 +130,13 @@ export function chime(enabled, kind) {
       tone(freq, dur, when, snd === REST_SOUNDS.classic ? {} : { peak: snd.peak, hold: snd.hold, timbre: snd.timbre, glide })
     }
   } catch (e) { /* */ }
+}
+
+// The 3-2-1 before the end of a rest or a hold, in the end sound's own tick (lib/rest-sounds.js).
+export function tick(enabled, kind) {
+  if (!enabled) return
+  const [freq, dur, peak] = tickOf(kind === true ? 'classic' : kind)
+  try { tone(freq, dur, 0, { peak }) } catch (e) { /* */ }
 }
 
 // Call from inside a tap. Gets the context created and running while the browser still counts
