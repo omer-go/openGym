@@ -109,6 +109,8 @@ export const DEF = {
   // What each one-tap workout's setup sheet last started with, by day type (lib/generate.js
   // genDefaults: count, groups, cardio, stretch, sets, reps, restSec, warmupSets, lastToFailure).
   genSetup: {},
+  // Combos kept for reuse, newest first (lib/saved-combos.js): the combo builder starts from one.
+  savedCombos: [],
   // The weekly goal (lib/goals.js): sets a week for the big groups, one per group where set, and
   // the days a week you mean to train.
   goals: { weeklySets: 10, byGroup: {}, days: 4 },

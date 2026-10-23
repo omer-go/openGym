@@ -22,6 +22,8 @@ import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
 import { durationSheet } from './components/DurationPicker.jsx'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
+import { randomAbsCombo, swapAbsExercise, resizeAbsCombo, absSpotsOpen, ABS_COMBO_COUNT, ABS_COMBO_MAX } from './lib/abs-combo.js'
+import { savedCombosOf, saveCombo, removeCombo } from './lib/saved-combos.js'
 import { REST_MAX, fmtRest } from './lib/duration.js'
 import Icon from './components/Icon.jsx'
 import { Button, Slider, Switch, Segmented, SelectRow, Row, TextField, NumberField, MultiSelectRow } from './components/ui.jsx'
@@ -3515,12 +3517,31 @@ function SupersetSettings({ meta, onSave, close }) {
 }
 export const supersetSheet = (meta, onSave) => ui().openSheet(close => <SupersetSettings meta={meta} onSave={onSave} close={close} />)
 
-// A combo: its name, how many rounds and the rest between them, and its exercises, added one at
-// a time from the same Add exercise screen a workout adds from, in the order you will do them.
-// Every exercise gets the same number of rounds; what each round asks of it starts from its usual
-// numbers (Workout.jsx, RoutineEdit.jsx). There is no rest between the exercises of a round: that
-// is what makes it a combo. `routineId` is the routine editor's, for the screen's suggestions.
+// A combo: its name, how many rounds and the rest between them, and its exercises, in the order
+// you will do them. Every exercise gets the same number of rounds; what each round asks of it
+// starts from its usual numbers (Workout.jsx, RoutineEdit.jsx). There is no rest between the
+// exercises of a round: that is what makes it a combo. `routineId` is the routine editor's, for
+// the Add exercise screen's suggestions. Three ways in, one tab each: Random, an abs combo picked
+// for one spot in the gym (lib/abs-combo.js); Saved, the combos kept for reuse (S.savedCombos,
+// lib/saved-combos.js), which open in Build; and Build, one exercise at a time from the same Add
+// exercise screen a workout adds from.
+const SPOT_LABEL = () => ({
+  any: t('Any'), floor: t('Floor'), item: t('Floor + one item'), bar: t('Bar'), bench: t('Bench'), cable: t('Cable'), machine: t('Machine'),
+})
+const GEAR_LABEL = () => ({
+  bar: t('pull-up bar'), chair: t('captain’s chair'), bench: t('decline bench'), ghd: t('glute-ham bench'), cable: t('cable'),
+  machine: t('one machine'), suspension: t('suspension trainer'), rope: t('battle ropes'), dumbbell: t('one dumbbell'),
+  kettlebell: t('one kettlebell'), plate: t('one plate'), 'medicine ball': t('one medicine ball'), wheel: t('ab wheel'),
+  roller: t('roller'), band: t('band'), ball: t('stability ball'), bosu: t('bosu ball'), barbell: t('barbell'), sandbag: t('sandbag'),
+})
 function ComboBuilder({ onDone, routineId, close }) {
+  const saved = savedCombosOf(useStore(s => s.S.savedCombos))
+  const [tab, setTab] = useState(() => saved.length ? 'saved' : 'random')
+  const [count, setCount] = useState(ABS_COMBO_COUNT)
+  const [spot, setSpot] = useState('any')
+  const spots = useMemo(() => absSpotsOpen(useStore.getState().S), [])
+  const roll = (c, sp, avoid = []) => randomAbsCombo(useStore.getState().S, { count: c, spot: sp, avoid })
+  const [rolled, setRolled] = useState(() => roll(ABS_COMBO_COUNT, 'any'))
   const [ids, setIds] = useState([])
   // Read by the Add exercise screen's pick, which outlives the render that opened it.
   const idsRef = useRef(ids)
@@ -3529,8 +3550,32 @@ function ComboBuilder({ onDone, routineId, close }) {
   const [rounds, setRounds] = useState(3)
   const [rest, setRest] = useState(0)
   const [kind, setKind] = useState(KIND_CONDITIONING)
+  const [more, setMore] = useState(false)
+  // The saved combo Build holds (saving updates that one), and whether Add combo also saves.
+  const [savedId, setSavedId] = useState(null)
+  const [keep, setKeep] = useState(false)
   const inputRef = useRef(null)
   const onFocus = useSheetKeyboard(inputRef)
+  const list = tab === 'random' ? rolled.ids : ids
+  const editing = tab === 'build' && savedId
+  const reroll = (c, sp, avoid) => {
+    const next = roll(c, sp, avoid)
+    if (next.ids.length < 2) { ui().toast(t('No abs exercises to pick from')); return }
+    setRolled(next)
+  }
+  // One more or one fewer, at the bottom: the rest of the combo stays where it is.
+  const resize = c => {
+    if (!rolled.gear) { reroll(c, spot); return }
+    const next = resizeAbsCombo(useStore.getState().S, rolled.ids, rolled.gear, c)
+    // Nothing more fits: the count shows what the combo got.
+    if (next.length !== c) { setCount(next.length); ui().toast(t('No more abs exercises to add')) }
+    setRolled({ ...rolled, ids: next })
+  }
+  const swap = k => {
+    const next = swapAbsExercise(useStore.getState().S, rolled.ids, k)
+    if (next === rolled.ids) ui().toast(t('Nothing else to swap in'))
+    else setRolled({ ...rolled, ids: next })
+  }
   const addOne = () => {
     // One pick, then back here: the row and its "+" both add the exercise as it is.
     const picker = addExerciseSheet(ex => {
@@ -3539,54 +3584,139 @@ function ComboBuilder({ onDone, routineId, close }) {
       setIds(cur => [...cur, ex.id])
     }, { routineId })
   }
-  // The first exercise is what a new combo needs first: its screen opens with the builder.
-  // Once: a re-run of the effect (StrictMode) must not stack a second screen.
-  const firstOpen = useRef(false)
-  useEffect(() => { if (!firstOpen.current) { firstOpen.current = true; addOne() } }, [])
+  const load = c => {
+    setIds(c.ids); setName(c.name); setRounds(c.rounds); setRest(c.rest); setKind(c.kind)
+    setSavedId(c.id); setKeep(true); setTab('build')
+  }
+  const toBuild = () => { setIds(rolled.ids); setSavedId(null); setTab('build') }
+  const forget = c => {
+    const before = useStore.getState().S.savedCombos
+    update(s => { s.savedCombos = removeCombo(s.savedCombos, c.id) })
+    if (savedId === c.id) { setSavedId(null); setKeep(false) }
+    ui().toast(t('“{0}” gone.', c.name || t('Combo')), { action: t('Undo'), onAction: () => update(s => { s.savedCombos = before }) })
+  }
   const move = (k, dir) => setIds(cur => {
     const next = [...cur], j = k + dir
     if (j < 0 || j >= next.length) return cur
     ;[next[k], next[j]] = [next[j], next[k]]
     return next
   })
-  const done = () => { close(); onDone({ ids, name: name.trim().slice(0, SG_NAME_MAX), rounds, rest, kind }) }
+  const fallback = tab === 'random' ? t('Abs combo') : t('Combo')
+  const done = () => {
+    const nm = (name.trim() || (tab === 'random' ? fallback : '')).slice(0, SG_NAME_MAX)
+    if (keep) {
+      update(s => { s.savedCombos = saveCombo(s.savedCombos, { id: (editing && savedId) || uid(), name: nm || fallback, ids: list, rounds, rest, kind }) })
+    }
+    close()
+    onDone({ ids: list, name: nm, rounds, rest, kind })
+  }
+  const exRow = (id, k, buttons) => {
+    const ex = exOr(id)
+    return <div key={id} className="item combo-order">
+      <span className="pick-n on" aria-hidden="true">{k + 1}</span>
+      <Thumb ex={ex} />
+      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div></div>
+      {buttons}
+    </div>
+  }
+  const gearLabel = rolled.gear === 'floor' ? t('Floor only') : rolled.gear ? t('Floor + {0}', GEAR_LABEL()[rolled.gear] || rolled.gear) : ''
   return <>
     <h3 style={{ marginBottom: 10 }}>{t('New combo')}</h3>
-    <input ref={inputRef} className="input" type="text" maxLength={SG_NAME_MAX} value={name}
-      placeholder={t('Name, e.g. Abs finisher')} onFocus={onFocus} onChange={e => setName(e.target.value)} />
+    <Segmented value={tab} onChange={v => { setTab(v); setKeep(v === 'build' && !!savedId) }} options={[
+      { value: 'random', label: t('Random') },
+      { value: 'saved', label: saved.length ? t('Saved ({0})', saved.length) : t('Saved') },
+      { value: 'build', label: t('Build') },
+    ]} />
     <div style={{ height: 12 }} />
-    <div className="list">
-      <Row icon="repeat" title={t('Rounds')}>
-        <Stepper value={rounds} min={1} max={20} decimal={false} ariaLabel={t('Rounds')} onChange={v => setRounds(Math.max(1, Math.min(20, Math.round(v) || 1)))} />
-      </Row>
-      <Row icon="timer" iconTint="var(--orange)" title={t('Rest between rounds')}
-        value={rest > 0 ? fmtRest(rest) : t('Longest exercise rest')} accessory="chevron"
-        onClick={() => durationSheet({ title: t('Rest between rounds'), value: rest, max: REST_MAX, off: t('Longest exercise rest'),
-          footer: t('Without one, the combo rests as long as its longest exercise rest.'), onDone: setRest })} />
-      <Row icon="bolt" title={t('Rest between exercises')} value={t('None')} />
-    </div>
-    <ComboKind kind={kind} onChange={setKind} />
-    <h4 className="sec">{t('Exercises, in order')}</h4>
-    <div className="list">
-      {ids.map((id, k) => {
-        const ex = exOr(id)
-        return <div key={id} className="item combo-order">
-          <span className="pick-n on" aria-hidden="true">{k + 1}</span>
-          <Thumb ex={ex} />
-          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div></div>
-          <button className="iconbtn" aria-label={t('Move up')} disabled={k === 0} onClick={() => move(k, -1)}><Icon name="chevronUp" /></button>
-          <button className="iconbtn" aria-label={t('Move down')} disabled={k === ids.length - 1} onClick={() => move(k, 1)}><Icon name="chevronDown" /></button>
-          <button className="iconbtn" aria-label={t('Remove')} onClick={() => setIds(cur => cur.filter(x => x !== id))}><Icon name="xmark" /></button>
+
+    {tab !== 'saved' && <>
+      <div className="sect-b">
+        <Row icon="repeat" title={name.trim() || fallback}
+          subtitle={[t('{0} rounds', rounds), rest > 0 && t('{0} rest', fmtRest(rest)), kind === KIND_STRENGTH ? t('Strength') : t('Conditioning')].filter(Boolean).join(' · ')}
+          onClick={() => setMore(v => !v)}><Icon name={more ? 'chevronUp' : 'chevronDown'} className="lrow-c" /></Row>
+      </div>
+      {more && <>
+        <div style={{ height: 12 }} />
+        <input ref={inputRef} className="input" type="text" maxLength={SG_NAME_MAX} value={name}
+          placeholder={tab === 'random' ? t('Abs combo') : t('Name, e.g. Abs finisher')} onFocus={onFocus} onChange={e => setName(e.target.value)} />
+        <div style={{ height: 12 }} />
+        <div className="sect-b">
+          <Row icon="repeat" title={t('Rounds')}>
+            <Stepper value={rounds} min={1} max={20} decimal={false} ariaLabel={t('Rounds')} onChange={v => setRounds(Math.max(1, Math.min(20, Math.round(v) || 1)))} />
+          </Row>
+          <Row icon="timer" iconTint="var(--orange)" title={t('Rest between rounds')}
+            value={rest > 0 ? fmtRest(rest) : undefined} subtitle={rest > 0 ? undefined : t('Longest exercise rest')} accessory="chevron"
+            onClick={() => durationSheet({ title: t('Rest between rounds'), value: rest, max: REST_MAX, off: t('Longest exercise rest'),
+              footer: t('Without one, the combo rests as long as its longest exercise rest.'), onDone: setRest })} />
+          <Row icon="bolt" title={t('Rest between exercises')} value={t('None')} />
         </div>
-      })}
+        <ComboKind kind={kind} onChange={setKind} />
+      </>}
+      <div style={{ height: 12 }} />
+    </>}
+
+    {tab === 'random' && <>
+      <div className="sect-b">
+        <Row icon="abs" title={t('Exercises')}>
+          <Stepper value={count} min={2} max={ABS_COMBO_MAX} decimal={false} ariaLabel={t('Exercises')}
+            onChange={v => { const c = Math.max(2, Math.min(ABS_COMBO_MAX, Math.round(v) || 2)); setCount(c); resize(c) }} />
+        </Row>
+      </div>
+      <div className="chips" style={{ flexWrap: 'wrap', overflow: 'visible', touchAction: 'auto', padding: 0, margin: '12px 0 8px' }}>
+        {spots.map(sp => <button key={sp} className={'chip nocap' + (spot === sp ? ' on' : '')}
+          onClick={() => { setSpot(sp); reroll(count, sp) }}>{SPOT_LABEL()[sp]}</button>)}
+      </div>
+      {gearLabel && <div className="small dim" style={{ margin: '0 0 8px' }}>{gearLabel}</div>}
+      <div className="list">
+        {rolled.ids.map((id, k) => exRow(id, k,
+          <button className="iconbtn" aria-label={t('Swap')} onClick={() => swap(k)}><Icon name="swap" /></button>))}
+        <div className="item combo-order" {...tappable(() => reroll(count, spot, rolled.ids))}>
+          <span className="pick-n" aria-hidden="true"><Icon name="shuffle" /></span>
+          <div className="grow"><div className="tt" style={{ color: 'var(--acc)' }}>{t('Shuffle all')}</div></div>
+        </div>
+        <div className="item combo-order" {...tappable(toBuild)}>
+          <span className="pick-n" aria-hidden="true"><Icon name="pencil" /></span>
+          <div className="grow"><div className="tt" style={{ color: 'var(--acc)' }}>{t('Reorder or add your own')}</div></div>
+        </div>
+      </div>
+    </>}
+
+    {tab === 'saved' && (saved.length
+      ? <div className="list">
+        {saved.map(c => <div key={c.id} className="item combo-order" {...tappable(() => load(c))}>
+          <span className="pick-n on" aria-hidden="true">{c.ids.length}</span>
+          <div className="grow">
+            <div className="tt">{c.name || t('Combo')}</div>
+            <div className="ss">{c.ids.map(id => exerciseNameText(exOr(id))).join(' · ')}</div>
+          </div>
+          <button className="iconbtn" aria-label={t('Delete')} onClick={e => { e.stopPropagation(); forget(c) }}><Icon name="trash" /></button>
+        </div>)}
+      </div>
+      : <div className="muted small" style={{ padding: '8px 2px' }}>{t('No saved combos yet. Make one in Random or Build and turn on Save to my combos.')}</div>)}
+
+    {tab === 'build' && <div className="list">
+      {ids.map((id, k) => exRow(id, k, <span style={{ display: 'flex', flex: 'none' }}>
+        <button className="iconbtn" aria-label={t('Move up')} disabled={k === 0} onClick={() => move(k, -1)}><Icon name="chevronUp" /></button>
+        <button className="iconbtn" aria-label={t('Move down')} disabled={k === ids.length - 1} onClick={() => move(k, 1)}><Icon name="chevronDown" /></button>
+        <button className="iconbtn" aria-label={t('Remove')} onClick={() => setIds(cur => cur.filter(x => x !== id))}><Icon name="xmark" /></button>
+      </span>))}
       <div className="item combo-order" {...tappable(addOne)}>
         <span className="pick-n" aria-hidden="true"><Icon name="plus" /></span>
         <div className="grow"><div className="tt" style={{ color: 'var(--acc)' }}>{t('Add exercise')}</div></div>
       </div>
-    </div>
-    <div style={{ height: 18 }} />
-    <Button variant="primary" disabled={ids.length < 2} onClick={done}>
-      {ids.length < 2 ? t('Add at least two exercises') : t('Add combo')}</Button>
+    </div>}
+
+    {tab !== 'saved' && <>
+      <div style={{ height: 12 }} />
+      {list.length >= 2 && <div className="sect-b">
+        <Row icon="star" title={editing ? t('Update saved combo') : t('Save to my combos')}>
+          <Switch checked={keep} onChange={setKeep} aria-label={t('Save to my combos')} />
+        </Row>
+      </div>}
+      <div style={{ height: 18 }} />
+      <Button variant="primary" disabled={list.length < 2} onClick={done}>
+        {list.length < 2 ? t('Add at least two exercises') : t('Add combo')}</Button>
+    </>}
   </>
 }
 export const comboBuilderSheet = (onDone, { routineId } = {}) => ui().openSheet(close => <ComboBuilder onDone={onDone} routineId={routineId} close={close} />)
