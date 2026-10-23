@@ -148,9 +148,14 @@ export function suggestDay(S, now = Date.now()) {
   return ranked[0]?.score > 0 ? ranked[0].type : null
 }
 
+const CATCH_UP = 1.5   // a day takes at most this many times its even part of a group's goal
+
 /**
  * Group id -> sets this `type` day should add: what each group still lacks this week, shared out
  * over the program days forecast for the rest of the week (this one included) that train it.
+ * A day never takes more than half again its even part of the goal (the goal over the
+ * program's days that train the group): a program started late in the week, or a week whose
+ * last day falls past its end, would otherwise pile the whole week onto one day.
  */
 export function dayShare(S, type, now = Date.now()) {
   const groups = genGroupsOf(type)
@@ -158,11 +163,14 @@ export function dayShare(S, type, now = Date.now()) {
   const weekEnd = addDays(isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S))), 6)
   const left = programForecast(S, now).filter(f => f.iso <= weekEnd).map(f => f.type)
   if (!left.includes(type)) left.push(type)
+  const days = isProgram(S?.program) ? S.program.days : [type]
   const out = {}
   for (const g of groups) {
-    const lack = Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0))
+    const goal = weeklyTargetOf(S, g)
+    const lack = Math.max(0, goal - (done[g] || 0))
     const hits = left.filter(t => genGroupsOf(t).includes(g)).length || 1
-    if (lack > 0) out[g] = lack / hits
+    const even = goal / (days.filter(t => genGroupsOf(t).includes(g)).length || 1)
+    if (lack > 0) out[g] = Math.min(lack / hits, even * CATCH_UP)
   }
   return out
 }
@@ -178,7 +186,10 @@ export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const share = dayShare(S, type, now)
   const want = Object.values(share).reduce((n, v) => n + v, 0)
   if (!(want > 0)) return Math.min(genCount(type), MAX_GEN_COUNT)
-  const picks = generateWorkout(S, type, { count: MAX_GEN_COUNT, groups, now })
+  // In the order they were picked, not the order they run in: a pull day runs every back lift
+  // before its first curl, so counted that way the shrugs fill the back long before the biceps
+  // get anything, and the day grows to eleven.
+  const picks = generateWorkout(S, type, { count: MAX_GEN_COUNT, groups, now }).sort((a, b) => a.at - b.at)
   const got = {}
   for (let i = 0; i < picks.length; i++) {
     const sets = genScheme(picks[i].id, setup).sets || 0

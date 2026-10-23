@@ -174,7 +174,8 @@ export function partGaps(S, groups, now = Date.now()) {
 
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
- * exercise's primary muscle and `last` the ISO day it was last trained, null when never.
+ * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
+ * the order it was picked in (the first n picked are what an n-exercise session would be).
  * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
  * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week.
  */
@@ -187,7 +188,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now) })
-    .map(({ id, slug }) => ({ id, muscle: slug, last: index.muscles[slug] || null }))
+    .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }

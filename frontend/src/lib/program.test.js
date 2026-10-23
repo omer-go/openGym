@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { MIN_DAY, dayShare, isProgram, newProgram, programForecast, programLayout, programOver, programWeek, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT } from './generate.js'
+import { MAX_GEN_COUNT, generateWorkout } from './generate.js'
+import { EXIDX } from './exercises.js'
+import { loadMuscleRoles } from './muscle-roles.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -78,7 +80,42 @@ describe('sizing a day to the goal', () => {
     const share = dayShare(st, 'push', THU)
     expect(share.chest).toBeCloseTo(6)
     expect(share.quads).toBeUndefined()
-    expect(dayShare(st, 'legs', THU).quads).toBeCloseTo(10)
+    // Quads lack all 10, but legs and full share them: 5 each, so legs takes at most 7.5.
+    expect(dayShare(st, 'legs', THU).quads).toBeCloseTo(7.5)
+  })
+  it('never piles the week onto one day: a program started on a Saturday', () => {
+    const sat = newProgram('full-3', { weeks: 8, today: '2026-09-19' })
+    const st = state({ program: sat, goals: { weeklySets: 15 } })
+    const share = dayShare(st, 'full', at(2026, 9, 19))
+    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(15 / 3 * 1.5 + 1e-9)
+    expect(sizeDay(st, 'full', { now: at(2026, 9, 19) })).toBeLessThan(MAX_GEN_COUNT)
+  })
+  describe('with muscle roles', () => {
+    beforeAll(loadMuscleRoles)
+    // Sized in the order the generator picks, not the order the day runs in: counted back lifts
+    // first, the shrugs filled the back before a curl was reached, and the pull day came to eleven,
+    // four of them shrugs.
+    it('a pull day is sized by what it picks first, not by its back lifts', () => {
+      const st = state({ program: newProgram('ppl-3', { weeks: 8, today: '2026-09-14' }), goals: { weeklySets: 10 },
+        workouts: [session('2026-09-14', 'push', ['0025', '0426', '0030', '5609', '0241'], 3)] })
+      const now = at(2026, 9, 16)
+      const n = sizeDay(st, 'pull', { now })
+      expect(n).toBeLessThanOrEqual(7)
+      const shrugs = generateWorkout(st, 'pull', { count: n, now }).filter(p => /shrug/i.test(EXIDX[p.id].n))
+      expect(shrugs.length).toBeLessThanOrEqual(1)
+    })
+    // What sizeDay counts on: an n-exercise day is the first n the generator picks for a longer
+    // one, and `at` says which those are; the order the day runs in does not.
+    it('a shorter day is the first picks of a longer one', () => {
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }), goals: { weeklySets: 15 },
+        workouts: [session('2026-09-14', 'full', ['0025', '0043', '0652'], 3)] })
+      const now = at(2026, 9, 16)
+      const long = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now }).sort((a, b) => a.at - b.at).map(p => p.id)
+      for (const n of [4, 7, 10]) {
+        const short = generateWorkout(st, 'full', { count: n, now }).map(p => p.id)
+        expect(short.slice().sort()).toEqual(long.slice(0, n).sort())
+      }
+    })
   })
   it('a higher goal makes a longer day, within bounds', () => {
     const low = sizeDay(state({ program: PPLF, goals: { weeklySets: 6 } }), 'push', { now: THU })

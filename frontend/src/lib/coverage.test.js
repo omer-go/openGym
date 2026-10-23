@@ -161,6 +161,25 @@ describe('pickForCoverage, after the week so far', () => {
     const st = state({ workouts: [session('2026-09-14', [BENCH, DB_BENCH], sets(4))] })
     expect(groupsOf(generateWorkout(st, 'full', { now: NOW, count: 6 }))).not.toContain('chest')
   })
+  it('the evening after a full body, every group gets one before any gets a second', () => {
+    // Two full bodies, the second today: every group is tired, so every need is small, and only
+    // back, biceps and hamstrings are just over the line. They took every slot (#program QA).
+    const day = (d, m) => ({ id: d, d, name: 'x', entries: Object.entries(m).map(([id, n]) => ({ id, target: { reps: 10 }, sets: sets(n) })) })
+    const st = state({ goals: { weeklySets: 15 }, workouts: [
+      day('2026-09-11', { '0770': 3, '0811': 4, '0652': 3, [BENCH]: 4, [OHP]: 3, '0031': 4, '0274': 6, [PUSHDOWN]: 3 }),
+      day('2026-09-15', { '0770': 3, '0585': 3, [DEADLIFT]: 3, '0027': 3, '0314': 3, '0091': 3, '0188': 3, '0061': 3, '0313': 3, '1385': 3 }),
+    ] })
+    const groups = groupsOf(generateWorkout(st, 'full', { now: NOW + 9 * 36e5, count: 8 }))
+    expect(new Set(groups).size).toBe(8)
+    expect(groups).toEqual(expect.arrayContaining(['quads', 'chest', 'shoulders', 'back', 'biceps', 'hamstrings']))
+  })
+  it('a group that has had its week waits until no other group can take one', () => {
+    const cands = [SQUAT, BENCH, OHP, PUSHDOWN, '0031'].map((id, rank) => ({ id, rank }))
+    const groups = ['chest', 'shoulders', 'triceps', 'biceps', 'quads']
+    const picks = pickForCoverage(cands, { count: 4, groups, need: { chest: 0, shoulders: 0.05, triceps: 0.05, biceps: 0.5, quads: 0.3 } })
+    expect(picks.map(p => p.id)).not.toContain(BENCH)
+    expect(pickForCoverage(cands, { count: 5, groups, need: { chest: 0, shoulders: 0.05, triceps: 0.05, biceps: 0.5, quads: 0.3 } }).map(p => p.id)).toContain(BENCH)
+  })
   it('still fills every slot when each group has had its week', () => {
     const st = state({ workouts: [session('2026-09-12', ['0652', BENCH, OHP, SQUAT, RDL, '0031', PUSHDOWN, '0175', '0605'], sets(12))] })
     expect(generateWorkout(st, 'full', { now: NOW })).toHaveLength(7)
@@ -317,6 +336,12 @@ describe('one movement once', () => {
   })
   it('the same movement again only when nothing else is left', () => {
     expect(ids([DB_RDL, SLDL], 2)).toHaveLength(2)
+  })
+  it('one shrug: isolation lifts for the same part of a group are one movement', () => {
+    // An 8-exercise pull day was four shrugs, a barbell, dumbbell, cable and lever one.
+    const pull = generateWorkout(state(), 'pull', { count: 8, now: NOW }).map(p => EXIDX[p.id].n)
+    expect(pull.filter(n => /shrug/i.test(n))).toHaveLength(1)
+    expect(pull.filter(n => /row|pull-?up|pulldown/i.test(n)).length).toBeGreaterThanOrEqual(3)
   })
 })
 
