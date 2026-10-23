@@ -2352,3 +2352,12 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* Home's week strip: a program day still to come, as a ring in its kind's colour. */
 .wday .dot.planned { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--kind); }
 .wday .wk-name.planned { opacity: .6; }
+
+/* The workout summary's way out (sheets.jsx FinishSummary) stays at the foot of the dialog while
+   what is above it scrolls: the dialog's own padding is 20px, so the band reaches its edges. */
+.finish-foot{
+  position:sticky;bottom:-20px;z-index:3;
+  margin:14px -20px -20px;padding:12px 20px 20px;
+  background:var(--bg-el);
+}
+:root[data-theme="light"] .finish-foot{background:#fff}

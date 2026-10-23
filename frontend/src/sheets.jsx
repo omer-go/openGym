@@ -52,7 +52,7 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT } from './lib/generate.js'
+import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { plannedSets } from './lib/coverage.js'
 import { weeklyTargets } from './lib/goals.js'
@@ -60,7 +60,7 @@ import { isProgram, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
-import { swapActiveExercise } from './lib/active-exercise-swap.js'
+import { swapActiveExercise, withSlotSettings } from './lib/active-exercise-swap.js'
 import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet-keyboard.js'
 import { useAutoMore } from './lib/use-auto-more.js'
 import { isFav, toggleFav, sortFavouritesFirst, sortYoursFirst } from './lib/favourites.js'
@@ -1482,7 +1482,9 @@ export function swapActiveWorkoutExercise(index) {
   // "+" on a row commits with the default config, exactly as it does in the add flows; tapping
   // the row still opens the config sheet first.
   // Worded for the session, not the routine: a swap changes today's workout only.
-  const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, null, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
+  // The settings sheet opens on what the slot would get anyway (slotConfig): a pick from it
+  // is then taken as typed, warm-ups and rest included.
+  const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, slotConfig(S(), index, ex.id, defaultConfig(ex.id)).cfg, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
   function swapTo(ex, cfg, typed = false) {
     // The picker is a chooser here, not a stack you keep adding from: one swap, then back to
     // the workout, as the add flow does. A pick by hand starts a new
@@ -1509,11 +1511,29 @@ export function quickSwapActiveWorkoutExercise(index) {
 // entry; `extra` is laid over the replacement. Logged sets are kept: the replacement then goes in
 // after them, once confirmed. `done(at)` gets the index the replacement landed at.
 // `typed`: the numbers come from the settings sheet, so a freestyle slot opens at them.
-function swapEntryTo(index, ex, cfg, extra = {}, done, typed = false) {
-  const full = { ...cfg, id: ex.id }
+/**
+ * The config exercise `id` goes into slot `index` with: in a one-tap workout a lift is built from
+ * the workout's setup (sessionConfig) and opens at its numbers, as if it had been picked; anywhere
+ * else `cfg` takes the slot's rest, warm-ups and last set to failure (withSlotSettings). `typed`
+ * says the rows open at the config's numbers rather than at last time's.
+ */
+function slotConfig(st, index, id, cfg) {
+  const current = st.active?.entries?.[index]
+  if (!current) return { cfg, typed: false }
+  const planned = current.rid ? null : sessionConfig(sessionHistory(st), id, st.active)
+  if (planned) return { cfg: planned, typed: true }
+  return { cfg: withSlotSettings({ ...cfg, id }, { id: current.id, ...(current.target || {}) }), typed: false }
+}
+
+function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   const st = S()
   const current = st.active?.entries?.[index]
   if (!current) return
+  // The workout's settings reach the new exercise: what was typed in the settings sheet stands
+  // (it opened on them), anything else is set up for the slot.
+  let cfg = picked
+  if (!typed) ({ cfg, typed } = slotConfig(st, index, ex.id, picked))
+  const full = { ...cfg, id: ex.id }
   // A swap is an in-place substitution — routine identity is unchanged, so the replacement
   // keeps the slot's own `rid` and reads its prescription from that routine (not a
   // session-wide one). A slot with no `rid` is freestyle.
@@ -3708,9 +3728,14 @@ function CardioDone({ st, w }) {
   </div>
 }
 
+// The summary right after Finish: the numbers, any records, and the muscles it hit. The
+// exercises you just did are one tap away rather than spelled out — you were there — and the
+// way out stays at the foot of the dialog however far it scrolls.
 function FinishSummary({ w, prs, e1prs = [], close }) {
   const st = useStore(s => s.S)
-  return <div style={{ textAlign: 'center', padding: '8px 0' }}>
+  const [open, setOpen] = useState(false)
+  const exCount = finishCompare(st, w).length + finishCardio(w).length
+  return <div style={{ textAlign: 'center', paddingTop: 8 }}>
     <div style={{ fontSize: 44, display: 'flex', justifyContent: 'center', color: 'var(--acc)' }}><Icon name="trophy" /></div>
     <h3 style={{ margin: '8px 0' }}>{t('Workout complete!')}</h3>
     <div className="tiles" style={{ textAlign: 'start' }}>
@@ -3725,10 +3750,18 @@ function FinishSummary({ w, prs, e1prs = [], close }) {
     </div>}
     <h4 className="sec" style={{ textAlign: 'start' }}>{t('What you just trained')}</h4>
     <BodyMap load={loadOfWorkouts([w])} body={st.body} />
-    <div style={{ height: 14 }} />
-    <LastAndNext st={st} w={w} />
-    <CardioDone st={st} w={w} />
-    <Button variant="primary" onClick={() => closeThenNav(close, '/home')}>{t('Nice!')}</Button>
+    {exCount > 0 && <div className="list" style={{ textAlign: 'start', marginTop: 14 }} data-finish-exercises={open ? 'open' : 'closed'}>
+      <Row icon="list" title={t('Exercises')} value={exCount} onClick={() => setOpen(o => !o)}>
+        <Icon name={open ? 'chevronUp' : 'chevronDown'} className="lrow-c" style={{ order: 9 }} />
+      </Row>
+    </div>}
+    {open && <div style={{ marginTop: 14 }}>
+      <LastAndNext st={st} w={w} />
+      <CardioDone st={st} w={w} />
+    </div>}
+    <div className="finish-foot">
+      <Button variant="primary" onClick={() => closeThenNav(close, '/home')}>{t('Nice!')}</Button>
+    </div>
   </div>
 }
 export function finishWorkout() {

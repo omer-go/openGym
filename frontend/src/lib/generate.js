@@ -226,6 +226,20 @@ export function withSessionRest(cfg, active) {
 }
 
 /**
+ * The config of a lift added to a one-tap workout, or swapped into one: built from the workout's
+ * setup the way the lifts it picked were (genConfig), so it takes the same sets and reps, rest,
+ * warm-ups and last set to failure. Null in any other session, and for cardio and stretches,
+ * which a one-tap workout builds the freestyle way too (generatedEntries).
+ */
+export function sessionConfig(S, id, active) {
+  const setup = active?.gen?.setup
+  if (!setup || id == null) return null
+  const ex = EXIDX[id]
+  if (ex ? (isCardio(ex) || isStretch(ex)) : modeOf({ id, ...defaultConfig(id) }) === 'cardio') return null
+  return genConfig(S, id, setup)
+}
+
+/**
  * Session entries for `picks`, built the way a freestyle exercise added mid-workout is
  * (Workout.jsx): last time's target and loads, in the exercise's dumbbell meaning today.
  * With a `setup` the lifts take its target instead (genConfig) and open at it, the weight

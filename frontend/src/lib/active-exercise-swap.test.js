@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { swapActiveExercise } from './active-exercise-swap.js'
+import { swapActiveExercise, withSlotSettings } from './active-exercise-swap.js'
 
 const entry = (id, { sg, done = false, target, sets } = {}) => ({
   id,
@@ -84,5 +84,48 @@ describe('safe active exercise swap', () => {
     expect(active.entries.includes(partner)).toBe(true)
     expect(active.entries.at(-1)).toBe(unrelated)
     expect(active.cur).toBe(cursor)
+  })
+
+  it('keeps the slot\'s rest when the replacement has none of its own', () => {
+    const slot = entry('bench', { target: { mode: 'reps', sets: 3, reps: 5, weight: 60, restSec: 150 } })
+    const active = { cur: 0, entries: [slot] }
+    swapActiveExercise(active, 0, replacement())
+    expect(active.entries[0].target.restSec).toBe(150)
+
+    const logged = entry('bench', { target: { mode: 'reps', sets: 3, reps: 5, weight: 60, restSec: 150 }, sets: [{ w: 60, r: 5, done: true }] })
+    const both = { cur: 0, entries: [logged] }
+    swapActiveExercise(both, 0, replacement(), { loggedConfirmed: true })
+    expect(both.entries[1].target.restSec).toBe(150)
+  })
+
+  it('lets a rest typed for the replacement win over the slot\'s', () => {
+    const active = { cur: 0, entries: [entry('bench', { target: { mode: 'reps', sets: 3, reps: 5, weight: 60, restSec: 150 } })] }
+    const next = replacement()
+    next.target.restSec = 60
+    swapActiveExercise(active, 0, next)
+    expect(active.entries[0].target.restSec).toBe(60)
+  })
+})
+
+describe('the slot\'s settings on the exercise swapped in', () => {
+  const slot = { id: 'bench', mode: 'reps', sets: 3, reps: 5, restSec: 150, warmupSets: 2, warmupRestSec: 45, lastToFailure: true }
+  it('carries the rest, the warm-ups and their rest, and a last set to failure', () => {
+    expect(withSlotSettings({ id: 'incline', mode: 'reps', sets: 3, reps: 10 }, slot))
+      .toMatchObject({ sets: 3, reps: 10, restSec: 150, warmupSets: 2, warmupRestSec: 45, lastToFailure: true })
+  })
+  it('keeps what the new exercise sets itself', () => {
+    expect(withSlotSettings({ id: 'incline', mode: 'reps', restSec: 60, warmupSets: 1, lastToFailure: false }, slot))
+      .toMatchObject({ restSec: 60, warmupSets: 1, lastToFailure: false })
+  })
+  it('gives warm-ups only to an exercise done the same way, and none to cardio', () => {
+    const plank = withSlotSettings({ id: 'plank', mode: 'time', sets: 3, sec: 30 }, slot)
+    expect(plank.warmupSets).toBeUndefined()
+    expect(plank.restSec).toBe(150)
+    const run = withSlotSettings({ id: 'run', mode: 'cardio' }, slot)
+    expect(run.warmupSets).toBeUndefined()
+    expect(run.lastToFailure).toBeUndefined()
+  })
+  it('changes nothing for a slot with no settings of its own', () => {
+    expect(withSlotSettings({ id: 'incline', mode: 'reps' }, { id: 'bench', mode: 'reps' })).toEqual({ id: 'incline', mode: 'reps' })
   })
 })

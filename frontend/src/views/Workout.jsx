@@ -28,7 +28,7 @@ import { asComboMember } from '../lib/combo.js'
 import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { durationSheet } from '../components/DurationPicker.jsx'
-import { withSessionRest } from '../lib/generate.js'
+import { withSessionRest, sessionConfig } from '../lib/generate.js'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
 import { startFlow, addExerciseSheet, exConfigSheet, exerciseDetailSheet, finishWorkout, exitWorkoutEdit, workoutCompleteSheet, confirmSheet, exerciseNoteSheet, sessionNoteSheet, renameWorkoutSheet, swapActiveWorkoutExercise, quickSwapActiveWorkoutExercise, barWeightSheet, menuSheet, skipMenuItem, effortPickerSheet, exerciseHistorySheet, addRoutineToSessionSheet, finishWorkoutSheet, shuffleGenerated, comboBuilderSheet } from '../sheets.jsx'
 import { afterScrollRestore, scrollRestorePending } from '../components/Modals.jsx'
@@ -1490,8 +1490,11 @@ function ActiveWorkout() {
     // Freestyle has no routine prescription to apply: show the last target in the config
     // sheet and carry its completed rows forward. A planned session uses its configured
     // target when progression is off, while progression-enabled sessions keep their path.
-    // In a one-tap workout it takes the rest the workout was set up with (withSessionRest).
-    const seed = freestyle ? withSessionRest(freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) }), A) : null
+    // In a one-tap workout a lift is set up the way the workout's own were (sessionConfig): its
+    // sets and reps, rest, warm-ups and last set to failure, opening at those numbers. Cardio and
+    // stretches there take its rest (withSessionRest).
+    const planned = freestyle ? sessionConfig(sessionHistory(S), ex.id, A) : null
+    const seed = planned || (freestyle ? withSessionRest(freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) }), A) : null)
     // `typed`: the settings sheet's numbers, picked on purpose, so the rows open at them rather
     // than at last time's (a weight left on Auto still reads last time, buildSets useTarget).
     const commit = (cfg, typed = false) => {
@@ -1511,7 +1514,7 @@ function ActiveWorkout() {
     // button. Quick-add commits with the same default (or, freestyle, last-session) config
     // the sheet would have opened with; tapping the row still opens that sheet for anyone
     // who wants to set sets/reps first.
-    if (quick) { commit(seed || defaultConfig(ex.id)); useUI.getState().toast(t('“{0}” added to {1}', exerciseNameText(ex), routine ? routine.name : t('Freestyle'))) }
+    if (quick) { commit(seed || defaultConfig(ex.id), !!planned); useUI.getState().toast(t('“{0}” added to {1}', exerciseNameText(ex), routine ? routine.name : t('Freestyle'))) }
     // The confirm names what it changes: this workout, never the routine behind it.
     else exConfigSheet(ex, null, cfg => commit(cfg, true), null, routine, seed, null, t('Add to this workout'))
   }) }

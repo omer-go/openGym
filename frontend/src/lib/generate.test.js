@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
 import { liftKind } from './coverage.js'
 import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
@@ -219,5 +219,23 @@ describe('an exercise added to a running session', () => {
     expect(withSessionRest(cfg, { gen: { type: 'push' } })).toBe(cfg)
     expect(withSessionRest(cfg, { entries: [] })).toBe(cfg)
     expect(withSessionRest(null, { gen: { setup: { restSec: 20 } } })).toBeNull()
+  })
+})
+
+describe('a lift added to or swapped into a one-tap workout', () => {
+  const setup = { ...genDefaults('push'), byKind: false, sets: 4, reps: 6, restSec: 75, warmupSets: 2, lastToFailure: true }
+  const active = { gen: { type: 'push', setup }, entries: [] }
+  it('is set up the way the workout set up its own lifts', () => {
+    expect(sessionConfig(state(), CURL, active)).toMatchObject({ mode: 'reps', sets: 4, reps: 6, restSec: 75, warmupSets: 2, lastToFailure: true })
+  })
+  it('goes by the kind of lift when the setup does', () => {
+    const cfg = sessionConfig(state(), CURL, { gen: { type: 'push', setup: { ...setup, byKind: true } } })
+    expect(cfg).toMatchObject({ ...GEN_SCHEME.isolation, warmupSets: 2 })
+  })
+  it('leaves cardio, stretches and any other session alone', () => {
+    expect(sessionConfig(state(), '0685', active)).toBeNull()
+    expect(sessionConfig(state(), '1511', active)).toBeNull()
+    expect(sessionConfig(state(), CURL, { gen: { type: 'push' } })).toBeNull()
+    expect(sessionConfig(state(), CURL, { entries: [] })).toBeNull()
   })
 })
