@@ -4,8 +4,8 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({ ok: true })) }))
-const { tick, chime } = vi.hoisted(() => ({ tick: vi.fn(), chime: vi.fn() }))
-vi.mock('../lib/sound.js', () => ({ tick, chime, vibrate: vi.fn(), alertBuzz: vi.fn() }))
+const { beep, chime } = vi.hoisted(() => ({ beep: vi.fn(), chime: vi.fn() }))
+vi.mock('../lib/sound.js', () => ({ beep, chime, vibrate: vi.fn(), alertBuzz: vi.fn() }))
 
 import { api } from '../lib/api.js'
 import { useUI } from './useUI.js'
@@ -21,7 +21,7 @@ describe('pausing the rest timer', () => {
     useStore.setState({ S: { ...original.S, sound: true, timerFlash: true }, user: { id: 'u1' } })
     useUI.setState({ timer: null, work: null, timerFlashId: 0, toastMsg: '' })
     api.mockClear()
-    tick.mockClear()
+    beep.mockClear()
     chime.mockClear()
   })
   afterEach(() => {
@@ -40,7 +40,7 @@ describe('pausing the rest timer', () => {
     vi.advanceTimersByTime(10 * 60000)   // a phone call
     expect(useUI.getState().timer).toMatchObject({ left: 60, paused: true })
     expect(useUI.getState().timer.ready).toBeUndefined()
-    expect(tick).not.toHaveBeenCalled()
+    expect(beep).not.toHaveBeenCalled()
     expect(chime).not.toHaveBeenCalled()
     expect(useUI.getState().toastMsg).toBe('')
 

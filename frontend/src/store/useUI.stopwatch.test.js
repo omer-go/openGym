@@ -4,8 +4,8 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({ ok: true })) }))
-const { tick, chime } = vi.hoisted(() => ({ tick: vi.fn(), chime: vi.fn() }))
-vi.mock('../lib/sound.js', () => ({ tick, chime, vibrate: vi.fn(), alertBuzz: vi.fn() }))
+const { beep, chime } = vi.hoisted(() => ({ beep: vi.fn(), chime: vi.fn() }))
+vi.mock('../lib/sound.js', () => ({ beep, chime, vibrate: vi.fn(), alertBuzz: vi.fn() }))
 
 import { useUI, restoreWork, WORK_KEY, MAX_STOPWATCH_SEC } from './useUI.js'
 import { useStore } from './useStore.js'
@@ -20,7 +20,7 @@ beforeEach(() => {
   useStore.setState({ S: { ...original, sound: true, active: { id: 'a', entries: [{ id: '0685', sets: [{ min: 20, speed: 9 }] }] } } })
   useUI.setState({ timer: null, work: null })
   localStorage.clear()
-  tick.mockClear(); chime.mockClear()
+  beep.mockClear(); chime.mockClear()
 })
 afterEach(() => {
   useUI.getState().stopWork()
@@ -35,7 +35,7 @@ describe('the stopwatch', () => {
     useUI.getState().startWork(0, 'Run', done, owner, { up: true, mode: 'cardio' })
     vi.advanceTimersByTime(25 * 60000 + 10000)
     expect(useUI.getState().work).toMatchObject({ up: true, left: 25 * 60 + 10 })
-    expect(tick).not.toHaveBeenCalled()
+    expect(beep).not.toHaveBeenCalled()
     expect(chime).not.toHaveBeenCalled()
     useUI.getState().finishWorkEarly()
     expect(done).toHaveBeenCalledWith(25 * 60 + 10)

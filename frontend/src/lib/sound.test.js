@@ -487,22 +487,3 @@ describe('alertBuzz', () => {
   })
 
 })
-
-describe('the 3-2-1 tick before the end', () => {
-  const peakOf = events => Math.max(...events.map(([, v]) => v))
-  const fresh = () => { const c = ctx(); if (c) { c.tones = []; c.gains = []; c.oscs = [] } }
-  it('is the short sound\'s soft pluck by default, and the old beep for the other sounds', () => {
-    sound.tick(true, 'short')
-    expect(ctx().tones.map(tn => tn.freq)).toEqual([1175])
-    expect(ctx().gains.map(peakOf)).toEqual([0.22])
-    fresh()
-    sound.tick(true, 'chime')
-    expect(ctx().tones.map(tn => tn.freq)).toEqual([660])
-    expect(ctx().gains.map(peakOf)).toEqual([0.35])
-  })
-
-  it('stays silent with sounds off', () => {
-    sound.tick(false, 'short')
-    expect(FakeCtx.instances).toHaveLength(0)
-  })
-})

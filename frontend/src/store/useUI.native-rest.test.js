@@ -15,14 +15,14 @@ vi.mock('../lib/rest-alert.js', () => ({
   bindNativeRest: vi.fn(cb => { h.native = cb }),
   toneNative: vi.fn(() => Promise.resolve(true)),
 }))
-vi.mock('../lib/sound.js', () => ({ tick: vi.fn(), chime: vi.fn(), vibrate: vi.fn(), alertBuzz: vi.fn() }))
+vi.mock('../lib/sound.js', () => ({ beep: vi.fn(), chime: vi.fn(), vibrate: vi.fn(), alertBuzz: vi.fn() }))
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({ ok: true })) }))
 
 import { useUI } from './useUI.js'
 import { useStore } from './useStore.js'
 import { api } from '../lib/api.js'
 import { armRestAlert, disarmRestAlert, holdRestAlert } from '../lib/rest-alert.js'
-import { tick, chime } from '../lib/sound.js'
+import { beep, chime } from '../lib/sound.js'
 import { toneNative } from '../lib/rest-alert.js'
 
 const hide = hidden => {
@@ -41,7 +41,7 @@ beforeEach(() => {
   originalSettings = useStore.getState().S
   useStore.setState({ S: { ...originalSettings, sound: true, timerFlash: false }, user: null })
   useUI.setState({ timer: null, timerFlashId: 0 })
-  for (const f of [armRestAlert, holdRestAlert, disarmRestAlert, tick, chime, api, toneNative]) f.mockClear()
+  for (const f of [armRestAlert, holdRestAlert, disarmRestAlert, beep, chime, api, toneNative]) f.mockClear()
   hide(false)
 })
 afterEach(() => {
@@ -124,10 +124,11 @@ describe('the rest the app starts, pauses and ends', () => {
     expect(disarmRestAlert.mock.calls.length).toBe(ready + 1)
   })
 
-  it('plays the last-seconds ticks', () => {
+  it('plays no 3-2-1 before the end, only the end sound', () => {
     useUI.getState().startRest(5)
-    vi.advanceTimersByTime(3000)
-    expect(tick).toHaveBeenCalled()
+    vi.advanceTimersByTime(4000)
+    expect(beep).not.toHaveBeenCalled()
+    expect(chime).not.toHaveBeenCalled()
   })
 
   it('still schedules an alert when sound is off', () => {
