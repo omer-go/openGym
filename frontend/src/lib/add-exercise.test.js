@@ -174,6 +174,20 @@ describe('shortlist', () => {
     expect(picks[0].id).toBe(want.id)
     expect(plain[0].id).not.toBe(want.id)
   })
+  it('puts your own that work the part to favour first', () => {
+    const S = state({ workouts: [session('2026-10-10', [BENCH, DBBENCH]), session('2026-10-12', [BENCH])] })
+    const first = shortlist(S, 'chest').yours.map(x => x.id)
+    expect(first).toHaveLength(2)
+    expect(shortlist(S, 'chest', { fills: x => x.id === first[1] }).yours.map(x => x.id)).toEqual([first[1], first[0]])
+  })
+  it('starts with nothing logged on the ones that work the part to favour', () => {
+    // A swap away from a lateral raise when your shoulder exercises are all in the workout already.
+    const { all, picks } = shortlist(state(), 'shoulders')
+    const want = all.find(x => !picks.includes(x) && /lateral raise/i.test(x.name || x.n)).id
+    const got = shortlist(state(), 'shoulders', { fills: x => x.id === want }).picks
+    expect(got[0].id).toBe(want)
+    expect(got).toHaveLength(picks.length)
+  })
   it('leaves out what is already in the session', () => {
     const { all, hidden } = shortlist(state(), 'chest', { have: [{ id: BENCH }] })
     expect(all.some(x => x.id === BENCH)).toBe(false)

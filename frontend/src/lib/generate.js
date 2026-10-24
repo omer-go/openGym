@@ -15,6 +15,10 @@
 // on whichever of 300 catalogue rows sorts first. `shift` walks each choice one further:
 // Shuffle in the workout is a shift + 1.
 //
+// A day of the running program (lib/program.js) keeps its main lifts (coverage.js `keep`): the
+// compounds you have logged come back, the one you did last first, so their weight can go up
+// week to week; the isolation lifts still rotate.
+//
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
 // which muscle groups it covers, add a run and stretches, and set the rest and warm-ups of every
 // exercise. Sets and reps go by the kind of lift (GEN_SCHEME) unless the setup sets its own for
@@ -23,7 +27,7 @@ import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
-import { partGap } from './muscle-roles.js'
+import { partFocus } from './muscle-roles.js'
 import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { suggestable } from './skipped.js'
@@ -106,6 +110,10 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
   return [...logged, ...staples]
 }
 
+// Is `type` a day of the program S runs? program.js imports this file, so its isProgram is not
+// read here; a program is its list of days.
+const programDay = (S, type) => Array.isArray(S?.program?.days) && S.program.days.includes(type)
+
 /** How many exercises a `type` session has unless the setup says otherwise. */
 export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
 
@@ -155,8 +163,8 @@ function stretchCandidates(S, index, slugs) {
 export const GEN_STRETCHES = 2
 
 /**
- * Group id -> the target muscles of the part of it the 14 days up to `now` left out
- * (muscle-roles.js partGap, the hint Add exercise shows), for the `groups` given.
+ * Group id -> the target muscles of the part of it the 14 days up to `now` trained least
+ * (muscle-roles.js partFocus, as Add exercise marks it), for the `groups` given.
  */
 export function partGaps(S, groups, now = Date.now()) {
   const today = isoOf(new Date(now)), from = isoOf(new Date(now - 13 * 864e5))
@@ -165,7 +173,7 @@ export function partGaps(S, groups, now = Date.now()) {
   for (const g of ADD_GROUPS) {
     if (!groups.includes(g.id)) continue
     for (const slug of g.m) {
-      const gap = partGap(items, slug)
+      const gap = partFocus(items, slug)
       if (gap) gaps[g.id] = [...(gaps[g.id] || []), ...gap.muscles]
     }
   }
@@ -184,10 +192,10 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
   const candidates = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
-    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
+    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank, last: index.exercises[id]?.d || null })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
-    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now) })
+    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now), keep: programDay(S, type) })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

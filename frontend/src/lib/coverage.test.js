@@ -169,8 +169,10 @@ describe('pickForCoverage, after the week so far', () => {
       day('2026-09-11', { '0770': 3, '0811': 4, '0652': 3, [BENCH]: 4, [OHP]: 3, '0031': 4, '0274': 6, [PUSHDOWN]: 3 }),
       day('2026-09-15', { '0770': 3, '0585': 3, [DEADLIFT]: 3, '0027': 3, '0314': 3, '0091': 3, '0188': 3, '0061': 3, '0313': 3, '1385': 3 }),
     ] })
-    const groups = groupsOf(generateWorkout(st, 'full', { now: NOW + 9 * 36e5, count: 8 }))
-    expect(new Set(groups).size).toBe(8)
+    // Seven groups can take one tonight; the eighth exercise is the first second, picked last.
+    const picks = generateWorkout(st, 'full', { now: NOW + 9 * 36e5, count: 8 })
+    const groups = groupsOf(picks)
+    expect(new Set(groupsOf(picks.filter(p => p.at < 7))).size).toBe(7)
     expect(groups).toEqual(expect.arrayContaining(['quads', 'chest', 'shoulders', 'back', 'biceps', 'hamstrings']))
   })
   it('a group that has had its week waits until no other group can take one', () => {
@@ -224,6 +226,20 @@ describe('variety', () => {
     const cands = [{ id: '0047', rank: 3 }, { id: '0314', rank: 1 }, { id: '0757', rank: 2 }]
     const [pick] = pickForCoverage(cands, { count: 1, groups: ['chest'], need: { chest: 1 } })
     expect(pick.id).toBe('0314')
+  })
+  it('a chest dip and a triceps dip are one dip: a session takes one of them', () => {
+    // a push day: both dips first in line, a bench press and a pushdown behind them
+    const cands = [{ id: '0251', rank: 0 }, { id: '0814', rank: 0 }, { id: '0025', rank: 1 }, { id: PUSHDOWN, rank: 1 }]
+    const ids = pickForCoverage(cands, { count: 3, groups: ['chest', 'shoulders', 'triceps'], need: { chest: 1, shoulders: 1, triceps: 1 } }).map(p => p.id)
+    expect(ids.filter(id => id === '0251' || id === '0814')).toHaveLength(1)
+  })
+  it('a program day keeps the compound you did last over a fresher one', () => {
+    // squats on two tools: the barbell one is the staler, so it wins unless the day keeps
+    const cands = [{ id: '0770', rank: 1, last: '2026-09-10' }, { id: SQUAT, rank: 0, last: null }]
+    const history = variantHistory(state({ workouts: [session('2026-09-10', ['0770'])] }))
+    const pick = keep => pickForCoverage(cands, { count: 1, groups: ['quads', 'glutes'], need: { quads: 1, glutes: 1 }, history, keep })[0].id
+    expect(pick(false)).toBe(SQUAT)
+    expect(pick(true)).toBe('0770')
   })
 })
 
@@ -401,6 +417,14 @@ describe('gaps: the part of a group the last two weeks left out', () => {
       expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['rear-delt'] }) // presses help the side delt
       const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
       expect(muscleRolesOf(shoulders[0].id).target).toContain('rear-delt')
+    })
+    it('the side delts a press only helped are not trained: after presses and rear flies, a side-delt lift', () => {
+      // 3 sets of presses and a bench press helped the side delts; 2 of rear flies targeted the rear
+      const st = state({ workouts: [session('2026-10-19', [OHP, BENCH]), session('2026-10-20', ['0378'], sets(2))] })
+      const now = at(2026, 10, 22)
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt'] })
+      const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
+      expect(muscleRolesOf(shoulders[0].id).target).toContain('side-delt')
     })
   })
 })

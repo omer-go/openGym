@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
 import { liftKind } from './coverage.js'
-import { modeOf } from './history.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 import { groupOfExercise } from './muscle-colors.js'
@@ -87,6 +86,19 @@ describe('generateWorkout', () => {
     const b = generateWorkout(state(), 'legs', { shift: 1 }).map(p => p.id)
     expect(b).not.toEqual(a)
     expect(new Set(b).size).toBe(b.length)
+  })
+  it('a program day keeps the compounds you logged, the one you did last first', () => {
+    // a smith squat, a barbell row and an incline dumbbell press last week; a fresh week now
+    const st = state({ workouts: [session('2026-09-03', ['0770', '0027', '0314'], sets(3))] })
+    const off = generateWorkout(st, 'full', { now: NOW }).map(p => p.id)
+    const on = generateWorkout({ ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }, 'full', { now: NOW }).map(p => p.id)
+    expect(off).not.toContain('0770')
+    expect(on).toEqual(expect.arrayContaining(['0770', '0027', '0314']))
+    // a swap sticks: the barbell squat done since takes the smith squat's place
+    const swapped = { ...st, program: { days: ['full'], startedAt: '2026-09-01', weeks: 8 }, workouts: [...st.workouts, session('2026-09-05', [SQUAT], sets(3))] }
+    const ids = generateWorkout(swapped, 'full', { now: NOW }).map(p => p.id)
+    expect(ids).toContain(SQUAT)
+    expect(ids).not.toContain('0770')
   })
   it('an unknown type builds nothing', () => {
     expect(generateWorkout(state(), 'arms')).toEqual([])
@@ -196,9 +208,11 @@ describe('generatedEntries with a setup', () => {
     expect(generatedEntries(st, pick, setup)[0].sets.filter(s => !isWarmupRow(s)).map(s => [s.w, s.r])).toEqual([[70, 8], [70, 8], [70, 8], [70, 8]])
   })
   it('a hold keeps its seconds and takes the sets', () => {
+    // a front plank: the catalogue files it as a hold, so it is timed (history.js defaultConfig)
     const [e] = generatedEntries(state(), [{ id: '0463', muscle: 'abs', last: null }], setup)
-    expect(e.target.mode).toBe(modeOf({ id: '0463' }))
-    if (e.target.mode === 'time') expect(e.target.reps).toBeUndefined()
+    expect(e.target.mode).toBe('time')
+    expect(e.target.sec).toBe(45)
+    expect(e.target.reps).toBeUndefined()
     expect(e.sets.filter(s => !isWarmupRow(s))).toHaveLength(4)
   })
   it('cardio and stretches are built the freestyle way', () => {

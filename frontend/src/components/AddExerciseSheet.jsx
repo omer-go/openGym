@@ -17,7 +17,7 @@ import { Thumb } from './Media.jsx'
 import Icon from './Icon.jsx'
 import { Button, Segmented } from './ui.jsx'
 import { useMuscleRoles } from './MuscleRoles.jsx'
-import { rolesLoaded, partGap, muscleRolesOf } from '../lib/muscle-roles.js'
+import { rolesLoaded, partFocus, targetParts, muscleRolesOf } from '../lib/muscle-roles.js'
 
 // The workout's Add exercise: pick a muscle group (what the last 7 days lack most, less what the
 // workout already covers, is marked Suggested), then an exercise from it, its areas in the order
@@ -27,7 +27,10 @@ import { rolesLoaded, partGap, muscleRolesOf } from '../lib/muscle-roles.js'
 // left out, since a routine is for any week: Suggested is what the routine covers least.
 // Grouping and ranking live in lib/add-exercise.js.
 // A swap opens it with a `title` and `like`, the exercise being replaced: it then starts on that
-// exercise's group and area, Back still leading to every group.
+// exercise's group and area, Back still leading to every group, and what works the same part of
+// the muscle as `like` (a side-delt raise for a side-delt raise) comes first.
+// Otherwise what works the part of a muscle the last two weeks targeted least comes first
+// (muscle-roles.js partFocus), as in the one-tap workouts.
 // Cardio and Stretching sit below the muscle groups (lib/activities.js): their areas are kinds of
 // cardio and parts of the body, with an icon where a muscle group has its avatar, and no
 // this-week dots, since nobody needs to run every muscle.
@@ -77,14 +80,18 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
     history: variantHistory(S),
   }), [S.workouts, S.unit, !!routine, rolesLoaded()])
   const suggested = useMemo(() => suggestedGroups(gaps.need, have), [gaps, have])
-  // Which part of each area the last 14 days (this session's done sets included) left behind,
-  // from the muscle roles (muscle-roles.js partGap). Not for a routine: it has no recent past.
+  // The part of each area to favour: in a swap, the one `like` works; otherwise the one the last
+  // 14 days (this session's done sets included) targeted least (muscle-roles.js partFocus), which
+  // a routine, having no recent past, goes without.
   const partGaps = useMemo(() => {
+    const own = like && primaryMuscleOf(EXIDX[like])?.slug
+    const parts = own && targetParts(like, own)
+    if (parts?.length) return { [own]: { name: parts[0].name, muscles: parts.flatMap(x => x.muscles), parts } }
     if (routine) return {}
     const since = new Date(); since.setDate(since.getDate() - 13)
     const items = doneSetItems([...S.workouts.filter(w => w.d >= isoOf(since)), ...(S.active ? [S.active] : [])])
-    return Object.fromEntries(ADD_GROUPS.flatMap(x => x.m).map(m => [m, partGap(items, m)]).filter(([, v]) => v))
-  }, [S.workouts, S.active, !!routine, rolesLoaded()])
+    return Object.fromEntries(ADD_GROUPS.flatMap(x => x.m).map(m => [m, partFocus(items, m)]).filter(([, v]) => v))
+  }, [S.workouts, S.active, !!routine, like, rolesLoaded()])
   const logged = useMemo(() => new Set(Object.keys(trainingIndex(S).exercises)), [S.workouts])
   const openGroup = id => { setGroup(id); setPath(null) }
 
@@ -125,17 +132,18 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
 
   const act = activityGroup(group)
   const g = act || ADD_GROUPS.find(x => x.id === group)
-  // The part of its muscle an exercise works that the last two weeks left behind, if any.
+  // The part of its muscle to favour that an exercise works (its name, for the row), if any.
   const gapOf = ex => (act ? null : partGaps[primaryMuscleOf(ex)?.slug] || null)
-  const fills = (ex, gap = gapOf(ex)) => !!gap && !!muscleRolesOf(ex.id)?.target?.some(m => gap.muscles.includes(m))
+  const partOf = (ex, gap = gapOf(ex)) => gap?.parts.find(x => muscleRolesOf(ex.id)?.target?.some(m => x.muscles.includes(m)))?.name || null
+  const fills = ex => !!partOf(ex)
   const { yours, picks, all, hidden } = shortlist(S, group, { status, have, gaps, fills })
   const row = ex => {
     const last = lastTopSet(S, ex.id)
-    const gap = gapOf(ex)
+    const part = partOf(ex)
     return <div key={ex.id} className="item" {...tappable(() => onPick(ex))}>
       <Thumb ex={ex} />
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
-        <div className="ss capitalize">{g.m?.length > 1 && !act ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{act?.id === 'stretching' ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) : t(ex.eq)}{fills(ex, gap) && <b className="ax-fills"> · {t(gap.name)}</b>}</div></div>
+        <div className="ss capitalize">{g.m?.length > 1 && !act ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) + ' · ' : ''}{act?.id === 'stretching' ? t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp) : t(ex.eq)}{part && <b className="ax-fills"> · {t(part)}</b>}</div></div>
       <div className="ax-last">{last && act
         ? <span>{fmtDaysAgo(last.d)}</span>
         : last ? <><b>{last.w > 0 ? `${fmtNum(last.w)} ${S.unit} × ${last.r ?? '–'}` : `× ${last.r ?? '–'}`}</b><span>{fmtDaysAgo(last.d)}</span></>

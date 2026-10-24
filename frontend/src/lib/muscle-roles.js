@@ -109,24 +109,39 @@ export function regionBreakdown(items, region, rolesOf = muscleRolesOf) {
   return { rows, covered: round(loadOf(withRoles)[region]), total: round(loadOf(items || [])[region]) }
 }
 
-// The parts a gap hint may name: the ones a lifter trains on purpose. The rotator cuff, pec minor
+// The parts a focus may name: the ones a lifter trains on purpose. The rotator cuff, pec minor
 // and teres major only ever help, so a low count there says nothing; the traps work hardest
 // holding a deadlift or a carry, which a stabilizer's zero weight leaves out.
 export const GAP_PARTS = new Set(['Front delt', 'Side delt', 'Rear delt', 'Upper chest', 'Mid and lower chest', 'Lats', 'Rhomboids'])
 
 /**
- * The part of a region the recent work left behind, as { name, sets, muscles }, or null.
- * `items` as regionBreakdown takes them (the caller picks the window). Only speaks when the region
- * was really trained (`min` sets), the exercises with roles account for at least half of it, and
- * the weakest part got a quarter or less of the strongest: a split this lopsided is a gap, not noise.
+ * The part of a region the recent work trained least, as { name, sets, muscles, parts }, or null.
+ * `items` as regionBreakdown takes them (the caller picks the window). Parts are compared by the
+ * sets that targeted them; the sets they only helped in break a tie, so the side delts a press
+ * helps never stand in for a lateral raise. Parts still tied after both are all named (`parts`,
+ * each { name, muscles }; `name` and `sets` are the first's, `muscles` all of theirs). Only speaks
+ * when the region was really trained (`min` sets) and the exercises with roles account for at
+ * least half of it, and says nothing when every part is level.
  */
-export function partGap(items, region, { rolesOf = muscleRolesOf, min = 4 } = {}) {
+export function partFocus(items, region, { rolesOf = muscleRolesOf, min = 4 } = {}) {
   const b = regionBreakdown(items, region, rolesOf)
   if (!b || b.total < min || b.covered < b.total / 2) return null
-  const rows = b.rows.filter(r => GAP_PARTS.has(r.name))
+  const only = role => id => { const r = rolesOf(id); return r && { [role]: r[role] || [] } }
+  const count = role => Object.fromEntries((regionBreakdown(items, region, only(role))?.rows || []).map(r => [r.name, r.sets]))
+  const target = count('target'), helps = count('synergists')
+  const rows = REGION_PARTS[region].filter(([name]) => GAP_PARTS.has(name))
+    .map(([name, muscles]) => ({ name, muscles, t: target[name] || 0, h: helps[name] || 0 }))
   if (rows.length < 2) return null
-  const top = Math.max(...rows.map(r => r.sets))
-  const low = rows.reduce((a, r) => r.sets < a.sets ? r : a)
-  if (low.sets > top / 4) return null
-  return { name: low.name, sets: Math.round(low.sets), muscles: REGION_PARTS[region].find(([n]) => n === low.name)[1] }
+  const below = (a, c) => a.t - c.t || a.h - c.h
+  const low = rows.reduce((a, r) => (below(r, a) < 0 ? r : a))
+  const parts = rows.filter(r => !below(r, low))
+  if (parts.length === rows.length) return null
+  return { name: low.name, sets: Math.round(low.t), muscles: parts.flatMap(r => r.muscles), parts: parts.map(({ name, muscles }) => ({ name, muscles })) }
+}
+
+/** The parts of `region` an exercise targets, as partFocus names them ([{ name, muscles }]). */
+export function targetParts(id, region, rolesOf = muscleRolesOf) {
+  const target = rolesOf(id)?.target || []
+  return (REGION_PARTS[region] || []).filter(([name, muscles]) => GAP_PARTS.has(name) && muscles.some(m => target.includes(m)))
+    .map(([name, muscles]) => ({ name, muscles }))
 }

@@ -189,11 +189,12 @@ const WORTH_ADDING = 2
 const STARTERS = 5
 
 /**
- * A group's first screen: the exercises you do there (`yours`: your most-logged, up to YOURS, in
- * the Suggested order), a couple worth adding that you have not done (`picks`: the ones `fills`
- * the week's gap first, then the ranking's best), and `all`, the whole group in Suggested order,
+ * A group's first screen: the exercises you do there (`yours`: your most-logged, up to YOURS, the
+ * ones that `fills` — the part to favour — first, then in the Suggested order), a couple worth
+ * adding that you have not done (`picks`: the ones that `fills` first, then the ranking's best), and `all`, the whole group in Suggested order,
  * which "Something else" narrows step by step (`groupFacets`). With nothing logged in the group,
- * `picks` are a few starting points instead, one per kind of equipment as far as they go.
+ * `picks` are a few starting points instead, one per kind of equipment as far as they go, those
+ * that `fills` first.
  * The long tail (exercise-facets.js isTail) is never picked.
  */
 export function shortlist(S, groupId, { fills = () => false, ...opts } = {}) {
@@ -204,13 +205,15 @@ export function shortlist(S, groupId, { fills = () => false, ...opts } = {}) {
   const most = [...logged].sort((a, b) => exercises[b.id].n - exercises[a.id].n || (exercises[b.id].d < exercises[a.id].d ? -1 : exercises[b.id].d > exercises[a.id].d ? 1 : 0))
   const top = new Set(most.slice(0, YOURS).map(ex => ex.id))
   const yours = logged.filter(ex => top.has(ex.id))
-  const fresh = all.filter(ex => !exercises[ex.id] && !isTail(ex))
+  yours.sort((a, b) => fills(b) - fills(a))
+  const unfilled = all.filter(ex => !exercises[ex.id] && !isTail(ex))
+  const fresh = [...unfilled.filter(ex => fills(ex)), ...unfilled.filter(ex => !fills(ex))]
   let picks
-  if (yours.length) picks = [...fresh.filter(ex => fills(ex)), ...fresh.filter(ex => !fills(ex))].slice(0, WORTH_ADDING)
+  if (yours.length) picks = fresh.slice(0, WORTH_ADDING)
   else if (activityGroup(groupId)) picks = fresh.slice(0, STARTERS)
   else {
     // The best-ranked of each kind of equipment, in the order they rank (not for cardio or a
-    // stretch, where the kit is beside the point).
+    // stretch, where the kit is beside the point), the ones that fill the part first.
     const seen = new Set()
     picks = fresh.filter(ex => !seen.has(kitOf(ex)) && seen.add(kitOf(ex))).slice(0, STARTERS)
     if (picks.length < STARTERS) picks = [...picks, ...fresh.filter(ex => !picks.includes(ex)).slice(0, STARTERS - picks.length)]

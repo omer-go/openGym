@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows, roleChips, regionBreakdown, REGION_PARTS, partGap } from './muscle-roles.js'
+import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows, roleChips, regionBreakdown, REGION_PARTS, partFocus, targetParts } from './muscle-roles.js'
 import { doneSetItems, MUSCLES } from './muscles.js'
 import data from './exercise-roles.json'
 
@@ -86,51 +86,73 @@ describe('regionBreakdown', () => {
   })
 })
 
-describe('partGap', () => {
+describe('partFocus', () => {
   const roles = {
     raise: { target: ['side-delt'], synergists: ['front-delt', 'supraspinatus', 'infraspinatus'] },
     press: { target: ['front-delt'], synergists: ['side-delt', 'triceps'] },
     rear: { target: ['rear-delt'], synergists: ['infraspinatus', 'teres-minor', 'side-delt'] },
     bench: { target: ['pec-major-sternal'], synergists: ['front-delt', 'triceps'] },
+    ohp: { target: ['front-delt'], synergists: ['triceps'] },
   }
   const rolesOf = id => roles[id] || null
   const ex = (id, primaries, secondaries = []) => ({ id, primaries, secondaries })
   const items = (...entries) => doneSetItems([{ entries: entries.map(([e, done]) => ({ id: e.id, exercise: e,
     sets: Array(done).fill({ done: true }) })) }])
   const RAISE = ex('raise', ['deltoids']), PRESS = ex('press', ['deltoids']), REAR = ex('rear', ['deltoids'])
+  const OHP = ex('ohp', ['deltoids'])
 
-  it('names the part a lopsided region left out', () => {
-    expect(partGap(items([RAISE, 3], [PRESS, 3]), 'deltoids', { rolesOf }))
-      .toEqual({ name: 'Rear delt', sets: 0, muscles: ['rear-delt'] })
+  it('names the part trained least', () => {
+    expect(partFocus(items([RAISE, 3], [PRESS, 3]), 'deltoids', { rolesOf }))
+      .toEqual({ name: 'Rear delt', sets: 0, muscles: ['rear-delt'], parts: [{ name: 'Rear delt', muscles: ['rear-delt'] }] })
+    // however close: 2 sets against 3 is still the least
+    expect(partFocus(items([RAISE, 3], [PRESS, 3], [REAR, 2]), 'deltoids', { rolesOf })).toMatchObject({ name: 'Rear delt', sets: 2 })
   })
 
-  it('stays quiet once the weakest part has more than a quarter of the strongest', () => {
-    expect(partGap(items([RAISE, 3], [PRESS, 3], [REAR, 2]), 'deltoids', { rolesOf })).toBe(null)
-    // 1 set against 5.4 is still a gap, and says how many
-    expect(partGap(items([RAISE, 4], [PRESS, 3], [REAR, 1]), 'deltoids', { rolesOf })).toMatchObject({ name: 'Rear delt', sets: 1 })
+  it('counts the sets that targeted a part, not the ones it only helped in', () => {
+    // presses and rear flies help the side delts 8 sets' worth, and never target them
+    expect(partFocus(items([PRESS, 4], [REAR, 4]), 'deltoids', { rolesOf })).toMatchObject({ name: 'Side delt', sets: 0 })
+  })
+
+  it('breaks a tie by the sets a part helped in', () => {
+    // three each targeted: the rear delts helped in nothing, the side delts in the press and the fly
+    expect(partFocus(items([RAISE, 3], [PRESS, 3], [REAR, 3]), 'deltoids', { rolesOf })).toMatchObject({ name: 'Rear delt', sets: 3 })
+  })
+
+  it('names every part still tied, and nothing when all are level', () => {
+    expect(partFocus(items([OHP, 4]), 'deltoids', { rolesOf })).toMatchObject({ name: 'Side delt',
+      muscles: ['side-delt', 'rear-delt'], parts: [{ name: 'Side delt', muscles: ['side-delt'] }, { name: 'Rear delt', muscles: ['rear-delt'] }] })
+    const only = { a: { target: ['front-delt'] }, b: { target: ['side-delt'] }, c: { target: ['rear-delt'] } }
+    const level = items([ex('a', ['deltoids']), 2], [ex('b', ['deltoids']), 2], [ex('c', ['deltoids']), 2])
+    expect(partFocus(level, 'deltoids', { rolesOf: id => only[id] || null })).toBe(null)
   })
 
   it('never names a part that only helps', () => {
-    // Pec minor and the rotator cuff have nothing here either; upper chest is the gap
-    expect(partGap(items([ex('bench', ['chest']), 6]), 'chest', { rolesOf })).toMatchObject({ name: 'Upper chest', sets: 0 })
-    expect(partGap(items([RAISE, 3], [PRESS, 3], [REAR, 2]), 'deltoids', { rolesOf })?.name).not.toBe('Rotator cuff')
+    // Pec minor and the rotator cuff have nothing here either; upper chest is the one
+    expect(partFocus(items([ex('bench', ['chest']), 6]), 'chest', { rolesOf })).toMatchObject({ name: 'Upper chest', sets: 0 })
+    expect(partFocus(items([RAISE, 3], [PRESS, 3], [REAR, 2]), 'deltoids', { rolesOf })?.name).not.toBe('Rotator cuff')
   })
 
   it('needs a region really trained, and mostly by exercises with roles', () => {
-    expect(partGap(items([RAISE, 1], [PRESS, 1]), 'deltoids', { rolesOf })).toBe(null)
-    expect(partGap(items([RAISE, 3], [PRESS, 3], [ex('machine', ['deltoids']), 8]), 'deltoids', { rolesOf })).toBe(null)
-    expect(partGap(items([RAISE, 1], [PRESS, 1]), 'deltoids', { rolesOf, min: 2 })).toMatchObject({ name: 'Rear delt' })
-    expect(partGap([], 'deltoids', { rolesOf })).toBe(null)
-    expect(partGap(items([RAISE, 6]), 'quadriceps', { rolesOf })).toBe(null)
+    expect(partFocus(items([RAISE, 1], [PRESS, 1]), 'deltoids', { rolesOf })).toBe(null)
+    expect(partFocus(items([RAISE, 3], [PRESS, 3], [ex('machine', ['deltoids']), 8]), 'deltoids', { rolesOf })).toBe(null)
+    expect(partFocus(items([RAISE, 1], [PRESS, 1]), 'deltoids', { rolesOf, min: 2 })).toMatchObject({ name: 'Rear delt' })
+    expect(partFocus([], 'deltoids', { rolesOf })).toBe(null)
+    expect(partFocus(items([RAISE, 6]), 'quadriceps', { rolesOf })).toBe(null)
+  })
+
+  it('targetParts: the parts an exercise targets', () => {
+    expect(targetParts('raise', 'deltoids', rolesOf)).toEqual([{ name: 'Side delt', muscles: ['side-delt'] }])
+    expect(targetParts('bench', 'deltoids', rolesOf)).toEqual([])
+    expect(targetParts('none', 'deltoids', rolesOf)).toEqual([])
   })
 })
 
-describe('partGap on the traps', () => {
+describe('partFocus on the traps', () => {
   it('stays quiet: rows credit the middle traps, deadlifts hold the upper ones unseen', () => {
     const rolesOf = id => id === 'row' ? { target: ['middle-trap', 'rhomboids', 'lats'] } : null
     const row = { id: 'row', primaries: ['trapezius'], secondaries: [] }
     const items = doneSetItems([{ entries: [{ id: 'row', exercise: row, sets: Array(8).fill({ done: true }) }] }])
     expect(regionBreakdown(items, 'trapezius', rolesOf).rows[0]).toEqual({ name: 'Upper traps', sets: 0 })
-    expect(partGap(items, 'trapezius', { rolesOf })).toBe(null)
+    expect(partFocus(items, 'trapezius', { rolesOf })).toBe(null)
   })
 })
