@@ -212,10 +212,12 @@ export function setLabel(id, s, cfg, speedUnit) {
 }
 // Default config for a freshly added exercise.
 // A stretch is held for time, not counted (lib/activities.js times it with a stopwatch): two
-// 30-second holds.
+// 30-second holds. A hold (the catalogue's isometric: a plank, a wall sit, an L-sit) is timed
+// too, a pallof press aside: that one is pressed out and counted.
+const isHold = ex => ex?.cat === 'isometric' && !/pallof/.test(ex.n || '')
 export function defaultConfig(id, mode) {
   if (!mode && EXIDX[id]?.cat === 'stretching') return { sets: 2, sec: 30, weight: 0, mode: 'time', bodyweight: true }
-  const m = mode || modeOf({ id })
+  const m = mode || (isHold(EXIDX[id]) ? 'time' : modeOf({ id }))
   if (m === 'cardio') return { sets: 1, min: 20, speed: 5 }
   // Written only when it is true, so a barbell config is byte-for-byte what it was before
   // the flag existed and a plan file gains nothing it does not need.

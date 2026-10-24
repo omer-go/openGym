@@ -334,6 +334,13 @@ describe('defaultConfig', () => {
     expect(defaultConfig(BW, 'time')).toEqual({ sets: 3, sec: 45, weight: 0, mode: 'time', bodyweight: true })
     expect('bodyweight' in defaultConfig(LIFT)).toBe(false)
   })
+  it('times a hold the catalogue files as isometric, and counts a pallof press', () => {
+    // bear plank and bird dog plank (isometric), band pallof press (isometric, pressed out)
+    expect(defaultConfig('4170')).toEqual({ sets: 3, sec: 45, weight: 0, mode: 'time', bodyweight: true })
+    expect(defaultConfig('9002').mode).toBe('time')
+    expect(defaultConfig('0979').mode).toBe('reps')
+    expect(defaultConfig('4170', 'reps').mode).toBe('reps')
+  })
 })
 
 /* ---------- bodyweight and per side (issues #31/#32/#33) ---------- */
