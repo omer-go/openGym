@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember } from './combo.js'
+import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember, comboSwapSeed, asComboSwap, comboRowsFrom } from './combo.js'
 
 const row = (done = false, extra = {}) => ({ w: 20, r: 10, done, ...extra })
 
@@ -81,5 +81,36 @@ describe('asComboMember', () => {
     expect(e.sg).toBe('sgB')
     expect(e.sets).toHaveLength(3)
     expect(e.target).toEqual({ sec: 30, sets: 3, sgCombo: true })
+  })
+})
+
+describe('a swap inside a combo', () => {
+  const member = { id: 'crunch', sg: 'sgC', target: { reps: 15, sets: 3, sgCombo: true, sgKind: 'strength', sgName: 'Core', sgRest: 45 }, sets: [row(true), row(false), row(false)] }
+  it('builds the new exercise for the member\'s rounds and the combo\'s kind', () => {
+    expect(comboSwapSeed(member)).toEqual({ sets: 3, sgCombo: true, sgKind: 'strength' })
+    expect(comboSwapSeed({ id: 'crunch', target: { reps: 15 }, sets: [row(false)] })).toEqual({})
+  })
+  it('keeps the replacement in the combo, one row per round, with its meta', () => {
+    const swapped = asComboSwap(member, { id: 'plank', target: { sec: 30, sets: 5 }, sets: [row(false, { sec: 30 })] })
+    expect(swapped.sg).toBe('sgC')
+    expect(swapped.sets).toHaveLength(3)
+    expect(swapped.target).toEqual({ sec: 30, sets: 3, sgCombo: true, sgKind: 'strength', sgName: 'Core', sgRest: 45 })
+  })
+  it('leaves any other entry\'s replacement as it is', () => {
+    const plain = { id: 'plank', target: { sec: 30 }, sets: [row(false)] }
+    expect(asComboSwap({ id: 'crunch', sg: 'sgD', target: {}, sets: [] }, plain)).toBe(plain)
+  })
+})
+
+describe('comboRowsFrom', () => {
+  it('is the round on show and the later ones, past the rows already done', () => {
+    const e = { sets: [row(true, { warmup: true }), row(true), row(false), row(true), row(false)] }
+    expect(comboRowsFrom(e, 1)).toEqual([2, 4])
+    expect(comboRowsFrom(e, 3)).toEqual([4])
+    expect(comboRowsFrom(e, 9)).toEqual([])
+  })
+  it('takes both rows of a hold timed per side', () => {
+    const e = { sets: [{ sec: 30, side: 'L', done: false }, { sec: 30, side: 'R', done: false }, { sec: 30, side: 'L', done: false }, { sec: 30, side: 'R', done: false }] }
+    expect(comboRowsFrom(e, 1)).toEqual([2, 3])
   })
 })

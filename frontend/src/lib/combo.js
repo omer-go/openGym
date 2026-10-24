@@ -69,3 +69,34 @@ export function asComboMember(item, { sg, rounds, name = '', rest = 0, kind = ''
   if (!onTarget) return { ...item, sets: n, sg, ...meta }
   return { ...item, sg, sets: fitRounds(item.sets, n), target: { ...(item.target || {}), sets: n, ...meta } }
 }
+
+/**
+ * What a swap builds for the session entry `current` when it is a combo's member: its rounds as
+ * the set count and the combo's flag and kind, so the new exercise's rows come from its last
+ * combo of that kind. Empty for any other entry.
+ */
+export function comboSwapSeed(current) {
+  const f = current?.target || {}
+  if (f.sgCombo !== true || !current.sg) return {}
+  return { sets: Math.max(1, comboSpans(current).length), sgCombo: true, ...(f.sgKind === 'strength' ? { sgKind: 'strength' } : {}) }
+}
+
+/**
+ * A swap's `replacement` for the session entry `current`: when that is a combo's member, one row
+ * per round of it and the combo's group and meta, so the card keeps the new exercise in its place
+ * in every round. Any other entry's replacement is returned as it is.
+ */
+export function asComboSwap(current, replacement) {
+  const f = current?.target || {}
+  if (f.sgCombo !== true || !current.sg) return replacement
+  return asComboMember(replacement, { sg: current.sg, rounds: comboSpans(current).length, name: f.sgName, rest: f.sgRest, kind: f.sgKind }, { onTarget: true })
+}
+
+/**
+ * The rows of `entry` a number picked on the combo card goes to: round `r` and every later one,
+ * both rows of a hold timed per side, a row already done left as it was logged.
+ */
+export function comboRowsFrom(entry, r) {
+  return comboSpans(entry).slice(Math.max(0, r)).flatMap(([from, count]) =>
+    Array.from({ length: count }, (_, k) => from + k)).filter(i => entry.sets[i]?.done !== true)
+}

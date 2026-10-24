@@ -24,7 +24,7 @@ import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
 import { supersetMeta } from '../lib/superset-meta.js'
 import ComboCard from '../components/ComboCard.jsx'
-import { asComboMember } from '../lib/combo.js'
+import { asComboMember, asComboSwap, comboSwapSeed } from '../lib/combo.js'
 import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
 import { workoutSettingsSheet } from '../components/WorkoutSettingsSheet.jsx'
 import { durationSheet } from '../components/DurationPicker.jsx'
@@ -1022,7 +1022,7 @@ function ActiveWorkout() {
     return m.combo && !comboAll.has(u.join('-')) ? m : null
   }
   const comboCard = (u, m, inert = false) => <ComboCard entries={A.entries} unit={u} meta={m} propsFor={blockProps} inert={inert}
-    onShowAll={() => comboShowAll(u, true)} onUnpair={() => unpairAt(u[0])} />
+    onShowAll={() => comboShowAll(u, true)} onUnpair={() => unpairAt(u[0])} onRemove={() => confirmRemoveCombo(u)} onAdd={() => addToCombo(u)} />
   // The superset header's way back to the combo card it was opened from.
   const comboBack = u => supersetMeta(A.entries, u, { onTarget: true }).combo
     ? <Button size="xs" variant="ghost" icon="list" onClick={() => comboShowAll(u, false)}>{t('Combo view')}</Button> : null
@@ -1666,6 +1666,42 @@ function ActiveWorkout() {
         ? t('The sets you logged for this exercise in this session will be lost.')
         : t('This removes the exercise from your current session.'),
       confirmText: t('Remove'), danger: true, onConfirm: () => removeExercise(idx)
+    })
+  }
+  // One more exercise in a combo, after its last one: picked from the same screen as Add exercise
+  // and built the way a swap inside a combo is (lib/combo.js), one row per round under the combo's
+  // group. It goes straight in; its numbers are set on the card.
+  const addToCombo = u => { const picker = addExerciseSheet(ex => {
+    const member = A.entries[u[0]]
+    const ids = u.map(i => A.entries[i]?.id)
+    picker.close()
+    if (focusMode) focusPointerEpoch.current++
+    const ctx = addContext()
+    const seed = ctx.freestyle ? (sessionConfig(sessionHistory(S), ex.id, A) || freestyleConfig(sessionHistory(S), { id: ex.id, ...defaultConfig(ex.id) })) : defaultConfig(ex.id)
+    update(s => {
+      if (u.some((i, k) => s.active.entries[i]?.id !== ids[k])) return
+      const at = Math.max(...u) + 1
+      s.active.entries.splice(at, 0, asComboSwap(member, buildAdded(s, ex.id, { ...seed, ...comboSwapSeed(member) }, ctx)))
+      if (s.active.cur >= at) s.active.cur++
+      useUI.getState().shiftRestOwner(at, 1)
+    })
+    useUI.getState().toast(t('“{0}” added to {1}', exerciseNameText(ex), supersetMeta(A.entries, u, { onTarget: true }).name || t('Combo')))
+  }, { title: t('Add to combo'), like: A.entries[u[0]]?.id }) }
+  // The whole combo at once, last entry first so the earlier indices stay put while it goes.
+  const confirmRemoveCombo = u => {
+    const ids = u.map(i => A.entries[i]?.id)
+    const hasDone = u.some(i => (A.entries[i]?.sets || []).some(s => s.done))
+    confirmSheet({
+      title: t('Remove combo?'),
+      message: hasDone
+        ? t('The sets you logged for this combo in this session will be lost.')
+        : t('This removes the combo from your current session.'),
+      confirmText: t('Remove'), danger: true, onConfirm: () => {
+        const now = useStore.getState().S.active?.entries || []
+        if (u.some((i, k) => now[i]?.id !== ids[k])) return
+        focusPointerEpoch.current++
+        ;[...u].sort((a, b) => b - a).forEach(i => removeActiveExercise(i))
+      }
     })
   }
   const removeExerciseSheet = () => {

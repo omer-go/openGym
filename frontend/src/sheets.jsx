@@ -22,6 +22,7 @@ import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
 import { durationSheet } from './components/DurationPicker.jsx'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
+import { comboSwapSeed, asComboSwap } from './lib/combo.js'
 import { randomAbsCombo, swapAbsExercise, resizeAbsCombo, absSpotsOpen, ABS_COMBO_COUNT, ABS_COMBO_MAX } from './lib/abs-combo.js'
 import { savedCombosOf, saveCombo, removeCombo } from './lib/saved-combos.js'
 import { REST_MAX, fmtRest } from './lib/duration.js'
@@ -1535,7 +1536,8 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   // (it opened on them), anything else is set up for the slot.
   let cfg = picked
   if (!typed) ({ cfg, typed } = slotConfig(st, index, ex.id, picked))
-  const full = { ...cfg, id: ex.id }
+  // A combo's member swaps to an exercise built for the combo's rounds and kind (lib/combo.js).
+  const full = { ...cfg, ...comboSwapSeed(current), id: ex.id }
   // A swap is an in-place substitution — routine identity is unchanged, so the replacement
   // keeps the slot's own `rid` and reads its prescription from that routine (not a
   // session-wide one). A slot with no `rid` is freestyle.
@@ -1551,7 +1553,7 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   const built = freestyle
     ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, ...(typed ? { useTarget: true } : { preferLast: true }) }), full, dropGrid(st, full)) }
     : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
-  const replacement = {
+  const replacement = asComboSwap(current, {
     id: ex.id,
     ...built,
     ...(current.rid ? { rid: current.rid } : {}),
@@ -1562,7 +1564,7 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
     // and an Undo must leave numbers that are right to count.
     ...(current.noProg === true ? { noProg: true } : {}),
     ...extra,
-  }
+  })
 
   const apply = options => {
     // A timed callback closes over entry/set indexes. Invalidate it, and the current rest,
