@@ -180,6 +180,16 @@ describe('shortlist', () => {
     expect(first).toHaveLength(2)
     expect(shortlist(S, 'chest', { fills: x => x.id === first[1] }).yours.map(x => x.id)).toEqual([first[1], first[0]])
   })
+  it('in a swap, lists only your own that work the part', () => {
+    const S = state({ workouts: [session('2026-10-10', [BENCH, DBBENCH]), session('2026-10-12', [BENCH])] })
+    const first = shortlist(S, 'chest').yours.map(x => x.id)
+    expect(shortlist(S, 'chest', { fills: x => x.id === first[1], same: true }).yours.map(x => x.id)).toEqual([first[1]])
+    // None of them do: it starts afresh, one per kind of equipment
+    const none = shortlist(S, 'chest', { fills: () => false, same: true })
+    expect(none.yours).toEqual([])
+    expect(new Set(none.picks.map(x => x.eq)).size).toBe(none.picks.length)
+    expect(none.picks.length).toBeGreaterThan(2)
+  })
   it('starts with nothing logged on the ones that work the part to favour', () => {
     // A swap away from a lateral raise when your shoulder exercises are all in the workout already.
     const { all, picks } = shortlist(state(), 'shoulders')
@@ -187,6 +197,11 @@ describe('shortlist', () => {
     const got = shortlist(state(), 'shoulders', { fills: x => x.id === want }).picks
     expect(got[0].id).toBe(want)
     expect(got).toHaveLength(picks.length)
+  })
+  it('puts the ones that work more of the parts first', () => {
+    const [one, two] = shortlist(state(), 'back').picks.slice(-2).map(x => x.id)
+    const got = shortlist(state(), 'back', { fills: x => (x.id === two ? 2 : x.id === one ? 1 : 0) }).picks
+    expect(got.slice(0, 2).map(x => x.id)).toEqual([two, one])
   })
   it('leaves out what is already in the session', () => {
     const { all, hidden } = shortlist(state(), 'chest', { have: [{ id: BENCH }] })

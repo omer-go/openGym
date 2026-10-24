@@ -86,7 +86,7 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
   const partGaps = useMemo(() => {
     const own = like && primaryMuscleOf(EXIDX[like])?.slug
     const parts = own && targetParts(like, own)
-    if (parts?.length) return { [own]: { name: parts[0].name, muscles: parts.flatMap(x => x.muscles), parts } }
+    if (parts?.length) return { [own]: { name: parts[0].name, muscles: parts.flatMap(x => x.muscles), parts, swap: true } }
     if (routine) return {}
     const since = new Date(); since.setDate(since.getDate() - 13)
     const items = doneSetItems([...S.workouts.filter(w => w.d >= isoOf(since)), ...(S.active ? [S.active] : [])])
@@ -134,9 +134,13 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
   const g = act || ADD_GROUPS.find(x => x.id === group)
   // The part of its muscle to favour that an exercise works (its name, for the row), if any.
   const gapOf = ex => (act ? null : partGaps[primaryMuscleOf(ex)?.slug] || null)
-  const partOf = (ex, gap = gapOf(ex)) => gap?.parts.find(x => muscleRolesOf(ex.id)?.target?.some(m => x.muscles.includes(m)))?.name || null
-  const fills = ex => !!partOf(ex)
-  const { yours, picks, all, hidden } = shortlist(S, group, { status, have, gaps, fills })
+  const worked = (ex, gap = gapOf(ex)) => gap?.parts.filter(x => muscleRolesOf(ex.id)?.target?.some(m => x.muscles.includes(m))) || []
+  const partOf = ex => worked(ex)[0]?.name || null
+  // How many of the parts it works: a row for a row (lats and mid-back) before a pulldown (lats).
+  const fills = ex => worked(ex).length
+  // A swap with a part to keep lists only your own that work it: the rest are another part.
+  const same = !act && Object.values(partGaps).some(x => x.swap)
+  const { yours, picks, all, hidden } = shortlist(S, group, { status, have, gaps, fills, same })
   const row = ex => {
     const last = lastTopSet(S, ex.id)
     const part = partOf(ex)

@@ -190,24 +190,25 @@ const STARTERS = 5
 
 /**
  * A group's first screen: the exercises you do there (`yours`: your most-logged, up to YOURS, the
- * ones that `fills` — the part to favour — first, then in the Suggested order), a couple worth
+ * ones that `fills` — the part to favour, or the most of the parts — first, then in the Suggested order; only those, with
+ * `same`), a couple worth
  * adding that you have not done (`picks`: the ones that `fills` first, then the ranking's best), and `all`, the whole group in Suggested order,
  * which "Something else" narrows step by step (`groupFacets`). With nothing logged in the group,
  * `picks` are a few starting points instead, one per kind of equipment as far as they go, those
  * that `fills` first.
  * The long tail (exercise-facets.js isTail) is never picked.
  */
-export function shortlist(S, groupId, { fills = () => false, ...opts } = {}) {
+export function shortlist(S, groupId, { fills = () => false, same = false, ...opts } = {}) {
   const { sections, hidden } = groupExercises(S, groupId, { ...opts, sort: 'suggested' })
   const all = sections.flatMap(x => x.list)
   const { exercises } = trainingIndex(S)
   const logged = all.filter(ex => exercises[ex.id])
   const most = [...logged].sort((a, b) => exercises[b.id].n - exercises[a.id].n || (exercises[b.id].d < exercises[a.id].d ? -1 : exercises[b.id].d > exercises[a.id].d ? 1 : 0))
   const top = new Set(most.slice(0, YOURS).map(ex => ex.id))
-  const yours = logged.filter(ex => top.has(ex.id))
+  // A swap (`same`) keeps only those that work the part of the one it replaces.
+  const yours = logged.filter(ex => top.has(ex.id) && (!same || fills(ex)))
   yours.sort((a, b) => fills(b) - fills(a))
-  const unfilled = all.filter(ex => !exercises[ex.id] && !isTail(ex))
-  const fresh = [...unfilled.filter(ex => fills(ex)), ...unfilled.filter(ex => !fills(ex))]
+  const fresh = all.filter(ex => !exercises[ex.id] && !isTail(ex)).sort((a, b) => fills(b) - fills(a))
   let picks
   if (yours.length) picks = fresh.slice(0, WORTH_ADDING)
   else if (activityGroup(groupId)) picks = fresh.slice(0, STARTERS)
