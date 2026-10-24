@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember, comboSwapSeed, asComboSwap, comboRowsFrom } from './combo.js'
+import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember, comboSwapSeed, asComboSwap, comboRowsFrom, comboWeightChips } from './combo.js'
 
 const row = (done = false, extra = {}) => ({ w: 20, r: 10, done, ...extra })
 
@@ -112,5 +112,24 @@ describe('comboRowsFrom', () => {
   it('takes both rows of a hold timed per side', () => {
     const e = { sets: [{ sec: 30, side: 'L', done: false }, { sec: 30, side: 'R', done: false }, { sec: 30, side: 'L', done: false }, { sec: 30, side: 'R', done: false }] }
     expect(comboRowsFrom(e, 1)).toEqual([2, 3])
+  })
+})
+
+describe('comboWeightChips', () => {
+  const by5 = (v, d) => v + d * 5
+  it('offers the weight set now with the steps either side of it', () => {
+    expect(comboWeightChips(20, by5)).toEqual([10, 15, 20, 25, 30, 35])
+  })
+  it('never goes under zero, offering more steps up instead', () => {
+    expect(comboWeightChips(0, by5)).toEqual([0, 5, 10, 15, 20, 25])
+    expect(comboWeightChips(5, (v, d) => Math.max(0, v + d * 5))).toEqual([0, 5, 10, 15, 20, 25])
+  })
+  it('walks the exercise\'s own steps, bell to bell', () => {
+    const bells = [8, 12, 16, 20]
+    const step = (v, d) => d > 0 ? bells.find(b => b > v) ?? v : [...bells].reverse().find(b => b < v) ?? v
+    expect(comboWeightChips(12, step)).toEqual([8, 12, 16, 20])
+  })
+  it('reads an empty weight as zero', () => {
+    expect(comboWeightChips('', by5, 1, 1)).toEqual([0, 5, 10])
   })
 })

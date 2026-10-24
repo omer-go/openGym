@@ -100,3 +100,25 @@ export function comboRowsFrom(entry, r) {
   return comboSpans(entry).slice(Math.max(0, r)).flatMap(([from, count]) =>
     Array.from({ length: count }, (_, k) => from + k)).filter(i => entry.sets[i]?.done !== true)
 }
+
+/**
+ * The weights the combo card offers one tap away: the one set now with the steps either side
+ * of it, `below` steps down (never under zero) and `above` steps up, the steps there is no room
+ * for below added above, so a weight near zero still gets as many to pick from. `step(v, dir)` is the
+ * exercise's own step, so owned dumbbells walk bell to bell.
+ */
+export function comboWeightChips(value, step, below = 2, above = 3) {
+  const v = Number(value) || 0
+  const out = [v]
+  for (let k = 0, x = v; k < below; k++) {
+    const n = step(x, -1)
+    if (!(n >= 0) || n >= x) break
+    out.unshift(x = n)
+  }
+  for (let k = 0, x = v, up = above + below + 1 - out.length; k < up; k++) {
+    const n = step(x, 1)
+    if (!(n > x)) break
+    out.push(x = n)
+  }
+  return out
+}

@@ -5,7 +5,9 @@ import { exOr } from '../lib/exercises.js'
 import { modeOf, isBw, EFFORT, effortOf, fmtSec, fmtMin } from '../lib/history.js'
 import { isSideSet } from '../lib/workout-model.js'
 import { usesStopwatch } from '../lib/activities.js'
-import { comboRound, comboSpanAt, comboRowsFrom } from '../lib/combo.js'
+import { comboRound, comboSpanAt, comboRowsFrom, comboWeightChips } from '../lib/combo.js'
+import { weightIncrement, stepWeight } from '../lib/progression.js'
+import { ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 import { effortColor } from '../lib/effort.js'
 import { fmtNum } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
@@ -58,6 +60,20 @@ export default function ComboCard({ entries, unit, meta, propsFor, onShowAll, on
       onPick: v => { for (const i of comboRowsFrom(entries[idx], r)) p.onField(i, f, v) },
     })
     return <button className="cb-f" onClick={open} disabled={inert}>{fmtNum(Number(value) || 0)}{unitLabel !== cols.hd && <span>{unitLabel}</span>}</button>
+  }
+  // The weight the same way: the weights either side of the one set now, a tap away, on the
+  // exercise's own step (bell to bell with the dumbbells you own), and the stepper for the rest.
+  const weightButton = (idx, value, cfg, p) => {
+    const ex = exOr(entries[idx].id)
+    const owned = ownedWeightsFor(S, cfg)
+    const step = weightIncrement(cfg, S.unit)
+    const onStep = (v, _s, dir) => (owned ? stepOwned(owned, v, dir) : stepWeight(v, step, dir))
+    const open = () => countSheet({
+      title: exerciseNameFor(ex), titleClass: exerciseNameClass(ex), unit: S.unit, value, step, onStep, decimal: true,
+      chips: comboWeightChips(value, (v, dir) => onStep(v, step, dir)),
+      onPick: v => { for (const i of comboRowsFrom(entries[idx], r)) p.onField(i, 'w', v) },
+    })
+    return <button className="cb-f" onClick={open} disabled={inert}>{fmtNum(Number(value) || 0)}</button>
   }
 
   const effortButton = (s, idx, si, p) => {
@@ -139,7 +155,7 @@ export default function ComboCard({ entries, unit, meta, propsFor, onShowAll, on
     } else {
       const minUnit = cols.hd === t('min') ? null : t('min')
       cells = <>
-        {cols.w && (mode === 'reps' && !isBw(cfg) ? field(s.w, null, v => p.onField(si, 'w', v), true) : <span />)}
+        {cols.w && (mode === 'reps' && !isBw(cfg) ? weightButton(idx, s.w, cfg, p) : <span />)}
         {mode === 'reps' && countButton(idx, 'r', s.r, t('reps'), p)}
         {timed && countButton(idx, 'sec', s.sec, t('sec'), p)}
         {mode === 'cardio' && (watch && Number(s.min) % 1
@@ -187,16 +203,16 @@ function countSheet(opts) {
   useUI.getState().openSheet(close => <CountPick {...opts} close={close} />)
 }
 
-function CountPick({ title, titleClass, unit, value, step, chips, onPick, close }) {
+function CountPick({ title, titleClass, unit, value, step, onStep, decimal = false, chips, onPick, close }) {
   const [v, setV] = useState(Number(value) || 0)
   const pick = n => { onPick(n); close() }
   return <>
     <h3 className={titleClass || undefined} style={{ marginBottom: 4 }}>{title}</h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{t('This round and the ones after it')}</div>
     <div className="chips" style={{ flexWrap: 'wrap', overflow: 'visible', touchAction: 'auto', padding: 0, marginBottom: 16 }}>
-      {chips.map(n => <button key={n} className={'chip nocap' + (n === v ? ' on' : '')} onClick={() => pick(n)}>{n}</button>)}
+      {chips.map(n => <button key={n} className={'chip nocap' + (n === v ? ' on' : '')} onClick={() => pick(n)}>{fmtNum(n)}</button>)}
     </div>
-    <Stepper label={unit} value={v} step={step} min={0} decimal={false} onChange={setV} />
+    <Stepper label={unit} value={v} step={step} onStep={onStep} min={0} decimal={decimal} onChange={setV} />
     <div style={{ marginTop: 18 }}><Button variant="primary" onClick={() => pick(v)}>{t('Done')}</Button></div>
   </>
 }
