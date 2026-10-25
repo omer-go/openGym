@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A balance-focused hip hinge on one leg with a kettlebell. It trains the hamstrings and glutes.",
   "instructions": [
     "Hold a kettlebell in one hand and stand on the opposite leg.",

@@ -3,13 +3,15 @@
   "name": "dumbbell step-up",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Holding dumbbells, you step up onto a bench or box and step down. It builds the glutes and thighs, one leg at a time.",
   "instructions": [
     "Stand in front of a bench or step with a dumbbell in each hand, palms facing your body.",

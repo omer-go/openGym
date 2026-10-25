@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A wood chop done on one leg that adds a balance challenge to the core rotation.",
   "instructions": [
     "Stand on one leg holding a medicine ball overhead to one side.",

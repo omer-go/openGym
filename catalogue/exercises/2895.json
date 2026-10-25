@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "isometric",
+  "pattern": "core",
   "description": "A high plank where you lift one arm at a time, training anti-rotation core strength.",
   "instructions": [
     "Start in a high plank with hands under shoulders.",

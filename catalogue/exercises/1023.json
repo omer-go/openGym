@@ -3,12 +3,13 @@
   "name": "band straight back stiff leg deadlift",
   "bodyPart": "upper legs",
   "equipment": "band",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "A stiff-leg deadlift with a band, hinging at the hips with a straight back. It trains the glutes and hamstrings.",
   "instructions": [
     "Stand with your feet shoulder-width apart and place the band around your upper legs.",

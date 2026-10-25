@@ -10,6 +10,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A seated one arm Arnold press for shoulders with rotation through the movement.",
   "instructions": [
     "Sit upright with a dumbbell in one hand at chest height, palm facing you.",

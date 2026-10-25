@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Press a single dumbbell up from shoulder height on an incline bench. It builds the upper chest and shoulders and evens out strength between sides.",
   "instructions": [
     "Sit on an incline bench with a dumbbell in one hand, resting on your thigh.",

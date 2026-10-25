@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg barbell hip hinge. It trains the hamstrings and balance.",
   "instructions": [
     "Rest a barbell on your upper back and stand on one leg.",

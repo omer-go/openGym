@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A standing overhead press with a kettlebell and no leg drive, focused on shoulder strength.",
   "instructions": [
     "Hold the kettlebell at shoulder height in the rack position.",

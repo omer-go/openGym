@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A machine row where you pull each handle independently. It works the upper back and lets you even out strength differences between sides.",
   "instructions": [
     "Adjust the seat height and position yourself facing the machine.",

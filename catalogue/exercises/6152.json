@@ -11,6 +11,8 @@
     "quadriceps"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-arm snatch that takes a dumbbell from the floor to overhead in one motion. This version uses the left arm.",
   "instructions": [
     "Stand over a dumbbell with your feet shoulder-width apart.",

@@ -12,6 +12,7 @@
     "core"
   ],
   "category": "olympic",
+  "pattern": "hinge",
   "description": "A kettlebell version of the classic lift: swing it to the shoulder, then drive it overhead with a leg push.",
   "instructions": [
     "Stand over a kettlebell with feet shoulder-width apart and hinge to grab it.",

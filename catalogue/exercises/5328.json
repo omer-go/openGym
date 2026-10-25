@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "An overhead press done standing. It builds shoulder strength and total-body stability.",
   "instructions": [
     "Hold the bar at shoulder height with hands just outside shoulder-width.",

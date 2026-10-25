@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Combo lunge: step back, drive the knee up, then step forward into a lunge.",
   "instructions": [
     "Stand tall with hands on hips.",

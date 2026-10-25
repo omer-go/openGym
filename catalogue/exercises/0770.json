@@ -3,13 +3,14 @@
   "name": "smith squat",
   "bodyPart": "upper legs",
   "equipment": "smith machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A back squat with the bar guided by the smith machine. It builds the thighs and glutes with extra stability.",
   "instructions": [
     "Set up the smith machine with the barbell at an appropriate height for your squat.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "An overhead press using a heavy iron block, building shoulder and arm strength.",
   "instructions": [
     "Lift the block to your shoulders and set your feet hip width apart.",

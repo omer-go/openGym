@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
   "description": "A hopping drill where you flick one heel up to your glutes. It warms up the hamstrings and raises your heart rate.",
   "instructions": [
     "Stand on one leg with the other foot lifted.",

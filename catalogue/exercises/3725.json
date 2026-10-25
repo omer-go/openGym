@@ -11,6 +11,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge performed with a barbell held locked out overhead. It builds leg strength and demands shoulder and core stability.",
   "instructions": [
     "Press a barbell overhead and hold it with straight arms.",

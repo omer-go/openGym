@@ -11,6 +11,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "Squat while holding a dumbbell overhead with one arm. It builds leg strength and demands good shoulder and trunk control.",
   "instructions": [
     "Press a dumbbell overhead with one arm and keep it locked out.",

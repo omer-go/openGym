@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Balancing on a stability ball, you extend one leg at a time. It works the quads and balance.",
   "instructions": [
     "Sit on a stability ball with your feet flat.",

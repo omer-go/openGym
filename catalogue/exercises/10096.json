@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A combo move: a rear lunge followed by a single-arm press as you stand. It works legs and shoulders together.",
   "instructions": [
     "Hold a dumbbell at one shoulder and stand tall.",

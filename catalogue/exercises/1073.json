@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "Press yourself away from the straps. It works the chest.",
   "instructions": [
     "Face away from the anchor and hold the handles at chest level.",

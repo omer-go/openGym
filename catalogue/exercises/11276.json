@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A lying face-down leg curl on a cable. Training one leg at a time builds the hamstrings evenly.",
   "instructions": [
     "Lie face down with an ankle strap attached to a low cable.",

@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing one-arm curl with your chest over an incline bench. It isolates the biceps.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand.",

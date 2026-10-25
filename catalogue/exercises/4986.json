@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Step up onto a bench or box holding dumbbells. It trains your legs and glutes one side at a time.",
   "instructions": [
     "Hold a dumbbell in each hand and stand facing a sturdy bench.",

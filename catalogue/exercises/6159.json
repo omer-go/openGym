@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated overhead triceps extension with one dumbbell. This version uses the left arm.",
   "instructions": [
     "Sit upright holding a dumbbell in your left hand overhead.",

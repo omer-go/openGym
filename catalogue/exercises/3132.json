@@ -3,13 +3,14 @@
   "name": "potty squat with support",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A deep squat done holding a support for balance. Works the glutes and legs.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes pointing slightly outward.",

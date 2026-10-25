@@ -10,6 +10,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step up combined with an overhead press. It trains legs and shoulders together.",
   "instructions": [
     "Hold weight at your shoulders and stand facing a bench.",

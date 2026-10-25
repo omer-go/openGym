@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "An overhead press using a band for resistance. It builds the shoulders and triceps.",
   "instructions": [
     "Stand on the band with feet shoulder-width apart.",

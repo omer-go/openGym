@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm pushdown with an overhand grip. It isolates one triceps at a time.",
   "instructions": [
     "Attach a handle to a high pulley and stand facing it.",

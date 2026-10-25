@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A walking lunge carrying a weighted bag, building the legs, glutes and core.",
   "instructions": [
     "Hold the bag at your chest or on your shoulders.",

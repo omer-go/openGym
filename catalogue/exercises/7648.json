@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg deadlift holding the dumbbell on the same side as the standing leg, for hamstrings and balance.",
   "instructions": [
     "Hold a dumbbell in the hand on the same side as your standing leg.",

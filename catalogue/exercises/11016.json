@@ -11,6 +11,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press from a half kneeling stance. It trains the shoulder while the position challenges your balance and core.",
   "instructions": [
     "Kneel on one knee with the other foot flat in front, and hold a dumbbell at shoulder height.",

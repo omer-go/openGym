@@ -10,6 +10,8 @@
     "hands"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Hanging from a bar with just one hand. It builds grip strength and gives the shoulder a stretch.",
   "instructions": [
     "Stand under a pull-up bar and grip it with one hand.",

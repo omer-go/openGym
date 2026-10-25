@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm hammer curl over a preacher bench. It builds the brachialis and biceps without swinging.",
   "instructions": [
     "Sit on a preacher bench with a dumbbell in one hand and your upper arm resting on the pad.",

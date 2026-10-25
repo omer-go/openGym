@@ -10,6 +10,7 @@
     "chest"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A close grip press on an incline bench using the guided Smith bar to hit the triceps and upper chest.",
   "instructions": [
     "Set an incline bench under the Smith bar and lie back with eyes under the bar.",

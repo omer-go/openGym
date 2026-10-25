@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "Hold a chair and swirl one leg in circles. It loosens the hip joint and warms up the glutes.",
   "instructions": [
     "Stand beside a chair and hold it for balance.",

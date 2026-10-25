@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm hammer preacher curl with a rope on a cable. It targets the brachialis and the biceps on one side.",
   "instructions": [
     "Attach a rope handle to a low pulley cable machine.",

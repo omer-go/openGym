@@ -9,6 +9,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row with an underhand grip, supported on an incline bench. It works the upper back and biceps one side at a time.",
   "instructions": [
     "Set up an incline bench at a 45-degree angle.",

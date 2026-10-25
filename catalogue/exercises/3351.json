@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with cable resistance, building leg strength with a constant load.",
   "instructions": [
     "Hold a cable handle at chest height and step away from the stack.",

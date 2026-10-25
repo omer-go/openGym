@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm cable fly done in a braced, staggered stance, working the chest and keeping the trunk steady.",
   "instructions": [
     "Set a cable at chest height and stand with a staggered stance.",

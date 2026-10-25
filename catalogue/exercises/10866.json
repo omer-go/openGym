@@ -10,6 +10,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm machine row done from a bent-over stance. It targets the lats with a strong squeeze.",
   "instructions": [
     "Set the machine and lean forward from the hips with a flat back.",

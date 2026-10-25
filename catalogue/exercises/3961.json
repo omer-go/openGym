@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge sequence that steps forward, to the side and then back with the same leg. It trains the legs and hips from three directions and challenges your balance.",
   "instructions": [
     "Stand tall with your feet together and hands on your hips.",

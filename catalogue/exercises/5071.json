@@ -11,6 +11,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunge while holding one kettlebell locked out overhead. The overhead load challenges balance, shoulder stability and the legs.",
   "instructions": [
     "Press a kettlebell overhead with one arm and keep that arm straight.",

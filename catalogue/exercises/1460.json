@@ -3,13 +3,15 @@
   "name": "walking lunge",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Stepping forward into one lunge after another, moving across the room. It works the quads and glutes and challenges balance.",
   "instructions": [
     "Stand with your feet shoulder-width apart.",

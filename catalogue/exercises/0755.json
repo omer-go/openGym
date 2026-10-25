@@ -3,13 +3,14 @@
   "name": "smith hack squat",
   "bodyPart": "upper legs",
   "equipment": "smith machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "On the smith machine, you squat with your feet forward of the bar. Works the quads and glutes.",
   "instructions": [
     "Adjust the barbell on the smith machine to an appropriate height for your body.",

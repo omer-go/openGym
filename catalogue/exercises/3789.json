@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip hinge with a one-arm band row. It challenges your balance and trains hamstrings, glutes and back.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

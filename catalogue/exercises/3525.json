@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A kneeling single-arm press with a landmine. It trains the shoulders and builds core stability.",
   "instructions": [
     "Kneel facing the end of a landmine barbell.",

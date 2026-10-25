@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A one-legged squat down to a bench behind you. It builds leg strength and balance while the bench keeps the depth safe.",
   "instructions": [
     "Stand in front of a bench with your back to it and lift one foot off the floor.",

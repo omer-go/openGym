@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single arm overhead extension on a high pulley that stretches and loads the long head of the triceps.",
   "instructions": [
     "Face away from a high pulley and hold the handle overhead with one hand.",

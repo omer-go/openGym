@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with the front foot on a vibrating plate for added stability work.",
   "instructions": [
     "Place one foot on the vibrating plate and step the other back.",

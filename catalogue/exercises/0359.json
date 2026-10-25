@@ -9,6 +9,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Braced on a support, you raise one dumbbell out to the side with a bent torso. It targets the rear shoulder and upper back, one side at a time.",
   "instructions": [
     "Sit on a bench with your feet flat on the ground and your back straight.",

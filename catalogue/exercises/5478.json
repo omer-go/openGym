@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Explosive lunge-and-drive-knee movement off a bosu ball that trains leg power and balance.",
   "instructions": [
     "Stand with one foot on the bosu dome and the other behind you.",

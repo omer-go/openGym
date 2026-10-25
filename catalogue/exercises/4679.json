@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with band resistance. It works the quads and glutes one leg at a time.",
   "instructions": [
     "Stand on the band with your front foot and hold the other end at your shoulders.",

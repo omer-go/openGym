@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated knee extension against band tension. It isolates the quads one leg at a time.",
   "instructions": [
     "Sit on a bench and secure a band around one ankle.",

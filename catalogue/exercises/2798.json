@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A barbell squat jump followed by a rear lunge. Builds explosive leg power.",
   "instructions": [
     "Start by standing with your feet shoulder-width apart, holding a barbell across your upper back.",

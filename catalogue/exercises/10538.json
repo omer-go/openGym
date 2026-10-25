@@ -8,6 +8,8 @@
     "hip flexors"
   ],
   "category": "rehab",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A variation of the seated knee extension. It builds thigh strength with a small, controlled range.",
   "instructions": [
     "Sit tall on a chair, holding the seat edge for support.",

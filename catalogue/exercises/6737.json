@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with a band around the legs while raising the top leg. It works the outer hip and the side of the trunk.",
   "instructions": [
     "Put a band around your thighs or ankles and get into a side plank on your forearm.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Split squat holding a kettlebell, working the thighs and glutes one leg at a time.",
   "instructions": [
     "Hold a kettlebell at your chest and take a long split stance.",

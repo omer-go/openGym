@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge with an overhead reach that works your legs and stretches your torso.",
   "instructions": [
     "Stand tall with your feet hip-width apart.",

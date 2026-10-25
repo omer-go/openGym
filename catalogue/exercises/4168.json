@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A single leg squat to a box followed by a jump. It builds balance and explosive leg strength.",
   "instructions": [
     "Stand in front of a box on one leg, other leg forward.",

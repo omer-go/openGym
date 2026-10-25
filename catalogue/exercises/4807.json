@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up where the hands move from a wide to a narrow position between reps. It shifts the load from chest to triceps.",
   "instructions": [
     "Start in a high plank with your hands wider than your shoulders.",

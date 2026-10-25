@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg calf raise on a step with a full stretch at the bottom. It builds calf strength and balance.",
   "instructions": [
     "Stand on one foot with the ball of that foot on a step, other foot lifted.",

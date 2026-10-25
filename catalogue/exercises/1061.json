@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg version of the barbell hip thrust that demands more balance and glute strength on each side.",
   "instructions": [
     "Set your upper back on a bench with a padded barbell over your hips.",

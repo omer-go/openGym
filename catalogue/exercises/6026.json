@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with a pulling arm motion, to build core stability and shoulder strength.",
   "instructions": [
     "Get into a side plank on your forearm with your body in a straight line.",

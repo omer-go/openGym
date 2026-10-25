@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "carry",
   "description": "Carrying a kettlebell upside down overhead with one arm. It builds shoulder stability and a strong grip.",
   "instructions": [
     "Clean a kettlebell so it is upside down with the bell above your fist.",

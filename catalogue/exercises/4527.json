@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A hip-driven swing with one hand on a kettlebell. It builds explosive posterior chain power.",
   "instructions": [
     "Stand with feet slightly wider than your shoulders and the kettlebell in front of you.",

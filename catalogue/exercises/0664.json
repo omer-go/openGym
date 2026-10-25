@@ -10,6 +10,8 @@
     "triceps"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "You do a push-up, then rotate into a side plank. Works the chest, arms, shoulders and obliques.",
   "instructions": [
     "Start in a push-up position with your hands shoulder-width apart and your body in a straight line.",

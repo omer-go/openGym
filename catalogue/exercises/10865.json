@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg Romanian deadlift with the rear foot on a bench. It targets hamstrings and glutes.",
   "instructions": [
     "Hold dumbbells with your rear foot resting on a bench.",

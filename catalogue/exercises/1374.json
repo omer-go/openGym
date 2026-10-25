@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Step off a box and land on both feet, then hold the landing on one leg. It builds landing control and strengthens the calves and ankle.",
   "instructions": [
     "Stand in front of a box or platform with your feet shoulder-width apart.",

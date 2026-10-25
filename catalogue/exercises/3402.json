@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-vertical",
   "description": "A pike push-up with your hands on two chairs so your head can drop lower.",
   "instructions": [
     "Set two sturdy chairs shoulder-width apart and grip them.",

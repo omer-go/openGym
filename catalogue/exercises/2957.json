@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat holding dumbbells at your sides with the front foot raised. It deepens the range for the quads and glutes.",
   "instructions": [
     "Hold a dumbbell in each hand and place your front foot on a low platform.",

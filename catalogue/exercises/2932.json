@@ -11,6 +11,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm kettlebell press from a kneeling position. Kneeling takes the legs out of it and challenges your trunk.",
   "instructions": [
     "Kneel on both knees with a kettlebell racked at your shoulder.",

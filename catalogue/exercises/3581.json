@@ -3,14 +3,16 @@
   "name": "lunge with leg lift",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core",
     "hip flexors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A lunge followed by lifting the back leg, working the glutes and balance.",
   "instructions": [
     "Stand tall and step one leg forward into a lunge.",

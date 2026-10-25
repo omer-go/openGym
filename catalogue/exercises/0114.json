@@ -3,13 +3,15 @@
   "name": "barbell step-up",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Step up onto a box with the bar on your back. Works the glutes and quads, one leg at a time.",
   "instructions": [
     "Stand in front of a bench or step with a barbell resting on your upper back.",

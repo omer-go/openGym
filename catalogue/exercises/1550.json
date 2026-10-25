@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with the other foot resting on a bench behind you, holding dumbbells. It hammers the quads and glutes and challenges balance.",
   "instructions": [
     "Hold a dumbbell in each hand and stand a step in front of a bench, facing away from it.",

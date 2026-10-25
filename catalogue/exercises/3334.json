@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one arm fly lying on the floor, a safe way to stretch and load the chest with a limited range.",
   "instructions": [
     "Lie on the floor with knees bent and a dumbbell in one hand over your chest.",

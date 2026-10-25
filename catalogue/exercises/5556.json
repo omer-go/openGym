@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "Push-up focusing on the slow lowering phase to build strength for full reps.",
   "instructions": [
     "Start at the top of a push-up with straight arms.",

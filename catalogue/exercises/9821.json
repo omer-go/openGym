@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "core",
   "description": "A plank with a leg lift into a mountain climber. It trains the core and raises the heart rate.",
   "instructions": [
     "Start in a high plank with hands under your shoulders.",

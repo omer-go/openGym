@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm seated press on the smith machine with a neutral grip. It trains the shoulder while the bar path stays guided.",
   "instructions": [
     "Set a bench under the smith bar and sit upright with your back supported.",

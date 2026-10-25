@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A side-lying leg kickback with a cable. It isolates the glutes.",
   "instructions": [
     "Lie on your side with a cuff on your top ankle.",

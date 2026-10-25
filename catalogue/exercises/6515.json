@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm chest-supported row with a neutral grip, letting you focus on each side of your back.",
   "instructions": [
     "Lean your chest against the pad and grip one handle, palm in.",

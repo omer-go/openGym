@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge with a shorter step and an upright torso. It emphasizes the quads.",
   "instructions": [
     "Stand tall with hands on your hips.",

@@ -11,6 +11,7 @@
     "shoulders"
   ],
   "category": "combat",
+  "unilateral": true,
   "description": "Cross punches thrown while balancing on one leg, which trains balance, rotation and core control.",
   "instructions": [
     "Stand on one leg with a slight knee bend and fists up.",

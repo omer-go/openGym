@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge combined with an overhead medicine ball press that links leg strength with shoulder work.",
   "instructions": [
     "Hold a medicine ball at chest height and stand tall.",

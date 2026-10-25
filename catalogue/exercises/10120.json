@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single leg step up with cable resistance that builds leg strength and balance one side at a time.",
   "instructions": [
     "Face a box with the cable handle held at your chest or by your side.",

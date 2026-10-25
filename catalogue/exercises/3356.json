@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward stepping lunge with cable tension, working quads and glutes.",
   "instructions": [
     "Hold a low cable handle at your chest and stand facing away from the stack.",

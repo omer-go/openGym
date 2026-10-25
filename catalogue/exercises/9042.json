@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with the rear foot raised on a bench, done on a smith machine. It targets the quads and glutes with extra stability.",
   "instructions": [
     "Place a bench behind the smith machine and rest your back foot on it.",

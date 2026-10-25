@@ -3,14 +3,15 @@
   "name": "side to wide squat",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A squat that starts with feet together and steps out to a wide stance. It trains the glutes and legs.",
   "instructions": [
     "Stand with your feet together and arms in front.",

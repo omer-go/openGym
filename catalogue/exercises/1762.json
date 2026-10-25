@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A pistol squat where you hold onto a support to help with balance. It builds single-leg strength and control on the way to an unassisted pistol.",
   "instructions": [
     "Stand next to a sturdy support and hold it with one or both hands.",

@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm overhead triceps extension with a cable. The overhead position stretches and works the long head of the triceps.",
   "instructions": [
     "Hold a handle from a low pulley overhead, elbow bent, with your upper arm close to your head.",

@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A single-leg squat where you reach down to touch the heel of the working foot. It challenges balance and leg strength.",
   "instructions": [
     "Stand on one leg with the other foot slightly off the floor.",

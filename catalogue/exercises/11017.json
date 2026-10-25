@@ -11,6 +11,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press done on both knees. The kneeling position takes the legs out so your shoulder and core do the work.",
   "instructions": [
     "Kneel on both knees with your hips tall and hold a dumbbell at shoulder height.",

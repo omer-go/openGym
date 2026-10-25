@@ -9,6 +9,8 @@
     "chest"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm hammer press on an incline with an exercise ball. It works the triceps and adds a balance challenge.",
   "instructions": [
     "Sit on an exercise ball with a dumbbell in one hand.",

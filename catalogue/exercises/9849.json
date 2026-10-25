@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A side plank where you open and close your top knee. It works the outer hips and the obliques.",
   "instructions": [
     "Lie on your side in a side plank, supported on your forearm with knees bent.",

@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single arm fly that sweeps the dumbbell from low up to the chest. It works the upper pecs and front shoulder.",
   "instructions": [
     "Stand with feet staggered and hold a dumbbell at your side with a slight elbow bend.",

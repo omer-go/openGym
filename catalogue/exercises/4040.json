@@ -3,14 +3,16 @@
   "name": "landmine rear lunge v. 2",
   "bodyPart": "upper legs",
   "equipment": "landmine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core",
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Reverse lunge holding the end of a landmine bar at your chest. The bar adds load and encourages an upright torso.",
   "instructions": [
     "Hold the bar end against your chest with both hands.",

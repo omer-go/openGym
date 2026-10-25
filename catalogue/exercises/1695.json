@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with a stability ball between your back and a wall for support, building one-sided leg strength.",
   "instructions": [
     "Place a stability ball between your lower back and a wall.",

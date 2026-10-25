@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A split squat done while holding the band out in front of you. It builds single-leg strength and core stability.",
   "instructions": [
     "Anchor the band at chest height and stand side-on to it.",

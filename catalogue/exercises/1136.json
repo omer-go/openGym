@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A one-leg squat holding the straps for support, building leg strength and balance.",
   "instructions": [
     "Hold the handles and stand on one leg, other leg forward.",

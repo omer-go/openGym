@@ -11,6 +11,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Hold two dumbbells overhead and lunge. The load above you trains balance, core and shoulder stability along with leg strength.",
   "instructions": [
     "Press two dumbbells overhead with straight arms.",

@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Hopping on one leg using mostly the ankles. It builds calf power and springy ankles.",
   "instructions": [
     "Stand on one leg with a slight knee bend and arms relaxed.",

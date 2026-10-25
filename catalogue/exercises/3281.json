@@ -3,13 +3,14 @@
   "name": "smith full squat",
   "bodyPart": "upper legs",
   "equipment": "smith machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A full-depth back squat on the smith machine, where the fixed bar path gives extra stability. It trains the glutes, quads and thighs.",
   "instructions": [
     "Set up the smith machine with the barbell at shoulder height.",

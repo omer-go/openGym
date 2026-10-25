@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg split squat using the smith bar for balance, with the back foot raised. It trains the quads and glutes one side at a time.",
   "instructions": [
     "Stand in front of the smith machine with your feet shoulder-width apart.",

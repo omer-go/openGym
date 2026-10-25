@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Split squat holding one dumbbell at your chest. It builds the legs and glutes one side at a time.",
   "instructions": [
     "Hold a dumbbell vertically at your chest and step into a long split stance.",

@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A hand-strengthening drill pressing the fingers into a ball.",
   "instructions": [
     "Hold a small ball in one palm.",

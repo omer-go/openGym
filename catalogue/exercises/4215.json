@@ -11,6 +11,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm version of the plate-loaded low row. Working one side at a time helps fix strength differences in your back.",
   "instructions": [
     "Sit with your chest on the pad and grab one handle.",

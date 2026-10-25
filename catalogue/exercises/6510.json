@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row from a high cable, pulling toward your torso to train the upper back and lats.",
   "instructions": [
     "Set a cable to a high position and hold the handle with one hand.",

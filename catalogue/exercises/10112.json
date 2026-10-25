@@ -10,6 +10,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm seated cable row that keeps the pull in the lats. Great for fixing side-to-side strength gaps.",
   "instructions": [
     "Sit at the cable station with your feet braced and grab the handle with one hand.",

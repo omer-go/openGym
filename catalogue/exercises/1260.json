@@ -9,6 +9,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm cable press from a decline angle. It trains the chest and triceps.",
   "instructions": [
     "Adjust the cable machine to a decline position.",

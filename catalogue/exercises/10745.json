@@ -9,6 +9,7 @@
     "core"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A seated hip mobility drill where you sweep one leg in a half circle. It warms up the hips.",
   "instructions": [
     "Sit tall on the floor with hands behind you for support.",

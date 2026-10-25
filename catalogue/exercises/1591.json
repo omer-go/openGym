@@ -10,6 +10,7 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
   "description": "An explosive single-leg push off the floor or a step. It builds leg drive useful for running and jumping.",
   "instructions": [
     "Stand in front of a low step with one foot planted on it.",

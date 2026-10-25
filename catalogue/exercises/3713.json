@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-legged calf raise holding a dumbbell for extra load. It builds calf strength and ankle balance.",
   "instructions": [
     "Hold a dumbbell in one hand and stand on the opposite leg, lightly touching a wall for balance.",

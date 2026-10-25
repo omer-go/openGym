@@ -3,12 +3,13 @@
   "name": "dumbbell stiff leg deadlift",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "With soft knees, you lower dumbbells down your legs and stand back up. It trains the hamstrings, glutes and lower back.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with an overhand grip.",

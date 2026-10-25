@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Plate-loaded machine press on an incline, one arm at a time, for upper chest.",
   "instructions": [
     "Sit on the machine and grip one handle.",

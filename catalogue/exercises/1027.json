@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A machine press done with one leg at a time, helping you build leg strength and fix imbalances.",
   "instructions": [
     "Sit on the machine and place one foot on the platform.",

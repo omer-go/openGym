@@ -3,14 +3,16 @@
   "name": "cable lateral lunge v. 2",
   "bodyPart": "upper legs",
   "equipment": "cable",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A second variation of the cable side lunge for the glutes and inner thighs.",
   "instructions": [
     "Hold a cable handle at chest height, standing sideways to the stack.",

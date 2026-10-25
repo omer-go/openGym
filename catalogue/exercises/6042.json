@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged hip hinge holding weighted bottles. It works the hamstrings and glutes and challenges balance.",
   "instructions": [
     "Stand on one leg holding a bottle in each hand, with a slight bend in the knee.",

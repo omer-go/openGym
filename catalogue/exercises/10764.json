@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "carry",
   "description": "A single-leg press-like squat on a sled while lying back. It builds leg strength with back support.",
   "instructions": [
     "Lie back on the sled with one foot on the platform.",

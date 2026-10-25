@@ -9,6 +9,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm lying dumbbell press. The weight lowers to the chest side and presses up, working the pecs and triceps.",
   "instructions": [
     "Lie flat on a bench with your back supported and feet flat on the ground.",

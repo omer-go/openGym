@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "core",
   "description": "A dead bug with added weight to increase core work.",
   "instructions": [
     "Lie on your back holding a weight above your chest.",

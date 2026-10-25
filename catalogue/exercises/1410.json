@@ -3,13 +3,15 @@
   "name": "barbell lateral lunge",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "With a barbell on your upper back, step to the side and sit into a lateral lunge. It works the glutes, inner thighs and quads.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a barbell across your upper back.",

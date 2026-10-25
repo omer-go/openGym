@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip thrust with a landmine bar across the hips. It hits each glute separately and challenges balance.",
   "instructions": [
     "Rest your upper back on a bench with a padded landmine bar across your hips.",

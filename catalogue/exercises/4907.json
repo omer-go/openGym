@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with the top leg lifted, a second variation. It adds hip work to the oblique hold.",
   "instructions": [
     "Set up in a side plank on your forearm with your body in a line.",

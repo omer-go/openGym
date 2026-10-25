@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A second version of the one arm overhead band extension.",
   "instructions": [
     "Anchor or stand on the band and hold it overhead in one hand.",

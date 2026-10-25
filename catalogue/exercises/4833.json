@@ -11,6 +11,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm Arnold press with a rotating grip. It works all heads of the shoulder while challenging core stability.",
   "instructions": [
     "Stand tall holding a dumbbell at shoulder height, palm facing you.",

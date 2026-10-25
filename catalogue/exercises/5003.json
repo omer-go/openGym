@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "One-legged calf raise from a stair step for a deep stretch. It builds calf strength and ankle stability.",
   "instructions": [
     "Stand on the edge of a stair on one foot, holding the rail for balance.",

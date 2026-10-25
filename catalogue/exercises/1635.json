@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm reverse grip preacher curl on a cable. It works the brachialis and forearms along with the biceps.",
   "instructions": [
     "Adjust the cable machine so that the pulley is at the lowest position.",

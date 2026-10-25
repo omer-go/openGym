@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A stationary lunge with dumbbells at your sides. It strengthens one leg at a time, mainly the quads and glutes.",
   "instructions": [
     "Hold a dumbbell in each hand and take a long stance, one foot forward.",

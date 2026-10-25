@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge stepping forward while holding a kettlebell, working the thighs and glutes.",
   "instructions": [
     "Hold a kettlebell at your chest or by your side.",

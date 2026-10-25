@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Squat with a landmine bar held at your chest, mimicking a hack squat.",
   "instructions": [
     "Hold the end of a landmine bar at your chest.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "isometric",
+  "pattern": "core",
   "description": "A plank where one arm lifts at a time, challenging core stability and anti-rotation.",
   "instructions": [
     "Set up in a forearm plank with elbows under shoulders.",

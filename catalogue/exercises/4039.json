@@ -11,6 +11,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A supported one arm landmine row with your free hand and knee on a bench. It keeps the lower back relaxed while you pull.",
   "instructions": [
     "Set the landmine bar next to a bench and place one hand and knee on the bench.",

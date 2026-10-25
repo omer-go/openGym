@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A side plank with the top leg lifting inward, working the inner thighs and obliques.",
   "instructions": [
     "Set up in a side plank with the bottom knee bent.",

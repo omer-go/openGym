@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl that pauses at the halfway point to increase biceps tension.",
   "instructions": [
     "Stand holding a dumbbell at your side, palm forward.",

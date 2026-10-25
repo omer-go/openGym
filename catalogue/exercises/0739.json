@@ -3,13 +3,14 @@
   "name": "sled 45° leg press",
   "bodyPart": "upper legs",
   "equipment": "sled machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "On a 45 degree sled, you press the platform away with your feet. Works the quads and glutes.",
   "instructions": [
     "Adjust the seat and footplate of the sled machine to a comfortable position.",

@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Stepping onto a bench or box one leg at a time. It builds leg strength and single-leg control.",
   "instructions": [
     "Stand facing a sturdy step or bench.",

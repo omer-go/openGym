@@ -3,13 +3,14 @@
   "name": "weighted cossack squats (male)",
   "bodyPart": "upper legs",
   "equipment": "weighted",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "lunge",
   "description": "A weighted side-to-side squat, shifting weight deeply over one leg with the other straight. It trains the glutes, quads and adductors.",
   "instructions": [
     "Stand with your feet wider than shoulder-width apart and toes pointing slightly outward.",

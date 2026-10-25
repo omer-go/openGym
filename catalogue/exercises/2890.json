@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A move that moves from forearm plank to full push-up position, training the chest, arms and core.",
   "instructions": [
     "Start in a forearm plank with elbows under shoulders.",

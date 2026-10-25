@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A seated machine squat using one leg in a wide stance. It loads the quads, glutes and inner thighs with back support.",
   "instructions": [
     "Sit in the machine with your back against the pad and shoulders under the supports.",

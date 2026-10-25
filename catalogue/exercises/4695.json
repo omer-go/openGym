@@ -10,6 +10,8 @@
     "upper back"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A one-arm upright row with a band. It works the shoulders and traps.",
   "instructions": [
     "Stand on the band and hold the other end in one hand at your thigh.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A band-assisted single-arm pull-up on gymnastic rings. The rings add instability and grip demand.",
   "instructions": [
     "Hang a band from the rings or bar and place your foot in it.",

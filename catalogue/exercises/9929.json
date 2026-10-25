@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A single leg squat on a hack squat machine. It adds stability while loading one leg at a time.",
   "instructions": [
     "Set your back against the pad and step onto the platform.",

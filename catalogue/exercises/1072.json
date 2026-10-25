@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-vertical",
   "description": "Dip between straps. It works the chest and triceps.",
   "instructions": [
     "Support yourself on the straps with arms straight.",

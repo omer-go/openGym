@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A balance hop on one leg in four directions. It trains power, balance and ankle stability.",
   "instructions": [
     "Stand on one leg with a soft knee.",

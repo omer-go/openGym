@@ -9,6 +9,8 @@
     "chest"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm neutral-grip press while lying on an exercise ball. It trains the triceps while the core keeps you stable.",
   "instructions": [
     "Sit on an exercise ball with your feet flat on the ground and your back straight.",

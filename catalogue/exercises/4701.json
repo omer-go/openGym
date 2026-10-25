@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A leg lift from a face-down position against a band. It trains the glutes and lower back.",
   "instructions": [
     "Lie face down with a band looped around one foot and anchored under you.",

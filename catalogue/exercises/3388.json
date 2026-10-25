@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-horizontal",
   "description": "A bodyweight row under a sturdy support between two chairs for the upper back and arms.",
   "instructions": [
     "Set a sturdy bar or table edge between two stable chairs and lie under it.",

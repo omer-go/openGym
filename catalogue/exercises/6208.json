@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank on the left side with the top leg lifted. It trains the obliques, hips and shoulder stability.",
   "instructions": [
     "Lie on your left side and prop up on your left forearm, elbow under your shoulder.",

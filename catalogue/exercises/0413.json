@@ -3,13 +3,14 @@
   "name": "dumbbell squat",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Holding a dumbbell at your chest or sides, you squat down and stand back up. It builds the thighs and glutes.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand at your sides.",

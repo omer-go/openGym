@@ -11,6 +11,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row with your chest braced on an incline bench. It lets you focus on each side of the back.",
   "instructions": [
     "Lie face down on an incline bench holding a dumbbell in one hand.",

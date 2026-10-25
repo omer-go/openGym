@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-handed snatch that takes the bar from the floor to overhead in one fast pull. Needs power and coordination.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes pointing slightly outwards.",

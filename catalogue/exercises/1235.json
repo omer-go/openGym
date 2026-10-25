@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A single-arm row on a seated machine. It lets you load one side of the back at a time.",
   "instructions": [
     "Sit at the machine with your chest on the pad and grab one handle.",

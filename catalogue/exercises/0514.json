@@ -3,13 +3,14 @@
   "name": "jump squat",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "plyometrics",
+  "pattern": "squat",
   "description": "A bodyweight squat finished with an explosive jump. It builds leg power and conditioning.",
   "instructions": [
     "Stand with your feet shoulder-width apart.",

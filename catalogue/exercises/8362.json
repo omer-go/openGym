@@ -9,6 +9,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm side raise using band tension to train the middle part of the shoulder.",
   "instructions": [
     "Stand on the band and hold the handle in one hand at your side.",

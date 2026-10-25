@@ -3,14 +3,16 @@
   "name": "dumbbell lateral lunge",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A sideways lunge with dumbbells. It trains the glutes and inner thighs.",
   "instructions": [
     "Hold a dumbbell at your chest or sides.",

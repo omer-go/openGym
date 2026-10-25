@@ -8,6 +8,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing, you extend one arm overhead with a dumbbell, bending and straightening the elbow. It works the back of the upper arm.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand.",

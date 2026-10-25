@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm cable row from a kneeling position. Kneeling removes leg drive so your back does the pulling.",
   "instructions": [
     "Set a cable at chest height and kneel facing it.",

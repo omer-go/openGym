@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge held in the bottom position where you pulse up and down with your arms overhead. It burns the legs and challenges balance.",
   "instructions": [
     "Stand tall and raise both arms straight overhead.",

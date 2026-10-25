@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A bench press with one kettlebell at a time, adding stability demand for the shoulder and core.",
   "instructions": [
     "Lie on a bench holding a kettlebell above your chest.",

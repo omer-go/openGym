@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one arm dumbbell bench press with a wide elbow path, stressing the chest while your core resists rotation.",
   "instructions": [
     "Lie on a bench with one dumbbell held over your chest.",

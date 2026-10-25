@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Rear-foot elevated split squat with a dumbbell held at the chest.",
   "instructions": [
     "Place your rear foot on a bench and hold a dumbbell at your chest.",

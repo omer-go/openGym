@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A one legged squat with the working foot raised on a step. It builds leg strength and balance.",
   "instructions": [
     "Stand on a bench or box on one leg with the other leg hanging off the edge.",

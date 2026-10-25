@@ -10,6 +10,8 @@
     "obliques"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "You curl yourself up with one arm holding a single strap, a tough unilateral biceps move.",
   "instructions": [
     "Hold one handle palm up and lean back at an angle.",

@@ -10,6 +10,7 @@
     "calves"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "Tap your toes in different directions while balancing. It works hip stability.",
   "instructions": [
     "Stand on one leg.",

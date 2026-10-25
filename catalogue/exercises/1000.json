@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-leg calf raise with a band, rising onto the ball of the foot. It trains the calves.",
   "instructions": [
     "Stand with your feet hip-width apart and place the band around the ball of your foot.",

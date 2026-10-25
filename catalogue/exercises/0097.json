@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side split squat with the bar on your back, sinking toward one leg. Works the quads and adductors.",
   "instructions": [
     "Stand with your feet wider than shoulder-width apart, toes pointing slightly outwards.",

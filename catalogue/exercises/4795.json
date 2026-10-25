@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up onto a bench using one leg at a time. It builds strength in the thighs and glutes and helps balance.",
   "instructions": [
     "Stand facing a sturdy bench and place one foot fully on top.",

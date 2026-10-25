@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A landmine press with a band adding extra resistance on the way up.",
   "instructions": [
     "Set up a landmine with a band attached and hold the end of the bar at your shoulder.",

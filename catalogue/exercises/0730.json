@@ -9,6 +9,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing on one foot on a slide board, you slide your other leg back and forth. Works the legs and glutes with a balance challenge.",
   "instructions": [
     "Start by standing with one foot on a platform or slide board.",

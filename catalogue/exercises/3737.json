@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A seated overhead press with one kettlebell, which removes leg drive and keeps the work on the shoulder.",
   "instructions": [
     "Sit on a bench with a kettlebell held at your shoulder.",

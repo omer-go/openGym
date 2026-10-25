@@ -12,6 +12,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A combo move where you lift into a superman on the floor, then press into a push-up.",
   "instructions": [
     "Lie face down with arms extended in front.",

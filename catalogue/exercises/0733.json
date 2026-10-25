@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up on a box or bench using one leg. It builds the legs and balance.",
   "instructions": [
     "Stand in front of a sturdy step.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A pushup where your hands are behind you, working the triceps hard.",
   "instructions": [
     "Sit on the floor and place your hands behind you, fingers pointing toward your hips.",

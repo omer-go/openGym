@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A standing overhead press with weight in hand. It builds shoulder and triceps strength.",
   "instructions": [
     "Stand with feet shoulder width apart, weight at shoulder height.",

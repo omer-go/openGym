@@ -10,6 +10,8 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with a sprint-style arm drive and alternating legs.",
   "instructions": [
     "Stand tall.",

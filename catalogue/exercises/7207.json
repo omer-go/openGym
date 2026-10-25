@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with the rear foot elevated and a band adding resistance.",
   "instructions": [
     "Stand in front of a bench, band under your front foot and held at your shoulders.",

@@ -8,6 +8,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A lying hamstring curl on a machine using one leg at a time. It helps balance strength between legs.",
   "instructions": [
     "Lie face down on the machine and place one leg under the pad above your heel.",

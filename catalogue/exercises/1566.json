@@ -11,6 +11,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A squat while holding a kettlebell locked out overhead with one arm. It trains leg strength together with shoulder stability and core control.",
   "instructions": [
     "Press a kettlebell overhead with one arm and lock out your elbow.",

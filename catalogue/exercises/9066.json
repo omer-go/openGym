@@ -10,6 +10,8 @@
     "ankles"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Hopping on one leg forward, back and side to side trains balance, ankle stability and power.",
   "instructions": [
     "Stand on one leg with a soft knee.",

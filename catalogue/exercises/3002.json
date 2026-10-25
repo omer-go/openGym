@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm push-up from the knees, a stepping stone toward the full single-arm version. It builds chest and trunk strength.",
   "instructions": [
     "Kneel and place one hand under your shoulder, with the other arm behind your back.",

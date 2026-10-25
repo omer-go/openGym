@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl on a plate-loaded preacher machine, isolating the biceps.",
   "instructions": [
     "Sit at the machine with your upper arm resting on the pad and grip the handle.",

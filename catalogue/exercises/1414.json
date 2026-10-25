@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Rest your arm on a preacher bench and curl a dumbbell with an overhand grip. It targets the biceps and forearms with no body swing.",
   "instructions": [
     "Sit on a preacher bench with your chest against the pad and your arm extended over the edge of the bench, holding a dumbbell with an underhand grip.",

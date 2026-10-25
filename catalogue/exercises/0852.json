@@ -3,13 +3,14 @@
   "name": "weighted squat",
   "bodyPart": "upper legs",
   "equipment": "weighted",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat with weight held at the chest or shoulders. It builds the glutes and thighs.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes pointing slightly outward.",

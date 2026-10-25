@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "Hinge forward and row a kettlebell to your hip with one arm. Targets the lats and upper back while your core keeps you steady.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell in one hand with an overhand grip.",

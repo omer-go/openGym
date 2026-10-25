@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with the bar on your back. Challenges the quads, glutes and balance.",
   "instructions": [
     "Stand with your feet shoulder-width apart and hold a barbell across your upper back.",

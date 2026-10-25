@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A push-up with one hand on a stability ball. It makes the chest and shoulders work harder to stay stable.",
   "instructions": [
     "Get into a push-up position with one hand on a stability ball and one on the floor.",

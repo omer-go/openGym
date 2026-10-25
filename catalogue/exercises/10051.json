@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge done with a narrow stance and no weight. It targets the quads and glutes while challenging balance.",
   "instructions": [
     "Stand with feet close together and hands on your hips or in front of you.",

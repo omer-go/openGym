@@ -9,6 +9,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated single-arm raise that targets the front of the shoulder without leg drive helping out.",
   "instructions": [
     "Sit upright on a bench holding a dumbbell in one hand, arm down at your thigh.",

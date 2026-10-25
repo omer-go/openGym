@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Press one dumbbell up on an incline bench to train the upper chest and front shoulder. Working one arm at a time helps balance both sides.",
   "instructions": [
     "Adjust the incline bench to a 45-degree angle.",

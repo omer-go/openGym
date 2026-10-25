@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up that starts from lying flat on the floor each rep, so every rep begins from a dead stop and builds pressing strength.",
   "instructions": [
     "Lie face down with your hands under your shoulders.",

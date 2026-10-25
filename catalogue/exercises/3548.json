@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "carry",
   "description": "A one-handed overhead carry, walking while holding a dumbbell above your head. It trains the shoulders, core and balance.",
   "instructions": [
     "Stand tall with your feet shoulder-width apart, holding a dumbbell in one hand.",

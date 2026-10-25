@@ -10,6 +10,7 @@
     "upper chest"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A bench press started from a dead stop on safety pins, using a standard grip. It builds strength off the chest without any bounce.",
   "instructions": [
     "Set the pins at a height just above your chest and lie on the bench.",

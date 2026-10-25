@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm standing cable curl. The cable keeps the biceps under tension from bottom to top.",
   "instructions": [
     "Stand facing the cable machine with your feet shoulder-width apart.",

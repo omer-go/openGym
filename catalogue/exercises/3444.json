@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up onto a sturdy chair, a simple single-leg exercise.",
   "instructions": [
     "Face a sturdy chair.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "An overhead press with a heavy viking-press frame, building shoulders and triceps.",
   "instructions": [
     "Stand inside the frame and grab the handles.",

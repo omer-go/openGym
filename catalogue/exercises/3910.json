@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up wearing a weighted vest for extra load on the chest and triceps.",
   "instructions": [
     "Put on a weighted vest and start in a plank with hands under shoulders.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step up that flows into a lunge while holding dumbbells. Builds single leg strength and balance.",
   "instructions": [
     "Hold a dumbbell in each hand and stand facing a sturdy box or step.",

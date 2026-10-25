@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge holding a landmine bar at the chest, working the quads and glutes.",
   "instructions": [
     "Hold the end of a landmine bar at your chest.",

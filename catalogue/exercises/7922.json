@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated one-arm cable curl that keeps tension on the biceps. Good for fixing strength gaps between arms.",
   "instructions": [
     "Sit upright with a low cable handle in one hand.",

@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "One forearm rests over a bench with the palm facing in, and you move the dumbbell with the wrist. A grip and forearm builder done one side at a time.",
   "instructions": [
     "Sit on a bench with a dumbbell in one hand and your arm extended over the bench, palm facing up.",

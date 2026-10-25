@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "Press dumbbells overhead one arm at a time. It builds the shoulders and triceps.",
   "instructions": [
     "Stand or sit with dumbbells at shoulder height.",

@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing one-arm dumbbell curl. It builds the biceps on one side at a time.",
   "instructions": [
     "Stand up straight with a dumbbell in one hand, palm facing forward and arm fully extended.",

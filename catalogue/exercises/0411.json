@@ -3,13 +3,15 @@
   "name": "dumbbell single leg squat",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "You squat down on one leg while holding a dumbbell, then stand up. It builds single-leg strength and balance.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand.",

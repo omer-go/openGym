@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm press done lying on your side on a bench. It targets the chest while the core resists rolling.",
   "instructions": [
     "Lie on your side on a flat bench with a dumbbell in the top hand.",

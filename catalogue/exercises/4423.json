@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-horizontal",
   "description": "A bodyweight row hanging under a barbell set in a rack, using a close underhand grip to target the lats and biceps.",
   "instructions": [
     "Set a barbell in a rack at about waist height.",

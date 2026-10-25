@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg bridge curl with the heel on a towel. It's a tougher hamstring and glute exercise.",
   "instructions": [
     "Lie on your back with one heel on a towel on a smooth floor.",

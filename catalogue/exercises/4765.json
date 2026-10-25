@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hyperextension on the glute ham bench. It strengthens the glutes and hamstrings and the lower back.",
   "instructions": [
     "Set up on the bench with one foot planted and the other lifted behind you.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up combined with side steps. It trains the chest and shoulders with extra coordination.",
   "instructions": [
     "Start in a high plank.",

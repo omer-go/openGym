@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "One-legged calf raise from the edge of a step. It builds calf strength with a deep stretch.",
   "instructions": [
     "Stand on one foot on the edge of a step, holding a rail for balance.",

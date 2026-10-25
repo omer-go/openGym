@@ -9,6 +9,8 @@
     "ankles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg seated calf raise on a machine. Working each leg alone helps balance strength and targets the soleus.",
   "instructions": [
     "Sit on the machine and place the ball of one foot on the platform.",

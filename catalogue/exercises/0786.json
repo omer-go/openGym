@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "olympic",
+  "pattern": "squat",
   "description": "An Olympic lift where you dip, drive the bar overhead and catch it in a split stance. It builds explosive power and overhead stability.",
   "instructions": [
     "Start with the barbell resting on your shoulders, with your feet shoulder-width apart.",

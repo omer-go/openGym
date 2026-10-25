@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A standing one arm row using a towel as the handle, pulled toward the chest. It trains the upper back with very little equipment.",
   "instructions": [
     "Stand with your feet shoulder-width apart, knees slightly bent, and hold a towel with one hand.",

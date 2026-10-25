@@ -3,14 +3,16 @@
   "name": "power sled rear lunge v. 2",
   "bodyPart": "upper legs",
   "equipment": "sled machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "carry",
   "description": "A rear lunge using a power sled for resistance. Builds glute and thigh strength.",
   "instructions": [
     "Hold the sled handles and stand tall with feet together.",

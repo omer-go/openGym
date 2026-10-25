@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-armed incline press on a plate-loaded lever machine. It trains the upper chest one side at a time.",
   "instructions": [
     "Sit on the machine and grip one handle.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A forward lunge combined with an overhead press of a kettlebell. It trains legs and shoulders together.",
   "instructions": [
     "Hold a kettlebell at your shoulder in the rack position.",

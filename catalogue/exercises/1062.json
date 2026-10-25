@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip thrust with weight resting on your hips. It strengthens each glute separately and fixes side-to-side gaps.",
   "instructions": [
     "Rest your upper back on a bench and place the weight on your hips.",

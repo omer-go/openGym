@@ -3,13 +3,14 @@
   "name": "resistance band lateral step and squat",
   "bodyPart": "upper legs",
   "equipment": "resistance band",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A sideways step into a squat with band tension to train the glutes and legs.",
   "instructions": [
     "Put the band around your thighs and stand tall.",

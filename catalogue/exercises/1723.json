@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm triceps pushdown on a cable. It isolates the triceps on one side at a time.",
   "instructions": [
     "Stand facing a cable machine with a straight bar attachment at chest height.",

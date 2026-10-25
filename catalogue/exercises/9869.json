@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable reverse fly with a palm-up grip, hinged at 45 degrees.",
   "instructions": [
     "Stand at a cable station and take one handle with your palm up.",

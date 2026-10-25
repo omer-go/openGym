@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing glute kickback with a band while leaning forward, isolating one hip at a time.",
   "instructions": [
     "Loop a resistance band around your ankle and anchor the other end low in front of you.",

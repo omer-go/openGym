@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear-foot-elevated split squat holding a kettlebell, with a free hand on a support. Builds single-leg strength in the quads and glutes.",
   "instructions": [
     "Hold a kettlebell at your chest in one hand and rest the other hand on a sturdy support, standing away from a bench.",

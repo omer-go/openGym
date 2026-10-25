@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing, you curl one dumbbell with an overhand grip. It works the biceps, the muscle under them and the forearm.",
   "instructions": [
     "Stand up straight with your feet shoulder-width apart and hold a dumbbell in one hand with an overhand grip.",

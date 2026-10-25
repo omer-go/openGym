@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "Pulling a kettlebell from the floor to the shoulder with one arm. It trains explosive hip power and coordination.",
   "instructions": [
     "Stand over a kettlebell and hinge to grip it with one hand.",

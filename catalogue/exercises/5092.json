@@ -9,6 +9,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Lift one dumbbell to the front with your palm facing up. This variation trains the front delt and upper chest.",
   "instructions": [
     "Stand tall with a dumbbell in one hand, palm facing forward.",

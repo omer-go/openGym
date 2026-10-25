@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A hack squat on the sled using one leg at a time. It isolates each quad and glute with solid back support.",
   "instructions": [
     "Position yourself in the hack squat sled with your back and shoulders against the pads.",

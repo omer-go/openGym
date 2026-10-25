@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A seated overhead press with one dumbbell. Working one arm at a time shows any imbalances.",
   "instructions": [
     "Sit on a bench with back support, holding a dumbbell at your shoulder.",

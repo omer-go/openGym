@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Side lunge holding a kettlebell at the chest. It trains the thighs, glutes and inner thighs in the frontal plane.",
   "instructions": [
     "Hold the kettlebell at your chest with both hands and stand tall.",

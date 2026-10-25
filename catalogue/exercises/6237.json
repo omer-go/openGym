@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl on a ring. It builds the biceps with a lot of control.",
   "instructions": [
     "Hold one ring and lean back.",

@@ -10,6 +10,8 @@
     "hip flexors"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge held in place that ends with a kick from the back leg. It works the legs and balance.",
   "instructions": [
     "Step into a lunge with your front knee over your ankle.",

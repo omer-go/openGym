@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge paired with a bicep curl. It trains the biceps, quads and glutes together.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with your palms facing forward.",

@@ -3,13 +3,14 @@
   "name": "band squat",
   "bodyPart": "upper legs",
   "equipment": "band",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat with a band above the knees. It trains the glutes and thighs.",
   "instructions": [
     "Stand with your feet shoulder-width apart, with the band placed just above your knees.",

@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A basic bodyweight squat that trains the legs and hips and builds a solid movement pattern.",
   "instructions": [
     "Stand with feet shoulder-width apart, toes slightly out.",

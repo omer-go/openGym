@@ -8,6 +8,8 @@
     "hip flexors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated knee extension with a light weight on the ankle. It adds load to build thigh strength.",
   "instructions": [
     "Strap a light ankle weight on and sit tall on a chair.",

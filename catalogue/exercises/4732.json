@@ -3,14 +3,15 @@
   "name": "dumbbell cossack squat v. 2",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "inner thighs"
   ],
   "category": "strength",
+  "pattern": "lunge",
   "description": "A deep side-to-side squat holding a dumbbell at the chest. It works the thighs and glutes and opens up the hips.",
   "instructions": [
     "Stand with feet wide and hold a dumbbell at your chest.",

@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a Smith machine bar across your back for loaded leg work.",
   "instructions": [
     "Set the bar across your upper back and stand in front of a bench.",

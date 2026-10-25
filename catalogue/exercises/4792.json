@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged hip thrust with your upper back on a bench, a second variation. It hits the glutes hard without any equipment.",
   "instructions": [
     "Rest your upper back on a bench with one foot flat on the floor.",

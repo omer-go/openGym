@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A hard push up with one hand on a medicine ball, challenging balance and chest strength.",
   "instructions": [
     "Place one hand on the ball and the other on the floor in a plank.",

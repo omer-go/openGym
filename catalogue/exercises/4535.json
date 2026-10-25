@@ -10,6 +10,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A sit-up while holding a kettlebell overhead with one arm. It adds shoulder stability to an abdominal move.",
   "instructions": [
     "Lie on your back with knees bent and a kettlebell held straight up in one hand.",

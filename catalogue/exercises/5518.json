@@ -11,6 +11,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "One-arm cable row from a kneeling position, leaning forward to give a long pull for the lats and mid back.",
   "instructions": [
     "Kneel facing a low cable with a handle in one hand.",

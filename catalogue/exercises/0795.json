@@ -8,6 +8,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A bodyweight hamstring curl done standing on one leg, bringing the heel toward the glutes. It trains the hamstrings and balance.",
   "instructions": [
     "Stand with your feet hip-width apart and your hands on your hips.",

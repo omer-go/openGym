@@ -3,13 +3,15 @@
   "name": "kettlebell lunge pass through",
   "bodyPart": "upper legs",
   "equipment": "kettlebell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge where you pass the kettlebell around your front leg at the bottom. Works the legs and glutes while challenging your balance and core.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell in front of your chest with both hands.",

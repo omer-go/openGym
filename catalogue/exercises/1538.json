@@ -12,6 +12,7 @@
     "calves"
   ],
   "category": "olympic",
+  "pattern": "push-vertical",
   "description": "An overhead lift where you dip, drive and catch the bar with locked arms in a split stance.",
   "instructions": [
     "Rack the bar on your front shoulders with elbows slightly forward.",

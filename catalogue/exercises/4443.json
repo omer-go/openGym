@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear-foot-elevated split squat with a dumbbell in one hand and the other hand on a support. Builds single-leg strength in the quads and glutes.",
   "instructions": [
     "Hold a dumbbell in one hand and rest the other hand on a sturdy support, standing away from a bench.",

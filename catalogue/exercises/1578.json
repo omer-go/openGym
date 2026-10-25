@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A shallow single-leg squat that is easy on the knees. It builds balance and leg strength.",
   "instructions": [
     "Stand on one leg with the other foot lifted slightly off the floor.",

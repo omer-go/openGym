@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "An explosive one-leg glute bridge where you pop your hips off the floor. It builds glute power and balance.",
   "instructions": [
     "Lie on your back with one foot planted and the other leg lifted.",

@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl with a cable using an overhand grip. It works the forearms and the outer part of the biceps.",
   "instructions": [
     "Stand facing a cable machine with your feet shoulder-width apart.",

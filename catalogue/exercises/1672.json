@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm Zottman curl over a preacher bench: curl up palm up, turn the palm down to lower. It works biceps and forearms.",
   "instructions": [
     "Sit on a preacher curl bench and hold a dumbbell in one hand with an underhand grip.",

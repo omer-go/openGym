@@ -3,13 +3,15 @@
   "name": "lever horizontal one leg press",
   "bodyPart": "upper legs",
   "equipment": "leverage machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A horizontal machine leg press done one leg at a time. Builds the glutes and quads.",
   "instructions": [
     "Adjust the seat of the machine so that your knees are at a 90-degree angle when your feet are on the footplate.",

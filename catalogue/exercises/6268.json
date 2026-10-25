@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm wrist curl with a neutral grip on an EZ barbell. It targets the forearms.",
   "instructions": [
     "Stand holding one end of an EZ bar.",

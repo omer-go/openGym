@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl braced on a preacher pad for strict biceps isolation.",
   "instructions": [
     "Sit at a preacher bench with your upper arm on the pad.",

@@ -3,13 +3,14 @@
   "name": "sled lying squat",
   "bodyPart": "upper legs",
   "equipment": "sled machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "carry",
   "description": "Lying on a sled, you bend your knees and press the platform away. Works the quads and glutes.",
   "instructions": [
     "Adjust the sled machine to a comfortable weight.",

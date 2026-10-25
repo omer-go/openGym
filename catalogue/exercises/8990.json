@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Seated sideways on a machine, you pull one arm back in a wide arc. It isolates the rear delt.",
   "instructions": [
     "Sit sideways on the machine with your chest against the pad.",

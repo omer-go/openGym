@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm dumbbell press done with your upper back on a stability ball. Your core has to stay tight to keep you steady while the chest presses.",
   "instructions": [
     "Sit on an exercise ball with a dumbbell in one hand, feet flat on the ground.",

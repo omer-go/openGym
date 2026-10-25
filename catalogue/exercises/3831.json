@@ -10,6 +10,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Lying on your back, you curl a towel looped around one foot with an overhand grip. It targets your forearms and biceps.",
   "instructions": [
     "Lie on your back and loop a towel around one foot.",

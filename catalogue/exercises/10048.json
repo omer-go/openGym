@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with cable resistance that adds load to the legs and hips.",
   "instructions": [
     "Stand facing a box or bench with a cable handle in your hands.",

@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A deep split squat holding dumbbells at your sides, great for loading the quads and glutes one leg at a time.",
   "instructions": [
     "Hold a dumbbell in each hand and step into a long split stance.",

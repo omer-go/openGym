@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated biceps curl with a cable, working one arm at a time. It gives constant tension throughout the movement.",
   "instructions": [
     "Sit facing a low cable and hold the handle with one hand.",

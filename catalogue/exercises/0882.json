@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat holding a dumbbell. It builds leg strength and balance.",
   "instructions": [
     "Hold a dumbbell at your chest or by your side.",

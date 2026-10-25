@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-vertical",
   "description": "A standing overhead press without weight, good for learning the pressing path or warming up.",
   "instructions": [
     "Stand tall with feet shoulder-width apart and fists at your shoulders.",

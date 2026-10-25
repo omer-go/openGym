@@ -9,6 +9,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Seated, you rotate a dumbbell with one forearm, turning the palm up and down. It trains forearm control and wrist strength.",
   "instructions": [
     "Sit on a bench with your back straight and hold a dumbbell in one hand, resting it on your thigh.",

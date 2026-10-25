@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A single-arm dumbbell press with your upper back on a stability ball. Staying balanced makes your core work as hard as the chest.",
   "instructions": [
     "Sit on a stability ball with a dumbbell and walk your feet out until your upper back rests on the ball.",

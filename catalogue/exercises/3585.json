@@ -11,6 +11,8 @@
     "hip flexors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip hinge that ends with a knee drive, training balance, hamstrings and glutes.",
   "instructions": [
     "Stand on one leg with a slight knee bend.",

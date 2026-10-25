@@ -3,13 +3,15 @@
   "name": "dumbbell reverse lunge from deficit",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Reverse lunge with the front foot raised for a deeper range, hitting the glutes and quads.",
   "instructions": [
     "Stand with your front foot on a low platform, holding dumbbells at your sides.",

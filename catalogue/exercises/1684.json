@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single leg step up combined with a bicep curl. It trains the biceps, glutes and balance.",
   "instructions": [
     "Stand in front of a step or platform with a dumbbell in each hand, palms facing your body.",

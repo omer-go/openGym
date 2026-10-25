@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with a deep, low range that challenges your front thigh and glutes while building balance and hip mobility.",
   "instructions": [
     "Step one foot forward into a long split stance.",

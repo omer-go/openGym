@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Squat on one leg, building strength and balance.",
   "instructions": [
     "Stand on one leg with the other lifted in front.",

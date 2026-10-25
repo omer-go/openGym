@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A basic bodyweight squat that builds leg strength and mobility.",
   "instructions": [
     "Stand with feet shoulder-width apart.",

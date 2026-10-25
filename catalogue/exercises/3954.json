@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "core",
   "description": "Rotate from a front plank into a side plank to train the core.",
   "instructions": [
     "Start in a front plank on your forearms or hands.",

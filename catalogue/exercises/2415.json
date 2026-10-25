@@ -9,6 +9,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A lateral raise done while leaning away from a support for a greater range on the side delt.",
   "instructions": [
     "Hold a support with one hand and lean your body away.",

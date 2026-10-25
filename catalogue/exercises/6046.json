@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A stationary lunge holding bottles at your sides. It builds single-leg strength in the quads and glutes.",
   "instructions": [
     "Hold a bottle in each hand and step into a long split stance.",

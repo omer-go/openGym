@@ -11,6 +11,7 @@
     "lower back"
   ],
   "category": "strength",
+  "pattern": "pull-horizontal",
   "description": "A row starting from the rack pins, resetting every rep for strict pulling.",
   "instructions": [
     "Set the bar on pins at knee height.",

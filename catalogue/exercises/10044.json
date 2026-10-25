@@ -12,6 +12,7 @@
     "core"
   ],
   "category": "olympic",
+  "pattern": "hinge",
   "description": "A powerful one-arm lift where the dumbbell goes from hip height to overhead in one motion.",
   "instructions": [
     "Stand with a dumbbell hanging in front of your thighs, hips hinged slightly.",

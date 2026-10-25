@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A strict overhead press where you clean or lift the bar to your shoulders without a rack.",
   "instructions": [
     "Lift the barbell from the floor to your collarbone using a safe clean or deadlift and curl.",

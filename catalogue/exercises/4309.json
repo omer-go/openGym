@@ -10,6 +10,7 @@
     "quadriceps"
   ],
   "category": "pilates",
+  "unilateral": true,
   "description": "A pilates move where you alternate pulling one knee in while the other leg extends. It builds core control and coordination.",
   "instructions": [
     "Lie on your back, lift your head and shoulders, and bring both knees toward your chest.",

@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Single arm band press that travels across the body, working the chest and core.",
   "instructions": [
     "Anchor the band behind you and hold the end in one hand.",

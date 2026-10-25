@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "An advanced push-up using one arm. Works the chest, shoulder, triceps and core.",
   "instructions": [
     "Start in a push-up position with your hands shoulder-width apart and one hand placed slightly wider than the other.",

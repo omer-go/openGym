@@ -9,6 +9,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable raise done bent over, moving the arm out to the side. It works the upper back and rear shoulder with a controlled sweep.",
   "instructions": [
     "Stand with your feet shoulder-width apart, facing a cable machine.",

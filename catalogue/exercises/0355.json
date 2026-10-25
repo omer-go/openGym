@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "You raise one dumbbell out to the side to shoulder height, one arm at a time. It builds the side of the shoulder.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand with your palm facing your body.",

@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A standing press with cables that trains the chest while your core keeps you steady.",
   "instructions": [
     "Set the cables at chest height and hold a handle in each hand.",

@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A standing one arm kettlebell press where the path drifts out to the side. Works the shoulder and upper back while your core resists leaning.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell in one hand at shoulder height.",

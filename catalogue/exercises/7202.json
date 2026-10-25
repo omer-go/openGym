@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side lunge with band tension that works the legs and hips from a different angle.",
   "instructions": [
     "Stand with the band under your feet or around your thighs, feet together.",

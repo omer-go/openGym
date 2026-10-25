@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "Pressing with one leg on an angled leg press machine focuses the work on the quads and glutes.",
   "instructions": [
     "Sit on the machine and place one foot on the platform.",

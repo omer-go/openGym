@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "Standing band press, one arm at a time, hitting the chest and triceps.",
   "instructions": [
     "Anchor the band behind you at chest height and hold both ends.",

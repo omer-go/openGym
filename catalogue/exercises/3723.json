@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge where you step diagonally behind you with a barbell on your back. It works the glutes and outer hips.",
   "instructions": [
     "Rest a barbell across your upper back and stand tall.",

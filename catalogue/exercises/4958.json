@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one arm overhead triceps extension with a rope. It isolates the triceps.",
   "instructions": [
     "Hold a rope with one hand overhead and face away from the stack.",

@@ -10,6 +10,8 @@
     "lower back"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg bridge with the free leg straight, working the glutes and core.",
   "instructions": [
     "Lie on your back with one knee bent and the other leg straight up.",

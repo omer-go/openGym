@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A curtsey lunge holding a kettlebell at your chest. It targets the glutes and outer hips.",
   "instructions": [
     "Hold a kettlebell by the horns at your chest and stand tall.",

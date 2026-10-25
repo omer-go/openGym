@@ -3,13 +3,14 @@
   "name": "kettlebell goblet squat",
   "bodyPart": "upper legs",
   "equipment": "kettlebell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Hold a kettlebell close to your chest and squat down between your hips. A friendly squat variation for legs, glutes and core.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell close to your chest with both hands.",

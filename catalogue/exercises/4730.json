@@ -12,6 +12,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row from a hinged position, pulling a dumbbell toward your hip. It trains the lats and mid back.",
   "instructions": [
     "Hold a dumbbell in one hand and hinge forward with a flat back, knees slightly bent.",

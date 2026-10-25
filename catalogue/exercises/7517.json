@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "Advanced single-arm pull on a ring that demands serious back and arm strength.",
   "instructions": [
     "Hang from one ring with a firm grip.",

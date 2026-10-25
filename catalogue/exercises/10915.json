@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged hinge held at the bottom. It builds balance and the hamstrings.",
   "instructions": [
     "Stand on one leg with a soft knee.",

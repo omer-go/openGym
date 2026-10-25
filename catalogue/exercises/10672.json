@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm seated press on a lever machine. It builds the chest on each side and trains the core to resist twisting.",
   "instructions": [
     "Sit with your back against the pad and grip one handle.",

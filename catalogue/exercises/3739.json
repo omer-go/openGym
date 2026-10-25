@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A bench press holding the kettlebell upside down, which forces tight control of the shoulder and wrist.",
   "instructions": [
     "Lie on a bench holding a kettlebell upside down above your chest.",

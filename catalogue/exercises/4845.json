@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A floor press with kettlebells. The floor limits range and keeps the focus on the chest and triceps.",
   "instructions": [
     "Lie on the floor holding a kettlebell in each hand at chest level.",

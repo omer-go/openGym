@@ -3,13 +3,14 @@
   "name": "barbell low bar squat (with rack)",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Squat with the bar low on the back, taken from a rack, that works the glutes, thighs and back.",
   "instructions": [
     "Set the bar in the rack and place it on your rear delts, below the traps.",

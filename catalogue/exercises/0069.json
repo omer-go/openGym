@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "olympic",
+  "pattern": "squat",
   "description": "A squat with the bar held locked out overhead. Builds mobility, stability and leg strength.",
   "instructions": [
     "Stand with your feet shoulder-width apart and toes slightly turned out.",

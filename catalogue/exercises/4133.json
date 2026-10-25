@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-sided deadlift holding the kettlebell at your side like a suitcase, training the core as well.",
   "instructions": [
     "Stand beside a kettlebell and hinge to grip it.",

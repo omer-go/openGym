@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge held in one place with no stepping. It builds the legs and balance.",
   "instructions": [
     "Step one foot forward and stay in a split stance.",

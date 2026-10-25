@@ -3,14 +3,15 @@
   "name": "barbell full squat (back pov)",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A full-depth barbell squat shown from behind. It builds the quads, glutes and core and is a great check of back and knee alignment.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes slightly turned out.",

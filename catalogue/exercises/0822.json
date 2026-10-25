@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A squat that adds a torso twist as you stand. It trains the legs and rotational control.",
   "instructions": [
     "Stand with feet shoulder-width apart and hands together at your chest.",

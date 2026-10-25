@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A strap chest press with one foot lifted, adding a balance challenge to the pressing movement.",
   "instructions": [
     "Hold the handles, lean forward and lift one foot off the floor.",

@@ -3,12 +3,14 @@
   "name": "dumbbell single leg deadlift",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip hinge holding a dumbbell. Works the glutes and hamstrings and improves balance.",
   "instructions": [
     "Stand with your feet hip-width apart, holding a dumbbell in your right hand.",

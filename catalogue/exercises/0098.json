@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side-to-side lunge with the bar across the back. Strengthens the quads and adductors.",
   "instructions": [
     "Stand with your feet wider than shoulder-width apart, toes pointing slightly outward.",

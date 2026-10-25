@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunge stepping backward from a raised surface, which increases the range of motion.",
   "instructions": [
     "Stand on a low step with feet together.",

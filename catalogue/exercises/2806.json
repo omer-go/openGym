@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one leg deadlift with the rear foot resting on a step box for balance. Works hamstrings and glutes with less wobble.",
   "instructions": [
     "Hold a dumbbell and rest the toes of one foot on a step box behind you.",

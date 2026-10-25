@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up between parallel bars that lets you sink deeper than the floor allows. It gives the chest a greater stretch.",
   "instructions": [
     "Grip two parallel bars and hold a straight plank position.",

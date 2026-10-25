@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge combined with a medicine ball curl. It trains the legs and arms in one go.",
   "instructions": [
     "Stand holding a medicine ball at your thighs.",

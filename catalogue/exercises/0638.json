@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "An advanced pull-up using only one arm. Builds big lat and biceps strength and takes lots of practice.",
   "instructions": [
     "Stand facing a pull-up bar with your feet shoulder-width apart.",

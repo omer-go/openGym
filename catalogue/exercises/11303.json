@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat on the Smith machine to a bench. The bench gives you a consistent depth and a stable path.",
   "instructions": [
     "Set a bench behind you and place the bar on your upper back.",

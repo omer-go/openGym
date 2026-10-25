@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat holding a dumbbell for balance and extra load.",
   "instructions": [
     "Hold a dumbbell at your chest and stand on one leg.",

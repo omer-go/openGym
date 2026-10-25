@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "Push-up with hands elevated on a bench, an easier version of the push-up.",
   "instructions": [
     "Place hands on a bench slightly wider than shoulders.",

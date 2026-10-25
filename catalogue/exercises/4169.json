@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A single leg squat with an explosive jump at the top. It trains leg power and balance.",
   "instructions": [
     "Stand on one leg with the other extended forward.",

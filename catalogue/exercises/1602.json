@@ -3,13 +3,15 @@
   "name": "transverse step up",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up performed side-on to the bench. It works the glutes and quads while challenging your balance.",
   "instructions": [
     "Stand sideways next to a bench or step.",

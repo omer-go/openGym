@@ -10,6 +10,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-armed lying lateral raise across the body with a low cable. It isolates a single side delt and lets you fix imbalances.",
   "instructions": [
     "Lie on a flat bench next to a low pulley and take the handle with the far hand.",

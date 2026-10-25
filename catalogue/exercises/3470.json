@@ -3,13 +3,15 @@
   "name": "forward lunge (male)",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A bodyweight lunge stepping forward and pushing back, alternating legs. It builds the glutes, quads and balance.",
   "instructions": [
     "Stand with your feet hip-width apart and hands on your hips.",

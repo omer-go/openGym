@@ -11,6 +11,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank variation held on one forearm. It builds the obliques and shoulder stability.",
   "instructions": [
     "Lie on your side and prop up on your forearm.",

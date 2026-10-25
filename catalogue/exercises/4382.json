@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge with the bar resting on your front shoulders. The front load works the quads and glutes and challenges your core.",
   "instructions": [
     "Rest the barbell on the front of your shoulders with elbows high.",

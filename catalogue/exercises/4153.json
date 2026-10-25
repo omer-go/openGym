@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A push up where one arm does most of the work while the other extends out to the side. It builds unilateral chest and arm strength.",
   "instructions": [
     "Start in a wide push up position with hands well outside your shoulders.",

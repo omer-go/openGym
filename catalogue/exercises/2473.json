@@ -10,6 +10,8 @@
     "lower back"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg bridge with a foot on a bench that targets the glutes harder.",
   "instructions": [
     "Lie on your back with one foot on a bench and the other leg extended.",

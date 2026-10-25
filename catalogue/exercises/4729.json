@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A weighted bench dip with your feet raised on a second bench, which makes the triceps work harder.",
   "instructions": [
     "Place two benches facing each other, hands on one and heels on the other.",

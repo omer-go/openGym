@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing and leaning forward, you curl one dumbbell with your elbow braced on your thigh. It isolates the biceps one side at a time.",
   "instructions": [
     "Stand up straight with your feet shoulder-width apart and hold a dumbbell in one hand, palm facing up.",

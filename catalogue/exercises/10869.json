@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat on a Bosu ball. It challenges the legs and balance.",
   "instructions": [
     "Stand on one foot on the Bosu.",

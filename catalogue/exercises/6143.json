@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated front raise done one arm at a time. It targets the front of the shoulder.",
   "instructions": [
     "Sit tall holding a dumbbell at your side.",

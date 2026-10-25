@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat paired with a backward roll to challenge your control and leg strength.",
   "instructions": [
     "Start in a split stance with your torso upright.",

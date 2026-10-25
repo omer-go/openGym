@@ -3,13 +3,14 @@
   "name": "smith low bar squat",
   "bodyPart": "upper legs",
   "equipment": "smith machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A low bar squat on the smith machine, with the bar sitting lower on the back. It builds the glutes, quads and hamstrings along a fixed bar path.",
   "instructions": [
     "Set up the smith machine with the barbell at a height that allows you to comfortably rest it on your upper back.",

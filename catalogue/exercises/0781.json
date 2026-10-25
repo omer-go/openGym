@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A staggered-stance squat where the back leg stays put. It works the quads and glutes one side at a time.",
   "instructions": [
     "Stand in a long stride with one foot forward and the other back.",

@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "You clean a kettlebell to your shoulder, then dip and drive it overhead with one arm. A full body power move for legs, shoulders and core.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell in one hand with an overhand grip.",

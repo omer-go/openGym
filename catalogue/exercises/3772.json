@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge that finishes with a high knee, combined with a one-arm band row. It builds leg strength and balance.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "pilates",
+  "unilateral": true,
   "description": "A hip mobility move where one leg draws circles in the air.",
   "instructions": [
     "Lie on your back with one leg extended up.",

@@ -3,14 +3,16 @@
   "name": "cable lateral step up",
   "bodyPart": "upper legs",
   "equipment": "cable",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "adductors",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A sideways step up against cable tension that works the glutes and thighs and challenges balance.",
   "instructions": [
     "Stand sideways to a box with the cable handle held at your chest.",

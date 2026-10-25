@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up with hands on kettlebell handles to lower the chest deeper than the floor allows.",
   "instructions": [
     "Place two kettlebells shoulder width apart and grip the handles.",

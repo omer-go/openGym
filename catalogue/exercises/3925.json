@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated one-arm cable curl with your elbow braced against the thigh, isolating the biceps.",
   "instructions": [
     "Sit on the floor facing a low cable with a handle in one hand.",

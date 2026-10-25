@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "Kneeling one-arm landmine press for shoulder strength with an angled path.",
   "instructions": [
     "Kneel holding the end of a landmine bar at your shoulder.",

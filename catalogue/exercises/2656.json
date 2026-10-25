@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl using a cable for constant tension, great for working each biceps on its own.",
   "instructions": [
     "Stand facing the cable with the handle at low height and grip it with one hand, palm up.",

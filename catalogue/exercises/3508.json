@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated leg curl with a band around the foot. It isolates the hamstrings.",
   "instructions": [
     "Sit on the floor with a band anchored in front and looped around one foot.",

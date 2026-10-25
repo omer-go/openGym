@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm dumbbell front raise using a hammer grip, targeting the front deltoid with less wrist strain.",
   "instructions": [
     "Stand tall holding a dumbbell at your side with palm facing in.",

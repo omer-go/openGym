@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A smith machine squat down to a bench behind you. The bench gives a consistent depth target.",
   "instructions": [
     "Place a bench behind you under the smith bar.",

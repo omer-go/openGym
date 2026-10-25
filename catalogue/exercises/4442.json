@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with the rear foot raised on a bench and a hand lightly holding a support for balance. Trains quads and glutes with less wobble.",
   "instructions": [
     "Stand facing away from a bench and hold a sturdy post or rack with one hand for balance.",

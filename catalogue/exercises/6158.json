@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated overhead extension with one dumbbell. It isolates the triceps.",
   "instructions": [
     "Sit upright holding a dumbbell in one hand overhead.",

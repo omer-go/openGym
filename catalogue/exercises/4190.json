@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "core",
   "description": "Move the EZ bar in an arc with a twist. It trains the obliques.",
   "instructions": [
     "Stand holding the EZ bar in front of you.",

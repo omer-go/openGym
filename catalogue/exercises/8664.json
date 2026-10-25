@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge where one leg crosses behind you, working the glutes and outer hips with added load.",
   "instructions": [
     "Stand holding dumbbells at your sides.",

@@ -3,14 +3,15 @@
   "name": "barbell banded bench squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "lower back",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Squat to a bench with bands adding tension. It teaches depth control and builds the glutes and thighs.",
   "instructions": [
     "Set a bench behind you and place the bar on your upper back with bands attached.",

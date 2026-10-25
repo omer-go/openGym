@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A push-up where you lift one arm out to the side at the top. Challenges the core and shoulder stability.",
   "instructions": [
     "Start in a push-up position with your hands slightly wider than shoulder-width apart and your feet together.",

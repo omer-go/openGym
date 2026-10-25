@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split-stance lunge done in place with dumbbells in hand. It builds strength in the front thigh and glutes without any stepping.",
   "instructions": [
     "Hold a dumbbell in each hand and stand in a long split stance, rear heel lifted.",

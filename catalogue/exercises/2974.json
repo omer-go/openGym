@@ -10,6 +10,8 @@
     "upper chest"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A single-arm chest press on a plate-loaded machine. It lets each side work on its own.",
   "instructions": [
     "Sit on the machine with your back against the pad and grip one handle.",

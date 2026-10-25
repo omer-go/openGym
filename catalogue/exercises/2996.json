@@ -11,6 +11,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press against a band. It trains the shoulders and makes your core resist twisting.",
   "instructions": [
     "Stand on the band with your feet hip width apart and hold the other end at shoulder height.",

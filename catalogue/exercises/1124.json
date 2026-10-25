@@ -10,6 +10,8 @@
     "obliques"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A single-arm push on one strap that trains the chest while the core fights rotation.",
   "instructions": [
     "Hold one handle, lean forward and place your feet wide for balance.",

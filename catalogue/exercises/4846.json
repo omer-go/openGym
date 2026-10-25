@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm floor press with the kettlebell upside down. It demands stability in the wrist and shoulder.",
   "instructions": [
     "Lie on the floor and hold a kettlebell upside down in one hand.",

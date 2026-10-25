@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg calf raise that also challenges balance. It builds calf strength and ankle stability.",
   "instructions": [
     "Stand tall on one foot with the other lifted.",

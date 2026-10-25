@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg glute bridge with the knee kept forward. Works each glute on its own and tests hip balance.",
   "instructions": [
     "Lie on your back with one foot flat and the other leg lifted.",

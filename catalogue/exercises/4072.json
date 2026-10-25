@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "One leg squat with your back against a wall for balance. It builds single leg strength.",
   "instructions": [
     "Lean your back on a wall and lift one foot off the floor.",

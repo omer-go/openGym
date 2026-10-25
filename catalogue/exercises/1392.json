@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg calf press on a leg press sled using only your toes. It trains each calf separately under a supported load.",
   "instructions": [
     "Adjust the seat of the leg press machine so that your knees are slightly bent when your feet are on the sled.",

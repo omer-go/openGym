@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A lunge jump where you land on a single leg. It builds explosive leg power and balance.",
   "instructions": [
     "Stand in a lunge position.",

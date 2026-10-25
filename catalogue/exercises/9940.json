@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge holding a sandbag at your chest or on your shoulders. The awkward load challenges your legs and core.",
   "instructions": [
     "Hold a sandbag against your chest or across your shoulders and stand tall.",

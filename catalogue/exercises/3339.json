@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge holding a dumbbell in one hand. The uneven load makes your core work to keep you balanced.",
   "instructions": [
     "Stand tall holding a dumbbell in one hand at your side.",

@@ -3,14 +3,16 @@
   "name": "barbell knee raise step up",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "hip flexors",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up finished with a knee drive, training the glutes and legs along with balance and hip flexor control.",
   "instructions": [
     "Rest a barbell on your upper back and stand facing a box.",

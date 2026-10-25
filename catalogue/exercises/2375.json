@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A one-leg squat using a support for balance, building strength in each leg.",
   "instructions": [
     "Stand next to a sturdy support and hold it lightly with one hand.",

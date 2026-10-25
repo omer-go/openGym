@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with band resistance that works the legs and glutes.",
   "instructions": [
     "Stand on the middle of a band and hold the ends at your shoulders.",

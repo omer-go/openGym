@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with dumbbells held at your shoulders, which challenges your legs and trunk.",
   "instructions": [
     "Hold a dumbbell in each hand at shoulder height.",

@@ -10,6 +10,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row with your free hand braced on a rack for support. It lets you pull heavy while keeping your back steady.",
   "instructions": [
     "Place one hand on a rack or sturdy support and hinge forward with a flat back.",

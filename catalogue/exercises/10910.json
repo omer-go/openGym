@@ -10,6 +10,7 @@
     "shins"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A seated ankle move that sweeps the foot from side to side. It improves ankle mobility.",
   "instructions": [
     "Sit tall and lift one foot slightly off the floor.",

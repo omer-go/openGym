@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear-foot-elevated split squat with a forward lean, loading the glutes.",
   "instructions": [
     "Hold a dumbbell in each hand and stand with your back foot on a bench.",

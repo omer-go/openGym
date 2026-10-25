@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a kettlebell, held in a different position, to train the quads and glutes unilaterally.",
   "instructions": [
     "Stand facing a bench or box holding a kettlebell.",

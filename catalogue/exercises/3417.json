@@ -10,6 +10,7 @@
     "obliques"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A kneeling drill where one arm reaches, rolls and lifts to open the upper back and shoulders.",
   "instructions": [
     "Start on hands and knees with hands under shoulders.",

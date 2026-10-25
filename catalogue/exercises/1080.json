@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-horizontal",
   "description": "A bodyweight row hanging under straps. It builds the upper back and biceps.",
   "instructions": [
     "Hold the handles and lean back with arms extended and body straight.",

@@ -10,6 +10,8 @@
     "obliques"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A crunch where one leg lifts as you curl up. It adds a lower-abs challenge to the basic crunch.",
   "instructions": [
     "Lie on your back with knees bent and hands behind your head.",

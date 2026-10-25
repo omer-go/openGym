@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A side plank with a top leg raise. Challenges the inner and outer thighs while keeping the core braced.",
   "instructions": [
     "Start by lying on your side with your legs extended and stacked on top of each other.",

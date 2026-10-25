@@ -12,6 +12,8 @@
     "trapezius"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one arm dumbbell clean followed by a jerk overhead. Trains explosive power from the legs through the shoulder.",
   "instructions": [
     "Stand over a dumbbell with feet shoulder width apart and grab it with one hand.",

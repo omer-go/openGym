@@ -3,13 +3,14 @@
   "name": "dumbbell bench squat",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A dumbbell squat to a bench. Touching the bench gives a consistent depth and works the glutes and thighs.",
   "instructions": [
     "Place a dumbbell on the ground in front of a bench.",

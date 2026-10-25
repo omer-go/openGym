@@ -3,14 +3,16 @@
   "name": "dumbbell overhead side lunge",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "shoulders",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side lunge with a dumbbell held overhead that trains the legs and core stability.",
   "instructions": [
     "Hold one dumbbell overhead with both hands or one hand and stand tall.",

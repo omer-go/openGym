@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-vertical",
   "description": "Pull-up on gymnastic rings, which move freely and demand extra stability from the back and arms.",
   "instructions": [
     "Grab the rings and hang with arms straight.",

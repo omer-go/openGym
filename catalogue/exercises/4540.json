@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A squat into an overhead press with a single dumbbell, training the legs and shoulders together.",
   "instructions": [
     "Hold a dumbbell at your shoulder with one hand and stand with feet shoulder-width apart.",

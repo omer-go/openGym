@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge with your arms stretched overhead, adding a core and shoulder challenge to the leg work.",
   "instructions": [
     "Stand tall with your arms extended overhead.",

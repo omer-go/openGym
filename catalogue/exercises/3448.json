@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side lunge with dumbbells that works the thighs and inner thighs.",
   "instructions": [
     "Hold a dumbbell in each hand.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A goblet split squat with the front foot on a raised platform. The extra height deepens the range for the quads and glutes.",
   "instructions": [
     "Hold one dumbbell at your chest and place your front foot on a low platform.",

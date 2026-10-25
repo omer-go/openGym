@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A single-arm pulldown on a high cable. It lets each side of the lats work on its own.",
   "instructions": [
     "Attach a handle to a high pulley and sit facing the stack.",

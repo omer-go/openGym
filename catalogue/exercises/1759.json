@@ -3,13 +3,15 @@
   "name": "single leg squat (pistol) male",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A deep single-leg squat with the other leg held out in front. Builds leg strength, balance and mobility.",
   "instructions": [
     "Stand with your feet shoulder-width apart and arms extended in front of you.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "Combine a lunge with a kettlebell clean and overhead press for a full body strength move.",
   "instructions": [
     "Start standing with a kettlebell hanging in one hand.",

@@ -10,6 +10,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A bent-over one-arm cable raise that hits the rear delts.",
   "instructions": [
     "Stand next to a low pulley and bend forward at the hips with a flat back.",

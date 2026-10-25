@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step up holding a kettlebell, training each leg separately.",
   "instructions": [
     "Hold a kettlebell and stand facing a box.",

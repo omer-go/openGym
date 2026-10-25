@@ -3,13 +3,14 @@
   "name": "barbell low bar squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat with the bar resting low across the rear delts, which leans you forward a bit more. It loads the glutes, hamstrings and lower back heavily.",
   "instructions": [
     "Stand with your feet shoulder-width apart and the barbell resting on your upper back.",

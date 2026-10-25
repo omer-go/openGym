@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hinge with a ball against the wall for balance. It trains hamstrings and balance.",
   "instructions": [
     "Stand facing a wall with a ball between your hand and the wall.",

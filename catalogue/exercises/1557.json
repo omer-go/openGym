@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunges done on the move with dumbbells in your hands. A great move for leg strength, glutes and coordination.",
   "instructions": [
     "Hold a dumbbell in each hand at your sides and stand tall.",

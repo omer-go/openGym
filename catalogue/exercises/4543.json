@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "olympic",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A powerful hip-driven pull that brings a kettlebell from the floor to the rack position on one shoulder.",
   "instructions": [
     "Stand over a kettlebell with feet shoulder-width apart and hinge at the hips to grab the handle.",

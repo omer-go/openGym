@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with a band around the legs to fire up the hips and the sides of the waist.",
   "instructions": [
     "Place a band around your thighs and lie on one side with your legs straight.",

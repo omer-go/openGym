@@ -11,6 +11,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm push press with a landmine, using leg drive to move the bar up and the shoulder to control it.",
   "instructions": [
     "Stand facing the landmine end and hold it at your shoulder with one hand.",

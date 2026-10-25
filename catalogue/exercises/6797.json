@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A sideways step up onto a bench with a barbell on the back. It builds single-leg strength in the quads and glutes.",
   "instructions": [
     "Place the bar on your upper back and stand beside a bench.",

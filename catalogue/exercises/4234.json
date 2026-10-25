@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm reverse wrist curl, palm down, seated with a weight. It strengthens the top of the forearm.",
   "instructions": [
     "Sit and rest one forearm on your thigh, palm down.",

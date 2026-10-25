@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A curtsey lunge on the smith machine that steps one leg behind and across the other. It hits the glutes and outer hips with a stable bar path.",
   "instructions": [
     "Set the bar on your upper back and unrack it, feet hip-width apart.",

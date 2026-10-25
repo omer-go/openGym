@@ -9,6 +9,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Lifting one arm out to the side against a cable keeps constant tension on the side delt. It builds shoulder width.",
   "instructions": [
     "Stand side-on to the low cable and hold the handle with the far hand.",

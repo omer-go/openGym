@@ -9,6 +9,7 @@
     "hamstrings"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A partner-assisted leg movement that gently stretches the hip and thigh.",
   "instructions": [
     "Lie on your back and relax.",

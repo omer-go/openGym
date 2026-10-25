@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg deadlift using the smith bar. It trains the hamstrings, glutes and balance.",
   "instructions": [
     "Stand holding the bar at hip height on a single leg.",

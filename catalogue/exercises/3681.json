@@ -10,6 +10,7 @@
     "upper chest"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A bench press with dumbbells pressed together to keep constant tension in the chest.",
   "instructions": [
     "Lie on a bench holding dumbbells pressed together above your chest.",

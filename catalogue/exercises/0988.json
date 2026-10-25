@@ -9,6 +9,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A standing one-arm low row with a band. It trains the back and biceps.",
   "instructions": [
     "Attach the band to a stable anchor point at waist height.",

@@ -10,6 +10,8 @@
     "soleus"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with a heel raise added at the top. It works the quads, glutes and calves together.",
   "instructions": [
     "Stand in a split stance with one foot well forward.",

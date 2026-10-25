@@ -3,12 +3,13 @@
   "name": "dumbbell romanian deadlift",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "A hip hinge with dumbbells that lowers them down the legs while your back stays flat. It trains the hamstrings and glutes.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with an overhand grip.",

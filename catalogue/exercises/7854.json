@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with a twist that ends in an arm raise. It challenges your obliques and shoulders.",
   "instructions": [
     "Set up in a side plank on your forearm.",

@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated one-arm concentration curl using a cable. It isolates the biceps on one side at a time.",
   "instructions": [
     "Sit on a bench with your feet flat on the floor and your back straight.",

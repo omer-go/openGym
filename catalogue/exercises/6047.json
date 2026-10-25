@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A walking-style lunge stepping forward with bottles in your hands. It works the quads and glutes one leg at a time.",
   "instructions": [
     "Stand tall holding a bottle in each hand at your sides.",

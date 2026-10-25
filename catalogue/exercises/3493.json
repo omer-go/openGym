@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A one-leg squat down to a low box, giving you a target depth. It builds single-leg strength and balance.",
   "instructions": [
     "Stand in front of a low box or bench on one leg.",

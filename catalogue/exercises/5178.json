@@ -8,6 +8,8 @@
     "hip flexors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A plate-loaded machine extension done one leg at a time. It isolates the quads and evens out left-right differences.",
   "instructions": [
     "Sit in the machine and adjust the pad to rest on your lower shin.",

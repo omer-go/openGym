@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm dumbbell row from a hinged stance. It trains the upper back one side at a time.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand with your palm facing your body.",

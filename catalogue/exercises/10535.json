@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Press the top of your foot upward against resistance while seated. It strengthens the shin muscle.",
   "instructions": [
     "Sit with one foot resting flat and the other leg crossed over it.",

@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A bounding jump from one leg to the other leg. It develops power and single-leg control.",
   "instructions": [
     "Stand on one leg with a slight knee bend.",

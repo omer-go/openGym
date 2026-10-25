@@ -3,14 +3,15 @@
   "name": "smith front squat (clean grip)",
   "bodyPart": "upper legs",
   "equipment": "smith machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "A front squat on a smith machine with a clean grip. The bar path is guided so you can focus on the quads and glutes.",
   "instructions": [
     "Set up the smith machine with the barbell at shoulder height.",

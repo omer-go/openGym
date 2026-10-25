@@ -3,14 +3,16 @@
   "name": "crossover reverse lunge",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "adductors",
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge where the back leg steps behind and across the line of the front leg. It trains glutes, thighs and balance.",
   "instructions": [
     "Stand tall with your hands on your hips.",

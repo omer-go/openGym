@@ -10,6 +10,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm shrug with a dumbbell. It builds the upper traps and grip.",
   "instructions": [
     "Stand tall holding a dumbbell in one hand at your side.",

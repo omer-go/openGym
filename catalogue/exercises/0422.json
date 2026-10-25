@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing beside an incline bench, you curl one dumbbell with the upper arm braced on the pad. It keeps the biceps working without swing.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand with your palm facing forward.",

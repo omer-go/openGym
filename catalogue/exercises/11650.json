@@ -9,6 +9,8 @@
     "ankles"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A seated one-leg calf raise that mainly hits the soleus using only your body weight.",
   "instructions": [
     "Sit on a chair with one foot flat on the floor, knee bent to 90 degrees.",

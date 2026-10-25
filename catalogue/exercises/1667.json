@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm reverse spider curl, with an overhand grip over a bench. It works the forearms and brachialis.",
   "instructions": [
     "Stand up straight with a dumbbell in one hand, palm facing down and arm fully extended.",

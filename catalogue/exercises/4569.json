@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A single-arm row using a resistance band, working the lats and mid-back.",
   "instructions": [
     "Stand on the band with a staggered stance and hinge forward.",

@@ -3,14 +3,16 @@
   "name": "cable lateral lunge",
   "bodyPart": "upper legs",
   "equipment": "cable",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A sideways lunge against cable tension, training glutes, inner thighs and side to side strength.",
   "instructions": [
     "Hold a low cable handle at your chest and stand sideways to the stack.",

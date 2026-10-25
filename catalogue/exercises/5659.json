@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "Squat starting from the bottom position, pausing each rep to build strength.",
   "instructions": [
     "Set the bar in safety pins at the bottom of a squat.",

@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with the rear foot in a suspension strap. It builds the quads and glutes and challenges balance.",
   "instructions": [
     "Stand facing away from a suspension trainer with your feet shoulder-width apart.",

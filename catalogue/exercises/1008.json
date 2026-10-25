@@ -3,13 +3,15 @@
   "name": "band step-up",
   "bodyPart": "upper legs",
   "equipment": "band",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a band around the thighs. It trains the glutes and quads.",
   "instructions": [
     "Place a band around your thighs, just above your knees.",

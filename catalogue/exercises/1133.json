@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm strap row with the elbow flared, aimed at the rear shoulder.",
   "instructions": [
     "Hold one handle and lean back at an angle.",

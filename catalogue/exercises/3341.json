@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A dumbbell lunge variation for leg strength and balance, working quads and glutes.",
   "instructions": [
     "Stand tall with a dumbbell in each hand at your sides.",

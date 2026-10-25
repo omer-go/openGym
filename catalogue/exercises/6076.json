@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "An overhead press with a bottle in each hand. It builds shoulders and triceps.",
   "instructions": [
     "Hold a bottle in each hand at shoulder height.",

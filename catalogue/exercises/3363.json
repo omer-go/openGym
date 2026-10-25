@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A standing close grip cable press that focuses on the triceps.",
   "instructions": [
     "Set the cable at chest height and hold the handle with a narrow grip.",

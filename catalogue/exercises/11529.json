@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip hinge on a belt-loaded lever machine that trains hamstrings and glutes with extra balance support.",
   "instructions": [
     "Fasten the belt and stand on one leg on the platform with a slight knee bend.",

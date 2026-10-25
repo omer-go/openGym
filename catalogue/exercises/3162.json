@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A standing one arm row from a hip hinge, pulling a weight toward your chest one side at a time. Good for the upper back and lats.",
   "instructions": [
     "Stand with your feet shoulder-width apart, knees slightly bent, and hold a dumbbell in one hand.",

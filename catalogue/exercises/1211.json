@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A standing single-arm cable press with a rotation. It trains the chest and the core's ability to resist and produce twist.",
   "instructions": [
     "Set the cable at chest height and stand sideways with the handle in your inside hand.",

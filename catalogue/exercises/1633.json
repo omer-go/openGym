@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm preacher curl on a cable. The pad blocks swinging, so the biceps take the load.",
   "instructions": [
     "Adjust the cable machine so that the preacher curl pad is at chest height.",

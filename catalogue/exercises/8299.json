@@ -11,6 +11,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm cable row from a half-kneeling stance. It works the lats and challenges your core stability.",
   "instructions": [
     "Half kneel facing the cable with the handle in one hand.",

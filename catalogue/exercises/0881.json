@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge where you step back and across behind you, like a curtsey. It works the glutes and outer hips from a different angle.",
   "instructions": [
     "Stand tall holding a dumbbell in each hand at your sides.",

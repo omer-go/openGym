@@ -11,6 +11,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row in a hinged position. It builds the lats and upper back, one side at a time.",
   "instructions": [
     "Hold a dumbbell in one hand and hinge forward with a flat back.",

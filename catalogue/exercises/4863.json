@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with the top leg lifted. It trains the obliques and hip stabilisers.",
   "instructions": [
     "Lie on your side and prop up on your forearm.",

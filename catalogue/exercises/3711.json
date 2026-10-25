@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Step up onto a box or bench with one leg to build single-leg strength.",
   "instructions": [
     "Stand facing a sturdy box or bench.",

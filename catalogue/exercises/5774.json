@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "Hip thrusts done on one leg with your upper back on a support. Builds glute strength and hip stability.",
   "instructions": [
     "Rest your upper back on a bench with one foot flat and the other leg lifted.",

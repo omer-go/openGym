@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg Romanian deadlift holding a landmine bar, challenging balance and the hamstrings.",
   "instructions": [
     "Hold the end of a landmine bar with both hands.",

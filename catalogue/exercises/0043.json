@@ -3,14 +3,15 @@
   "name": "barbell full squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A deep back squat with the bar across the upper back. Builds the quads, glutes and overall leg strength.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes slightly turned out.",

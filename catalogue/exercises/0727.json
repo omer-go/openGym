@@ -9,6 +9,8 @@
     "feet"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Standing on one leg, you rise up onto your toes with the ball of your foot on a dumbbell. Works the calves with extra range.",
   "instructions": [
     "Stand with your feet hip-width apart and hold a dumbbell in one hand.",

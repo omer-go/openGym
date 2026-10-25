@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm raise in front of you that trains the front delts.",
   "instructions": [
     "Stand with a dumbbell in one hand in front of your thigh.",

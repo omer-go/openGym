@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single leg squat on a machine that supports balance while you load one leg through full depth.",
   "instructions": [
     "Step into the machine and put one foot on the platform with the other leg lifted or extended.",

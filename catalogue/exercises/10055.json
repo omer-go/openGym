@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A narrow-stance lunge holding a dumbbell in each hand to add load for the quads and glutes.",
   "instructions": [
     "Stand with feet close together, a dumbbell in each hand at your sides.",

@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A one-arm pulldown on a plate-loaded machine using an underhand grip. It trains the lats and biceps one side at a time.",
   "instructions": [
     "Sit in the machine and grab one handle with an underhand grip.",

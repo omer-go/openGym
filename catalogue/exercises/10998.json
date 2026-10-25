@@ -11,6 +11,8 @@
     "upper back"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A wall-facing handstand with one leg split off the wall. It trains balance and shoulder endurance.",
   "instructions": [
     "Kick up into a handstand facing the wall.",

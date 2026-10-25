@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip hinge holding a landmine bar. It builds hamstring and glute strength along with balance.",
   "instructions": [
     "Hold the end of a landmine bar at your chest and stand on one leg.",

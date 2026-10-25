@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A seated cable row that alternates between arms. It works the back one side at a time with a full squeeze each rep.",
   "instructions": [
     "Sit on a bench facing a cable machine with your feet flat on the ground and knees slightly bent.",

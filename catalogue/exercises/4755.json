@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip thrust with a dumbbell on your hips. It builds glute strength and hip stability.",
   "instructions": [
     "Sit with your upper back on a bench and a dumbbell across your hips.",

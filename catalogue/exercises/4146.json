@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one arm band row where you rotate the torso as you pull. It trains the lats and back while the trunk resists and controls the twist.",
   "instructions": [
     "Anchor the band at chest height and hold the handle in one hand.",

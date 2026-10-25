@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with a bent top leg that you lift, challenging your obliques and outer hips.",
   "instructions": [
     "Lie on one side and prop yourself on your forearm.",

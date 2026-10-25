@@ -3,13 +3,14 @@
   "name": "kettlebell box squat",
   "bodyPart": "upper legs",
   "equipment": "kettlebell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat to a box holding a kettlebell at your chest. It trains the hips and legs.",
   "instructions": [
     "Stand in front of a box holding a kettlebell at your chest.",

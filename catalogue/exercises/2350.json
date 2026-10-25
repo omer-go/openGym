@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A side-by-side form check for the starting position of a push-up, showing the common mistake next to the correct technique so you can spot it in your own sets.",
   "instructions": [
     "Set your hands on the floor under your shoulders and extend your legs back.",

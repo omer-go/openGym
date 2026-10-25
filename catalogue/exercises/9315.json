@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with the rear foot on a bench builds leg strength and balance, one leg at a time.",
   "instructions": [
     "Stand a stride length in front of a bench and rest your back foot on it.",

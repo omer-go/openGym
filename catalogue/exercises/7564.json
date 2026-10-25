@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "Single-arm cable row in a split stance for stable pulling.",
   "instructions": [
     "Stand in a split stance facing a low cable.",

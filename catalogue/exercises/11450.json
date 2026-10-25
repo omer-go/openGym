@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A simple stair step-up done on the first and second steps. It builds leg strength and balance using everyday stairs.",
   "instructions": [
     "Stand facing the stairs with your feet hip-width apart.",

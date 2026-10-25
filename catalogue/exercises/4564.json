@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A leg-burning chain of squat, lunge and jump with dumbbells for strength and conditioning.",
   "instructions": [
     "Hold dumbbells at your sides and stand with feet shoulder-width apart.",

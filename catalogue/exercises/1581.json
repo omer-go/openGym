@@ -3,13 +3,15 @@
   "name": "bodyweight rear lunge",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge where you step back instead of forward. It is gentler on the knees and focuses on the glutes.",
   "instructions": [
     "Stand tall with your feet hip-width apart.",

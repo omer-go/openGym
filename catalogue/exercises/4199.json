@@ -10,6 +10,7 @@
     "grip muscles"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "A deadlift with chains adding load toward lockout.",
   "instructions": [
     "Set chains on the bar.",

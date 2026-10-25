@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "rehab",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Sitting down, you bend one knee by sliding your heel back. It is a gentle way to build knee mobility and hamstring control.",
   "instructions": [
     "Sit on a chair with your feet flat on the floor.",

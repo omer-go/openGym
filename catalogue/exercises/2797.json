@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A barbell squat, a small jump and a step back into a rear lunge. A demanding combo for leg strength and power.",
   "instructions": [
     "Rest the barbell across your upper back and stand with feet shoulder width apart.",

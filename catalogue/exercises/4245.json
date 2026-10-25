@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A one-leg jump over or onto a board to build power and landing control. It trains single-leg explosiveness.",
   "instructions": [
     "Stand on one leg next to or in front of a board.",

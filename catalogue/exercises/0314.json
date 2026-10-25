@@ -9,6 +9,7 @@
     "triceps"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "An incline dumbbell bench press. The raised bench shifts the work toward the upper chest.",
   "instructions": [
     "Set up an incline bench at a 45-degree angle.",

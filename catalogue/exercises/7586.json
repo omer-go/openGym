@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a cable held on the same side as the working leg, leaning forward to bias the glutes.",
   "instructions": [
     "Stand in front of a box with a cable handle in the hand on your working side.",

@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a cable that is set to put more work on the glutes. It builds strength in the hips.",
   "instructions": [
     "Hold the cable handle and stand facing a step.",

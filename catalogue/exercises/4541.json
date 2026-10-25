@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A kettlebell squat-to-press combo done with one arm that works the legs, shoulders and core in one flow.",
   "instructions": [
     "Hold a kettlebell in the rack position at one shoulder, feet shoulder-width apart.",

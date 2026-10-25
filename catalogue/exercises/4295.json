@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunging forward step after step with a dumbbell in each hand. It builds leg and glute strength and balance.",
   "instructions": [
     "Stand tall holding a dumbbell in each hand at your sides.",

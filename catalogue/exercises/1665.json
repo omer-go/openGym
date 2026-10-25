@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm curl lying chest down on an incline bench. It isolates the biceps on one side.",
   "instructions": [
     "Lie face down on a flat bench with a dumbbell in one hand, palm facing down.",

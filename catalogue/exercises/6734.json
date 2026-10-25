@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A one-leg press on an angled sled. It loads each leg separately for strength and balance.",
   "instructions": [
     "Sit in the angled sled and place one foot in the middle of the platform.",

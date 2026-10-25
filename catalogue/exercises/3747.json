@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat where you hold a bed sheet anchored to something sturdy for assistance.",
   "instructions": [
     "Hold the ends of a bed sheet anchored to a door or post.",

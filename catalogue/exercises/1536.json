@@ -12,6 +12,7 @@
     "core"
   ],
   "category": "olympic",
+  "pattern": "hinge",
   "description": "A snatch started from blocks. It trains the pull and the deep overhead catch.",
   "instructions": [
     "Set the bar on blocks and take a wide grip with a flat back.",

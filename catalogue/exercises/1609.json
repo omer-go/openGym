@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-armed cable pushdown done from the side. It isolates each triceps and lets you focus on form.",
   "instructions": [
     "Attach a handle to a high pulley and stand sideways to the machine.",

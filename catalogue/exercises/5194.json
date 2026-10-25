@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-vertical",
   "description": "An advanced pull-up that transitions into a dip above a bar. It builds serious pulling and pushing strength.",
   "instructions": [
     "Hang from a pull-up bar with a false or standard grip.",

@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Stepping up onto a tall box. It builds the quads and glutes.",
   "instructions": [
     "Stand facing a high box.",

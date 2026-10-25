@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "pull-vertical",
   "description": "A seated pull-up with a staggered grip, pulling your head to alternating sides of the bar. It trains the lats and grip.",
   "instructions": [
     "Sit under a bar and grab it with one hand in front of the other.",

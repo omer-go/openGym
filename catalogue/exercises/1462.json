@@ -3,14 +3,15 @@
   "name": "barbell full squat (side pov)",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A full-depth barbell squat shown from the side. It builds the quads, glutes and core and shows your depth and back angle clearly.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes slightly turned out.",

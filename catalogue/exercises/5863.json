@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Hold a kettlebell overhead in one hand and lower it behind your head. It isolates one triceps at a time.",
   "instructions": [
     "Stand tall with a kettlebell held overhead in one hand.",

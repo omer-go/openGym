@@ -10,6 +10,7 @@
     "feet"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "Balance on one leg and rock between heel and toes. It warms up the calf and ankle.",
   "instructions": [
     "Stand on one leg next to a wall for balance.",

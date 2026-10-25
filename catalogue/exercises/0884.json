@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A sideways step up under the smith bar. It works the quads and glutes one leg at a time.",
   "instructions": [
     "Place a bench beside you and set the bar across your upper back.",

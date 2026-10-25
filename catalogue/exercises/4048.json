@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Split squat with the dumbbell held on the same side as the working front leg. It tests balance and leg strength.",
   "instructions": [
     "Hold a dumbbell in one hand and step into a split stance, the dumbbell on the same side as your front leg.",

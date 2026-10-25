@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Press dumbbells on a decline bench one arm at a time. It hits the lower chest and keeps your core working to stay balanced.",
   "instructions": [
     "Lie on a decline bench holding a dumbbell in each hand over your chest.",

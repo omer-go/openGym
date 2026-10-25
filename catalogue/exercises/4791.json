@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged glute bridge with arms crossed on the chest. It focuses the work on the glutes and tests hip stability.",
   "instructions": [
     "Lie on your back with one knee bent, foot flat, and the other leg extended or raised.",

@@ -10,6 +10,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm hammer curl on a cable using a rope. Hits the biceps and forearm muscles with a neutral grip.",
   "instructions": [
     "Attach the rope to a low pulley and hold it with one hand, thumb up.",

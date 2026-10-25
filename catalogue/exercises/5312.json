@@ -3,13 +3,15 @@
   "name": "rear lunge from deficit",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge starting from a raised platform so you go deeper. Great for glutes and quads.",
   "instructions": [
     "Stand on a low step with your feet hip-width apart.",

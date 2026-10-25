@@ -3,14 +3,16 @@
   "name": "long distance lunge (low lunge)",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "hip flexors",
     "groin"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with an extra-long stride into a low position. It stretches the hips while working the glutes and thighs.",
   "instructions": [
     "Stand tall with hands on your hips.",

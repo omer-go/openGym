@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable lateral raise. You lift the arm out to the side until it is level, targeting the side delt.",
   "instructions": [
     "Stand with your feet shoulder-width apart, facing the cable machine.",

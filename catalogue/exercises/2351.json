@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A side-by-side form check for the bottom position of a push-up, showing the common mistake next to the correct technique so you can spot it in your own sets.",
   "instructions": [
     "Start in a high plank and lower yourself under control.",

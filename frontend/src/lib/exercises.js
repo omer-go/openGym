@@ -201,6 +201,18 @@ export const gifSrc = (ex, figure) => GIF_BASE + clipFile(drawing(ex, figure) ? 
 export const isVideoSrc = src => /\.(mp4|webm)(\?|$)/i.test(src || '')
 
 // Cardio exercises log time + speed instead of weight × reps.
+// One arm or one leg at a time (catalogue "unilateral"): a new plan of it logs per side (history.js
+// defaultConfig). Only a default: what a plan says (`side`) is what counts once it is written.
+export const isUnilateral = idOrEx => !!(typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.uni
+// The movement (catalogue "pattern"): 'squat', 'hinge', 'lunge', 'push-horizontal', 'push-vertical',
+// 'pull-horizontal', 'pull-vertical', 'carry', 'core' or 'isolation'; null for a stretch, cardio
+// or your own exercise.
+export const patternOf = idOrEx => (typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.pt || null
+// The movement that balances each one: a row for a bench press, a deadlift for a squat.
+export const OPPOSITE_PATTERN = {
+  squat: 'hinge', hinge: 'squat', 'push-horizontal': 'pull-horizontal', 'pull-horizontal': 'push-horizontal',
+  'push-vertical': 'pull-vertical', 'pull-vertical': 'push-vertical',
+}
 export const isCardio = idOrEx => (typeof idOrEx === 'string' ? EXIDX[idOrEx] : idOrEx)?.bp === 'cardio'
 
 // Exercises the dataset already knows carry no external load (issue #32) — a quarter of the

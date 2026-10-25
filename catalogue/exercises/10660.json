@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A one-arm pull-up with a band under your foot or knee to reduce the load. It builds toward unassisted single-arm pulling.",
   "instructions": [
     "Loop a band over the bar and place your foot or knee in it.",

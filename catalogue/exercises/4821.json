@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg step-up onto a bench with dumbbells at your sides. It builds leg strength and balance.",
   "instructions": [
     "Stand facing a bench holding a dumbbell in each hand.",

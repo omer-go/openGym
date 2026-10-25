@@ -9,6 +9,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A standing dumbbell shoulder press that alternates arms. One arm presses overhead while the other stays at the shoulder.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand at shoulder height.",

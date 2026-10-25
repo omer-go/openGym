@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with your back foot raised, loaded through a belt machine to hit the quads and glutes.",
   "instructions": [
     "Set up in the belt squat machine and place your back foot on the bench behind you.",

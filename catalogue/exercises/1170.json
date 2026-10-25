@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg back extension on a 45 degree bench that trains the glutes, hamstrings and lower back one side at a time.",
   "instructions": [
     "Set the pad under your hips and hook one foot under the roller, with the other leg lifted off.",

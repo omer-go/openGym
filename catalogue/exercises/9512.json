@@ -10,6 +10,8 @@
     "forearms"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A pull-up with only one foot on a box for assistance. It is a step closer to a full pull-up.",
   "instructions": [
     "Place a box under a pull-up bar.",

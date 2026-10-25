@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "One arm landmine press with a band.",
   "instructions": [
     "Hold the landmine end at your shoulder.",

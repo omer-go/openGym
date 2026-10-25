@@ -3,12 +3,14 @@
   "name": "dumbbell single leg deadlift with stepbox support",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single leg dumbbell deadlift with the rear foot supported on a step box. Works the glutes and hamstrings.",
   "instructions": [
     "Stand with your feet hip-width apart, holding a dumbbell in your right hand.",

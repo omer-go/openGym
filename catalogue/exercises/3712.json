@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Raise your heel on one leg while holding a support for balance, building the calf.",
   "instructions": [
     "Stand on one foot and hold a wall or rail for balance.",

@@ -3,12 +3,13 @@
   "name": "barbell stiff leg good morning",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "hamstrings",
   "secondaryMuscles": [
-    "hamstrings",
+    "glutes",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "hinge",
   "description": "A straight-leg good morning with the bar on the upper back. Trains the glutes, hamstrings and lower back.",
   "instructions": [
     "Stand with your feet shoulder-width apart and your knees slightly bent.",

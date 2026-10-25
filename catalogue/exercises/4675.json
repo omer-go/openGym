@@ -10,6 +10,8 @@
     "groin"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A bouncy side lunge that stretches the inner thighs and trains light explosive movement.",
   "instructions": [
     "Stand with feet wide apart.",

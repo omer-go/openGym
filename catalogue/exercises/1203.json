@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm cable curl with the elbow pointing slightly out to emphasise the inner biceps.",
   "instructions": [
     "Attach a handle to a low cable and stand facing the stack.",

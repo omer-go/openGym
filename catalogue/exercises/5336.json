@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge holding a kettlebell, a second variation. It builds the thighs and glutes.",
   "instructions": [
     "Hold a kettlebell at chest height or by your side.",

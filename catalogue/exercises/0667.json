@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A push-up performed with one leg lifted. It challenges the chest, shoulders and core stability.",
   "instructions": [
     "Start in a push-up position.",

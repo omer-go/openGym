@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with band resistance, building the quads and glutes one leg at a time.",
   "instructions": [
     "Stand in a split stance with the band under your front foot and handles at your shoulders.",

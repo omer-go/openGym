@@ -12,6 +12,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge followed by a row. It trains the legs and the back in one flowing movement.",
   "instructions": [
     "Stand holding dumbbells at your sides.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Stepping up onto a bench with one leg while holding dumbbells. It builds single-leg strength in the quads and glutes.",
   "instructions": [
     "Hold a dumbbell in each hand and stand facing a box or bench.",

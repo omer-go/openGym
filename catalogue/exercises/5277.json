@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up that emphasises the glutes by leaning slightly forward. It builds single-leg strength.",
   "instructions": [
     "Stand in front of a bench and place one foot on it.",

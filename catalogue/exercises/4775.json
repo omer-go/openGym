@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A combined move on parallel bars that pairs a push-up with a dip. It works the chest and triceps.",
   "instructions": [
     "Place hands on parallel bars and support yourself in a plank.",

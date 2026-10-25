@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm incline cable press on an exercise ball. It trains the upper chest and balance.",
   "instructions": [
     "Sit on an exercise ball with your feet flat on the ground and your back resting against an incline bench.",

@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge held in one place with a barbell on your back, so the feet stay put while you lower and rise.",
   "instructions": [
     "Place a barbell across your upper back.",

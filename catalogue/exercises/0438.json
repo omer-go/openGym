@@ -9,6 +9,7 @@
     "chest"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "You press dumbbells overhead in a W-shaped path. It trains the shoulders and the muscles that stabilise them.",
   "instructions": [
     "Sit on a bench with a dumbbell in each hand, palms facing forward.",

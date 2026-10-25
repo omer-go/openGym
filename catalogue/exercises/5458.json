@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Raise one dumbbell diagonally across your body. Works the chest and front shoulder.",
   "instructions": [
     "Stand holding a dumbbell by your opposite hip.",

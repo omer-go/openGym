@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up where you lift your hands at the bottom, removing momentum and building chest strength.",
   "instructions": [
     "Start in a high plank with hands under shoulders.",

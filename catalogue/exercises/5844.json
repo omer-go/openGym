@@ -10,6 +10,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A straight-arm cable pulldown from the side, one arm at a time. It isolates the lats without bending the elbow much.",
   "instructions": [
     "Stand facing a high cable with one handle in your hand.",

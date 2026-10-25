@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "Press one dumbbell up from the floor. Lying on the floor limits the range of motion and challenges your core to stay still.",
   "instructions": [
     "Lie on your back with your knees bent, holding a dumbbell at chest level.",

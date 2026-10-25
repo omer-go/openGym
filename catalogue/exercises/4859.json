@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A push-up that finishes by rotating into a side plank. It trains the chest and trunk.",
   "instructions": [
     "Start in a high plank.",

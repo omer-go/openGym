@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A side-on step with a jump that trains power in the legs.",
   "instructions": [
     "Stand beside a low step.",

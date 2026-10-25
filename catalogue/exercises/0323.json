@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm lateral raise on an incline bench. It isolates the side delt, one arm at a time.",
   "instructions": [
     "Sit on an incline bench with a dumbbell in one hand, resting it on your thigh.",

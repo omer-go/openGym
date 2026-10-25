@@ -3,14 +3,15 @@
   "name": "barbell front squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "The barbell front squat with the bar resting on the front of the shoulders. Heavy on the quads and core.",
   "instructions": [
     "Start by standing with your feet shoulder-width apart, toes slightly turned out.",

@@ -11,6 +11,8 @@
     "trapezius"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A raise lying face down on a bench or floor with one arm. It targets the lower and middle traps and shoulder blade control.",
   "instructions": [
     "Lie face down with one arm hanging or reaching overhead, thumb up.",

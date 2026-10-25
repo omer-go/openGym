@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "isometric",
+  "pattern": "pull-vertical",
   "description": "A chin-up variation focused on holding at the top and lowering slowly to build strength.",
   "instructions": [
     "Jump or step up so your chin is above the bar.",

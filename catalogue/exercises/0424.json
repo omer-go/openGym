@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "You press one dumbbell overhead with the palm facing in. It trains the shoulders and triceps, with a joint-friendly grip.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand at shoulder height with your palm facing inwards.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge while pressing a landmine bar overhead. It trains the legs, glutes and shoulders together.",
   "instructions": [
     "Hold the end of the landmine bar at your shoulder.",

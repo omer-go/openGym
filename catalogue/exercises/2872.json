@@ -10,6 +10,7 @@
     "obliques"
   ],
   "category": "pilates",
+  "unilateral": true,
   "description": "A Pilates ab move with alternating knee pulls that builds core endurance and coordination.",
   "instructions": [
     "Lie on your back and curl your head and shoulders off the mat.",

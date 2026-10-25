@@ -3,13 +3,14 @@
   "name": "bodyweight box squat",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A squat that lightly touches a box behind you to teach depth, hip hinge and control.",
   "instructions": [
     "Place a box behind you and stand with feet a bit wider than shoulders.",

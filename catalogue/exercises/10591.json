@@ -10,6 +10,8 @@
     "hip flexors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Seated knee flexion with a band under your foot, hugging one knee. It adds resistance to the bend.",
   "instructions": [
     "Sit tall on a chair with a band around one foot.",

@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm rope kickback that works the triceps with steady cable tension.",
   "instructions": [
     "Attach a rope to a low pulley and hold one end with a neutral grip.",

@@ -3,13 +3,15 @@
   "name": "dumbbell contralateral forward lunge",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A dumbbell lunge stepping forward with the opposite arm movement. It trains the glutes, quads and balance.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand.",

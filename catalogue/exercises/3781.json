@@ -12,6 +12,8 @@
     "upper back"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "An explosive split jump with a one-arm band row. It builds power in your legs and trains your back.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

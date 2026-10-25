@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A single-leg squat jump with the rear foot elevated, building explosive power and balance in each leg.",
   "instructions": [
     "Stand facing away from a bench and rest the top of one foot on it.",

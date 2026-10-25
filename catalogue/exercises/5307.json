@@ -11,6 +11,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip hinge holding a landmine bar. It trains hamstrings and glutes and challenges your balance.",
   "instructions": [
     "Hold the end of the landmine bar in front of you with both hands.",

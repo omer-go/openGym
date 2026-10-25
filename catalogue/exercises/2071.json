@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip thrust that works the glutes hard and challenges balance and hip stability.",
   "instructions": [
     "Sit with your upper back against a bench and one foot flat on the floor.",

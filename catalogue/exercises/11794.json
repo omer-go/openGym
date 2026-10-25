@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A second version of the fingers-on-ball drill for forearm and hand strength.",
   "instructions": [
     "Place a ball under one hand on a table or hold it in your palm.",

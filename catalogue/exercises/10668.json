@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm band row from a kneeling position. It builds the lats and mid back with simple equipment.",
   "instructions": [
     "Anchor a band at chest height and kneel facing it.",

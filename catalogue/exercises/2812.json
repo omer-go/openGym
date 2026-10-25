@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A dumbbell step-up combined with a knee drive. Builds the quads and glutes.",
   "instructions": [
     "Stand in front of a bench or step with a dumbbell in each hand, palms facing your body.",

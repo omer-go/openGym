@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A vertical jump from one leg to build explosive power and balance. Each side gets its own work.",
   "instructions": [
     "Stand on one leg with a slight knee bend.",

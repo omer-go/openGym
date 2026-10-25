@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A form check drawing for the lunge, showing correct and incorrect positions. It reminds you how to train the thighs safely.",
   "instructions": [
     "Stand tall with feet hip width.",

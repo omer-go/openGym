@@ -10,6 +10,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable reverse fly, hinged at 45 degrees to target the rear delt.",
   "instructions": [
     "Stand at a cable station and take one handle.",

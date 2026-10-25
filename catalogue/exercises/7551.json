@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Split squat with the front heel raised, loading the quads more directly.",
   "instructions": [
     "Place your rear foot on a bench and front heel on a small plate.",

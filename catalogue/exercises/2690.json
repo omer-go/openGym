@@ -9,6 +9,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-sided raise out to the side that builds the middle part of the shoulder.",
   "instructions": [
     "Stand holding a dumbbell in one hand at your side.",

@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "An easier one-arm push-up using a wall, building the strength and stability needed for the full floor version.",
   "instructions": [
     "Stand facing a wall at arm's length and place one hand on it at chest height.",

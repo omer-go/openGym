@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A Bulgarian split squat with one dumbbell held in the opposite hand to the front leg.",
   "instructions": [
     "Hold one dumbbell in the hand opposite your front leg.",

@@ -3,13 +3,15 @@
   "name": "dumbbell rear lunge front raise",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "shoulders",
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Step back into a lunge and raise the dumbbells in front. It trains the legs and shoulders together.",
   "instructions": [
     "Stand tall holding a dumbbell in each hand at your thighs.",

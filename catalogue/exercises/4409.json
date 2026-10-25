@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A walking lunge with the barbell in a front rack, challenging the legs, balance and core.",
   "instructions": [
     "Rest the barbell across your front shoulders with elbows high.",

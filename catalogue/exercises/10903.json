@@ -10,6 +10,8 @@
     "grip muscles"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A one-arm pull-up where a band takes some of your body weight. It helps you work toward an unassisted rep.",
   "instructions": [
     "Hang a band from the bar and place a foot or knee in the loop.",

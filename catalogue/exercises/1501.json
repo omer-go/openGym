@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A side plank with a rowing motion against a band held by a partner. It trains the lats and trunk stability.",
   "instructions": [
     "Get into a side plank on one forearm, with a partner holding the band in front of you.",

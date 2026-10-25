@@ -10,6 +10,8 @@
     "feet"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-leg calf hop with a step box nearby for balance. It trains ankle power with extra stability.",
   "instructions": [
     "Stand beside a step box and rest a hand lightly on it for balance.",

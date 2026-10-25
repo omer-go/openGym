@@ -3,13 +3,14 @@
   "name": "sled closer hack squat",
   "bodyPart": "upper legs",
   "equipment": "sled machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "On a sled hack squat machine, you squat with your feet close together. Puts more focus on the quads.",
   "instructions": [
     "Adjust the sled machine to a comfortable weight and position yourself with your back against the pad.",

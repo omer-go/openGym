@@ -3,13 +3,14 @@
   "name": "bodyweight drop jump squat",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "plyometrics",
+  "pattern": "squat",
   "description": "A squat that ends with an explosive jump, bringing the feet together in the air. It builds leg power and cardio.",
   "instructions": [
     "Stand with your feet shoulder-width apart.",

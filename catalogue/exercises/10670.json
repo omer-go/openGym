@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm incline press on a lever machine. Working one side at a time evens out strength differences.",
   "instructions": [
     "Sit on the machine and grab one handle at upper-chest height.",

@@ -3,13 +3,15 @@
   "name": "barbell rear lunge v. 2",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A reverse lunge with the bar on your back, stepping back and returning to standing. Works the glutes and quads.",
   "instructions": [
     "Stand with your feet shoulder-width apart and hold a barbell across your upper back.",

@@ -3,13 +3,15 @@
   "name": "kettlebell rear lunge",
   "bodyPart": "upper legs",
   "equipment": "kettlebell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Step back into a lunge while holding a kettlebell. Stepping backward is kind on the knees and loads the glutes and quads.",
   "instructions": [
     "Stand tall holding a kettlebell at your chest or by your side.",

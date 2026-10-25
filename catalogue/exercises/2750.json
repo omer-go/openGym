@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged deadlift where a wall helps you balance while the hamstrings and glutes do the work.",
   "instructions": [
     "Stand near a wall, holding a dumbbell and resting one hand on it for balance.",

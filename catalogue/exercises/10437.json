@@ -12,6 +12,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-armed seated row with a rope handle on a low pulley. It works the lats and upper back one side at a time.",
   "instructions": [
     "Attach a rope to a low pulley and sit facing the stack with your feet braced.",

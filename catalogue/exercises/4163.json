@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A wrist curl using cable resistance on one arm. It strengthens the forearm flexors.",
   "instructions": [
     "Sit by a low pulley with your forearm resting on your thigh.",

@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Hold a dumbbell at your chest and step behind and across into a curtsey lunge.",
   "instructions": [
     "Hold a dumbbell at your chest.",

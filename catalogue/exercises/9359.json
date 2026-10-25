@@ -10,6 +10,8 @@
     "lower back"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-legged bridge with your heel planted that works the hamstrings and glutes.",
   "instructions": [
     "Lie on your back with one foot flat and the other leg raised.",

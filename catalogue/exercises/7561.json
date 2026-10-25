@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Supported single leg squat that helps you progress toward the full version.",
   "instructions": [
     "Hold a stable support with one hand.",

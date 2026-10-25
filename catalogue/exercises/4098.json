@@ -3,14 +3,16 @@
   "name": "kettlebell side lunge",
   "bodyPart": "upper legs",
   "equipment": "kettlebell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lateral lunge holding a kettlebell, working glutes, quads and inner thighs.",
   "instructions": [
     "Stand tall holding a kettlebell at your chest.",

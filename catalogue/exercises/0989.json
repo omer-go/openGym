@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm chest press with a band that adds a twist. It trains the chest and core.",
   "instructions": [
     "Attach the band to a sturdy anchor point at chest height.",

@@ -10,6 +10,7 @@
     "upper chest"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "Bench press from pins in the rack, starting from a dead stop at the chest.",
   "instructions": [
     "Set the pins just above your chest.",

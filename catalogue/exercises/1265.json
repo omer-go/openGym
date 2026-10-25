@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm incline cable press. It trains the upper chest and shoulders.",
   "instructions": [
     "Adjust the cable machine to a low pulley position.",

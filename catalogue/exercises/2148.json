@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one sided machine hip thrust that hits each glute on its own and challenges hip stability.",
   "instructions": [
     "Sit on the machine with your upper back on the pad and the belt across your hips.",

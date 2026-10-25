@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Seated on a bench or floor, you lift one straight leg to train the hip flexors and thigh. It is a simple core and leg exercise.",
   "instructions": [
     "Sit tall on the edge of a bench with your hands beside you.",

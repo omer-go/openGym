@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "An explosive one-leg hip thrust where you jump your hips off the floor. It trains glute power.",
   "instructions": [
     "Sit with your upper back on a bench and one foot planted.",

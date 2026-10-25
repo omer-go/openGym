@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A clean followed by an overhead press with one kettlebell. It links hip power with shoulder strength.",
   "instructions": [
     "Hinge and swing the kettlebell back, then clean it to your shoulder.",

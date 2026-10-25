@@ -3,13 +3,15 @@
   "name": "weighted stretch lunge",
   "bodyPart": "upper legs",
   "equipment": "weighted",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A weighted lunge into a deep stretch for the hips. It trains the glutes and quads while opening up the hip flexors.",
   "instructions": [
     "Stand with your feet shoulder-width apart.",

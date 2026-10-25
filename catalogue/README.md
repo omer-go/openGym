@@ -45,6 +45,16 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
 - **bodyPart, equipment, target, secondaryMuscles, category**: only the words listed at the top of
   [`scripts/catalogue/validate.mjs`](../scripts/catalogue/validate.mjs). The app filters, translates
   and draws the muscle map from them, so a new word needs app support first. Ask in an issue.
+- **unilateral** (optional): `true` when the exercise works one arm or one leg at a time (a one-arm
+  row, a split squat, a side plank). Adding it to a plan then logs it per side from the start. It was
+  seeded from the names ([`scripts/catalogue/seed-unilateral.mjs`](../scripts/catalogue/seed-unilateral.mjs));
+  set `false` to overrule a wrong match, and the seeder leaves it alone.
+- **pattern** (optional): the movement, one of `squat`, `hinge`, `lunge`, `push-horizontal`,
+  `push-vertical`, `pull-horizontal`, `pull-vertical`, `carry`, `core` or `isolation` (one joint,
+  one muscle group). Swap offers the same movement first, and generated workouts balance pushes
+  against pulls and squats against hinges. Seeded from the muscle-role templates and the names
+  ([`scripts/catalogue/seed-pattern.mjs`](../scripts/catalogue/seed-pattern.mjs)); a stretch, a
+  pose or cardio has none. Correct a wrong one by hand and the seeder leaves it alone.
 - **description**: one or two sentences on what the movement is and what it trains.
 - **instructions**: 4 to 7 short steps, second person ("Brace your core..."). No em dashes.
 - **muscleMap** (optional): a more precise muscle-map drawing with the body map's own muscle names

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A front squat into an overhead press with one kettlebell. It combines legs and shoulders in one flowing move.",
   "instructions": [
     "Hold a kettlebell at your shoulder with one hand in the rack position.",

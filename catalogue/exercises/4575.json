@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A standing one-arm row with a band to train the lats and mid-back.",
   "instructions": [
     "Anchor a band at chest height and stand facing it.",

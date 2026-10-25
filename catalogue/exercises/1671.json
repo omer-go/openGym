@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing one-arm hammer curl. It trains the brachialis and biceps with a neutral grip.",
   "instructions": [
     "Stand up straight with a dumbbell in each hand, palms facing your torso.",

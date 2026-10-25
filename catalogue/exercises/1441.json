@@ -9,6 +9,8 @@
     "brachialis"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm reverse wrist curl with your forearm resting over a bench. It strengthens the wrist extensors on the top of the forearm.",
   "instructions": [
     "Sit on a bench with your feet flat on the ground and hold a dumbbell in one hand, palm facing down.",

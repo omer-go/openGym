@@ -11,6 +11,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg deadlift where you pass a kettlebell from hand to hand. It trains balance and the hip hinge.",
   "instructions": [
     "Stand on one leg holding a kettlebell in one hand.",

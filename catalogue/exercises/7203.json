@@ -3,13 +3,14 @@
   "name": "resistance band squat step out",
   "bodyPart": "upper legs",
   "equipment": "resistance band",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat that steps sideways against a band, firing up the glutes and hips.",
   "instructions": [
     "Place the band around your thighs and stand with feet hip-width.",

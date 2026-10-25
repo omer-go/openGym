@@ -10,6 +10,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing fly on a cable, one arm at a time. It builds the chest.",
   "instructions": [
     "Stand sideways to a cable with the handle at chest height.",

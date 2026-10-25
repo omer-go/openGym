@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with the knees bent, a more approachable version of the full move. It strengthens the obliques and the side of the hip.",
   "instructions": [
     "Lie on your side with your knees bent and your elbow under your shoulder.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A single-leg squat with arms forward as a counterweight. It builds balance and strength.",
   "instructions": [
     "Stand on one leg and extend the other behind you.",

@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A forward lunge combined with a triceps extension. It trains the triceps and legs.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in each hand.",

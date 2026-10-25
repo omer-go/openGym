@@ -11,6 +11,8 @@
     "upper back"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with the barbell in the front rack, emphasizing quads and an upright torso.",
   "instructions": [
     "Rest the barbell on your front shoulders with elbows high.",

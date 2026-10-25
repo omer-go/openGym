@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-horizontal",
   "description": "A bench press with bands hanging weights from the bar. The shaky load trains control and stability.",
   "instructions": [
     "Hang weights from each end of the bar with bands.",

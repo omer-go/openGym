@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A floor dip with one leg raised for extra challenge. It targets the triceps and core balance.",
   "instructions": [
     "Sit on the floor with hands behind you and knees bent.",

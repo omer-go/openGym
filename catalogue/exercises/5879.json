@@ -10,6 +10,8 @@
     "glutes"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank holding a kettlebell above you. It builds core and shoulder stability.",
   "instructions": [
     "Lie on your side with your elbow under your shoulder.",

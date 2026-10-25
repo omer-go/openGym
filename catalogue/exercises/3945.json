@@ -10,6 +10,8 @@
     "upper back"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm row against the Smith bar for a stable path. It builds the lats and upper back, one side at a time.",
   "instructions": [
     "Set the bar at a low height and hinge at the hips with a flat back.",

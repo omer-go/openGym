@@ -10,6 +10,8 @@
     "lower abs"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A lying leg raise on one leg. It strengthens the thigh and hip flexors.",
   "instructions": [
     "Lie on your back with one knee bent and that foot flat.",

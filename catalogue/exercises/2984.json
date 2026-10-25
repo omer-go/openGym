@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat down to a box. The box gives you a target for depth as you build strength.",
   "instructions": [
     "Stand in front of a box with one leg extended forward.",

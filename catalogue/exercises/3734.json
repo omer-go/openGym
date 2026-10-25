@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg deadlift with the back foot lightly touching the floor for support, so you can focus on the working leg.",
   "instructions": [
     "Hold a kettlebell and stand with one foot slightly behind, toes on the ground as a kickstand.",

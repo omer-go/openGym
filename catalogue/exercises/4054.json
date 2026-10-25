@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Overhead triceps extension with one dumbbell while seated on a stability ball. The ball adds a core challenge.",
   "instructions": [
     "Sit tall on a stability ball and hold a dumbbell overhead in one hand.",

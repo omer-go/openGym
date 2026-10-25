@@ -12,6 +12,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A hip hinge paired with a one-arm band row. It works your posterior chain and your upper back.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

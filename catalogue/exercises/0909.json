@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunges with band resistance. They build the quads and glutes with extra tension.",
   "instructions": [
     "Stand on the band with the ends held at your shoulders.",

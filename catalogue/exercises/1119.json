@@ -3,13 +3,15 @@
   "name": "suspender lunge back crossover",
   "bodyPart": "upper legs",
   "equipment": "suspension trainer",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear lunge where the back leg crosses behind the front one, hitting the glutes and outer hips.",
   "instructions": [
     "Hold the handles and stand facing the anchor.",

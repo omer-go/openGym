@@ -9,6 +9,8 @@
     "glutes"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg seated hamstring curl on a plate-loaded machine. It builds each hamstring separately.",
   "instructions": [
     "Sit on the machine and set the pad above your ankle.",

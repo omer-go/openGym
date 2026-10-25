@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A standing or all fours kickback with a band that targets the glutes one leg at a time.",
   "instructions": [
     "Loop a band around your ankles or anchor it and loop it around one foot.",

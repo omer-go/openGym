@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single leg bridge with a band and the free leg held straight, demanding strong glutes and a level pelvis.",
   "instructions": [
     "Lie on your back with a band around your thighs and one knee bent, foot flat.",

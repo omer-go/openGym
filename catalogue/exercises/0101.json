@@ -3,13 +3,14 @@
   "name": "barbell speed squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A fast, light back squat. Builds explosive leg power and speed out of the hole.",
   "instructions": [
     "Stand with your feet shoulder-width apart, toes slightly turned out.",

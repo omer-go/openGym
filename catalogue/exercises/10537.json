@@ -8,6 +8,8 @@
     "hip flexors"
   ],
   "category": "rehab",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Seated on a chair, you straighten one knee to lift your foot. A gentle move that wakes up the thigh.",
   "instructions": [
     "Sit tall on a chair with your feet flat.",

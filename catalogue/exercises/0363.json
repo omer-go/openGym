@@ -9,6 +9,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "You pull one dumbbell up along your body toward chin height with the elbow leading. It trains the side shoulders and upper traps.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a dumbbell in one hand with an overhand grip.",

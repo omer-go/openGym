@@ -11,6 +11,8 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank with an arm rotation under the body. It builds the obliques and shoulder stability.",
   "instructions": [
     "Set up in a side plank on one forearm or hand with your top arm raised.",

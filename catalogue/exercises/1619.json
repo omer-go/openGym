@@ -9,6 +9,8 @@
     "chest"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A one-arm neutral-grip press on an incline bench. It trains the triceps and upper chest on one side at a time.",
   "instructions": [
     "Sit on an incline bench with a dumbbell in one hand, resting on your thigh.",

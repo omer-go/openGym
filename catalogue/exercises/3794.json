@@ -12,6 +12,8 @@
     "upper back"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A jumping lunge combined with a one-arm band row. It raises your heart rate and builds leg power.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A step-up with a forward lean and a high box that shifts the work onto the glutes.",
   "instructions": [
     "Hold a dumbbell in each hand and face a bench or box.",

@@ -3,13 +3,14 @@
   "name": "sled 45° leg wide press",
   "bodyPart": "upper legs",
   "equipment": "sled machine",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "calves"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "On a 45 degree sled, you press with a wide stance. Works the inner thighs, glutes and quads.",
   "instructions": [
     "Adjust the sled machine to a 45-degree angle.",

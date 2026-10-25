@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A dumbbell side plank with a reverse fly. It trains the rear delts, upper back and obliques.",
   "instructions": [
     "Start by lying on your side with your legs extended and stacked on top of each other.",

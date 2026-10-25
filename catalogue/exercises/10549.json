@@ -10,6 +10,8 @@
     "lower back"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg glute bridge with your feet raised. It strongly works the glutes and hamstrings.",
   "instructions": [
     "Lie on your back with one foot raised on a bench or step.",

@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A Bulgarian split squat on a Smith machine with the front foot raised, giving extra depth for quads and glutes.",
   "instructions": [
     "Set the bar on your upper back and stand with the front foot on a low plate or step.",

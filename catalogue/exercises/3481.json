@@ -10,6 +10,8 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A low lunge hold in a sprinter stance for the legs and hips.",
   "instructions": [
     "Step into a long lunge.",

@@ -3,13 +3,15 @@
   "name": "dumbbell forward leaning lunge",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge with a forward torso lean that shifts more of the load onto the glutes and hamstrings.",
   "instructions": [
     "Hold a dumbbell in each hand and stand tall with your feet hip width apart.",

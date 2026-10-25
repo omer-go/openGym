@@ -12,6 +12,8 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A squat combined with a one-arm band row. It trains your legs and your back together.",
   "instructions": [
     "Anchor the band at a low point and hold the handle in one hand.",

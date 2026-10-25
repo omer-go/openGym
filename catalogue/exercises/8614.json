@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable pushdown in a horizontal path, isolating the triceps.",
   "instructions": [
     "Set the cable at chest height and stand facing away holding the handle by your shoulder.",

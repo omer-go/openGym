@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "push-vertical",
   "description": "A strict standing overhead press with a barbell. It builds shoulder and triceps strength.",
   "instructions": [
     "Unrack the bar at shoulder height, hands just outside your shoulders.",

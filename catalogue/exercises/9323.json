@@ -3,13 +3,14 @@
   "name": "wide bench air squat",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "adductors",
     "hamstrings"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "An air squat with a wide stance, touching a bench to guide your depth. It works the glutes and inner thighs.",
   "instructions": [
     "Stand in front of a bench with your feet wide and toes turned out.",

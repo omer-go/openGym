@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A weighted lunge with an arm swing as you step forward. It trains the glutes, quads and shoulders.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a weight in each hand.",

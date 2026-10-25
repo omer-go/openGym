@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A seated machine squat done on one leg. It lets you load each leg separately with good support.",
   "instructions": [
     "Sit in the machine with your back against the pad and shoulders under the supports.",

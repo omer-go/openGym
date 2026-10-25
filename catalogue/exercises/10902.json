@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "pull-vertical",
   "description": "A slow lowering phase of a one-arm pull-up. It builds the strength needed for the full move.",
   "instructions": [
     "Get into the top position of a pull-up, with one hand on the bar and the other assisting or at rest.",

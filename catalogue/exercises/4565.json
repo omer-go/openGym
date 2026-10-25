@@ -3,14 +3,16 @@
   "name": "dumbbell step up with knee raise",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hip flexors",
     "core",
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A loaded step-up that finishes with a knee drive, working the legs and balance.",
   "instructions": [
     "Hold dumbbells at your sides and stand facing a bench or box.",

@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A reverse lunge with an overhead reach and a twist. It warms up the legs, hips and spine together.",
   "instructions": [
     "Stand tall with your arms by your sides.",

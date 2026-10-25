@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "plyometrics",
+  "pattern": "push-horizontal",
   "description": "A push-up pushed fast enough for your hands to leave the floor. Builds upper-body power.",
   "instructions": [
     "Start in a high plank with hands under shoulders.",

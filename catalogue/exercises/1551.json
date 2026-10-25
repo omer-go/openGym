@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear-foot-elevated lunge using a decline bench and dumbbells. The raised back foot shifts the load onto the front leg.",
   "instructions": [
     "Hold a dumbbell in each hand and stand facing away from a decline bench.",

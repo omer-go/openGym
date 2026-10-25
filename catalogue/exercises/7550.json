@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Rear-foot elevated split squat with the front foot raised for greater depth.",
   "instructions": [
     "Stand with your front foot on a low platform and your rear foot on a bench.",

@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press with a resistance band. It trains each shoulder separately and challenges your trunk.",
   "instructions": [
     "Stand on the band with the handle in one hand at shoulder height.",

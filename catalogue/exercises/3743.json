@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A single-leg squat with your rear foot resting on a chair, which builds strength and balance.",
   "instructions": [
     "Stand facing away from a chair and rest the top of one foot on it.",

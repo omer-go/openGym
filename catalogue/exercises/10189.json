@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A plate flow that links a deadlift, a reverse lunge and an overhead press for a full body hit.",
   "instructions": [
     "Stand holding a weight plate in front of your thighs.",

@@ -11,6 +11,8 @@
     "rhomboids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm cable row from a high pulley while your chest rests on a pad. The support lets you focus on the upper back without cheating.",
   "instructions": [
     "Set a handle on a high pulley and lean your chest against the support.",

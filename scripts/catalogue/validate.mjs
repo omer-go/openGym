@@ -18,6 +18,7 @@ export const EQUIPMENT = list('body weight, dumbbell, cable, barbell, leverage m
 export const TARGETS = list('abs, pectorals, biceps, glutes, delts, triceps, upper back, lats, calves, quads, forearms, cardiovascular system, hamstrings, spine, traps, adductors, serratus anterior, abductors, levator scapulae')
 export const SECONDARY = list('shoulders, deltoids, rear deltoids, rotator cuff, chest, upper chest, triceps, biceps, brachialis, forearms, wrists, wrist flexors, wrist extensors, grip muscles, back, upper back, lats, latissimus dorsi, rhomboids, trapezius, traps, lower back, core, abdominals, obliques, lower abs, hip flexors, glutes, quadriceps, hamstrings, adductors, inner thighs, groin, calves, soleus, shins, ankles, ankle stabilizers, feet, hands, sternocleidomastoid')
 export const CATEGORIES = list('strength, stretching, mobility, plyometrics, cardio, olympic, calisthenics, pilates, yoga, combat, isometric, rehab')
+export const PATTERNS = list('squat, hinge, lunge, push-horizontal, push-vertical, pull-horizontal, pull-vertical, carry, core, isolation')
 export const MUSCLES = list('trapezius, deltoids, chest, upper-back, serratus, biceps, triceps, forearm, abs, obliques, lower-back, gluteal, quadriceps, hamstring, adductors, hip-flexors, calves, tibialis')
 // Single muscles for "muscleRoles", finer than the body map: which muscle moves the weight, which
 // help, which hold a joint still. Data only for now, the app does not read it yet.
@@ -31,7 +32,7 @@ export const ROLE_MUSCLES = list(`
   sternocleidomastoid, neck-extensors`)
 export const ROLES = list('target, synergists, dynamicStabilizers, stabilizers, antagonistStabilizers')
 export const LANGS = list('ar, bn, de, es, fr, hi, hu, it, ko, pl, pt, pt-BR, ru, th, tr, uk, zh, zh-TW')
-const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
+const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'unilateral', 'pattern', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
 const I18N_KEYS = ['name', 'description', 'instructions']
 
 export function validateCatalogue(dir) {
@@ -56,6 +57,8 @@ export function validateCatalogue(dir) {
     if (!Array.isArray(e.secondaryMuscles) || e.secondaryMuscles.some(m => !SECONDARY.includes(m)))
       say(file, `"secondaryMuscles" must be a list of: ${SECONDARY.join(', ')}`)
     if (e.category != null && !CATEGORIES.includes(e.category)) say(file, `"category" must be one of: ${CATEGORIES.join(', ')}`)
+    if (e.unilateral != null && typeof e.unilateral !== 'boolean') say(file, '"unilateral" must be true or false')
+    if (e.pattern != null && !PATTERNS.includes(e.pattern)) say(file, `"pattern" must be one of: ${PATTERNS.join(', ')}`)
     if (typeof e.description !== 'string') say(file, '"description" must be text (may be empty)')
     if (!Array.isArray(e.instructions) || e.instructions.some(s => !isText(s))) say(file, '"instructions" must be a list of steps (text)')
     if (e.textSource !== 'exercisedb') {

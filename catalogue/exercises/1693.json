@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A single-leg hip hinge holding a medicine ball that trains the hamstrings, glutes and balance.",
   "instructions": [
     "Hold a medicine ball at your chest and stand on one leg with a soft knee.",

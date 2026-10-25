@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm cable row from a hinged position. It trains the back one side at a time and shows up any strength imbalance.",
   "instructions": [
     "Stand facing a cable machine with your feet shoulder-width apart.",

@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Walking lunges with dumbbells held overhead. It trains the legs and shoulder stability.",
   "instructions": [
     "Hold dumbbells overhead with locked arms.",

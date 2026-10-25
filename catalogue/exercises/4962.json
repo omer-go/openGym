@@ -3,13 +3,14 @@
   "name": "barbell box squat",
   "bodyPart": "upper legs",
   "equipment": "barbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "lower back"
   ],
   "category": "strength",
+  "pattern": "squat",
   "description": "A squat to a box behind you. It trains the hips and legs while teaching depth control.",
   "instructions": [
     "Place a box behind you and a barbell on your upper back.",

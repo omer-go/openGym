@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "description": "A squat down to a bench and back up. The bench gives you a depth target and builds leg strength with control.",
   "instructions": [
     "Stand in front of a bench with feet shoulder-width apart.",

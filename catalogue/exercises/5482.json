@@ -11,6 +11,8 @@
     "ankles"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "Low-impact hopping on one leg to build ankle stiffness, balance and leg power.",
   "instructions": [
     "Stand on one leg with a slight knee bend and arms ready.",

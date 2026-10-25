@@ -9,6 +9,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one arm overhead band extension to isolate each triceps.",
   "instructions": [
     "Stand on the band and hold the other end overhead with one hand.",

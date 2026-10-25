@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "isolation",
   "description": "A bodyweight curl using gymnastic rings. It builds the biceps.",
   "instructions": [
     "Hold the rings and lean back.",

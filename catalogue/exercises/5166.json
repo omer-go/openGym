@@ -10,6 +10,8 @@
     "hamstrings"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "A one-legged jump onto a box. It builds explosive power and single-leg control.",
   "instructions": [
     "Stand facing a sturdy box on one foot.",

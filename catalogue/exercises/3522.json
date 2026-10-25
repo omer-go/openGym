@@ -11,6 +11,8 @@
     "chest"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg glute bridge with a kettlebell pullover, working glutes and lats.",
   "instructions": [
     "Lie on your back with one foot flat, other leg raised.",

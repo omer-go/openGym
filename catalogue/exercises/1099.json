@@ -9,6 +9,8 @@
     "hamstrings"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat holding the handles for help. It trains the legs and balance.",
   "instructions": [
     "Hold the handles and place your back foot behind you.",

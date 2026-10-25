@@ -12,6 +12,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "Pressing a kettlebell held upside down from a kneeling position. The unstable load demands shoulder control and grip.",
   "instructions": [
     "Kneel on both knees and hold a kettlebell bottoms up at shoulder height.",

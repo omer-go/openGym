@@ -9,6 +9,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm cable kickback that isolates the triceps with constant tension.",
   "instructions": [
     "Set a low pulley with a single handle and hinge forward at the hips.",

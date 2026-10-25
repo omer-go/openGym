@@ -12,6 +12,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A rear lunge combined with a row using a power sled. Works legs and back together.",
   "instructions": [
     "Hold the sled handles with arms extended and feet together.",

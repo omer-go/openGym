@@ -10,6 +10,7 @@
     "glutes"
   ],
   "category": "mobility",
+  "unilateral": true,
   "description": "A single-leg stand on a balance board. It trains ankle stability and control.",
   "instructions": [
     "Place a balance board on a flat floor next to a wall for safety.",

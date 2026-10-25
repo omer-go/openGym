@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm fly on the floor with a landmine bar, training the chest and stability.",
   "instructions": [
     "Lie on the floor holding the landmine bar end with one hand.",

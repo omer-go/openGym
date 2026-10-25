@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-horizontal",
   "description": "A standing one-arm press with a palm-up grip that works the chest and tests core stability.",
   "instructions": [
     "Set a cable at chest height and hold the handle with a palm-up grip.",

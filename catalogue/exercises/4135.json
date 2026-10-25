@@ -10,6 +10,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with a band adding resistance for the legs.",
   "instructions": [
     "Stand on the band in a split stance and hold the ends at your shoulders.",

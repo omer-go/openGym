@@ -11,6 +11,8 @@
     "rear deltoids"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm Y raise while supported on an incline bench, working the shoulders and upper back.",
   "instructions": [
     "Lie face down on an incline bench with a cable handle in one hand.",

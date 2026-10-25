@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A forward lunge with a forward hinge at the hips. It shifts more work to the glutes and hamstrings.",
   "instructions": [
     "Stand tall with feet hip width.",

@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "description": "A push-up that moves around like a clock, with an arm reaching out to the side on each rep. It works the chest, shoulders and core.",
   "instructions": [
     "Start in a high plank position with your hands directly under your shoulders and your body in a straight line.",

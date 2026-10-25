@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Step sideways onto a box and drive the other knee up. It adds balance and hip flexion to the lateral step up.",
   "instructions": [
     "Stand sideways next to a box with one foot on top.",

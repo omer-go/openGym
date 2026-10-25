@@ -11,6 +11,8 @@
     "feet"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "Small, springy hops on one leg that build calf and ankle stiffness, elasticity and balance.",
   "instructions": [
     "Stand on one leg with a soft knee and your arms relaxed at your sides.",

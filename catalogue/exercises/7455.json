@@ -10,6 +10,8 @@
     "ankles"
   ],
   "category": "plyometrics",
+  "unilateral": true,
+  "pattern": "squat",
   "description": "One-legged sideways hop that builds power and ankle stability.",
   "instructions": [
     "Stand on one leg with a slight knee bend.",

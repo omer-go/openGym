@@ -3,14 +3,16 @@
   "name": "transverse plane dumbbell lunge",
   "bodyPart": "upper legs",
   "equipment": "dumbbell",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "adductors",
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A lunge that steps diagonally or rotates, loading the legs from a different angle.",
   "instructions": [
     "Hold a dumbbell in each hand and stand tall.",

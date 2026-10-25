@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm front raise with constant cable tension, training the front of the shoulder.",
   "instructions": [
     "Stand facing away from a low cable pulley with the handle in one hand.",

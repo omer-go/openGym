@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with a barbell on your back, a second variation. Builds single leg strength and balance.",
   "instructions": [
     "Rest the barbell across your upper back and step into a split stance.",

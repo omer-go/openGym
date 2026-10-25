@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "Lunge forward step by step with a barbell on your back. It builds the legs and glutes and challenges balance.",
   "instructions": [
     "Place a barbell on your upper back and stand tall.",

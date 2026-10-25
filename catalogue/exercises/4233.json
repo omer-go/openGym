@@ -9,6 +9,8 @@
     "grip muscles"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm wrist curl, palm up, seated with a weight. It builds the forearm flexors and grip.",
   "instructions": [
     "Sit and rest one forearm on your thigh, palm up.",

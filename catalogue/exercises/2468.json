@@ -11,6 +11,8 @@
     "calves"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A side-on step up with dumbbells that builds the legs and glutes.",
   "instructions": [
     "Stand beside a bench holding a dumbbell in each hand.",

@@ -10,6 +10,8 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A single-arm lateral raise done lying on your side or back on the floor with a low cable crossing the body. It trains the side delt under steady tension.",
   "instructions": [
     "Lie on the floor next to a low pulley and grip the handle with the far hand.",

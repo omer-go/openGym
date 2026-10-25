@@ -11,6 +11,8 @@
     "adductors"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A split squat with the bar in a front rack position, building leg strength and core control.",
   "instructions": [
     "Rest the barbell on your front shoulders with elbows high.",

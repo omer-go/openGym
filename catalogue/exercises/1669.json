@@ -8,6 +8,8 @@
     "forearms"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm seated hammer curl. It trains the brachialis and biceps on one side at a time.",
   "instructions": [
     "Sit on a bench with your back straight and feet flat on the ground.",

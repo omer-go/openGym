@@ -9,6 +9,8 @@
     "feet"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-leg calf raise on the floor with a hand on a wall for balance. It builds calf strength and ankle stability.",
   "instructions": [
     "Stand with your feet hip-width apart and place your hands on a wall or sturdy object for balance.",

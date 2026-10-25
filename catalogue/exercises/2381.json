@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press that builds the shoulders and challenges your core.",
   "instructions": [
     "Hold a dumbbell at shoulder height with your palm facing forward.",

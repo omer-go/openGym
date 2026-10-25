@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
   "description": "A one-arm cable row that adds a torso rotation. It trains the back and the twisting muscles of the core.",
   "instructions": [
     "Stand facing a cable at chest height with a single handle in one hand.",

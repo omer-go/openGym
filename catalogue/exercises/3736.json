@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "push-vertical",
   "description": "A one-arm overhead press holding the kettlebell upside down, which demands wrist and shoulder control.",
   "instructions": [
     "Hold a kettlebell upside down by the handle at shoulder height.",

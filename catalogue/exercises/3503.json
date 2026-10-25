@@ -11,6 +11,8 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank where you crunch the top elbow toward the knee. It targets the obliques and core.",
   "instructions": [
     "Set up in a side plank on your forearm, top hand behind your head.",

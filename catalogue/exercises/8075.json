@@ -10,6 +10,8 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "hinge",
   "description": "A one-leg hip thrust with a dumbbell across your hips. It hits the glutes hard and shows up strength imbalances.",
   "instructions": [
     "Sit with your upper back against a bench and a dumbbell on your hips.",

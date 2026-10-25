@@ -11,6 +11,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A side plank form check that compares a piked butt with a straight body line.",
   "instructions": [
     "Lie on your side with your forearm on the floor and elbow under your shoulder.",

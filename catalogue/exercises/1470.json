@@ -11,6 +11,8 @@
     "core"
   ],
   "category": "isometric",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A classic side plank that trains the obliques and hip stabilisers.",
   "instructions": [
     "Lie on your side with your forearm under your shoulder and your legs straight.",

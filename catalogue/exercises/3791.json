@@ -11,6 +11,8 @@
     "obliques"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "core",
   "description": "A front plank with a one-arm band pulldown. It trains core stability while your arm works against the band.",
   "instructions": [
     "Anchor the band overhead and set up in a forearm or high plank.",

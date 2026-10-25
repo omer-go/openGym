@@ -44,6 +44,8 @@ const rows = exercises
       img: e.id + '.webp', gif: e.id + '.mp4',
     }
     if (e.category) row.cat = e.category
+    if (e.unilateral) row.uni = 1
+    if (e.pattern) row.pt = e.pattern
     if (e.femaleVariant) row.fv = e.femaleVariant
     if (e.maleVariant) row.mv = e.maleVariant
     return row

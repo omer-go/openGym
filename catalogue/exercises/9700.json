@@ -3,14 +3,16 @@
   "name": "bodyweight walking low lunge",
   "bodyPart": "upper legs",
   "equipment": "body weight",
-  "target": "glutes",
+  "target": "quads",
   "secondaryMuscles": [
-    "quadriceps",
+    "glutes",
     "hamstrings",
     "hip flexors",
     "core"
   ],
   "category": "calisthenics",
+  "unilateral": true,
+  "pattern": "lunge",
   "description": "A walking lunge with a deep, low position that opens the hips and works the glutes and thighs.",
   "instructions": [
     "Stand tall with your hands on your hips.",

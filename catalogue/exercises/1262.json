@@ -9,6 +9,8 @@
     "triceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "isolation",
   "description": "A one-arm decline chest fly with a cable. It trains the lower chest.",
   "instructions": [
     "Attach a D-handle to a low pulley cable machine and set the bench to a decline angle.",
