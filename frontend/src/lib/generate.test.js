@@ -62,6 +62,15 @@ describe('candidatesFor', () => {
     expect(list.slice(0, 2)).toEqual(['0289', BENCH])
     expect(list.slice(2)).toEqual(STAPLES.chest.filter(id => id !== BENCH && id !== '0289'))
   })
+  it('offers what you starred after what you logged and before the staples', () => {
+    const FLY = '0308'   // a chest staple, starred: it moves up, once
+    const st = state({ workouts: [session('2026-09-10', [BENCH])], favEx: ['1269', FLY, CURL] })   // 1269: a cable crossover
+    const list = candidatesFor(st, 'chest')
+    expect(list.slice(0, 3)).toEqual([BENCH, '1269', FLY])
+    expect(list.filter(id => id === FLY)).toHaveLength(1)
+    // a starred curl is no chest lift
+    expect(list).not.toContain(CURL)
+  })
   it('leaves out what the active equipment profile cannot do', () => {
     const st = state({ equipFilterOn: true, equipProfiles: [{ id: 'p', name: 'Home', equipment: ['dumbbell', 'bench'], accV: 1 }], activeEquipId: 'p' })
     const list = candidatesFor(st, 'chest')
@@ -248,6 +257,10 @@ describe('a lift added to or swapped into a one-tap workout', () => {
   it('goes by the kind of lift when the setup does', () => {
     const cfg = sessionConfig(state(), CURL, { gen: { type: 'push', setup: { ...setup, byKind: true } } })
     expect(cfg).toMatchObject({ ...GEN_SCHEME.isolation, warmupSets: 2 })
+  })
+  it('counts a one-legged lift\'s reps on each leg', () => {
+    // dumbbell single leg split squat: 6 a leg is 12 in all
+    expect(sessionConfig(state(), '0410', active)).toMatchObject({ side: true, reps: 12 })
   })
   it('leaves cardio, stretches and any other session alone', () => {
     expect(sessionConfig(state(), '0685', active)).toBeNull()

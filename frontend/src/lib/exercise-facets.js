@@ -100,6 +100,10 @@ export function angleOf(ex) {
 // demonstration by one body type, and gym oddities like boards and chains.
 const TAIL = /form check|\bpov\b|\bv\. ?\d|version \d|\((male|female)\)|\bboards?\b|chains|\bfrom (the )?side\b|\bvariation \d/
 export const isTail = ex => TAIL.test(nameOf(ex))
+// A film of a lift rather than a lift: a form check, a camera angle ("side pov", "back view").
+// The lift itself is in the catalogue under its own name.
+const DEMO = /form check|\bpov\b|\b(front|side|back|rear) view\b/
+export const isDemo = ex => DEMO.test(nameOf(ex))
 
 // How unusual a name is: its words that fewer than RARE names in the catalogue share. A named
 // variant ("Svend press", "Larsen press") has one; a plain lift ("dumbbell bench press") none.

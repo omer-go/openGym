@@ -10,8 +10,9 @@
 // (side delts that only helped presses) gets its own exercise, and a full body always keeps
 // one lower-body compound. The session runs compounds first.
 //
-// Within a muscle, exercises you have already logged come first, longest-ago first; after them
-// a short list of staple lifts, so a muscle you have never trained opens on a bench press, not
+// Within a muscle, exercises you have already logged come first, longest-ago first; then the ones
+// you starred (Choose your exercises keeps a lift by starring it, lib/curate.js); after them a
+// short list of staple lifts, so a muscle you have never trained opens on a bench press, not
 // on whichever of 300 catalogue rows sorts first. `shift` walks each choice one further:
 // Shuffle in the workout is a shift + 1.
 //
@@ -31,7 +32,9 @@ import { partFocus } from './muscle-roles.js'
 import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { suggestable } from './skipped.js'
-import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, modeOf } from './history.js'
+import { favIds } from './favourites.js'
+import { POPULAR_IDS, popularBySlug } from './popular.js'
+import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf } from './format.js'
@@ -54,7 +57,8 @@ export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day',
 
 // Staple lifts per muscle, best first. Only reached for exercises you have not logged yet. The
 // last few are the decline, smith and military-press variants the variety rotation moves on to.
-export const STAPLES = {
+// Only those on the popular list (lib/popular.js) count, unless that leaves a muscle fewer than two.
+const PICKS = {
   chest: ['0025', '0289', '0047', '0314', '0308', '1030', '0251', '0662', '0188', '0033', '0301', '0748', '0757'],
   deltoids: ['0426', '0405', '0091', '0334', '0178', '0603', '2137', '0383', '5609', '1162', '1224'],
   triceps: ['0241', '0030', '0061', '0814', '2188', '0333', '0187'],
@@ -68,6 +72,14 @@ export const STAPLES = {
   trapezius: ['0406', '0095', '0220', '0604'],
   forearm: ['1412', '1411', '1415', '2917', '4163'],
 }
+const ON_LIST = new Set(POPULAR_IDS)
+export const STAPLES = Object.fromEntries(Object.entries(PICKS).map(([slug, ids]) => {
+  const listed = ids.filter(id => ON_LIST.has(id))
+  return [slug, listed.length >= 2 ? listed : ids]
+}))
+// The rest of the popular list, muscle by muscle: reached for when the staples run short.
+const POP = popularBySlug()
+const LISTED = Object.fromEntries(Object.entries(POP).map(([slug, ids]) => [slug, ids.filter(id => !STAPLES[slug]?.includes(id))]))
 
 // A muscle counts as trained by an exercise that works it at least this hard: every primary, not
 // a supporting role (muscles.js weighs a secondary at 0.4) — a bench press is not a shoulder day.
@@ -106,8 +118,13 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
     .filter(([id]) => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug)
     .sort(([a, x], [b, y]) => staler(x.d, y.d) || y.n - x.n || (a < b ? -1 : 1))
     .map(([id]) => id)
-  const staples = (STAPLES[slug] || []).filter(id => usable(EXIDX[id]) && !logged.includes(id))
-  return [...logged, ...staples]
+  const starred = favIds(S).filter(id => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug && !logged.includes(id))
+  const fresh = id => usable(EXIDX[id]) && !logged.includes(id) && !starred.includes(id)
+  const staples = (STAPLES[slug] || []).filter(fresh)
+  // The rest of the list only once the staples run short: the session is built from the best
+  // few, and a long tail of candidates would let an odd lift outscore them on coverage.
+  const more = starred.length + staples.length < 2 ? (LISTED[slug] || []).filter(fresh) : []
+  return [...logged, ...starred, ...staples, ...more]
 }
 
 
@@ -217,7 +234,8 @@ export function genConfig(S, id, setup) {
   for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) keep[k] = base[k]
   const want = genScheme(id, setup)
   const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(want.sets) || def.sets) }
-  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(want.reps) || def.reps)
+  // The scheme's reps are each arm's or leg's; a per-side count is the total across both.
+  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(want.reps) * (isPerSide(cfg) ? 2 : 1) || def.reps)
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true

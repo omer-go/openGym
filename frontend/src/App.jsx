@@ -37,6 +37,7 @@ import Stats from './views/Stats.jsx'
 import History from './views/History.jsx'
 import Library from './views/Library.jsx'
 import Muscles from './views/Muscles.jsx'
+import Curate from './views/Curate.jsx'
 import StructuralBalance from './views/StructuralBalance.jsx'
 import { SettingsRoute } from './views/Settings.jsx'
 import Admin from './views/Admin.jsx'
@@ -210,6 +211,9 @@ function Shell() {
               <Route path="/history" element={<History />} />
               <Route path="/library" element={<Library />} />
               <Route path="/muscles" element={<Muscles />} />
+              <Route path="/library/pick" element={<Curate />} />
+              <Route path="/library/pick/:group" element={<Curate />} />
+              <Route path="/library/pick/:group/:kit" element={<Curate />} />
               <Route path="/structural-balance" element={<StructuralBalance />} />
               <Route path="/measurements" element={<Measurements />} />
               <Route path="/settings" element={<SettingsRoute />} />

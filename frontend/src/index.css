@@ -2212,6 +2212,42 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ax-q{margin:16px 2px 8px;font-size:15px;font-weight:600}
 .ax-any{grid-column:1/-1;min-height:0}
 .ax-else{color:var(--acc);font-weight:500}
+/* Choose your exercises (views/Curate.jsx): Your gym's switches, the groups' progress, the deck. */
+.cu-entry{display:flex;align-items:center;gap:12px;width:100%;padding:12px;margin:0 0 12px;text-align:start;background:var(--surface);border-radius:var(--r-lg);color:var(--label)}
+.cu-entry .ax-m{flex:1}
+.cu-entry>svg:first-child{font-size:20px;color:var(--acc);flex:none}
+.cu-entry:active{opacity:.6}
+.cu-kit{justify-content:space-between}
+.cu-kit.on{box-shadow:inset 0 0 0 2px var(--acc)}
+.cu-tick{font-size:20px;flex:none;color:var(--label-3)}
+.cu-kit.on .cu-tick{color:var(--acc)}
+.cu-done{font-size:18px;flex:none;margin-inline-start:auto;color:var(--acc)}
+.cu-bar{display:block;height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.cu-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
+.cu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:10px 12px;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.cu-count{text-align:center;margin:-6px 0 10px}
+.cu-card{position:relative;touch-action:none;user-select:none;cursor:grab;transition:transform .2s ease;padding:12px}
+.cu-card.drag{transition:none;cursor:grabbing}
+.cu-media{border-radius:var(--r-md,12px);overflow:hidden}
+.cu-name{font-size:19px;font-weight:600;line-height:1.25;margin:12px 2px 8px;text-transform:capitalize}
+.cu-tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 8px}
+.cu-roles{display:flex;flex-direction:column;gap:3px;margin:0 2px}
+.cu-roles b{font-weight:600}
+.cu-say{position:absolute;top:18px;z-index:2;padding:4px 12px;border-radius:8px;font-weight:700;font-size:15px;border:2px solid;background:var(--surface)}
+.cu-say.keep{inset-inline-start:18px;color:var(--acc)}
+.cu-say.drop{inset-inline-end:18px;color:var(--red)}
+.cu-say.pass{left:50%;transform:translateX(-50%);color:var(--label-2)}
+.cu-btns{display:flex;justify-content:center;align-items:center;gap:18px;margin:16px 0 8px}
+.cu-b{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--surface);color:var(--label-2);font-size:18px}
+.cu-b.lg{width:62px;height:62px;font-size:26px}
+.cu-b.keep{color:var(--acc)}
+.cu-b.drop{color:var(--red)}
+.cu-b:disabled{opacity:.35}
+.cu-b:active{opacity:.6}
+.cu-hint{text-align:center}
+.cu-end{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:28px 16px}
+.cu-end-ico{font-size:40px;color:var(--acc)}
+.cu-end-btns{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:14px}
 /* The exercise name in the workout card opens its settings: looks like the title, acts like a button. */
 .exttl{flex:1;min-width:0;font-weight:600;letter-spacing:-.02em;line-height:1.2;text-align:start;background:none;border:0;padding:0;margin:0;color:inherit;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .exttl:active{opacity:.6}
