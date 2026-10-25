@@ -244,14 +244,6 @@ describe('variety', () => {
     const ids = pickForCoverage(cands, { count: 3, groups: ['chest', 'shoulders', 'triceps'], need: { chest: 1, shoulders: 1, triceps: 1 } }).map(p => p.id)
     expect(ids.filter(id => id === '0251' || id === '0814')).toHaveLength(1)
   })
-  it('a program day keeps the compound you did last over a fresher one', () => {
-    // squats on two tools: the barbell one is the staler, so it wins unless the day keeps
-    const cands = [{ id: '0770', rank: 1, last: '2026-09-10' }, { id: SQUAT, rank: 0, last: null }]
-    const history = variantHistory(state({ workouts: [session('2026-09-10', ['0770'])] }))
-    const pick = keep => pickForCoverage(cands, { count: 1, groups: ['quads', 'glutes'], need: { quads: 1, glutes: 1 }, history, keep })[0].id
-    expect(pick(false)).toBe(SQUAT)
-    expect(pick(true)).toBe('0770')
-  })
 })
 
 describe('the parts of a muscle', () => {

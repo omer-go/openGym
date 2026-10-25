@@ -15,9 +15,9 @@
 // on whichever of 300 catalogue rows sorts first. `shift` walks each choice one further:
 // Shuffle in the workout is a shift + 1.
 //
-// A day of the running program (lib/program.js) keeps its main lifts (coverage.js `keep`): the
-// compounds you have logged come back, the one you did last first, so their weight can go up
-// week to week; the isolation lifts still rotate.
+// A day of the running program (lib/program.js) rotates the same way: its own is how many
+// exercises it takes and which groups the ones past the first fill (`share`), not which lifts.
+// A variation you would rather not do is one swap away.
 //
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
 // which muscle groups it covers, add a run and stretches, and set the rest and warm-ups of every
@@ -110,9 +110,6 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
   return [...logged, ...staples]
 }
 
-// Is `type` a day of the program S runs? program.js imports this file, so its isProgram is not
-// read here; a program is its list of days.
-const programDay = (S, type) => Array.isArray(S?.program?.days) && S.program.days.includes(type)
 
 /** How many exercises a `type` session has unless the setup says otherwise. */
 export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
@@ -194,10 +191,10 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
   const candidates = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
-    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank, last: index.exercises[id]?.d || null })))
+    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
-    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now), keep: programDay(S, type),
+    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
     share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0 })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {

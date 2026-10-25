@@ -87,18 +87,13 @@ describe('generateWorkout', () => {
     expect(b).not.toEqual(a)
     expect(new Set(b).size).toBe(b.length)
   })
-  it('a program day keeps the compounds you logged, the one you did last first', () => {
+  it('a program day rotates its compounds as any one-tap day does', () => {
     // a smith squat, a barbell row and an incline dumbbell press last week; a fresh week now
     const st = state({ workouts: [session('2026-09-03', ['0770', '0027', '0314'], sets(3))] })
     const off = generateWorkout(st, 'full', { now: NOW }).map(p => p.id)
     const on = generateWorkout({ ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }, 'full', { now: NOW }).map(p => p.id)
-    expect(off).not.toContain('0770')
-    expect(on).toEqual(expect.arrayContaining(['0770', '0027', '0314']))
-    // a swap sticks: the barbell squat done since takes the smith squat's place
-    const swapped = { ...st, program: { days: ['full'], startedAt: '2026-09-01', weeks: 8 }, workouts: [...st.workouts, session('2026-09-05', [SQUAT], sets(3))] }
-    const ids = generateWorkout(swapped, 'full', { now: NOW }).map(p => p.id)
-    expect(ids).toContain(SQUAT)
-    expect(ids).not.toContain('0770')
+    expect(on).toEqual(off)
+    expect(on).not.toContain('0770')
   })
   it('an unknown type builds nothing', () => {
     expect(generateWorkout(state(), 'arms')).toEqual([])
