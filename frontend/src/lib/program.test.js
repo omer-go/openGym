@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, dayShare, isProgram, newProgram, programForecast, programLayout, programOver, programWeek, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, dayShare, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
+import { USEFUL, entryWeights, groupCredit } from './coverage.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
@@ -87,7 +88,7 @@ describe('sizing a day to the goal', () => {
     const sat = newProgram('full-3', { weeks: 8, today: '2026-09-19' })
     const st = state({ program: sat, goals: { weeklySets: 15 } })
     const share = dayShare(st, 'full', at(2026, 9, 19))
-    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(15 / 3 * 1.5 + 1e-9)
+    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(15 / 3 + 1e-9)
     expect(sizeDay(st, 'full', { now: at(2026, 9, 19) })).toBeLessThan(MAX_GEN_COUNT)
   })
   describe('with muscle roles', () => {
@@ -110,12 +111,41 @@ describe('sizing a day to the goal', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }), goals: { weeklySets: 15 },
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0652'], 3)] })
       const now = at(2026, 9, 16)
-      const long = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now }).sort((a, b) => a.at - b.at).map(p => p.id)
+      const share = programShare(st, 'full', now)
+      const long = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now, share }).sort((a, b) => a.at - b.at).map(p => p.id)
       for (const n of [4, 7, 10]) {
-        const short = generateWorkout(st, 'full', { count: n, now }).map(p => p.id)
+        const short = generateWorkout(st, 'full', { count: n, now, share }).map(p => p.id)
         expect(short.slice().sort()).toEqual(long.slice(0, n).sort())
       }
     })
+    // Each group to its own share, not 85% of the sum: that stopped a day at six with back,
+    // biceps and hamstrings each a set or more short, chest over.
+    it('fills every group to its share, and ends with the last exercise that adds a set', () => {
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 15 },
+        workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4)] })
+      const now = at(2026, 9, 16)
+      const share = dayShare(st, 'full', now)
+      const n = sizeDay(st, 'full', { now })
+      const picks = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now, share }).sort((a, b) => a.at - b.at)
+      const got = {}, adds = []
+      for (const p of picks) {
+        let add = 0
+        for (const [g, c] of Object.entries(groupCredit(entryWeights(p)))) {
+          add += Math.min(c * 3, Math.max(0, (share[g] || 0) - (got[g] || 0)))
+          got[g] = (got[g] || 0) + c * 3
+        }
+        adds.push(add)
+        if (adds.length === n) for (const [g, v] of Object.entries(share)) expect(got[g] || 0, g).toBeGreaterThan(v - USEFUL)
+      }
+      expect(adds[n - 1]).toBeGreaterThanOrEqual(USEFUL)
+      expect(adds.slice(n).every(a => a < USEFUL)).toBe(true)
+    })
+  })
+  it('a program started this week does not catch up on the days before it', () => {
+    const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-17' }), goals: { weeklySets: 15 } })
+    const share = dayShare(st, 'full', THU)
+    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(5 + 1e-9)
+    expect(share.chest).toBeCloseTo(5)
   })
   it('a higher goal makes a longer day, within bounds', () => {
     const low = sizeDay(state({ program: PPLF, goals: { weeklySets: 6 } }), 'push', { now: THU })

@@ -182,6 +182,17 @@ describe('pickForCoverage, after the week so far', () => {
     expect(picks.map(p => p.id)).not.toContain(BENCH)
     expect(pickForCoverage(cands, { count: 5, groups, need: { chest: 0, shoulders: 0.05, triceps: 0.05, biceps: 0.5, quads: 0.3 } }).map(p => p.id)).toContain(BENCH)
   })
+  // A program day's share (program.js dayShare): once every group has its exercise, the next one
+  // goes to the group furthest short, not to whichever is next in line.
+  it('past each group’s first, picks for the group furthest short of its share', () => {
+    const ROW = '0027', PULLDOWN = '0198', CURL = '0031', HAMMER = '0313', CALF = '1372', DB_CALF = '0417'
+    const cands = [ROW, PULLDOWN, CURL, HAMMER, CALF, DB_CALF].map((id, rank) => ({ id, rank }))
+    const groups = ['back', 'biceps', 'calves']
+    const need = { back: 0.5, biceps: 0.5, calves: 0.5 }
+    const fourth = share => groupsOf(pickForCoverage(cands, { count: 4, groups, need, share }).filter(p => p.at === 3))[0]
+    expect(fourth({ back: 9, biceps: 4, calves: 3 })).toBe('back')
+    expect(fourth({ back: 3, biceps: 9, calves: 3 })).toBe('biceps')
+  })
   it('still fills every slot when each group has had its week', () => {
     const st = state({ workouts: [session('2026-09-12', ['0652', BENCH, OHP, SQUAT, RDL, '0031', PUSHDOWN, '0175', '0605'], sets(12))] })
     expect(generateWorkout(st, 'full', { now: NOW })).toHaveLength(7)

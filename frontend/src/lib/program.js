@@ -13,7 +13,7 @@
 // n of a long run are about what a run of n would pick.
 import { ADD_GROUPS } from './add-exercise.js'
 import { GEN_TYPES, MAX_GEN_COUNT, genCount, genGroupsOf, genScheme, generateWorkout } from './generate.js'
-import { entryWeights, groupCredit, weeklyDone, weeklyNeed } from './coverage.js'
+import { USEFUL, entryWeights, groupCredit, weeklyDone, weeklyNeed } from './coverage.js'
 import { weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
@@ -154,13 +154,17 @@ const CATCH_UP = 1.5   // a day takes at most this many times its even part of a
  * Group id -> sets this `type` day should add: what each group still lacks this week, shared out
  * over the program days forecast for the rest of the week (this one included) that train it.
  * A day never takes more than half again its even part of the goal (the goal over the
- * program's days that train the group): a program started late in the week, or a week whose
- * last day falls past its end, would otherwise pile the whole week onto one day.
+ * program's days that train the group), and in the week the program started no more than its
+ * even part: a program started late in the week, or a week whose last day falls past its end,
+ * would otherwise pile the whole week onto one day.
  */
 export function dayShare(S, type, now = Date.now()) {
   const groups = genGroupsOf(type)
   const done = weeklyDone(S, now)
-  const weekEnd = addDays(isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S))), 6)
+  const weekStart = isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S)))
+  const weekEnd = addDays(weekStart, 6)
+  // A program started this week has missed nothing yet: no day of it catches up.
+  const most = isProgram(S?.program) && S.program.startedAt > weekStart ? 1 : CATCH_UP
   const left = programForecast(S, now).filter(f => f.iso <= weekEnd).map(f => f.type)
   if (!left.includes(type)) left.push(type)
   const days = isProgram(S?.program) ? S.program.days : [type]
@@ -170,34 +174,40 @@ export function dayShare(S, type, now = Date.now()) {
     const lack = Math.max(0, goal - (done[g] || 0))
     const hits = left.filter(t => genGroupsOf(t).includes(g)).length || 1
     const even = goal / (days.filter(t => genGroupsOf(t).includes(g)).length || 1)
-    if (lack > 0) out[g] = Math.min(lack / hits, even * CATCH_UP)
+    if (lack > 0) out[g] = Math.min(lack / hits, even * most)
   }
   return out
 }
 
-const REACH = 0.85   // a day is long enough once it gives this share of what it should
+/** A `type` day's dayShare when the program S runs has that day, else null (generateWorkout's `share`). */
+export const programShare = (S, type, now = Date.now()) =>
+  (isProgram(S?.program) && S.program.days.includes(type) ? dayShare(S, type, now) : null)
 
 /**
  * How many exercises a `type` day takes to give its share (dayShare), from MIN_DAY to
  * MAX_GEN_COUNT; the generator's own count when nothing is lacking. `setup` is the one-tap
- * setup, for its sets per exercise.
+ * setup, for its sets per exercise. Every group is filled to its own share: the day ends with the
+ * last exercise that still gives a group a set it lacks (USEFUL), not when the sum looks close.
  */
 export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const share = dayShare(S, type, now)
-  const want = Object.values(share).reduce((n, v) => n + v, 0)
-  if (!(want > 0)) return Math.min(genCount(type), MAX_GEN_COUNT)
+  if (!Object.values(share).some(v => v > 0)) return Math.min(genCount(type), MAX_GEN_COUNT)
   // In the order they were picked, not the order they run in: a pull day runs every back lift
   // before its first curl, so counted that way the shrugs fill the back long before the biceps
   // get anything, and the day grows to eleven.
-  const picks = generateWorkout(S, type, { count: MAX_GEN_COUNT, groups, now }).sort((a, b) => a.at - b.at)
+  const picks = generateWorkout(S, type, { count: MAX_GEN_COUNT, groups, now, share, byKind: setup?.byKind, sets: setup?.sets }).sort((a, b) => a.at - b.at)
   const got = {}
+  let n = 0
   for (let i = 0; i < picks.length; i++) {
     const sets = genScheme(picks[i].id, setup).sets || 0
-    for (const [g, c] of Object.entries(groupCredit(entryWeights(picks[i])))) got[g] = (got[g] || 0) + c * sets
-    const reached = Object.entries(share).reduce((n, [g, v]) => n + Math.min(v, got[g] || 0), 0)
-    if (reached >= want * REACH) return Math.max(MIN_DAY, i + 1)
+    let adds = 0
+    for (const [g, c] of Object.entries(groupCredit(entryWeights(picks[i])))) {
+      adds += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
+      got[g] = (got[g] || 0) + c * sets
+    }
+    if (adds >= USEFUL) n = i + 1
   }
-  return Math.max(MIN_DAY, picks.length)
+  return Math.min(picks.length, Math.max(MIN_DAY, n))
 }
 
 /** Group id -> sets done this week and the goal, for the groups a program's days train. */

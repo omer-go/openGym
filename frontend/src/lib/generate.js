@@ -185,9 +185,11 @@ export function partGaps(S, groups, now = Date.now()) {
  * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
  * the order it was picked in (the first n picked are what an n-exercise session would be).
  * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
- * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week.
+ * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week. A
+ * program day passes its `share` (program.js dayShare) and the setup's `byKind` and `sets`, so
+ * the exercises past the first of each group go where the day is furthest short.
  */
-export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now() } = {}) {
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets } = {}) {
   if (!GEN_TYPES[type]) return []
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
@@ -195,7 +197,8 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank, last: index.exercises[id]?.d || null })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
-    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now), keep: programDay(S, type) })
+    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now), keep: programDay(S, type),
+    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0 })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

@@ -59,7 +59,7 @@ import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, M
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { plannedSets } from './lib/coverage.js'
 import { weeklyTargets } from './lib/goals.js'
-import { isProgram, programWeek, sizeDay } from './lib/program.js'
+import { isProgram, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -3023,8 +3023,8 @@ function GenSetup({ type, close }) {
   const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
   useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
-  const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift }),
-    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch, rolesLoaded()])
+  const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, share: programShare(st, type) }),
+    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
   // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's
@@ -3142,7 +3142,7 @@ export function shuffleGenerated() {
   if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
   const shift = (A.gen.shift || 0) + 1
   const setup = A.gen.setup || null
-  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift }), setup)
+  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift, share: programShare(S(), A.gen.type) }), setup)
   if (!entries.length) return
   useUI.getState().stopRest()
   update(s => { s.active.entries = entries; s.active.cur = 0; s.active.gen = { ...s.active.gen, shift } })

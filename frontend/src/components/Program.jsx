@@ -11,7 +11,7 @@ import {
   sessionMinutes, weeklyTargets,
 } from '../lib/goals.js'
 import {
-  DEFAULT_WEEKS, PROGRAM_TEMPLATES, PROGRAM_WEEKS, isProgram, newProgram, programForecast, programLayout, programOver, programWeek, sizeDay,
+  DEFAULT_WEEKS, PROGRAM_TEMPLATES, PROGRAM_WEEKS, isProgram, newProgram, programForecast, programLayout, programOver, programShare, programWeek, sizeDay,
   suggestDay, templateOf,
 } from '../lib/program.js'
 import { KIND_COLOR } from '../lib/workout-kind.js'
@@ -42,7 +42,7 @@ export function DayChip({ type, done, next }) {
 function dayEstimate(S, type) {
   const setup = { ...(S.genSetup?.[type] || {}) }
   const count = sizeDay(S, type, { setup })
-  const picks = generateWorkout(S, type, { count })
+  const picks = generateWorkout(S, type, { count, byKind: setup.byKind, sets: setup.sets, share: programShare(S, type) })
   const sets = picks.reduce((n, p) => n + (genScheme(p.id, setup)?.sets || 0), 0)
   return { count: picks.length, sets, minutes: sessionMinutes(sets) }
 }

@@ -68,6 +68,7 @@ const NEAR = 0.75         // within this share of the best gain, picks count as 
 const ALIKE = 0.5         // credit profiles closer than this are the same exercise twice
 const SAME_SHAPE = 1      // credit profiles this close cover the same, so variety may choose
 const CLOSE = 0.85         // a gain this close to the best still loses to a bigger compound
+export const USEFUL = 1    // a group less than one set short of its day's share is served
 
 /** The muscle weights of a logged entry: the catalogue's, else what was saved with it. */
 export function entryWeights(entry) {
@@ -331,6 +332,12 @@ function fresherFor(history, taken, keep = false) {
 const gainOf = (c, covered, cap, weight) => Object.entries(c.credit).reduce((s, [g, a]) => s + weight(g) * (
   Math.min(cap, (covered[g] || 0) + a) - Math.min(cap, covered[g] || 0) - ((covered[g] || 0) >= cap ? OVER * a : 0)), 0)
 const weightFor = need => g => Math.max((need[g] || 0) ** 2, MIN_WEIGHT)
+// The sets `c` done `sets` times gives the groups still `short` of their share, less a quarter of
+// what it gives past it: a row for a back short six sets before a calf raise short one.
+const fillOf = (c, sets, short) => Object.entries(c.credit).reduce((s, [g, a]) => {
+  const left = short(g)
+  return s + Math.min(a * sets, left) - OVER * Math.max(0, a * sets - left)
+}, 0)
 
 // Two compounds with the same targets are one movement twice, whatever group each is filed
 // under: a romanian deadlift (glutes) and a stiff-legged one (hamstrings) both hinge, a squat
@@ -364,9 +371,12 @@ const runOrder = (a, b) => b.compound - a.compound
  * variantHistory; `shift` walks each choice one further (Shuffle). `rolesOf` gives the muscle
  * roles the parts of a group rotate by. `anchor` is the group ids one compound must come from;
  * `gaps` maps a group id to the target muscles of the part it trained least (partFocus's `muscles`).
- * `keep` holds on to the compounds you have logged (a program day).
+ * `keep` holds on to the compounds you have logged (a program day). `share` maps a group id to
+ * the sets the day should give it (program.js dayShare), `setsOf` an id to the sets it takes:
+ * once every group has its exercise, the next go to the group furthest short of its share.
  */
-export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {}, keep = false }) {
+export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {}, keep = false,
+  share = null, setsOf = () => 3 }) {
   const on = new Set(groups)
   const pool = []
   for (const { id, rank, last } of candidates) {
@@ -381,34 +391,41 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const anchored = () => !pool.some(anchors) || picks.some(anchors)
   // A small group past its one exercise waits until every other group, rested ones too, is served.
   const full = c => !spill && SMALL.has(c.group) && picks.some(p => p.group === c.group)
-  let cap = 1, relaxed = false, spill = false
+  // Sets each group is still short of its share, while the picks go to the shares (`filling`).
+  const got = {}
+  const short = g => Math.max(0, (share?.[g] || 0) - (got[g] || 0))
+  let cap = 1, relaxed = false, spill = false, filling = false, filled = !share
   while (picks.length < count) {
     const last = picks.length === count - 1 && !anchored()
-    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : covered[c.group] < cap
-      && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c)))
+    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL && !full(c)
+      : covered[c.group] < cap && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c)))
     // A movement already in the session is out before a near twin is: a leg curl after a
     // stiff-legged deadlift covers alike, a romanian deadlift is the same lift again.
     const fresh = open.filter(c => !picks.some(p => sameMove(p, c)))
     const distinct = fresh.filter(c => !picks.some(p => distance(p.credit, c.credit) < ALIKE))
-    const ok = distinct.length ? distinct : fresh.length ? fresh : open
+    // Filling a share, what fills it most wins: a second curl for biceps still short, not a shrug.
+    const ok = distinct.length && !filling ? distinct : fresh.length ? fresh : open
     if (!ok.length) {
-      if (relaxed && cap < count) cap++
+      if (filling) { filling = false; filled = true } else if (!relaxed && !filled) filling = true
+      else if (relaxed && cap < count) cap++
       else if (!relaxed) { relaxed = true; cap = 1 } else if (!spill) { spill = true; cap = 1 } else break
       continue
     }
-    const gain = c => gainOf(c, covered, cap, weight)
+    const gain = c => (filling ? fillOf(c, setsOf(c.id), short) : gainOf(c, covered, cap, weight))
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
     const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
     // A part the last two weeks left out, and nothing in the session for it yet: its exercise.
     const gap = gaps[top.c.group]
     const fills = c => c.group === top.c.group && c.parts?.some(m => gap.includes(m))
-    const fillers = gap && !picks.some(fills) ? scored.filter(x => fills(x.c)) : []
+    // Filling a share, only one about as good: a shrug for the traps is no pull-up for a back
+    // and biceps both short.
+    const fillers = gap && !picks.some(fills) ? scored.filter(x => fills(x.c) && (!filling || within(x.g, top.g, NEAR))) : []
     const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
       && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
     const pick = near[shift % near.length]
     picks.push(pick)
-    for (const [g, a] of Object.entries(pick.credit)) covered[g] += a
+    for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }
   }
   return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at })).sort((a, b) => runOrder(picks[a.at], picks[b.at]))
 }
