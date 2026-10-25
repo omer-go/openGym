@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { POPULAR, POPULAR_IDS, popularBySlug } from './popular.js'
+import { POPULAR, POPULAR_IDS, popularBySlug, popularFirst, popularRank } from './popular.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { STAPLES, candidatesFor } from './generate.js'
@@ -36,5 +36,18 @@ describe('what a workout picks from', () => {
     expect(c[0]).toBe(STAPLES.chest[0])
     expect(c.length).toBeGreaterThan(1)
     expect(c.every(id => POPULAR_IDS.includes(id) && !S.skipEx.includes(id))).toBe(true)
+  })
+})
+
+describe('ranking by the list', () => {
+  it('puts the popular lifts first, most popular first, and keeps the rest in order', () => {
+    const rest = [{ id: 'zz1' }, { id: 'zz2' }]
+    const list = [rest[0], { id: POPULAR_IDS[5] }, rest[1], { id: POPULAR_IDS[0] }]
+    expect(popularFirst(list).map(e => e.id)).toEqual([POPULAR_IDS[0], POPULAR_IDS[5], 'zz1', 'zz2'])
+    expect(popularRank('zz1')).toBe(Infinity)
+  })
+  it('stands the list in for a muscle whose staples are all off it', () => {
+    expect(STAPLES.forearm.length).toBeGreaterThanOrEqual(2)
+    expect(STAPLES.forearm.every(id => POPULAR_IDS.includes(id))).toBe(true)
   })
 })

@@ -218,6 +218,14 @@ export const POPULAR = {
 /** Every id on the list, most popular first within each group. */
 export const POPULAR_IDS = Object.values(POPULAR).flat().flatMap(([, ids]) => ids)
 
+// Each listed id's place on the list; Infinity off it, so a sort puts the list first, in order.
+const RANK = new Map(POPULAR_IDS.map((id, i) => [id, i]))
+export const popularRank = id => (RANK.has(id) ? RANK.get(id) : Infinity)
+export const isPopular = id => RANK.has(id)
+
+/** `list` (exercises) with the popular ones first, in list order; the rest keep their order. */
+export const popularFirst = list => [...list].sort((a, b) => Math.min(popularRank(a.id), 1e9) - Math.min(popularRank(b.id), 1e9))
+
 /** Muscle slug -> the list's ids that mainly work it (lib/muscles.js), in list order. */
 export function popularBySlug() {
   const by = {}

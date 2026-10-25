@@ -17,7 +17,7 @@ import { primaryMuscleOf } from './strength-exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ALL_EQUIPMENT, ACC_V, accessoriesOf, activeProfile, eqAvailable, newProfile, profileEquipment } from './equipment.js'
 import { KITS, kitOf, isTail, isDemo, rareWords } from './exercise-facets.js'
-import { POPULAR_IDS } from './popular.js'
+import { popularRank, isPopular } from './popular.js'
 import { favIds } from './favourites.js'
 import { skipIds } from './skipped.js'
 
@@ -92,15 +92,13 @@ export function saveGym(s, have, name) {
   return p
 }
 
-// The popular lifts, most popular first: a pile deals them before anything else.
-const LIST_RANK = new Map(POPULAR_IDS.map((id, i) => [id, i]))
 const nameOf = ex => (ex.n || '').toLowerCase()
 // Words in a name that mark a variation of a lift, not the lift: a band added to it, a hold of
 // it, a ball under it.
 const VARIANT = /\bbanded\b|\bwith band\b|\bhold\b|\bon (a |an )?(stability|exercise|swiss) ball\b|\bversion\b/
 
 /** On the list a pile deals first: a popular lift, or your own. */
-export const onList = ex => LIST_RANK.has(ex.id) || isCustomEx(ex)
+export const onList = ex => isPopular(ex.id) || isCustomEx(ex)
 
 // A plain name: a few common words, nothing in brackets, not the long tail and not a variation
 // of something else. Off the list, these are dealt first.
@@ -109,10 +107,9 @@ const isPlain = ex => {
   return !isTail(ex) && !/[()]/.test(n) && !VARIANT.test(n) && n.split(/\s+/).length <= 5 && rareWords(ex) === 0
 }
 
-// The order a pile deals in: the list by rank, your own, then plain names before the rest, then
-// the shorter name.
-const rank = ex => (LIST_RANK.has(ex.id) ? LIST_RANK.get(ex.id) : Infinity)
-const byDeal = (a, b) => rank(a) - rank(b) || onList(b) - onList(a) || isPlain(b) - isPlain(a) || rareWords(a) - rareWords(b) ||
+// The order a pile deals in: the popular lifts, most popular first; your own; then plain names
+// before the rest, then the shorter name.
+const byDeal = (a, b) => (popularRank(a.id) - popularRank(b.id) || 0) || onList(b) - onList(a) || isPlain(b) - isPlain(a) || rareWords(a) - rareWords(b) ||
   nameOf(a).length - nameOf(b).length || (nameOf(a) < nameOf(b) ? -1 : nameOf(a) > nameOf(b) ? 1 : 0)
 
 /** The strength exercises of a muscle group that fit `have`, in the order a pile deals them. */

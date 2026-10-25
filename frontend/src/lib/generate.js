@@ -57,7 +57,8 @@ export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day',
 
 // Staple lifts per muscle, best first. Only reached for exercises you have not logged yet. The
 // last few are the decline, smith and military-press variants the variety rotation moves on to.
-// Only those on the popular list (lib/popular.js) count, unless that leaves a muscle fewer than two.
+// Only those on the popular list (lib/popular.js) count; where that leaves a muscle fewer than
+// two, the list's own first few for it (the forearms' wrist curls) stand in.
 const PICKS = {
   chest: ['0025', '0289', '0047', '0314', '0308', '1030', '0251', '0662', '0188', '0033', '0301', '0748', '0757'],
   deltoids: ['0426', '0405', '0091', '0334', '0178', '0603', '2137', '0383', '5609', '1162', '1224'],
@@ -73,12 +74,12 @@ const PICKS = {
   forearm: ['1412', '1411', '1415', '2917', '4163'],
 }
 const ON_LIST = new Set(POPULAR_IDS)
+const POP = popularBySlug()
 export const STAPLES = Object.fromEntries(Object.entries(PICKS).map(([slug, ids]) => {
   const listed = ids.filter(id => ON_LIST.has(id))
-  return [slug, listed.length >= 2 ? listed : ids]
+  return [slug, listed.length >= 2 ? listed : (POP[slug] || []).length >= 2 ? POP[slug].slice(0, 5) : ids]
 }))
 // The rest of the popular list, muscle by muscle: reached for when the staples run short.
-const POP = popularBySlug()
 const LISTED = Object.fromEntries(Object.entries(POP).map(([slug, ids]) => [slug, ids.filter(id => !STAPLES[slug]?.includes(id))]))
 
 // A muscle counts as trained by an exercise that works it at least this hard: every primary, not

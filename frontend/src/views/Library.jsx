@@ -15,6 +15,7 @@ import { Button } from '../components/ui.jsx'
 import { tappable, useRevealActiveChip } from '../lib/use-sheet-keyboard.js'
 import { useAutoMore } from '../lib/use-auto-more.js'
 import { isFav, sortFavouritesFirst, sortYoursFirst, usageOf } from '../lib/favourites.js'
+import { popularFirst } from '../lib/popular.js'
 import { isSkipped, skipIds } from '../lib/skipped.js'
 
 // The body-part row's "Not suggested" scope.
@@ -47,11 +48,12 @@ export default function Library() {
   const eqOpts = equipmentOf(eqFiltered)
   // Drop the equipment filter if the search narrowed it away, so you never hit a dead end.
   const eqOn = eqOpts.includes(eq) ? eq : ''
-  // Favourites float to the top of whatever the filters left (issue #6), the rest keeps its order;
-  // while searching, the exercises you have logged or planned follow right after them.
+  // Favourites float to the top of whatever the filters left (issue #6), then the popular lifts
+  // (lib/popular.js), most popular first; the rest keeps its order. While searching, the
+  // exercises you have logged or planned follow right after the favourites instead.
   const narrowedList = eqOn ? eqFiltered.filter(e => e.eq === eqOn) : eqFiltered
   const usage = useMemo(() => (q.trim() ? usageOf(S) : null), [q, S.routines, S.workouts])
-  const f = usage ? sortYoursFirst(narrowedList, S, usage) : sortFavouritesFirst(narrowedList, S)
+  const f = usage ? sortYoursFirst(narrowedList, S, usage) : sortFavouritesFirst(popularFirst(narrowedList), S)
   useRevealActiveChip(bpStrip, bp)
   useRevealActiveChip(eqStrip, eqOn)
   useRevealActiveChip(catStrip, catOn)

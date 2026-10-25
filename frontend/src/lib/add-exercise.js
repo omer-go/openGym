@@ -18,6 +18,7 @@ import { rankForGaps, sessionCredit } from './coverage.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { ACTIVITY_GROUPS, activityGroup, isStretch } from './activities.js'
 import { KIT_FACET, MOVE_FACET, ANGLE_FACET, isTail, rareWords, kitOf } from './exercise-facets.js'
+import { popularRank, isPopular } from './popular.js'
 
 // English names are i18n keys where shown. `low` puts a group under Lower body.
 export const ADD_GROUPS = [
@@ -128,17 +129,20 @@ export function lastTopSet(S, id) {
 
 const STATUS_RANK = { '': 0, wk: 1, td: 2 }
 const byName = (a, b) => exerciseNameFor(a).localeCompare(exerciseNameFor(b))
-// Past what is ranked, the plain version before its variations: the long tail last (a form-check
-// clip, a numbered copy), then a name of common words before a named variant ("Svend press"),
-// then the shorter name — "dumbbell fly" before "dumbbell incline twisted fly".
-const byCommon = (a, b) => isTail(a) - isTail(b) || rareWords(a) - rareWords(b) || (a.n || '').length - (b.n || '').length || byName(a, b)
+// Past what is ranked, the popular lifts (lib/popular.js) in list order, then the plain version
+// before its variations: the long tail last (a form-check clip, a numbered copy), then a name of
+// common words before a named variant ("Svend press"), then the shorter name — "dumbbell fly"
+// before "dumbbell incline twisted fly".
+const byPopular = (a, b) => (popularRank(a.id) - popularRank(b.id)) || 0
+const byCommon = (a, b) => byPopular(a, b) || isTail(a) - isTail(b) || rareWords(a) - rareWords(b) || (a.n || '').length - (b.n || '').length || byName(a, b)
 
 /**
  * The exercises of a group, as the sheet lists them. `sort`:
  * - 'suggested': one section per area, areas not trained in the last 7 days first and the
  *   longest-rested of those first; within an area what you have logged and the staple lifts,
  *   ranked by what they add to the session for the week (`gaps`: { need, history }, see
- *   coverage.js rankForGaps; without it, generate.js's order), then the rest plain versions first.
+ *   coverage.js rankForGaps; without it, generate.js's order), then the rest of the popular list,
+ *   then the rest plain versions first.
  * - 'az': one section per area in the group's order, exercises by name.
  * - 'recent': one section of everything you have logged in the group, most recent first.
  * Exercises already in the session (`have`, else the workout in progress) are left out and
@@ -208,16 +212,19 @@ export function shortlist(S, groupId, { fills = () => false, same = false, ...op
   // A swap (`same`) keeps only those that work the part of the one it replaces.
   const yours = logged.filter(ex => top.has(ex.id) && (!same || fills(ex)))
   yours.sort((a, b) => fills(b) - fills(a))
-  const fresh = all.filter(ex => !exercises[ex.id] && !isTail(ex)).sort((a, b) => fills(b) - fills(a))
+  // Those that fill the part first; as close as each other, a popular lift first.
+  const fresh = all.filter(ex => !exercises[ex.id] && !isTail(ex))
+    .sort((a, b) => fills(b) - fills(a) || isPopular(b.id) - isPopular(a.id))
   let picks
   if (yours.length) picks = fresh.slice(0, WORTH_ADDING)
   else if (activityGroup(groupId)) picks = fresh.slice(0, STARTERS)
   else {
-    // The best-ranked of each kind of equipment, in the order they rank (not for cardio or a
-    // stretch, where the kit is beside the point), the ones that fill the part first.
-    const seen = new Set()
-    picks = fresh.filter(ex => !seen.has(kitOf(ex)) && seen.add(kitOf(ex))).slice(0, STARTERS)
-    if (picks.length < STARTERS) picks = [...picks, ...fresh.filter(ex => !picks.includes(ex)).slice(0, STARTERS - picks.length)]
+    // The best-ranked popular lift of each kind of equipment, in the order they rank (not for
+    // cardio or a stretch, where the kit is beside the point), the ones that fill the part first;
+    // then more popular lifts, and only then the rest.
+    const seen = new Set(), pop = fresh.filter(ex => isPopular(ex.id))
+    picks = pop.filter(ex => !seen.has(kitOf(ex)) && seen.add(kitOf(ex))).slice(0, STARTERS)
+    for (const ex of [...pop, ...fresh]) if (picks.length < STARTERS && !picks.includes(ex)) picks.push(ex)
   }
   return { yours, picks, all, hidden }
 }

@@ -4,6 +4,7 @@ import { narrow, isTail, kitOf } from './exercise-facets.js'
 import { MUSCLES } from './muscles.js'
 import { STAPLES } from './generate.js'
 import { EXIDX } from './exercises.js'
+import { isPopular } from './popular.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { weeklyNeed, variantHistory } from './coverage.js'
 import { variantOf } from './variant.js'
@@ -240,5 +241,19 @@ describe('group questions', () => {
       expect(r.step, id).toBe(null)
       expect(r.list.length, id).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('the popular list in Add exercise', () => {
+  it('starts a group you have never trained on popular lifts only, where it has enough', () => {
+    for (const g of ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'quads', 'hamstrings', 'glutes', 'calves', 'forearms']) {
+      const { picks } = shortlist({}, g)
+      expect(picks.every(ex => isPopular(ex.id)), g).toBe(true)
+    }
+  })
+  it('lists the rest of the popular list right after the suggested lifts', () => {
+    const { all } = shortlist({}, 'chest')
+    const firstOff = all.findIndex(ex => !isPopular(ex.id))
+    expect(all.slice(firstOff).some(ex => isPopular(ex.id))).toBe(false)
   })
 })
