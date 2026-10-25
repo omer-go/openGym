@@ -128,6 +128,30 @@ export const reviewedIds = S => new Set([...favIds(S), ...skipIds(S)])
 export const inList = (S, ex) => favIds(S).includes(ex.id) || (onList(ex) && !skipIds(S).includes(ex.id))
 
 /**
+ * Your list, a muscle group at a time (Your list in views/Curate.jsx): each ADD_GROUPS group with
+ * `list`, its lifts on your list in the order a pile deals them (the popular lifts, most popular
+ * first, then the ones you added), and `dropped`, those you have taken off it. Only what `have`
+ * fits, as the piles.
+ */
+export function listOf(S, have = gymOf(S)) {
+  const skip = new Set(skipIds(S))
+  return ADD_GROUPS.map(g => {
+    const pool = groupPool(S, g.id, have)
+    return { id: g.id, n: g.n, list: pool.filter(ex => inList(S, ex)), dropped: pool.filter(ex => skip.has(ex.id)) }
+  })
+}
+
+/**
+ * Takes a lift off your list in a state draft, or puts it back. A popular lift is dropped (Not
+ * suggested) and put back by forgetting that; one from outside the list is kept (starred) and
+ * taken off by forgetting that, so it goes back to being one of the rest, not a dropped one.
+ */
+export function toggleListed(s, ex) {
+  const on = inList(s, ex), pop = onList(ex)
+  decide(s, ex.id, on ? (pop ? 'drop' : null) : (pop ? null : 'keep'))
+}
+
+/**
  * How far along a list is: `total`, `common` (on the list a pile deals first), how many are
  * `reviewed`, `kept`, `listed` (inList), and how many are still to go of the common ones (`left`)
  * and of the rest (`rare`).

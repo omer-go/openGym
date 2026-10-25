@@ -2222,6 +2222,13 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-tick{font-size:20px;flex:none;color:var(--label-3)}
 .cu-kit.on .cu-tick{color:var(--acc)}
 .cu-done{font-size:18px;flex:none;margin-inline-start:auto;color:var(--acc)}
+.yl-jump{position:sticky;top:var(--sat);box-shadow:0 calc(-1 * var(--sat)) 0 var(--bg);z-index:2;background:var(--bg);padding:6px 0;margin-bottom:4px}
+.yl-sec{scroll-margin-top:calc(var(--sat) + 52px)}
+.yl-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 8px}
+.yl-h h4.sec{margin:0}
+.yl-tog{flex:none;display:grid;place-items:center;width:40px;height:40px;font-size:24px;color:var(--label-3)}
+.yl-tog.on{color:var(--mc,var(--acc))}
+.yl-tog:active{opacity:.6}
 .cu-bar{display:block;height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
 .cu-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
 .cu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:10px 12px;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.12)}

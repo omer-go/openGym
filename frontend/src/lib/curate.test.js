@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, pilesOf, progressOf, deckOf, decide, reviewedIds } from './curate.js'
+import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, pilesOf, progressOf, deckOf, decide, reviewedIds, listOf, toggleListed } from './curate.js'
 import { ALL_EQUIPMENT } from './equipment.js'
 import { kitOf } from './exercise-facets.js'
 import { POPULAR_IDS } from './popular.js'
@@ -132,5 +132,36 @@ describe('the deck', () => {
     const p1 = progressOf({ favEx: [BENCH, off], skipEx: [pool[1].id] }, pool)
     // the dropped popular lift leaves the list, the kept rarer one joins it
     expect(p1).toMatchObject({ reviewed: 3, kept: 2, listed: p0.common, left: p0.common - 2, rare: p0.rare - 1 })
+  })
+})
+
+describe('your list', () => {
+  it('holds the popular lifts per group, most popular first, and nothing dropped', () => {
+    const groups = listOf({}, GYM)
+    const chest = groups.find(g => g.id === 'chest')
+    expect(chest.list.map(e => e.id).slice(0, 2)).toEqual([BENCH, DBBENCH])
+    expect(chest.list.every(onList)).toBe(true)
+    expect(chest.dropped).toEqual([])
+    expect(groups.every(g => g.list.length > 0)).toBe(true)
+  })
+  it('moves a dropped lift down to dropped, and a kept one onto the list', () => {
+    const tail = groupPool({}, 'chest', GYM).find(e => !onList(e))
+    const chest = listOf({ skipEx: [BENCH], favEx: [tail.id] }, GYM).find(g => g.id === 'chest')
+    expect(chest.list.map(e => e.id)).not.toContain(BENCH)
+    expect(chest.list.map(e => e.id)).toContain(tail.id)
+    expect(chest.dropped.map(e => e.id)).toEqual([BENCH])
+  })
+  it('takes a lift off and puts it back the way it was', () => {
+    const bench = CATALOGUE.find(e => e.id === BENCH), tail = groupPool({}, 'chest', GYM).find(e => !onList(e))
+    const s = {}
+    toggleListed(s, bench)
+    expect(s).toMatchObject({ favEx: [], skipEx: [BENCH] })
+    toggleListed(s, bench)
+    expect(s).toMatchObject({ favEx: [], skipEx: [] })   // back as it started, not starred
+    toggleListed(s, tail)
+    expect(inList(s, tail)).toBe(true)
+    toggleListed(s, tail)
+    expect(inList(s, tail)).toBe(false)
+    expect(s).toMatchObject({ favEx: [], skipEx: [] })   // one of the rest again, not dropped
   })
 })

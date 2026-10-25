@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, pilesOf, progressOf, deckOf, decide, onList } from '../lib/curate.js'
+import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, pilesOf, progressOf, deckOf, decide, onList, listOf, toggleListed } from '../lib/curate.js'
 import { activeProfile } from '../lib/equipment.js'
 import { kitOf } from '../lib/exercise-facets.js'
 import { isCustomEx } from '../lib/exercises.js'
@@ -10,17 +10,21 @@ import { roleChips } from '../lib/muscle-roles.js'
 import { groupColor, mcStyle } from '../lib/muscle-colors.js'
 import { fmtNum } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
+import { MUSCLE_NAME } from '../lib/muscles.js'
+import { tappable } from '../lib/use-sheet-keyboard.js'
+import { exerciseDetailSheet } from '../sheets.jsx'
 import { useMuscleRoles } from '../components/MuscleRoles.jsx'
 import { Ava } from '../components/AddExerciseSheet.jsx'
-import Media from '../components/Media.jsx'
+import Media, { Thumb } from '../components/Media.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button } from '../components/ui.jsx'
 
 // Choose your exercises (Library): say what your gym has, then go through the catalogue one pile
 // at a time — a muscle group, then the kit, as Add exercise asks — and swipe each lift: right
 // keeps it (a star), left drops it (Not suggested), up passes for now. Your list starts as the
-// popular lifts (lib/popular.js); one-tap workouts and program days pick from it. The piles, their
-// order and what counts as on the list live in lib/curate.js.
+// popular lifts (lib/popular.js); one-tap workouts and program days pick from it. Your list shows
+// it whole, a group at a time, to take a lift off or put one back without swiping. The piles,
+// their order and what counts as on the list live in lib/curate.js.
 
 const KIT_NAME = { barbell: 'Barbell', dumbbell: 'Dumbbell', kettlebell: 'Kettlebell', cable: 'Cable', machine: 'Machine', body: 'Body weight', band: 'Band', other: 'Other' }
 const FLING = 90     // px a card travels before letting go of it decides it
@@ -33,16 +37,17 @@ export default function Curate() {
   const body = S.body === 'female' ? 'female' : 'male'
   // Each step has its own path, so Back (the header's, the phone's or a swipe from the edge) goes
   // up one step, never out of the deck: /library/pick is the groups (Your gym on a first visit,
-  // with no gym saved), /library/pick/gym Your gym, /library/pick/<group> its kits and
+  // with no gym saved), /library/pick/gym Your gym, /library/pick/list Your list, /library/pick/<group> its kits and
   // /library/pick/<group>/<kit> the deck; ?all deals the rarer ones too.
   const { group: gp, kit } = useParams()
   const [search, setSearch] = useSearchParams()
   const gymStep = gp === 'gym' || (!gp && !activeProfile(S))
-  const group = gymStep ? null : gp
-  const step = gymStep ? 'gym' : !group ? 'groups' : !kit ? 'kits' : 'deck'
+  const listStep = gp === 'list'
+  const group = gymStep || listStep ? null : gp
+  const step = gymStep ? 'gym' : listStep ? 'list' : !group ? 'groups' : !kit ? 'kits' : 'deck'
   const have = gymOf(S)
 
-  const up = step === 'deck' ? `/library/pick/${group}` : step === 'kits' || gp === 'gym' ? '/library/pick' : '/library'
+  const up = step === 'deck' ? `/library/pick/${group}` : step === 'kits' || gp === 'gym' || listStep ? '/library/pick' : '/library'
   // Back to where we came from when that is in the history, else (opened from a link) one step up.
   const back = () => ((window.history.state?.idx || 0) > 0 ? nav(-1) : nav(up, { replace: true }))
   const g = ADD_GROUPS.find(x => x.id === group)
@@ -54,9 +59,11 @@ export default function Curate() {
     <GymStep S={S} have={have} onSave={h => { update(s => { saveGym(s, h, t('My gym')) }); if (gp === 'gym') back() }} />
   </>
 
+  if (step === 'list') return <YourList S={S} update={update} have={have} head={head} onGroup={id => nav(`/library/pick/${id}`)} />
+
   if (step === 'groups') return <>
     {head(t('Choose your exercises'), t('Your list starts with the most popular lifts. One-tap workouts pick from it. Swipe to drop or add lifts.'))}
-    <Groups S={S} have={have} body={body} onGym={() => nav('/library/pick/gym')} onGroup={id => nav(`/library/pick/${id}`)} />
+    <Groups S={S} have={have} body={body} onGym={() => nav('/library/pick/gym')} onList={() => nav('/library/pick/list')} onGroup={id => nav(`/library/pick/${id}`)} />
   </>
 
   if (!g) return null
@@ -106,7 +113,7 @@ function GymStep({ S, have, onSave }) {
 }
 
 // The muscle groups, each with how far along its common lifts are.
-function Groups({ S, have, body, onGym, onGroup }) {
+function Groups({ S, have, body, onGym, onList, onGroup }) {
   const prog = useMemo(() => Object.fromEntries(ADD_GROUPS.map(g => {
     const p = progressOf(S, groupPool(S, g.id, have))
     return [g.id, p]
@@ -118,7 +125,13 @@ function Groups({ S, have, body, onGym, onGroup }) {
       {p.listed > 0 && ' · ' + t('{0} in your list', fmtNum(p.listed))}</span>
       <span className="cu-bar"><i style={{ width: Math.round(100 * (p.common - p.left) / Math.max(1, p.common)) + '%' }} /></span></span>
   </button> }
+  const listed = ADD_GROUPS.reduce((n, g) => n + prog[g.id].listed, 0)
   return <>
+    <button className="cu-entry" onClick={onList}>
+      <Icon name="list" />
+      <span className="ax-m"><b>{t('Your list')}</b><span className="muted small">{t('{0} lifts', fmtNum(listed))}</span></span>
+      <Icon name="chevronRight" className="dim" />
+    </button>
     <button className="cu-entry" onClick={onGym}>
       <Icon name="kettlebell" />
       <span className="ax-m"><b>{t('Your gym')}</b><span className="muted small">{profile ? profile.name : t('All equipment')}</span></span>
@@ -128,6 +141,39 @@ function Groups({ S, have, body, onGym, onGroup }) {
     <div className="ax-gts">{ADD_GROUPS.filter(g => !g.low).map(tile)}</div>
     <h4 className="sec">{t('Lower body')}</h4>
     <div className="ax-gts">{ADD_GROUPS.filter(g => g.low).map(tile)}</div>
+  </>
+}
+
+// Your list whole: each group's lifts in the order a pile deals them, each taken off or put
+// back with one tap, a group's piles one tap away, and what you have dropped at the end.
+function YourList({ S, update, have, head, onGroup }) {
+  const groups = useMemo(() => listOf(S, have), [S.favEx, S.skipEx, S.customEx, have])
+  const total = groups.reduce((n, g) => n + g.list.length, 0)
+  const dropped = groups.flatMap(g => g.dropped)
+  const toggle = ex => update(s => { toggleListed(s, ex) })
+  const jump = id => document.getElementById('yl-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const row = (ex, on) => <div key={ex.id} className="item" {...tappable(() => exerciseDetailSheet(ex))}>
+    <Thumb ex={ex} />
+    <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
+      <div className="ss capitalize">{t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp)} · {t(ex.eq)}</div></div>
+    <button className={'yl-tog' + (on ? ' on' : '')} aria-pressed={on} aria-label={on ? t('Take off your list') : t('Put back on your list')}
+      onClick={e => { e.stopPropagation(); toggle(ex) }}><Icon name={on ? 'checkCircle' : 'plusCircle'} /></button>
+  </div>
+  return <>
+    {head(t('Your list'), t('{0} lifts. One-tap workouts and program days pick from these. Tap the tick to take one off.', fmtNum(total)))}
+    <div className="chips yl-jump">
+      {groups.map(g => <button key={g.id} className="chip nocap" onClick={() => jump(g.id)}>{t(g.n)} <span className="dim">{fmtNum(g.list.length)}</span></button>)}
+      {dropped.length > 0 && <button className="chip nocap" onClick={() => jump('dropped')}>{t('Dropped')} <span className="dim">{fmtNum(dropped.length)}</span></button>}
+    </div>
+    {groups.map(g => <section key={g.id} id={'yl-' + g.id} className="yl-sec" style={mcStyle(groupColor(g.id))}>
+      <div className="yl-h"><h4 className="sec">{t(g.n)} <span className="dim">{fmtNum(g.list.length)}</span></h4>
+        <Button size="sm" variant="tinted" icon="star" onClick={() => onGroup(g.id)}>{t('Swipe')}</Button></div>
+      <div className="list">{g.list.length ? g.list.map(ex => row(ex, true)) : <div className="empty small">{t('Nothing on your list here yet.')}</div>}</div>
+    </section>)}
+    {dropped.length > 0 && <section id="yl-dropped" className="yl-sec">
+      <div className="yl-h"><h4 className="sec">{t('Dropped')} <span className="dim">{fmtNum(dropped.length)}</span></h4></div>
+      <div className="list">{dropped.map(ex => row(ex, false))}</div>
+    </section>}
   </>
 }
 
