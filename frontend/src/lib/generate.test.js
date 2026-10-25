@@ -4,6 +4,7 @@ import { liftKind } from './coverage.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 import { groupOfExercise } from './muscle-colors.js'
+import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const session = (d, ids, sets = [row()]) => ({ id: 'w' + d + ids.join(), d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets })) })
@@ -24,6 +25,13 @@ describe('staples', () => {
   it('every muscle a day type names has staples', () => {
     const slugs = new Set(Object.values(GEN_TYPES).flat().flatMap(([spec]) => spec.split('|')))
     for (const slug of slugs) expect(STAPLES[slug]?.length, slug).toBeGreaterThan(1)
+  })
+  it('a hamstring staple works the hamstrings: a good morning is a second hinge, not a leg curl', async () => {
+    await loadMuscleRoles()
+    for (const id of STAPLES.hamstring) expect(muscleRolesOf(id)?.target, id).not.toContain('erector-spinae')
+  })
+  it('the quads have more than one isolation lift to rotate through', () => {
+    expect(STAPLES.quadriceps.filter(id => liftKind(id) === 'isolation').length).toBeGreaterThan(1)
   })
 })
 
