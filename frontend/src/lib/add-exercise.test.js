@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ADD_GROUPS, MUSCLE_VIEW, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet, shortlist, groupFacets } from './add-exercise.js'
+import { ADD_GROUPS, MUSCLE_VIEW, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, groupExercises, lastTopSet, shortlist, groupFacets, closeness } from './add-exercise.js'
 import { narrow, isTail, kitOf } from './exercise-facets.js'
 import { MUSCLES } from './muscles.js'
 import { STAPLES } from './generate.js'
@@ -189,6 +189,17 @@ describe('shortlist', () => {
     expect(none.yours).toEqual([])
     expect(new Set(none.picks.map(x => x.eq)).size).toBe(none.picks.length)
     expect(none.picks.length).toBeGreaterThan(2)
+  })
+  it('in a swap, puts the same movement first among those that work as much of the part', () => {
+    // barbell bent over row, cable seated row, cable lat pulldown, chin-up
+    const ROW = '0027', CABLE_ROW = '0861', PULLDOWN = '2330', CHIN = '1326'
+    expect(closeness(ROW, EXIDX[CABLE_ROW], 1)).toBeGreaterThan(closeness(ROW, EXIDX[PULLDOWN], 1))
+    expect(closeness(PULLDOWN, EXIDX[CHIN], 1)).toBeGreaterThan(closeness(PULLDOWN, EXIDX[CABLE_ROW], 1))
+    // the parts still count first: a pulldown working two of them beats a row working one
+    expect(closeness(ROW, EXIDX[PULLDOWN], 2)).toBeGreaterThan(closeness(ROW, EXIDX[CABLE_ROW], 1))
+    // keeping to the part, the same movement working none of it is no closer than anything else
+    expect(closeness(ROW, EXIDX[CABLE_ROW], 0, true)).toBe(0)
+    expect(closeness(null, EXIDX[CABLE_ROW], 1)).toBe(1)
   })
   it('starts with nothing logged on the ones that work the part to favour', () => {
     // A swap away from a lateral raise when your shoulder exercises are all in the workout already.

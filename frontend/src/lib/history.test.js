@@ -341,6 +341,12 @@ describe('defaultConfig', () => {
     expect(defaultConfig('0979').mode).toBe('reps')
     expect(defaultConfig('4170', 'reps').mode).toBe('reps')
   })
+  it('logs a one-arm or one-leg exercise per side, 10 a side', () => {
+    // dumbbell single leg split squat, side plank (a hold), barbell bench press
+    expect(defaultConfig('0410')).toEqual({ sets: 3, reps: 20, weight: 0, mode: 'reps', side: true })
+    expect(defaultConfig('0715')).toMatchObject({ mode: 'time', sec: 45, side: true })
+    expect('side' in defaultConfig('0025')).toBe(false)
+  })
 })
 
 /* ---------- bodyweight and per side (issues #31/#32/#33) ---------- */

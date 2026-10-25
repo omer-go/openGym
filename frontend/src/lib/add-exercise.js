@@ -7,7 +7,7 @@
 // not (''). A muscle counts as trained the way generate.js trainingIndex counts it: a completed
 // work set of an exercise that works it as a primary. Which groups are Suggested, and the order
 // of a group's exercises, go by the week's coverage (lib/coverage.js), as the one-tap workouts do.
-import { EXIDX, allExercises, isCardio } from './exercises.js'
+import { EXIDX, allExercises, isCardio, patternOf } from './exercises.js'
 import { suggestable } from './skipped.js'
 import { musclesOf, MUSCLE_NAME } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
@@ -220,6 +220,18 @@ export function shortlist(S, groupId, { fills = () => false, same = false, ...op
     if (picks.length < STARTERS) picks = [...picks, ...fresh.filter(ex => !picks.includes(ex)).slice(0, STARTERS - picks.length)]
   }
   return { yours, picks, all, hidden }
+}
+
+/**
+ * How close `ex` comes to the exercise a swap replaces (`like`), for shortlist's `fills`: `parts`,
+ * how many of the parts of its muscle it works, and half more for the same movement (catalogue
+ * "pattern"): a row for a row before a pulldown, a raise for a raise before a press. With `keep`
+ * (a swap that keeps to the part), one that works none of it is not close at all.
+ */
+export function closeness(like, ex, parts, keep = false) {
+  if (keep && !parts) return 0
+  const pt = like && patternOf(like)
+  return parts + (pt && patternOf(ex) === pt ? 0.5 : 0)
 }
 
 /**

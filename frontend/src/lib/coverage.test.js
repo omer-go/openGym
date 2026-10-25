@@ -364,6 +364,19 @@ describe('one movement once', () => {
   })
 })
 
+describe('balanced movements', () => {
+  beforeAll(loadMuscleRoles)
+  // pull-up, barbell bent over row; the push is picked first, the back being less behind
+  const PULLUP = '0652', ROW = '0027'
+  const ids = (push, cands) => pickForCoverage([push, ...cands].map((id, rank) => ({ id, rank })),
+    { count: 2, groups: ['chest', 'shoulders', 'back'], need: { chest: 1, shoulders: 1, back: 0.6 } }).map(p => p.id)
+
+  it('pulls the way the session pushes: a row after a bench press, a pull-up after an overhead press', () => {
+    expect(ids(BENCH, [PULLUP, ROW])).toEqual(expect.arrayContaining([BENCH, ROW]))
+    expect(ids(OHP, [ROW, PULLUP])).toEqual(expect.arrayContaining([OHP, PULLUP]))
+  })
+})
+
 describe('calves, forearms and abs', () => {
   // barbell standing, seated and floor calf raises, lever and dumbbell standing calf raises
   const CALF = ['1372', '0088', '1370', '0605', '0417']

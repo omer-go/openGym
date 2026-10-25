@@ -41,7 +41,7 @@
 // The same numbers show elsewhere: the one-tap setup and the routine editor draw what a session
 // adds per group (plannedSets), and Add exercise suggests groups and orders a group's exercises
 // by what the session in progress still lacks (rankForGaps).
-import { EXIDX, isCardio } from './exercises.js'
+import { EXIDX, isCardio, patternOf, OPPOSITE_PATTERN } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { musclesOf, weeklyPlanRoutines } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
@@ -275,6 +275,7 @@ function itemOf(id, rank, on, rolesOf) {
     // A compound trains three groups or more in earnest (a bench: chest, shoulders, triceps);
     // a fly or a curl has one helper at most. Isolation lifts rotate among themselves.
     compound: liftKind(id) === 'compound',
+    pattern: patternOf(ex),
   }
 }
 /**
@@ -339,6 +340,14 @@ const sameMove = (a, b) => (a.compound && b.compound && a.variant.tool === b.var
   && a.variant.position === b.variant.position && sameKeys(a.credit, b.credit))
   || ((a.compound ? b.compound : !b.compound && a.group === b.group) && !!a.parts && !!b.parts
   && a.parts.length === b.parts.length && a.parts.every(m => b.parts.includes(m)))
+
+// How much `c` evens out the movements of `picks`: one for each pick of the movement that balances
+// it (a row after a bench press, a deadlift after a squat), less one for each of its own. A
+// movement with nothing to balance (a lunge, a curl) is even.
+const balanceOf = (c, picks) => {
+  const op = OPPOSITE_PATTERN[c.pattern]
+  return op ? picks.filter(p => p.pattern === op).length - picks.filter(p => p.pattern === c.pattern).length : 0
+}
 
 const distance = (a, b) => {
   let d = 0
@@ -409,8 +418,11 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     // Filling a share, only one about as good: a shrug for the traps is no pull-up for a back
     // and biceps both short.
     const fillers = gap && !picks.some(fills) ? scored.filter(x => fills(x.c) && (!filling || within(x.g, top.g, NEAR))) : []
+    // Among those, the movement the session is short of comes first (a row after a bench press),
+    // the staler variation within it.
     const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
       && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
+      .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks))
     const pick = near[shift % near.length]
     picks.push(pick)
     for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../store/useStore.js'
-import { ADD_GROUPS, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, shortlist, groupFacets, lastTopSet, activityLast } from '../lib/add-exercise.js'
+import { ADD_GROUPS, avatarOf, groupOfMuscle, muscleStatus, suggestedGroups, shortlist, groupFacets, lastTopSet, activityLast, closeness } from '../lib/add-exercise.js'
 import { narrow } from '../lib/exercise-facets.js'
 import { trainingIndex } from '../lib/generate.js'
 import { ACTIVITY_GROUPS, activityGroup, activityOf } from '../lib/activities.js'
@@ -136,10 +136,11 @@ export default function AddExerciseSheet({ onPick, onSearch, title, like, routin
   const gapOf = ex => (act ? null : partGaps[primaryMuscleOf(ex)?.slug] || null)
   const worked = (ex, gap = gapOf(ex)) => gap?.parts.filter(x => muscleRolesOf(ex.id)?.target?.some(m => x.muscles.includes(m))) || []
   const partOf = ex => worked(ex)[0]?.name || null
-  // How many of the parts it works: a row for a row (lats and mid-back) before a pulldown (lats).
-  const fills = ex => worked(ex).length
   // A swap with a part to keep lists only your own that work it: the rest are another part.
   const same = !act && Object.values(partGaps).some(x => x.swap)
+  // How many of the parts it works, a row for a row (lats and mid-back) before a pulldown (lats);
+  // in a swap, the same movement first among those.
+  const fills = ex => closeness(!act && like, ex, worked(ex).length, same)
   const { yours, picks, all, hidden } = shortlist(S, group, { status, have, gaps, fills, same })
   const row = ex => {
     const last = lastTopSet(S, ex.id)
