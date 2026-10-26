@@ -276,23 +276,30 @@ function AheadDay({ S, day, next, open: opened = false }) {
     <button type="button" className="ahead-h" aria-expanded={open} onClick={() => setOpen(v => !v)}>
       <span className="lrow-i" style={{ background: `color-mix(in srgb,${color} 22%,transparent)`, color }}><Icon name={glyphOf(KIND_ICON[day.type])} /></span>
       <div className="grow">
-        <div className="tt">{fmtDate(day.iso, true)} · {t(GEN_NAME[day.type])}{next && <span className="ahead-next">{t('Next')}</span>}</div>
+        <div className="tt">{fmtDate(day.iso, true)} · {t(GEN_NAME[day.type])}<span className="ahead-next">{next ? t('Next') : t('Planned')}</span></div>
         <div className="ss">{tn('{0} exercise', '{0} exercises', day.entries.length)} · {tn('{0} set', '{0} sets', day.sets)} · {t('≈ {0} min', day.minutes)}</div>
       </div>
       <Icon name="chevronRight" />
     </button>
-    {open && <div className="ahead-b">
-      <CoverageStrip groups={groupsOf(S, day.type)} adds={day.groups} goals={weeklyTargets(S)} label={t('Sets per group this day, toward your weekly goal')} />
-      <div className="list">{day.entries.map(e => {
-        const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
-        const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${e.target?.reps ?? ''}`
-        const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching') : `${t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}`
-        return <div key={e.id} className="item">
-          <Thumb ex={ex} />
-          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
-        </div>
-      })}</div>
-    </div>}
+    {open && <AheadBody S={S} day={day} />}
+  </div>
+}
+
+/** What a day ahead gives each group, then its lifts as planned: sets × reps, and the weight. */
+function AheadBody({ S, day }) {
+  return <div className="ahead-b">
+    <CoverageStrip groups={groupsOf(S, day.type)} adds={day.groups} goals={weeklyTargets(S)} label={t('Sets per group this day, toward your weekly goal')} />
+    <div className="list">{day.entries.map(e => {
+      const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
+      const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${e.target?.reps ?? ''}`
+      const w = work.find(x => x.w > 0)?.w
+      const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching')
+        : `${t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}` + (w ? ` · ${fmtNum(w)} ${S.unit}` : '')
+      return <div key={e.id} className="item">
+        <Thumb ex={ex} />
+        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+      </div>
+    })}</div>
   </div>
 }
 
@@ -330,21 +337,31 @@ function ComingUp({ S, ahead, more, onMore }) {
   </>
 }
 
-/** A planned day of the program on its own: from the calendar, or its row in the week. */
-export function PlannedOn({ iso }) {
+/**
+ * A day ahead on its own, from the calendar or its row in the week: said to be planned, dashed
+ * like its mark in the calendar, and the next one can be started from here. Starting builds the
+ * next day, so a later one cannot. With nothing planned that day, just the date.
+ */
+export function PlannedOn({ iso, close }) {
   const S = useStore(s => s.S)
   const days = useMemo(() => {
     const i = programForecast(S).findLastIndex(f => f.iso === iso)
     return i < 0 ? 0 : i + 1
   }, [S, iso])
-  const ahead = useAhead(S, days).filter(d => d.iso === iso)
-  if (!ahead.length) return null
+  const all = useAhead(S, days)
+  const ahead = all.filter(d => d.iso === iso)
+  if (!ahead.length) return <h3>{fmtDate(iso, true)}</h3>
+  const next = all[0].iso === iso
+  const n = ahead.reduce((a, d) => ({ ex: a.ex + d.entries.length, sets: a.sets + d.sets, min: a.min + d.minutes }), { ex: 0, sets: 0, min: 0 })
   return <>
-    <div className="ahead-days">{ahead.map(d => <AheadDay key={d.type} S={S} day={d} open />)}</div>
-    <p className="sect-f">{t('As Start would build it if you do the days before it as planned.')}</p>
+    <h3>{t('Planned · {0}', ahead.map(d => t(GEN_NAME[d.type])).join(' + '))}</h3>
+    <div className="muted small">{fmtDate(iso, true)} · {tn('{0} exercise', '{0} exercises', n.ex)} · {tn('{0} set', '{0} sets', n.sets)} · {t('≈ {0} min', n.min)}</div>
+    <p className="sect-f" style={{ marginTop: 4 }}>{t('If you do the days before it as planned.')}</p>
+    {ahead.map(d => <div key={d.type} className="ahead-day planned-one" style={{ '--kind': KIND_COLOR[d.type] }}><AheadBody S={S} day={d} /></div>)}
+    {next && !S.active && <Button icon="play" onClick={() => { close?.(); startGenerated(ahead[0].type) }}>{t('Start {0}', t(GEN_NAME[ahead[0].type]))}</Button>}
   </>
 }
-const plannedSheet = iso => ui().openSheet(() => <><h3>{fmtDate(iso, true)}</h3><PlannedOn iso={iso} /></>)
+const plannedSheet = iso => ui().openSheet(close => <PlannedOn iso={iso} close={close} />)
 
 /** Plan → Schedule with Program chosen: the program and its week, the goal, and the programs. */
 export function ProgramMode() {

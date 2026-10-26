@@ -34,19 +34,20 @@ const GEN_TILES = [
 const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs' }
 
 // A day in the week strip: the sessions actually logged that day, each opening its detail. A day
-// ahead with a program day planned shows it as Start would build it (components/Program.jsx
-// PlannedOn); a past day with nothing logged can get a session backfilled.
+// ahead with a program day planned is said to be planned and shows it as Start would build it
+// (components/Program.jsx PlannedOn); a past day with nothing logged can get a session backfilled.
 function DayWorkouts({ iso, close }) {
   const S = useStore(s => s.S)
   const day = workoutsOn(S.workouts, iso)
   const note = dayNoteOf(S, iso)
   const open = w => { close(); workoutDetailSheet(w) }
+  const ahead = !day.length && iso >= todayISO()
   return <>
-    <h3>{fmtDate(iso, true)}</h3>
+    {ahead ? <PlannedOn iso={iso} close={close} /> : <h3>{fmtDate(iso, true)}</h3>}
     {day.length ? <div className="list">
       {day.map(({ w, kind }) => <WorkoutRow key={w.id} w={w} color={KIND_COLOR[kind]}
         icon={KIND_ICON[kind] ? glyphOf(KIND_ICON[kind]) : kind === 'free' ? 'shuffle' : undefined} onClick={() => open(w)} />)}
-    </div> : iso >= todayISO() ? <PlannedOn iso={iso} /> : <div className="muted small" style={{ marginBottom: 12 }}>{t('Nothing logged yet')}</div>}
+    </div> : ahead ? null : <div className="muted small" style={{ marginBottom: 12 }}>{t('Nothing logged yet')}</div>}
     {note && <div className="list" style={{ marginTop: 8 }}><DayNoteRow iso={iso} note={note} /></div>}
     {!day.length && iso < todayISO() && !S.active && <Button icon="plus" onClick={() => { close(); logPastWorkoutSheet({ iso }) }}>{t('Log a past workout')}</Button>}
   </>
@@ -79,7 +80,7 @@ export default function Home() {
   const wkStart = new Date(today)
   wkStart.setDate(today.getDate() - weekDayOffset(today.getDay(), ws) + weekOffset * 7)
   const strip = []
-  let doneInWeek = 0
+  let doneInWeek = 0, plannedInWeek = 0
   // With a program chosen, the days it has left this week show as a forecast (lib/program.js).
   const layout = programLayout(S, isoOf(wkStart))
   for (let i = 0; i < 7; i++) {
@@ -89,6 +90,7 @@ export default function Home() {
     const day = workoutsOn(S.workouts, iso)
     doneInWeek += day.length
     const ahead = !day.length && layout?.[i].items.find(it => it.state !== 'done')
+    if (ahead) plannedInWeek++
     strip.push(<div key={i} className={'wday' + (iso === todayISO() ? ' today' : '')} {...tappable(() => daySheet(iso))}>
       <div className="lbl">{t(DAYS[d.getDay()])}</div><div className="num">{d.getDate()}</div>
       <div className="dots">
@@ -97,7 +99,7 @@ export default function Home() {
           // A day off with a note (#261) reads as excused.
           : <span className={'dot' + (dayNoteOf(S, iso) ? ' noted' : '')} />}
       </div>
-      <div className={'wk-name' + (ahead ? ' planned' : '')} style={day.length ? { color: KIND_COLOR[day[0].kind] } : ahead ? { color: KIND_COLOR[ahead.type] } : undefined}>
+      <div className={'wk-name' + (ahead ? ' planned' : '')} style={day.length ? { color: KIND_COLOR[day[0].kind] } : undefined}>
         {day.length ? shortName(day[0]) + (day.length > 1 ? ' +' + (day.length - 1) : '') : ahead ? t(PROGRAM_SHORT[ahead.type]) : '\u00a0'}
       </div>
     </div>)
@@ -128,7 +130,7 @@ export default function Home() {
     <div className="card">
       <div className="row between" style={{ marginBottom: 8 }}>
         <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => setWeekOffset(w => w - 1)} aria-label={t('Previous week')}><Icon name="chevronLeft" /></button>
-        <div className="small muted" style={{ fontWeight: 500 }}>{wkLabel} · {tn('{0} workout', '{0} workouts', doneInWeek)}</div>
+        <div className="small muted" style={{ fontWeight: 500 }}>{wkLabel} · {plannedInWeek ? `${t('{0} done', doneInWeek)} · ${t('{0} planned', plannedInWeek)}` : tn('{0} workout', '{0} workouts', doneInWeek)}</div>
         <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => setWeekOffset(w => w + 1)} aria-label={t('Next week')}><Icon name="chevronRight" /></button>
       </div>
       <div className="week home-week">{strip}</div>

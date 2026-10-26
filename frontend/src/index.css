@@ -2395,8 +2395,10 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .prog-week .forecast .lrow-i, .prog-week .forecast .tt { opacity: .6; }
 .prog-week .prog-done { color: var(--green); flex: none; }
 /* Home's week strip: a program day still to come, as a ring in its kind's colour. */
-.wday .dot.planned { background: transparent !important; box-shadow: inset 0 0 0 1.5px var(--kind); }
-.wday .wk-name.planned { opacity: .6; }
+.wday .dot.planned { background: transparent !important; border: 1.5px dashed var(--kind); box-sizing: border-box; }
+.home-week .dot.planned { width: 8px; height: 8px; margin: -1px 0; }
+/* Colour is for what is done; a day ahead is named in grey, its dashed ring keeps its kind. */
+.wday .wk-name.planned { color: var(--label-3); font-weight: 500; }
 
 /* The workout summary's way out (sheets.jsx FinishSummary) stays at the foot of the dialog while
    what is above it scrolls: the dialog's own padding is 20px, so the band reaches its edges. */
@@ -2414,7 +2416,9 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .ahead-week{margin-bottom:14px}
 .ahead-wk{font-size:13px;font-weight:600;color:var(--label-2);margin:0 4px 6px}
 .ahead-days{display:flex;flex-direction:column;gap:8px}
-.ahead-day{border-radius:var(--r-lg);background:var(--surface);overflow:hidden}
+.ahead-day{border-radius:var(--r-lg);background:var(--surface);overflow:hidden;border:1.5px dashed color-mix(in srgb,var(--kind) 45%,var(--sep))}
+.ahead-day.planned-one{margin:10px 0}
+.ahead-day.planned-one .ahead-b{padding-top:12px}
 .ahead-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;color:var(--label);text-align:start}
 .ahead-h .grow{flex:1;min-width:0}
 .ahead-h .tt{font-weight:600}
