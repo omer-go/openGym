@@ -12,11 +12,12 @@
 // takes as many exercises as reach its share. The picks are greedy (coverage.js pickForCoverage), so the first
 // n of a long run are about what a run of n would pick.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_TYPES, MAX_GEN_COUNT, genCount, genGroupsOf, genScheme, generateWorkout } from './generate.js'
-import { USEFUL, entryWeights, groupCredit, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
-import { weeklyTargetOf } from './goals.js'
+import { GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genScheme, generateWorkout, generatedEntries } from './generate.js'
+import { USEFUL, entryWeights, groupCredit, plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
+import { sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
+import { isWarmupRow } from './workout-model.js'
 
 export const PROGRAM_TEMPLATES = [
   { id: 'full-3', n: 'Full body', sub: 'Three full-body days', days: ['full', 'full', 'full'] },
@@ -233,4 +234,39 @@ export function programLayout(S, weekStart, now = Date.now()) {
     .forEach(it => on(it.w.d)?.items.push({ type: it.type, state: 'done', w: it.w }))
   programForecast(S, now).forEach((f, i) => on(f.iso)?.items.push({ type: f.type, state: i === 0 ? 'next' : 'planned', w: null }))
   return days
+}
+
+/**
+ * The program's next `days` days, one after another, as the Start sheet would build each if the
+ * ones before it were done as planned: `[{ type, iso, entries, sets, minutes, groups }]`, `groups`
+ * being group id -> sets (coverage.js plannedSets). Each is built on the date the forecast gives it
+ * (the first one now, as Home's estimate), then logged in full, so what it covers counts for the
+ * days after it, and a new calendar week starts their shares over. A forecast, not a booking.
+ */
+export function planAhead(S, { days = 6, now = Date.now() } = {}) {
+  if (!isProgram(S?.program)) return []
+  const out = []
+  let s = S, at = now
+  for (let k = 0; k < days; k++) {
+    const f = programForecast(s, at)[0]
+    if (!f) break
+    const t = k ? new Date(f.iso + 'T12:00:00').getTime() : at
+    const setup = { ...genDefaults(f.type), ...(s.genSetup?.[f.type] || {}) }
+    const count = sizeDay(s, f.type, { now: t, groups: setup.groups, setup })
+    const picks = generateWorkout(s, f.type, { ...setup, count, now: t, share: programShare(s, f.type, t) })
+    const entries = generatedEntries(s, picks, setup)
+    const work = e => e.sets.filter(x => !isWarmupRow(x))
+    const sets = entries.reduce((n, e) => n + work(e).length, 0)
+    out.push({ type: f.type, iso: f.iso, entries, sets, minutes: sessionMinutes(sets), groups: plannedSets(entries) })
+    // Logged as done on its day, every work set, an hour long.
+    const on = Math.max(t, new Date(f.iso + 'T12:00:00').getTime())
+    const done = x => (x.sides ? { ...x, sides: { L: { ...x.sides.L, done: true }, R: { ...x.sides.R, done: true } } } : { ...x, done: true })
+    const w = {
+      id: 'ahead-' + k, d: f.iso, start: on, end: on + 36e5, name: f.type, genType: f.type, routineIds: [],
+      entries: entries.map(e => ({ id: e.id, target: e.target, sets: work(e).map(done) })),
+    }
+    s = { ...s, workouts: [...(s.workouts || []), w] }
+    at = on + 2 * 36e5
+  }
+  return out
 }

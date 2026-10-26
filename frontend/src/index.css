@@ -2409,3 +2409,23 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cb-pic{display:flex;padding:0;border:0;background:none}
 button.cb-pic,button.cb-name{cursor:pointer}
 .cb-add{align-self:flex-start;margin-top:2px}
+
+/* Plan → Program, the days ahead (components/Program.jsx ComingUp), and one of them from Home's week. */
+.ahead-week{margin-bottom:14px}
+.ahead-wk{font-size:13px;font-weight:600;color:var(--label-2);margin:0 4px 6px}
+.ahead-days{display:flex;flex-direction:column;gap:8px}
+.ahead-day{border-radius:var(--r-lg);background:var(--surface);overflow:hidden}
+.ahead-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;color:var(--label);text-align:start}
+.ahead-h .grow{flex:1;min-width:0}
+.ahead-h .tt{font-weight:600}
+.ahead-h .ss{font-size:13px;color:var(--label-2)}
+.ahead-h .icn{color:var(--label-3);flex:none;transition:transform .2s}
+.ahead-day.open .ahead-h .icn{transform:rotate(90deg)}
+[dir="rtl"] .ahead-h .icn{transform:scaleX(-1)}
+[dir="rtl"] .ahead-day.open .ahead-h .icn{transform:rotate(90deg)}
+.ahead-next{margin-inline-start:8px;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px;color:var(--kind);background:color-mix(in srgb,var(--kind) 16%,transparent)}
+.ahead-b{padding:4px 14px 12px;display:flex;flex-direction:column;gap:10px}
+.ahead-b .list{background:none}
+.ahead-sum{margin:8px 4px 0}
+.ahead-sum summary{cursor:pointer;font-size:13px;color:var(--acc);font-weight:500}
+.ahead-sum[open] summary{margin-bottom:8px}

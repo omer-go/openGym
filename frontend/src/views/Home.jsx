@@ -14,7 +14,7 @@ import { glyphOf } from '../lib/glyphs.js'
 import { dayNoteOf } from '../lib/day-notes.js'
 import { GEN_NAME } from '../lib/generate.js'
 import { KIND_COLOR, workoutsOn } from '../lib/workout-kind.js'
-import { NextDayCard, WeekGoalCard, PROGRAM_SHORT } from '../components/Program.jsx'
+import { NextDayCard, PlannedOn, WeekGoalCard, PROGRAM_SHORT } from '../components/Program.jsx'
 import { programLayout } from '../lib/program.js'
 import { PLAN_VIEW_KEY } from './Plan.jsx'
 
@@ -33,9 +33,9 @@ const GEN_TILES = [
 // A tile's glyph per kind, so a day's sessions wear the icon of the tile they came from.
 const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs' }
 
-// A day in the week strip: the sessions actually logged that day, each opening its detail. The
-// plan is not this sheet's business; Plan is where it lives. A past day with nothing logged can
-// get a session backfilled.
+// A day in the week strip: the sessions actually logged that day, each opening its detail. A day
+// ahead with a program day planned shows it as Start would build it (components/Program.jsx
+// PlannedOn); a past day with nothing logged can get a session backfilled.
 function DayWorkouts({ iso, close }) {
   const S = useStore(s => s.S)
   const day = workoutsOn(S.workouts, iso)
@@ -46,7 +46,7 @@ function DayWorkouts({ iso, close }) {
     {day.length ? <div className="list">
       {day.map(({ w, kind }) => <WorkoutRow key={w.id} w={w} color={KIND_COLOR[kind]}
         icon={KIND_ICON[kind] ? glyphOf(KIND_ICON[kind]) : kind === 'free' ? 'shuffle' : undefined} onClick={() => open(w)} />)}
-    </div> : <div className="muted small" style={{ marginBottom: 12 }}>{t('Nothing logged yet')}</div>}
+    </div> : iso >= todayISO() ? <PlannedOn iso={iso} /> : <div className="muted small" style={{ marginBottom: 12 }}>{t('Nothing logged yet')}</div>}
     {note && <div className="list" style={{ marginTop: 8 }}><DayNoteRow iso={iso} note={note} /></div>}
     {!day.length && iso < todayISO() && !S.active && <Button icon="plus" onClick={() => { close(); logPastWorkoutSheet({ iso }) }}>{t('Log a past workout')}</Button>}
   </>

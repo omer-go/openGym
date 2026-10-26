@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, dayShare, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, generateWorkout } from './generate.js'
+import { MIN_DAY, dayShare, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MAX_GEN_COUNT, genDefaults, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { USEFUL, entryWeights, groupCredit } from './coverage.js'
 import { loadMuscleRoles } from './muscle-roles.js'
@@ -200,5 +200,39 @@ describe('the days ahead', () => {
     const over = state({ program: newProgram('full-3', { today: '2026-09-14', weeks: 1 }), workouts: three })
     expect(show(programLayout(over, '2026-09-21', THU)).every(x => x === '-')).toBe(true)
     expect(programLayout(state(), '2026-09-14', THU)).toBe(null)
+  })
+})
+
+describe('planning the days ahead', () => {
+  beforeAll(loadMuscleRoles)
+  const MON = at(2026, 9, 21)
+  const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }), workouts: [
+    session('2026-09-15', 'full', ['0025', '0043', '0027']), session('2026-09-17', 'full', ['0025', '0085', '0652']),
+    session('2026-09-19', 'full', ['0025', '0043', '0027']),
+  ] })
+  let plan
+  beforeAll(() => { plan = planAhead(st, { days: 5, now: MON }) })
+  const ids = d => d.entries.map(e => e.id)
+
+  it('is nothing without a program', () => {
+    expect(planAhead(state(), { now: MON })).toEqual([])
+  })
+  it('goes day by day where the forecast puts them, the first as Start builds it now', () => {
+    expect(plan.map(d => d.iso)).toEqual(programForecast(st, MON).slice(0, 5).map(f => f.iso))
+    const setup = genDefaults('full')
+    const count = sizeDay(st, 'full', { now: MON, groups: setup.groups, setup })
+    expect(ids(plan[0])).toEqual(generateWorkout(st, 'full', { ...setup, count, now: MON, share: programShare(st, 'full', MON) }).map(p => p.id))
+    expect(plan[0].sets).toBe(plan[0].entries.length * 3)
+    expect(plan[0].groups.chest).toBeGreaterThan(0)
+  })
+  it('builds each day as if the ones before it were done in full', () => {
+    const d = plan[0], t = new Date(d.iso + 'T12:00:00').getTime()
+    const done = { ...st, workouts: [...st.workouts, {
+      id: 'x', d: d.iso, start: t, end: t + 36e5, name: 'full', genType: 'full', routineIds: [],
+      entries: d.entries.map(e => ({ id: e.id, target: e.target, sets: e.sets.filter(x => !x.warm).map(x => ({ ...x, done: true })) })),
+    }] }
+    const next = new Date(plan[1].iso + 'T12:00:00').getTime()   // built on its own day
+    expect(ids(planAhead(done, { days: 1, now: next })[0])).toEqual(ids(plan[1]))
+    expect(ids(plan[1])).not.toEqual(ids(plan[0]))
   })
 })

@@ -1,17 +1,17 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { t } from '../lib/i18n.js'
-import { DAYS, isoOf, startOfWeek, todayISO, weekStartOf } from '../lib/format.js'
+import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
+import { DAYS, fmtDate, fmtNum, isoOf, startOfWeek, todayISO, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { GEN_NAME, genScheme, generateWorkout } from '../lib/generate.js'
+import { GEN_NAME, genDefaults, genScheme, generateWorkout } from '../lib/generate.js'
 import { weeklyDone } from '../lib/coverage.js'
 import {
   DEFAULT_GOAL, GOAL_PRESETS, MAX_GOAL, MIN_GOAL, baseGoalOf, defaultTargetFor, goalEstimate, goalGroups,
   sessionMinutes, weeklyTargets,
 } from '../lib/goals.js'
 import {
-  DEFAULT_WEEKS, PROGRAM_TEMPLATES, PROGRAM_WEEKS, isProgram, newProgram, programForecast, programLayout, programOver, programShare, programWeek, sizeDay,
+  DEFAULT_WEEKS, PROGRAM_TEMPLATES, PROGRAM_WEEKS, isProgram, newProgram, programForecast, programLayout, programOver, planAhead, programShare, programWeek, sizeDay,
   suggestDay, templateOf,
 } from '../lib/program.js'
 import { KIND_COLOR } from '../lib/workout-kind.js'
@@ -21,6 +21,12 @@ import { startGenerated, confirmSheet } from '../sheets.jsx'
 import { Button, Segmented, Stepper } from './ui.jsx'
 import CoverageStrip from './CoverageStrip.jsx'
 import Icon from './Icon.jsx'
+import { useMuscleRoles } from './MuscleRoles.jsx'
+import { rolesLoaded } from '../lib/muscle-roles.js'
+import { exOr } from '../lib/exercises.js'
+import { MUSCLE_NAME } from '../lib/muscles.js'
+import { isWarmupRow } from '../lib/workout-model.js'
+import { Thumb } from './Media.jsx'
 
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
 // Schedule with Program chosen, the setup before a program starts, and Home's next-day and this-week cards.
@@ -38,11 +44,15 @@ export function DayChip({ type, done, next }) {
   </span>
 }
 
-/** About how long a `type` day runs for `S`: exercises, work sets and minutes. */
+/**
+ * About how long a `type` day runs for `S`: exercises, work sets and minutes. Built as the Start
+ * sheet builds it (sheets.jsx GenSetup), or the two say different numbers: the setup kept for the
+ * day, sized to its share of the week on a program day.
+ */
 function dayEstimate(S, type) {
-  const setup = { ...(S.genSetup?.[type] || {}) }
-  const count = sizeDay(S, type, { setup })
-  const picks = generateWorkout(S, type, { count, byKind: setup.byKind, sets: setup.sets, share: programShare(S, type) })
+  const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
+  if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
+  const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
   const sets = picks.reduce((n, p) => n + (genScheme(p.id, setup)?.sets || 0), 0)
   return { count: picks.length, sets, minutes: sessionMinutes(sets) }
 }
@@ -123,10 +133,12 @@ function ProgramSetup({ template, close }) {
   const [weeks, setWeeks] = useState(DEFAULT_WEEKS)
   const custom = !GOAL_PRESETS.some(p => p.sets === goal)
   const types = [...new Set(tpl.days)]
+  // Day picks count muscles by role (lib/muscle-roles.js), which load after the first render.
+  useMuscleRoles()
   const est = useMemo(() => {
     const draft = { ...S, program: newProgram(template, { weeks }), goals: { ...(S.goals || {}), weeklySets: goal } }
     return Object.fromEntries(types.map(type => [type, dayEstimate(draft, type)]))
-  }, [S, template, goal, weeks])
+  }, [S, template, goal, weeks, rolesLoaded()])
   const start = () => {
     const go = () => {
       update(s => {
@@ -199,12 +211,13 @@ export const endProgram = then => confirmSheet({
  * This week of the program on its days (lib/program.js programLayout): what was done where, and
  * the days left as a forecast from today, the next one a tap from starting.
  */
-function ProgramWeek({ S }) {
+function ProgramWeek({ S, ahead }) {
   const today = todayISO()
   const ws = weekStartOf(S)
   const days = useMemo(() => programLayout(S, isoOf(startOfWeek(today, ws))), [S, today, ws])
   const nextType = days?.flatMap(d => d.items).find(it => it.state === 'next')?.type
-  const est = useMemo(() => (nextType ? dayEstimate(S, nextType) : null), [S, nextType])
+  useMuscleRoles()
+  const est = useMemo(() => (nextType ? dayEstimate(S, nextType) : null), [S, nextType, rolesLoaded()])
   // This program week's days the forecast puts past Sunday.
   const carry = useMemo(() => {
     const left = programWeek(S)?.items.filter(it => !it.w).length || 0
@@ -219,10 +232,12 @@ function ProgramWeek({ S }) {
       // The days before it started weren't the program's to fill.
       const before = !it && iso < S.program.startedAt
       const next = items.find(x => x.state === 'next')
-      const tap = next && !S.active ? { role: 'button', 'aria-label': t('Start {0}', t(GEN_NAME[next.type])), ...tappable(() => startGenerated(next.type)) } : {}
+      const planned = !next && it?.state === 'planned' ? ahead?.find(d => d.iso === iso) : null
+      const tap = next && !S.active ? { role: 'button', 'aria-label': t('Start {0}', t(GEN_NAME[next.type])), ...tappable(() => startGenerated(next.type)) }
+        : it?.state === 'planned' ? { role: 'button', 'aria-label': t('Show {0}', fmtDate(iso, true)), ...tappable(() => plannedSheet(iso)) } : {}
       const sub = !it ? '' : it.state === 'done' ? t('Done')
         : it.state === 'next' ? (est ? t('Next · ≈ {0} exercises · {1} min', est.count, est.minutes) : t('Next'))
-        : t('Planned')
+        : planned ? t('Planned · ≈ {0} exercises · {1} min', planned.entries.length, planned.minutes) : t('Planned')
       return <div key={iso} className={'item plan-day' + (it?.state === 'planned' || before ? ' forecast' : '')} data-day={wd} data-state={it?.state || 'rest'} {...tap}>
         <span className={'plan-day-n' + (iso === today ? ' today' : '')} aria-hidden="true">{t(DAYS[wd])}</span>
         <span className={'lrow-i' + (it ? '' : ' rest')} style={it ? { background: `color-mix(in srgb,${KIND_COLOR[it.type]} 22%,transparent)`, color: KIND_COLOR[it.type] } : undefined}>
@@ -233,12 +248,103 @@ function ProgramWeek({ S }) {
         </div>
         {it?.state === 'done' && <Icon name="check" className="prog-done" />}
         {next && <span className="tag" style={{ color: KIND_COLOR[next.type], background: `color-mix(in srgb,${KIND_COLOR[next.type]} 16%,transparent)` }}>{t('Start')}</span>}
+        {!next && it?.state === 'planned' && <Icon name="chevronRight" className="menu-chev" />}
       </div>
     })}</div>
     {carry.length > 0 && <p className="sect-f">{t('Moves to next week: {0}.', carry.map(x => t(GEN_NAME[x])).join(', '))}</p>}
     <p className="sect-f">{t('A forecast, not a booking: train on any day, and the days left move along.')}</p>
   </>
 }
+
+/* ============================ The days ahead ============================ */
+
+// The program's days ahead (lib/program.js planAhead), each built as Start would build it if the
+// ones before it were done as planned: how big each is, what it gives each group, and its lifts.
+// A day done differently, or a day skipped, changes the ones after it.
+
+const groupsOf = (S, type) => ({ ...genDefaults(type), ...(S.genSetup?.[type] || {}) }).groups
+const useAhead = (S, days) => {
+  useMuscleRoles()
+  return useMemo(() => (days > 0 ? planAhead(S, { days }) : []), [S, days, rolesLoaded()])
+}
+
+/** One day ahead: its size, folded open to its sets per group and its lifts. */
+function AheadDay({ S, day, next, open: opened = false }) {
+  const [open, setOpen] = useState(opened)
+  const color = KIND_COLOR[day.type]
+  return <div className={'ahead-day' + (open ? ' open' : '')} style={{ '--kind': color }}>
+    <button type="button" className="ahead-h" aria-expanded={open} onClick={() => setOpen(v => !v)}>
+      <span className="lrow-i" style={{ background: `color-mix(in srgb,${color} 22%,transparent)`, color }}><Icon name={glyphOf(KIND_ICON[day.type])} /></span>
+      <div className="grow">
+        <div className="tt">{fmtDate(day.iso, true)} · {t(GEN_NAME[day.type])}{next && <span className="ahead-next">{t('Next')}</span>}</div>
+        <div className="ss">{tn('{0} exercise', '{0} exercises', day.entries.length)} · {tn('{0} set', '{0} sets', day.sets)} · {t('≈ {0} min', day.minutes)}</div>
+      </div>
+      <Icon name="chevronRight" />
+    </button>
+    {open && <div className="ahead-b">
+      <CoverageStrip groups={groupsOf(S, day.type)} adds={day.groups} goals={weeklyTargets(S)} label={t('Sets per group this day, toward your weekly goal')} />
+      <div className="list">{day.entries.map(e => {
+        const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
+        const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${e.target?.reps ?? ''}`
+        const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching') : `${t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}`
+        return <div key={e.id} className="item">
+          <Thumb ex={ex} />
+          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+        </div>
+      })}</div>
+    </div>}
+  </div>
+}
+
+/**
+ * Plan → Program: the days ahead one after another, by calendar week, each week with what its
+ * days add up to per group (with what is done of it already), two program weeks at first.
+ */
+function ComingUp({ S, ahead, more, onMore }) {
+  const ws = weekStartOf(S)
+  const thisWeek = isoOf(startOfWeek(todayISO(), ws))
+  const done = useMemo(() => weeklyDone(S), [S])
+  const weeks = []
+  for (const d of ahead) {
+    const from = isoOf(startOfWeek(d.iso, ws))
+    let w = weeks[weeks.length - 1]
+    if (w?.from !== from) weeks.push(w = { from, days: [], adds: from === thisWeek ? { ...done } : {} })
+    w.days.push(d)
+    for (const [g, v] of Object.entries(d.groups)) w.adds[g] = (w.adds[g] || 0) + v
+  }
+  if (!weeks.length) return null
+  const groups = [...new Set(S.program.days.flatMap(type => groupsOf(S, type)))]
+  return <>
+    <h4 className="sec">{t('Coming up')}</h4>
+    <p className="sect-f" style={{ marginTop: 0 }}>{t('Each day as Start would build it if you do the days before it as planned. Train differently and the days after change.')}</p>
+    {weeks.map(w => <div key={w.from} className="ahead-week">
+      <div className="ahead-wk">{w.from === thisWeek ? t('This week') : t('Week of {0}', fmtDate(w.from))}</div>
+      <div className="ahead-days">{w.days.map(d => <AheadDay key={d.iso + d.type} S={S} day={d} next={d === ahead[0]} />)}</div>
+      <details className="ahead-sum">
+        <summary>{t('These days add up to')}</summary>
+        <CoverageStrip groups={groups} adds={w.adds} goals={weeklyTargets(S)} ofGoal
+          label={w.from === thisWeek ? t('Sets per group this week, done and planned, of your weekly goal') : t('Sets per group that week, of your weekly goal')} />
+      </details>
+    </div>)}
+    {more && <Button variant="tinted" onClick={onMore}>{t('Show the next week')}</Button>}
+  </>
+}
+
+/** A planned day of the program on its own: from the calendar, or its row in the week. */
+export function PlannedOn({ iso }) {
+  const S = useStore(s => s.S)
+  const days = useMemo(() => {
+    const i = programForecast(S).findLastIndex(f => f.iso === iso)
+    return i < 0 ? 0 : i + 1
+  }, [S, iso])
+  const ahead = useAhead(S, days).filter(d => d.iso === iso)
+  if (!ahead.length) return null
+  return <>
+    <div className="ahead-days">{ahead.map(d => <AheadDay key={d.type} S={S} day={d} open />)}</div>
+    <p className="sect-f">{t('As Start would build it if you do the days before it as planned.')}</p>
+  </>
+}
+const plannedSheet = iso => ui().openSheet(() => <><h3>{fmtDate(iso, true)}</h3><PlannedOn iso={iso} /></>)
 
 /** Plan → Schedule with Program chosen: the program and its week, the goal, and the programs. */
 export function ProgramMode() {
@@ -247,6 +353,10 @@ export function ProgramMode() {
   const pw = p ? programWeek(S) : null
   const over = p && programOver(S)
   const tpl = p ? templateOf(p.template) : null
+  // The days ahead: two program weeks, a week more a tap, as far as the program goes.
+  const left = useMemo(() => (p && !over ? programForecast(S).length : 0), [S, p, over])
+  const [weeksAhead, setWeeksAhead] = useState(2)
+  const ahead = useAhead(S, Math.min(left, (p?.days.length || 0) * weeksAhead))
   return <>
     {p && <div className="card prog-card" data-program>
       <div className="row between">
@@ -268,7 +378,8 @@ export function ProgramMode() {
         </div>
       </div>
     </div>}
-    {p && !over && <ProgramWeek S={S} />}
+    {p && !over && <ProgramWeek S={S} ahead={ahead} />}
+    {p && !over && <ComingUp S={S} ahead={ahead} more={ahead.length < left} onMore={() => setWeeksAhead(n => n + 1)} />}
     {!p && <div className="card">
       <div className="muted small" style={{ marginBottom: 12 }}>{t('A week of one-tap days, each built fresh from what your muscles need, sized to your weekly goal.')}</div>
       <div className="list">
@@ -293,7 +404,10 @@ export function NextDayCard({ onPrograms }) {
   const pw = useMemo(() => (p ? programWeek(S) : null), [S, p])
   const over = p && programOver(S)
   const type = useMemo(() => (over ? null : suggestDay(S)), [S, over])
-  const est = useMemo(() => (type ? dayEstimate(S, type) : null), [S, type])
+  // As the Start sheet (sheets.jsx GenSetup): picked again once muscle roles are in, or the
+  // estimate is of a different day than Start builds.
+  useMuscleRoles()
+  const est = useMemo(() => (type ? dayEstimate(S, type) : null), [S, type, rolesLoaded()])
   const tpl = p ? templateOf(p.template) : null
   const head = p
     ? (over ? t('Program done') : t('Program · week {0} of {1}', pw.week, p.weeks))
