@@ -1,10 +1,15 @@
-import { describe, it, expect } from 'vitest'
-import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES } from './planner.js'
+import { describe, it, expect, beforeAll } from 'vitest'
+import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN } from './planner.js'
 import { EXDB } from './exercises-data.js'
+import { plannedSets } from './coverage.js'
+import { weeklyTargets } from './goals.js'
+import { loadMuscleRoles } from './muscle-roles.js'
 
 const ids = new Set(EXDB.map(e => e.id))
 
 describe('planner', () => {
+  beforeAll(() => loadMuscleRoles())
+
   it('only names exercises the library has', () => {
     for (const e of PLAN_LIB) expect(ids.has(e.id), e.id).toBe(true)
   })
@@ -50,10 +55,43 @@ describe('planner', () => {
     }
   })
 
-  it('reaches the weekly goal of every group when the settings allow it', () => {
-    const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 4, minutes: 60 })
-    expect(p.feasible).toBe(true)
-    for (const g of PLAN_GROUPS) expect(p.total[g]).toBeGreaterThanOrEqual(p.goals[g] * 0.85)
+  it('reaches the weekly goal of every group when the settings allow it, not just close to it', () => {
+    // 3 × 75 min: fill leaves the quads a set short and no quad lift on the third day; top-up adds one.
+    for (const o of [{ days: 4, minutes: 60 }, { days: 3, minutes: 75 }]) {
+      const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', ...o })
+      expect(p.feasible).toBe(true)
+      for (const g of PLAN_GROUPS) expect(p.total[g], `${o.days}d ${g}`).toBeGreaterThanOrEqual(p.goals[g] - 1e-9)
+    }
+  })
+
+  it('counts sets and sets goals the way the app does, so the program page shows what it planned', () => {
+    const p = plan({ template: 'ul', goal: 'growth', days: 4, minutes: 60, base: 15 })
+    const app = {}
+    for (const d of p.days) for (const [g, v] of Object.entries(plannedSets(d.items.map(i => ({ id: i.ex.id, sets: i.sets }))))) app[g] = (app[g] || 0) + v
+    for (const g of PLAN_GROUPS) expect(p.total[g] || 0).toBeCloseTo(app[g] || 0, 6)
+    expect(p.goals).toEqual(weeklyTargets({ goals: { weeklySets: 15 } }, PLAN_GROUPS))
+    // A squat counts for the calves that help it, a pulldown for the biceps.
+    expect(creditOf(planLift('1760')).calves).toBeGreaterThan(0)
+    expect(plan({ template: 'full', byGroup: { biceps: 4 } }).goals.biceps).toBe(4)
+  })
+
+  it('takes off what goes past the goal: no set comes off without a group falling short', () => {
+    for (const template of ['full', 'ul', 'ppl']) for (const days of [3, 4, 6]) {
+      const p = plan({ template, goal: 'growth', days, minutes: 60 })
+      const cfg = p.cfg, direct = {}
+      for (const d of p.days) for (const i of d.items) for (const g of i.ex.p) direct[g] = (direct[g] || 0) + i.sets
+      for (const d of p.days) for (const i of d.items) {
+        if (i.slot === 'lead' || i.sets <= (i.slot === 'accessory' ? cfg.accMin : cfg.slotMin)) continue
+        const c = Object.entries(creditOf(i.ex))
+        const free = c.every(([g, v]) => p.total[g] - v >= p.goals[g]) && i.ex.p.every(g => direct[g] - 1 >= Math.ceil(DIRECT_MIN[g] * p.goals[g]))
+        expect(free, `${template} ${days}d ${i.ex.id}`).toBe(false)
+      }
+    }
+  })
+
+  it('paces the compound slots, so six full-body days don\'t pile up the presses and rows', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 6, minutes: 60 })
+    for (const g of ['chest', 'back']) expect(p.total[g]).toBeLessThanOrEqual(p.goals[g] * 1.5)
   })
 
   it('is the same week from the same settings, another from another seed', () => {
@@ -72,12 +110,12 @@ describe('planner', () => {
   })
 
   it('blames the time when a short session can\'t fit the goal, and finds the fewest minutes that do', () => {
-    const o = { template: 'full', goal: 'strength', equipment: 'gym', days: 4, minutes: 60 }
+    const o = { template: 'full', goal: 'strength', equipment: 'gym', days: 3, minutes: 45 }
     expect(blocker(o).map(x => x.cause)).toContain('time')
     const fix = fixFor(o)
-    expect(fix.days * fix.minutes).toBeGreaterThan(4 * 60)
+    expect(fix.days * fix.minutes).toBeGreaterThan(3 * 45)
     expect(blocker({ ...o, ...fix })).toEqual([])
-    expect(fixFor(o, 'days').days).toBe(4)
+    expect(fixFor(o, 'days').days).toBe(3)
   })
 
   it('finds nothing to add when the settings already work', () => {

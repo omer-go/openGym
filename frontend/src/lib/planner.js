@@ -8,19 +8,26 @@
 // sets, then a slot. Then accessories close what each muscle group still lacks of its weekly
 // goal (pass 2, `fill`): the group furthest behind per day left that trains it goes first, and
 // arms and shoulders need part of their goal from lifts aimed at them, since presses and rows
-// barely reach the side delts or the triceps' long head. Last the days are evened out (pass 3,
-// `balance`): an accessory or a set moves from a long day to a short one while no group falls
-// below its goal.
+// barely reach the side delts or the triceps' long head. A group left a set or so short gets it
+// on a lift it already has (pass 3, `topUp`), what goes past the goal comes off (pass 4, `trim`),
+// and last the days are evened out (pass 5, `balance`): an accessory or a set
+// moves from a long day to a short one while no group falls below its goal.
 //
 // Sets and reps come from the goal (SCHEMES), how close to failure from the goal and the level.
 // A setting that leaves a group short of its goal for a reason the settings can fix (the time,
 // the accessories a day, the equipment) is not allowed: `blocker` says why, and `fixFor` finds
 // the fewest days × minutes that make it work.
+//
+// Sets are counted and goals set the way the rest of the app does (coverage.js, goals.js), so a
+// week built to reach the goal fills the bars the program page and Stats show: a squat counts in
+// full for quads and glutes and 0.4 a set for the hamstrings, calves and abs that help.
+
+import { entryWeights, groupCredit } from './coverage.js'
+import { weeklyTargetOf } from './goals.js'
+import { rolesLoaded } from './muscle-roles.js'
 
 export const PLAN_GROUPS = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs', 'quads', 'hamstrings', 'glutes', 'calves']
 const SMALL = ['calves', 'forearms', 'abs']
-// Share of the weekly goal each group aims for. Glutes and forearms are mostly fed by the big lifts.
-export const SHARE = { chest: 1, back: 1, quads: 1, hamstrings: .8, shoulders: .8, biceps: .7, triceps: .7, glutes: .8, abs: .6, calves: .6, forearms: .4 }
 // Share of a group's goal that must come from lifts aimed at it.
 export const DIRECT_MIN = { chest: 0, back: 0, shoulders: .4, biceps: .5, triceps: .5, forearms: 0, abs: 0, quads: 0, hamstrings: 0, glutes: 0, calves: 0 }
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
@@ -66,77 +73,78 @@ export const PLAN_MINUTES = [30, 45, 60, 75, 90]
 export const PLAN_BASES = [6, 8, 10, 15, 20]
 export const PLAN_DEFAULTS = { template: 'full', goal: 'growth', level: 'intermediate', equipment: 'gym', days: 3, minutes: 60, base: 'auto', seed: 1 }
 
-const ADV = { secondary: 0.5, maxDirect: 2, sessionCap: 10, needMin: 1, secPerRep: 3, warmupMin: 5 }
+const ADV = { maxDirect: 2, sessionCap: 10, needMin: 1, secPerRep: 3, warmupMin: 5 }
 
-// The lifts: app exercise id, pattern, kind, primary and secondary groups, the least equipment it
-// needs (bw ⊂ db ⊂ gym), and whether it can lead a day, only lead one, is a hold, or goes a side at a time.
-const X = (id, pat, kind, p, s, need, f = {}) => ({ id, pat, kind, p, s, need, lead: false, ...f })
+// The lifts: app exercise id, pattern, kind, the groups it is aimed at, the least equipment it
+// needs (bw ⊂ db ⊂ gym), and whether it can lead a day, only lead one, is a hold, or goes a side
+// at a time. What else a lift trains comes from the catalogue, as the app counts it (creditOf).
+const X = (id, pat, kind, p, need, f = {}) => ({ id, pat, kind, p, need, lead: false, ...f })
 export const PLAN_LIB = [
-  X('0043', 'squat', 'compound', ['quads'], ['glutes'], 'gym', { lead: true }), // back squat
-  X('0042', 'squat', 'compound', ['quads'], ['glutes'], 'gym', { lead: true }), // front squat
-  X('0739', 'squat', 'compound', ['quads'], ['glutes'], 'gym'), // leg press
-  X('5516', 'squat', 'compound', ['quads'], ['glutes'], 'gym'), // hack squat
-  X('1760', 'squat', 'compound', ['quads'], ['glutes'], 'db', { lead: true }), // goblet squat
-  X('2290', 'squat', 'compound', ['quads'], ['glutes'], 'db', { perSide: true, lead: true }), // bulgarian split squat
-  X('3743', 'squat', 'compound', ['quads'], ['glutes'], 'bw', { perSide: true, lead: true }), // bulgarian split squat, bodyweight
-  X('0431', 'squat', 'compound', ['quads'], ['glutes'], 'db', { perSide: true }), // step-up
-  X('0032', 'hinge', 'compound', ['hamstrings'], ['glutes', 'back', 'forearms'], 'gym', { lead: true, leadOnly: true }), // deadlift
-  X('0085', 'hinge', 'compound', ['hamstrings'], ['glutes'], 'gym', { lead: true }), // romanian deadlift
-  X('0044', 'hinge', 'compound', ['hamstrings'], ['glutes'], 'gym'), // good morning
-  X('1459', 'hinge', 'compound', ['hamstrings'], ['glutes'], 'db', { lead: true }), // dumbbell romanian deadlift
-  X('4971', 'hinge', 'compound', ['hamstrings'], ['glutes'], 'bw', { perSide: true }), // single-leg rdl
-  X('7746', 'hinge', 'compound', ['hamstrings'], [], 'bw', { lead: true }), // nordic curl
-  X('0025', 'hpress', 'compound', ['chest'], ['triceps', 'shoulders'], 'gym', { lead: true }), // bench press
-  X('0314', 'hpress', 'compound', ['chest'], ['triceps', 'shoulders'], 'db', { lead: true }), // incline dumbbell press
-  X('0289', 'hpress', 'compound', ['chest'], ['triceps', 'shoulders'], 'db', { lead: true }), // dumbbell bench press
-  X('0251', 'hpress', 'compound', ['chest'], ['triceps', 'shoulders'], 'bw'), // dip
-  X('0662', 'hpress', 'compound', ['chest'], ['triceps', 'shoulders'], 'bw', { lead: true }), // push-up
-  X('1162', 'vpress', 'compound', ['shoulders'], ['triceps'], 'gym', { lead: true }), // overhead press
-  X('0405', 'vpress', 'compound', ['shoulders'], ['triceps'], 'db', { lead: true }), // seated dumbbell press
-  X('2137', 'vpress', 'compound', ['shoulders'], ['triceps'], 'db'), // arnold press
-  X('2921', 'vpress', 'compound', ['shoulders'], ['triceps'], 'bw', { lead: true }), // pike push-up
-  X('0652', 'vpull', 'compound', ['back'], ['biceps'], 'bw', { lead: true }), // pull-up
-  X('2330', 'vpull', 'compound', ['back'], ['biceps'], 'gym'), // lat pulldown
-  X('1047', 'vpull', 'compound', ['back'], ['biceps'], 'gym'), // close-grip pulldown
-  X('0027', 'hpull', 'compound', ['back'], ['biceps', 'forearms'], 'gym', { lead: true }), // barbell row
-  X('9698', 'hpull', 'compound', ['back'], ['biceps'], 'db', { lead: true }), // chest-supported row
-  X('2393', 'hpull', 'compound', ['back'], ['biceps'], 'db', { perSide: true }), // one-arm dumbbell row
-  X('0861', 'hpull', 'compound', ['back'], ['biceps'], 'gym'), // seated cable row
-  X('0499', 'hpull', 'compound', ['back'], ['biceps'], 'bw', { lead: true }), // inverted row
-  X('0188', 'iso', 'iso', ['chest'], [], 'gym'), // cable fly
-  X('1030', 'iso', 'iso', ['chest'], [], 'gym'), // pec deck
-  X('0308', 'iso', 'iso', ['chest'], [], 'db'), // dumbbell fly
-  X('0279', 'iso', 'iso', ['chest'], ['triceps'], 'bw'), // decline push-up
-  X('0238', 'iso', 'iso', ['back'], [], 'gym'), // straight-arm pulldown
-  X('0375', 'iso', 'iso', ['back'], ['chest'], 'db'), // dumbbell pullover
-  X('0334', 'iso', 'iso', ['shoulders'], [], 'db'), // lateral raise
-  X('0178', 'iso', 'iso', ['shoulders'], [], 'gym'), // cable lateral raise
-  X('5527', 'iso', 'iso', ['shoulders'], ['back'], 'gym'), // rear-delt fly
-  X('0294', 'iso', 'iso', ['biceps'], [], 'db'), // dumbbell curl
-  X('0313', 'iso', 'iso', ['biceps'], ['forearms'], 'db'), // hammer curl
-  X('0318', 'iso', 'iso', ['biceps'], [], 'db'), // incline curl
-  X('1326', 'iso', 'iso', ['biceps'], ['back'], 'bw'), // chin-up
-  X('0200', 'iso', 'iso', ['triceps'], [], 'gym'), // rope pushdown
-  X('2188', 'iso', 'iso', ['triceps'], [], 'db'), // overhead triceps extension
-  X('0061', 'iso', 'iso', ['triceps'], [], 'gym'), // skull crusher
-  X('0283', 'iso', 'iso', ['triceps'], ['chest'], 'bw'), // diamond push-up
-  X('0585', 'iso', 'iso', ['quads'], [], 'gym'), // leg extension
-  X('1489', 'iso', 'iso', ['quads'], [], 'bw'), // sissy squat
-  X('0586', 'iso', 'iso', ['hamstrings'], [], 'gym'), // lying leg curl
-  X('0599', 'iso', 'iso', ['hamstrings'], [], 'gym'), // seated leg curl
-  X('3395', 'iso', 'iso', ['hamstrings'], [], 'bw'), // sliding leg curl
-  X('4742', 'iso', 'iso', ['glutes'], ['hamstrings'], 'db'), // hip thrust
-  X('2471', 'iso', 'iso', ['glutes'], ['hamstrings'], 'bw'), // glute bridge
-  X('7589', 'iso', 'iso', ['glutes'], [], 'gym', { perSide: true }), // cable kickback
-  X('0605', 'iso', 'iso', ['calves'], [], 'gym'), // standing calf raise
-  X('0594', 'iso', 'iso', ['calves'], [], 'gym'), // seated calf raise
-  X('4761', 'iso', 'iso', ['calves'], [], 'bw', { perSide: true }), // single-leg calf raise
-  X('0175', 'iso', 'iso', ['abs'], [], 'gym'), // cable crunch
-  X('9819', 'iso', 'iso', ['abs'], [], 'bw'), // hanging knee raise
-  X('0276', 'iso', 'iso', ['abs'], [], 'bw', { perSide: true }), // dead bug
-  X('0364', 'iso', 'iso', ['forearms'], [], 'db', { perSide: true }), // wrist curl
-  X('2133', 'iso', 'iso', ['forearms'], ['back'], 'db', { timed: true }), // farmer's walk
-  X('1357', 'iso', 'iso', ['forearms'], ['back'], 'bw', { timed: true, perSide: true }), // one-hand hang
+  X('0043', 'squat', 'compound', ['quads'], 'gym', { lead: true }), // back squat
+  X('0042', 'squat', 'compound', ['quads'], 'gym', { lead: true }), // front squat
+  X('0739', 'squat', 'compound', ['quads'], 'gym'), // leg press
+  X('5516', 'squat', 'compound', ['quads'], 'gym'), // hack squat
+  X('1760', 'squat', 'compound', ['quads'], 'db', { lead: true }), // goblet squat
+  X('2290', 'squat', 'compound', ['quads'], 'db', { perSide: true, lead: true }), // bulgarian split squat
+  X('3743', 'squat', 'compound', ['quads'], 'bw', { perSide: true, lead: true }), // bulgarian split squat, bodyweight
+  X('0431', 'squat', 'compound', ['quads'], 'db', { perSide: true }), // step-up
+  X('0032', 'hinge', 'compound', ['hamstrings'], 'gym', { lead: true, leadOnly: true }), // deadlift
+  X('0085', 'hinge', 'compound', ['hamstrings'], 'gym', { lead: true }), // romanian deadlift
+  X('0044', 'hinge', 'compound', ['hamstrings'], 'gym'), // good morning
+  X('1459', 'hinge', 'compound', ['hamstrings'], 'db', { lead: true }), // dumbbell romanian deadlift
+  X('4971', 'hinge', 'compound', ['hamstrings'], 'bw', { perSide: true }), // single-leg rdl
+  X('7746', 'hinge', 'compound', ['hamstrings'], 'bw', { lead: true }), // nordic curl
+  X('0025', 'hpress', 'compound', ['chest'], 'gym', { lead: true }), // bench press
+  X('0314', 'hpress', 'compound', ['chest'], 'db', { lead: true }), // incline dumbbell press
+  X('0289', 'hpress', 'compound', ['chest'], 'db', { lead: true }), // dumbbell bench press
+  X('0251', 'hpress', 'compound', ['chest'], 'bw'), // dip
+  X('0662', 'hpress', 'compound', ['chest'], 'bw', { lead: true }), // push-up
+  X('1162', 'vpress', 'compound', ['shoulders'], 'gym', { lead: true }), // overhead press
+  X('0405', 'vpress', 'compound', ['shoulders'], 'db', { lead: true }), // seated dumbbell press
+  X('2137', 'vpress', 'compound', ['shoulders'], 'db'), // arnold press
+  X('2921', 'vpress', 'compound', ['shoulders'], 'bw', { lead: true }), // pike push-up
+  X('0652', 'vpull', 'compound', ['back'], 'bw', { lead: true }), // pull-up
+  X('2330', 'vpull', 'compound', ['back'], 'gym'), // lat pulldown
+  X('1047', 'vpull', 'compound', ['back'], 'gym'), // close-grip pulldown
+  X('0027', 'hpull', 'compound', ['back'], 'gym', { lead: true }), // barbell row
+  X('9698', 'hpull', 'compound', ['back'], 'db', { lead: true }), // chest-supported row
+  X('2393', 'hpull', 'compound', ['back'], 'db', { perSide: true }), // one-arm dumbbell row
+  X('0861', 'hpull', 'compound', ['back'], 'gym'), // seated cable row
+  X('0499', 'hpull', 'compound', ['back'], 'bw', { lead: true }), // inverted row
+  X('0188', 'iso', 'iso', ['chest'], 'gym'), // cable fly
+  X('1030', 'iso', 'iso', ['chest'], 'gym'), // pec deck
+  X('0308', 'iso', 'iso', ['chest'], 'db'), // dumbbell fly
+  X('0279', 'iso', 'iso', ['chest'], 'bw'), // decline push-up
+  X('0238', 'iso', 'iso', ['back'], 'gym'), // straight-arm pulldown
+  X('0375', 'iso', 'iso', ['back'], 'db'), // dumbbell pullover
+  X('0334', 'iso', 'iso', ['shoulders'], 'db'), // lateral raise
+  X('0178', 'iso', 'iso', ['shoulders'], 'gym'), // cable lateral raise
+  X('5527', 'iso', 'iso', ['shoulders'], 'gym'), // rear-delt fly
+  X('0294', 'iso', 'iso', ['biceps'], 'db'), // dumbbell curl
+  X('0313', 'iso', 'iso', ['biceps'], 'db'), // hammer curl
+  X('0318', 'iso', 'iso', ['biceps'], 'db'), // incline curl
+  X('1326', 'iso', 'iso', ['biceps'], 'bw'), // chin-up
+  X('0200', 'iso', 'iso', ['triceps'], 'gym'), // rope pushdown
+  X('2188', 'iso', 'iso', ['triceps'], 'db'), // overhead triceps extension
+  X('0061', 'iso', 'iso', ['triceps'], 'gym'), // skull crusher
+  X('0283', 'iso', 'iso', ['triceps'], 'bw'), // diamond push-up
+  X('0585', 'iso', 'iso', ['quads'], 'gym'), // leg extension
+  X('1489', 'iso', 'iso', ['quads'], 'bw'), // sissy squat
+  X('0586', 'iso', 'iso', ['hamstrings'], 'gym'), // lying leg curl
+  X('0599', 'iso', 'iso', ['hamstrings'], 'gym'), // seated leg curl
+  X('3395', 'iso', 'iso', ['hamstrings'], 'bw'), // sliding leg curl
+  X('4742', 'iso', 'iso', ['glutes'], 'db'), // hip thrust
+  X('2471', 'iso', 'iso', ['glutes'], 'bw'), // glute bridge
+  X('7589', 'iso', 'iso', ['glutes'], 'gym', { perSide: true }), // cable kickback
+  X('0605', 'iso', 'iso', ['calves'], 'gym'), // standing calf raise
+  X('0594', 'iso', 'iso', ['calves'], 'gym'), // seated calf raise
+  X('4761', 'iso', 'iso', ['calves'], 'bw', { perSide: true }), // single-leg calf raise
+  X('0175', 'iso', 'iso', ['abs'], 'gym'), // cable crunch
+  X('9819', 'iso', 'iso', ['abs'], 'bw'), // hanging knee raise
+  X('0276', 'iso', 'iso', ['abs'], 'bw', { perSide: true }), // dead bug
+  X('0364', 'iso', 'iso', ['forearms'], 'db', { perSide: true }), // wrist curl
+  X('2133', 'iso', 'iso', ['forearms'], 'db', { timed: true }), // farmer's walk
+  X('1357', 'iso', 'iso', ['forearms'], 'bw', { timed: true, perSide: true }), // one-hand hang
 ]
 const BY_ID = Object.fromEntries(PLAN_LIB.map(e => [e.id, e]))
 export const planLift = id => BY_ID[id] || null
@@ -152,7 +160,9 @@ function rng(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 }
-const goalsFor = base => Object.fromEntries(PLAN_GROUPS.map(g => [g, Math.max(1, Math.round(base * SHARE[g]))]))
+// The app's weekly goal for each group (goals.js): the base, two thirds of it for the small
+// groups, or a group's own number.
+const goalsFor = (base, byGroup) => Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { weeklySets: base, byGroup } }, g)]))
 const SHORT = 0.85 // under 85% of the goal counts as short
 
 /** The settings with every default filled in. `base` 'auto' is the goal's own. */
@@ -179,14 +189,16 @@ export function prescribe(cfg, ex, slot, group) {
   return { lo: s.lo, hi: s.hi, rir, rest: s.rest, secs }
 }
 
-const creditOf = (cfg, ex) => {
-  const c = {}
-  for (const g of ex.p) c[g] = 1
-  for (const g of ex.s) c[g] = (c[g] || 0) + cfg.secondary
-  return c
+// Group id -> what a set of the lift counts for, the way the app counts a logged set
+// (coverage.js plannedSets): its muscle roles once they are loaded, else the catalogue's muscles.
+let credits = new Map(), creditsWithRoles = false
+export const creditOf = ex => {
+  if (creditsWithRoles !== rolesLoaded()) { credits = new Map(); creditsWithRoles = rolesLoaded() }
+  if (!credits.has(ex.id)) credits.set(ex.id, groupCredit(entryWeights({ id: ex.id })))
+  return credits.get(ex.id)
 }
 const add = (cfg, into, ex, sets) => {
-  for (const [g, v] of Object.entries(creditOf(cfg, ex))) into[g] = (into[g] || 0) + v * sets
+  for (const [g, v] of Object.entries(creditOf(ex))) into[g] = (into[g] || 0) + v * sets
   return into
 }
 const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * it.rx.secs, 0) / 60
@@ -206,7 +218,7 @@ export const scheduleOf = cfg => {
 }
 
 // Pass 1: one day's backbone.
-function skeleton({ cfg, k, type, occ, goals, has, week, rand, avail, sched }) {
+function skeleton({ cfg, k, type, goals, has, week, rand, avail, sched, leads }) {
   const items = []
   const usedPat = pat => (week.patterns[pat] || 0) + items.filter(i => i.ex.pat === pat).length
   const now = g => { const c = {}; for (const i of items) add(cfg, c, i.ex, i.sets); return has(g) + (c[g] || 0) }
@@ -220,26 +232,32 @@ function skeleton({ cfg, k, type, occ, goals, has, week, rand, avail, sched }) {
     return variant(pool, week.used, rand)
   }
   const take = (pat, slot, lead = false) => {
+    let sets = cfg.leadSets
+    if (!lead) {
+      // Paced over the week: what the group still needs once the leads still to come are counted,
+      // shared by the days left that train it. Nothing when it is within a set of its goal.
+      const g0 = PATTERN_GROUPS[pat][0]
+      const coming = leads.reduce((n, p, j) => n + (j > k && PATTERN_GROUPS[p].includes(g0) ? cfg.leadSets : 0), 0)
+      const need = goals[g0] - now(g0) - coming
+      if (need < 1) return
+      const left = sched.filter((t, j) => j >= k && DAY_TYPES[t].groups.includes(g0)).length
+      sets = Math.min(cfg.slotSets, Math.max(cfg.slotMin, Math.ceil(need / left)))
+    }
     const ex = pickOf(pat, lead)
     if (!ex) return
-    const full = !lead && PATTERN_GROUPS[pat].every(g => now(g) >= goals[g])
-    // Spread over the week: a group trained on 6 days needs fewer sets a slot than one trained on 3.
-    const g0 = PATTERN_GROUPS[pat][0], on = sched.filter(t => DAY_TYPES[t].groups.includes(g0)).length
-    const paced = Math.min(cfg.slotSets, Math.max(cfg.slotMin, Math.ceil(goals[g0] / on)))
-    const sets = lead ? cfg.leadSets : full ? Math.max(cfg.slotMin, paced - 1) : paced
     items.push({ ex, sets, slot, rx: prescribe(cfg, ex, slot, ex.p[0]) })
     week.used.add(ex.id)
   }
   const other = { squat: 'hinge', hinge: 'squat', hpress: 'vpress', vpress: 'hpress', vpull: 'hpull', hpull: 'vpull' }
   if (type === 'full') {
-    const lead = FULL_LEADS(cfg.days)[k]
+    const lead = leads[k]
     take(lead, 'lead', true)
     take(lead === 'squat' || lead === 'hinge' ? other[lead] : ratio('quads') <= ratio('hamstrings') ? 'squat' : 'hinge', 'lower')
     take(lead === 'hpress' || lead === 'vpress' ? other[lead] : ratio('chest') <= ratio('shoulders') ? 'hpress' : 'vpress', 'push')
     take(lead === 'vpull' || lead === 'hpull' ? other[lead]
       : usedPat('vpull') < usedPat('hpull') ? 'vpull' : usedPat('hpull') < usedPat('vpull') ? 'hpull' : k % 2 ? 'hpull' : 'vpull', 'pull')
   } else {
-    const lead = DAY_TYPES[type].leads[occ % 2]
+    const lead = leads[k]
     take(lead, 'lead', true)
     const slotOf = { squat: 'lower', hinge: 'lower', hpress: 'push', vpress: 'push', vpull: 'pull', hpull: 'pull' }
     take(other[lead], slotOf[other[lead]])
@@ -297,8 +315,10 @@ function fill({ cfg, day, goals, has, hasDirect, daysLeftFor, week, rand, avail 
       break
     }
     const sets = Math.max(cfg.accMin, Math.min(cfg.accMax, Math.round(pick.need), Math.ceil(pick.gap)))
-    // Among the lifts for this group, prefer one whose secondary muscles are short too (hammer curls feed forearms).
-    const helps = e => e.s.filter(g => allowed.includes(g) && goals[g] - has(g) > 0).length
+    // Among the lifts for this group, prefer one that also feeds another group still short (hammer
+    // curls feed forearms) and not one already at its goal (diamond push-ups feed the chest).
+    const helps = e => Object.entries(creditOf(e)).filter(([g, c]) => !e.p.includes(g) && c >= 0.25)
+      .reduce((n, [g]) => n + (goals[g] - has(g) > 0 ? 1 : -1), 0)
     const best = Math.max(...pick.cands.map(helps))
     const ex = variant(pick.cands.filter(e => helps(e) === best), week.used, rand)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
@@ -306,12 +326,77 @@ function fill({ cfg, day, goals, has, hasDirect, daysLeftFor, week, rand, avail 
     if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; noTime[pick.g] = true; continue }
     items.push(it)
     week.used.add(ex.id)
-    for (const [g, v] of Object.entries(creditOf(cfg, ex))) week.acc[g] = (week.acc[g] || 0) + v * sets
+    for (const [g, v] of Object.entries(creditOf(ex))) week.acc[g] = (week.acc[g] || 0) + v * sets
     for (const g of ex.p) week.accDirect[g] = (week.accDirect[g] || 0) + sets
   }
 }
 
-// Pass 3: even out session lengths. Moves a whole accessory, or one set between lifts for the same
+// Pass 3: close what fill left just short. Fill stops when a group is a set or so from its goal,
+// too little for an accessory of its own; here one set at a time goes on the lift that counts most
+// for that group, on a day with the minutes for it and below the day's cap for the group. With no
+// such lift, the day with the most time to spare gets an accessory at its fewest sets.
+function topUp({ cfg, out, goals, week, rand, avail }) {
+  const most = it => (it.slot === 'accessory' ? cfg.accMax : it.slot === 'lead' ? cfg.leadSets : cfg.slotSets)
+  const stuck = new Set()
+  for (let guard = 0; guard < 100; guard++) {
+    const t = {}
+    for (const d of out) for (const i of d.items) add(cfg, t, i.ex, i.sets)
+    const g = PLAN_GROUPS.filter(g => !stuck.has(g) && (t[g] || 0) < goals[g] - 1e-9).sort((a, b) => (t[a] || 0) / goals[a] - (t[b] || 0) / goals[b])[0]
+    if (!g) break
+    let best = null
+    for (const d of out) {
+      const day = {}
+      for (const i of d.items) add(cfg, day, i.ex, i.sets)
+      for (const it of d.items) {
+        const c = creditOf(it.ex)[g] || 0
+        if (c < 0.4 || it.sets >= most(it) || (day[g] || 0) + c > cfg.sessionCap) continue
+        if (minutesOf(cfg, d.items.map(i => (i === it ? { ...i, sets: i.sets + 1 } : i))) > cfg.minutes) continue
+        if (!best || c > best.c) best = { it, c }
+      }
+    }
+    if (best) { best.it.sets++; continue }
+    const days = out.filter(d => DAY_TYPES[d.type].groups.includes(g) && d.items.filter(i => i.slot === 'accessory').length < cfg.maxAcc)
+      .sort((a, b) => minutesOf(cfg, a.items) - minutesOf(cfg, b.items))
+    const added = days.some(d => {
+      const cands = avail.filter(e => e.kind === 'iso' && e.p.includes(g) && !d.items.some(i => i.ex.id === e.id))
+      if (!cands.length) return false
+      const ex = variant(cands, week.used, rand)
+      const it = { ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
+      if (minutesOf(cfg, [...d.items, it]) > cfg.minutes) return false
+      d.items.push(it)
+      week.used.add(ex.id)
+      return true
+    })
+    if (!added) stuck.add(g)
+  }
+}
+
+// Pass 4: take off what goes past the goal. A set comes off a lift (an accessory goes, at its
+// fewest) while every group it counts for stays at its goal, the lift that spills most first:
+// pulldowns and presses feed the chest and shoulders a little, the slots don't see it coming.
+function trim(cfg, out, goals) {
+  const least = it => (it.slot === 'accessory' ? cfg.accMin : cfg.slotMin)
+  for (let guard = 0; guard < 200; guard++) {
+    const t = {}, dr = {}
+    for (const d of out) for (const i of d.items) { add(cfg, t, i.ex, i.sets); for (const g of i.ex.p) dr[g] = (dr[g] || 0) + i.sets }
+    let best = null
+    for (const d of out) for (const it of d.items) {
+      if (it.slot === 'lead') continue
+      const n = it.sets > least(it) ? 1 : it.slot === 'accessory' ? it.sets : 0
+      if (!n) continue
+      const c = Object.entries(creditOf(it.ex))
+      const keeps = c.every(([g, v]) => (t[g] || 0) - v * n >= goals[g] - 1e-9)
+        && it.ex.p.every(g => dr[g] - n >= Math.ceil(DIRECT_MIN[g] * goals[g]))
+      const gain = c.reduce((a, [, v]) => a + v, 0)
+      if (keeps && (!best || gain > best.gain)) best = { d, it, n, gain }
+    }
+    if (!best) break
+    if (best.n === best.it.sets) best.d.items.splice(best.d.items.indexOf(best.it), 1)
+    else best.it.sets -= best.n
+  }
+}
+
+// Pass 5: even out session lengths. Moves a whole accessory, or one set between lifts for the same
 // muscle, from a long day to a short one, as long as no group falls below its goal.
 function balance(cfg, out, goals) {
   const mins = d => minutesOf(cfg, d.items)
@@ -370,7 +455,7 @@ function balance(cfg, out, goals) {
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
-  const goals = goalsFor(cfg.base), rand = rng(cfg.seed)
+  const goals = goalsFor(cfg.base, o.byGroup), rand = rng(cfg.seed)
   const exclude = new Set(o.exclude || [])
   const has = EQUIPMENT[cfg.equipment].has
   const fits = PLAN_LIB.filter(e => has.includes(e.need))
@@ -379,10 +464,14 @@ export function plan(o = {}) {
   const sched = scheduleOf(cfg)
   const week = { used: new Set(), patterns: {}, acc: {}, accDirect: {} }
   const out = [], skel = {}, skelDirect = {}, occ = {}
+  // Each day's lead pattern: the full-body rotation, or the day type's two leads in turn.
+  const leads = sched.map((t, k) => {
+    if (t === 'full') return FULL_LEADS(cfg.days)[k]
+    occ[t] = (occ[t] || 0) + 1
+    return DAY_TYPES[t].leads[(occ[t] - 1) % 2]
+  })
   sched.forEach((t, k) => {
-    const o2 = occ[t] || 0
-    occ[t] = o2 + 1
-    const d = skeleton({ cfg, k, type: t, occ: o2, goals, has: g => skel[g] || 0, week, rand, avail, sched })
+    const d = skeleton({ cfg, k, type: t, goals, has: g => skel[g] || 0, week, rand, avail, sched, leads })
     for (const i of d.items) { add(cfg, skel, i.ex, i.sets); for (const g of i.ex.p) skelDirect[g] = (skelDirect[g] || 0) + i.sets }
     out.push({ k, ...d })
   })
@@ -394,6 +483,8 @@ export function plan(o = {}) {
       daysLeftFor: g => out.filter(x => x.k >= d.k && DAY_TYPES[x.type].groups.includes(g)).length,
     })
   }
+  topUp({ cfg, out, goals, week, rand, avail })
+  trim(cfg, out, goals)
   if (o.balance !== false) balance(cfg, out, goals)
   const order = { lead: 0, lower: 1, push: 2, pull: 3, accessory: 4 }
   for (const d of out) {

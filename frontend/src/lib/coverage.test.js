@@ -5,7 +5,7 @@ import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
 import { groupOfExercise } from './muscle-colors.js'
-import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
+import { loadMuscleRoles, muscleRolesOf, roleWeights } from './muscle-roles.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const sets = n => Array.from({ length: n }, () => row())
@@ -626,8 +626,14 @@ describe('counting from the muscle roles', () => {
     const r = muscleRolesOf(SQUAT)
     expect(r.target.length).toBeGreaterThan(0)
     const w = entryWeights({ id: SQUAT })
-    expect(w).toMatchObject({ quadriceps: 1, gluteal: 1 })
+    expect(w).toMatchObject({ quadriceps: 1, gluteal: 0.5 })   // glutes share the target: half
     expect(w.abs).toBeUndefined()   // a squat's abs hold the trunk steady
+  })
+  it('counts the glutes half where they share the target with the quads or hamstrings, whole where they have it alone', () => {
+    expect(roleWeights({ target: ['glute-max', 'hamstrings'] })).toEqual({ gluteal: 0.5, hamstring: 1 })
+    expect(roleWeights({ target: ['glute-max'], synergists: ['hamstrings'] })).toEqual({ gluteal: 1, hamstring: 0.4 })
+    expect(roleWeights({ target: ['glute-max', 'erector-spinae'] }).gluteal).toBe(1)
+    expect(roleWeights({ target: ['quads', 'glute-max'], synergists: ['glute-med'] }).gluteal).toBe(0.5)
   })
   it('a press helps the side delts, it does not count as a lateral raise', () => {
     const split = groupSplitOf([session('2026-09-14', [OHP, LATERAL])])

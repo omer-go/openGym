@@ -80,6 +80,11 @@ export const REGION_PARTS = {
 // How much a set counts for a muscle in each role: the target fully, a helper as a secondary
 // muscle counts on the body map (lib/muscles.js SECONDARY), a stabilizer not at all.
 export const ROLE_WEIGHT = { target: 1, synergists: 0.4 }
+// The glutes drive a squat, a lunge or a deadlift beside the quads or the hamstrings, and the
+// catalogue lists them as a target of each; counted in full, every leg day would fill the glutes
+// twice over. As a co-target they count half a set; a hip thrust or a kickback, aimed at them
+// alone, still a whole one.
+export const SHARED_GLUTES = 0.5
 
 // The body-map region (lib/muscles.js MUSCLES) each role muscle belongs to. The neck muscles and
 // the coracobrachialis have none: no muscle group counts them.
@@ -100,15 +105,18 @@ const REGION_OF = {
 
 /**
  * Region -> weight from an exercise's roles (`r`): 1 where it targets a muscle of the region,
- * 0.4 where one only helps (ROLE_WEIGHT), nothing where the region only holds steady. Null
+ * 0.4 where one only helps (ROLE_WEIGHT), nothing where the region only holds steady, and the
+ * glutes half when they share the target with the quads or hamstrings (SHARED_GLUTES). Null
  * without roles, so the caller falls back to the coarse muscles (lib/muscles.js musclesOf).
  */
 export function roleWeights(r) {
   if (!r || !r.target?.length) return null
   const out = {}
+  const shared = r.target.includes('glute-max') && r.target.some(m => m === 'quads' || m === 'hamstrings')
   for (const role in ROLE_WEIGHT) for (const m of r[role] || []) {
     const region = REGION_OF[m]
-    if (region) out[region] = Math.max(out[region] || 0, ROLE_WEIGHT[role])
+    const w = role === 'target' && m === 'glute-max' && shared ? SHARED_GLUTES : ROLE_WEIGHT[role]
+    if (region) out[region] = Math.max(out[region] || 0, w)
   }
   return Object.keys(out).length ? out : null
 }

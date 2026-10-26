@@ -176,28 +176,32 @@ function PreviewDay({ day, k }) {
 function PlanBuilder({ template, close }) {
   const S = useStore(s => s.S)
   const running = isPlanProgram(S.program) ? S.program : null
-  const exclude = useMemo(() => planExclude(S), [S])
+  // What the plan leaves out and the goals it builds to; again once the muscle roles are in, as
+  // the planner counts a set the way the app does with them.
+  useMuscleRoles()
+  const roles = rolesLoaded()
+  const env = useMemo(() => ({ exclude: planExclude(S), byGroup: S.goals?.byGroup }), [S, roles])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, ...from, template }
-    const fix = blocker({ ...start, exclude }).length ? fixFor({ ...start, exclude }) : null
+    const fix = blocker({ ...start, ...env }).length ? fixFor({ ...start, ...env }) : null
     return fix ? { ...start, ...fix } : start
   })
   const [weeks, setWeeks] = useState(() => running?.weeks || DEFAULT_WEEKS)
   const [note, setNote] = useState('')
   // The planner is quick, but the controls ask it a hundred times; once each is plenty.
-  const memo = useMemo(() => new Map(), [exclude])
+  const memo = useMemo(() => new Map(), [env])
   const blocked = x => {
     const key = JSON.stringify(x)
-    if (!memo.has(key)) memo.set(key, blocker({ ...x, exclude }))
+    if (!memo.has(key)) memo.set(key, blocker({ ...x, ...env }))
     return memo.get(key)
   }
-  const week = useMemo(() => plan({ ...o, exclude }), [o, exclude])
+  const week = useMemo(() => plan({ ...o, ...env }), [o, env])
   const cfg = week.cfg
 
   const pick = (key, v) => {
     const next = { ...o, [key]: v }
-    const fix = blocked(next).length ? fixFor({ ...next, exclude }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, exclude }) : null
+    const fix = blocked(next).length ? fixFor({ ...next, ...env }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, ...env }) : null
     setNote(fix ? t('{0} needs more training time, so it also set {1}.', t(SETTING_NAME[key]), fixText(fix, o)) : '')
     setO(fix ? { ...next, ...fix } : next)
   }
@@ -206,7 +210,7 @@ function PlanBuilder({ template, close }) {
     if (v === o[key]) return opt
     const next = { ...o, [key]: v }
     if (!blocked(next).length) return opt
-    const fix = fixFor({ ...next, exclude }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, exclude })
+    const fix = fixFor({ ...next, ...env }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, ...env })
     return fix ? { ...opt, needs: true, title: t('Needs {0}. Picking it changes that too.', fixText(fix, o)) }
       : { ...opt, disabled: true, title: t("Can't reach the weekly goal with this.") }
   })
@@ -218,7 +222,7 @@ function PlanBuilder({ template, close }) {
 
   const start = () => {
     const go = () => {
-      const program = newPlanProgram(o, { weeks, today: todayISO(), exclude })
+      const program = newPlanProgram({ ...o, byGroup: env.byGroup }, { weeks, today: todayISO(), exclude: env.exclude })
       if (!program) return
       update(s => {
         s.program = program
