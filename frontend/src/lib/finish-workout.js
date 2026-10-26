@@ -126,6 +126,8 @@ export function buildCompletedWorkout(active, { end = Date.now(), prs = [], snap
     ...(allNoProg ? { excludeFromProgression: true } : {}),
     // A one-tap session keeps its day type, so Home can colour it (lib/workout-kind.js).
     ...(active?.gen?.type ? { genType: active.gen.type } : {}),
+    // A program day keeps which of the week's days it was (lib/program.js programRounds).
+    ...(Number.isInteger(active?.gen?.day) ? { programDay: active.gen.day } : {}),
     ...(sessionNote ? { note: sessionNote } : {}),
   }
 }

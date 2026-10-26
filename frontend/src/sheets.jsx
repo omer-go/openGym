@@ -61,7 +61,7 @@ import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { isProgram, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, isPlanProgram, isProgram, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -2995,10 +2995,13 @@ export function repeatWorkout(w, close) {
 // A one-tap workout (lib/generate.js): Full body, Push, Pull or Legs, built from the muscles
 // trained least lately. Its tile opens the setup first (GenSetup). A freestyle session
 // underneath — `gen` only remembers what it was built as and from, so the workout can offer
-// Shuffle until the first set is ticked.
-export function startGenerated(type) {
+// Shuffle until the first set is ticked. Day `k` of a program built from settings
+// (lib/program.js isPlanProgram) is its own lifts instead: ProgramDay.
+export function startGenerated(type, k) {
   if (S().active) { toast(t('Finish the current workout first.')); return }
-  ui().openSheet(close => <GenSetup type={type} close={close} />)
+  const p = S().program
+  if (isPlanProgram(p) && Number.isInteger(k) && p.days[k] === type) ui().openSheet(close => <ProgramDay type={type} k={k} close={close} />)
+  else ui().openSheet(close => <GenSetup type={type} close={close} />)
 }
 function beginGenerated(type, entries, gen) {
   const go = bw => {
@@ -3006,7 +3009,7 @@ function beginGenerated(type, entries, gen) {
     update(s => {
       s.active = {
         id: uid(), d: todayISO(), start: Date.now(), routineIds: [],
-        name: t(GEN_NAME[type]), bw: bw || null, cur: 0, entries,
+        name: t(DAY_NAME[type]), bw: bw || null, cur: 0, entries,
         gen: { type, ...gen },
         workoutView: savedWorkoutView(s),
       }
@@ -3027,7 +3030,7 @@ function beginGenerated(type, entries, gen) {
 // exercises as its share of the week's goal takes.
 function GenSetup({ type, close }) {
   const st = useStore(s => s.S)
-  const inProgram = isProgram(st.program) && st.program.days.includes(type)
+  const inProgram = isProgram(st.program) && !isPlanProgram(st.program) && st.program.days.includes(type)
   const sized = base => (inProgram ? { ...base, count: sizeDay(st, type, { groups: base.groups, setup: base }) } : base)
   const [setup, setSetup] = useState(() => sized({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
   const pw = inProgram ? programWeek(st) : null
@@ -3053,7 +3056,7 @@ function GenSetup({ type, close }) {
   }
   return <div className="wd-fit">
     <div className="row between" style={{ alignItems: 'flex-start', flex: 'none' }}>
-      <div><h3>{t(GEN_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{pw
+      <div><h3>{t(DAY_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{pw
         ? t('Program · week {0} of {1} · sized to your weekly goal.', pw.week, pw.weeks)
         : t('Choose what to train, then start.')}</div></div>
       <Button size="sm" variant="plain" onClick={() => { setSetup(sized(genDefaults(type))); setShift(0) }}>{t('Reset')}</Button>
@@ -3147,11 +3150,53 @@ function GenSetup({ type, close }) {
     </div>
   </div>
 }
+// A program day built from settings: its lifts as the program set them, at the weight and reps
+// they move on to from last time (lib/program.js planEntries). The workout keeps `gen.day`, so
+// it ticks this day of the week, and offers no Shuffle: the program chose the lifts.
+function ProgramDay({ type, k, close }) {
+  const st = useStore(s => s.S)
+  const entries = useMemo(() => programDayEntries(st, { type, k }), [st, type, k])
+  const pw = programWeek(st)
+  const day = st.program.week[k]
+  const sets = day.items.reduce((n, i) => n + i.sets, 0)
+  const start = () => {
+    close()
+    beginGenerated(type, entries, { day: k })
+  }
+  return <div className="wd-fit">
+    <div style={{ flex: 'none' }}>
+      <h3>{t(DAY_NAME[type])}</h3>
+      <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>
+        {t('Program · week {0} of {1}', pw.week, pw.weeks)} · {tn('{0} set', '{0} sets', sets)} · {t('≈ {0} min', day.minutes)}</div>
+    </div>
+    <div className="wd-scroll sheet-scroll">
+      <div className="list">{entries.map(e => {
+        const ex = exOr(e.id), it = day.items.find(i => i.id === e.id)
+        const cfg = { ...e.target, id: e.id }
+        const work = e.sets.filter(x => !isWarmupRow(x))
+        const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
+        const reps = cfg.repsMin > 0 && cfg.repsMin < cfg.reps ? `${cfg.repsMin}–${cfg.reps}` : cfg.reps
+        const what = (modeOf(cfg) === 'time' ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${reps}`)
+          + (it?.rest ? ` · ${t('{0} rest', fmtRest(it.rest))}` : '')
+        return <div key={e.id} className="item" role="button" {...tappable(() => exerciseDetailSheet(ex))}>
+          <Thumb ex={ex} />
+          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+          <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>
+        </div>
+      })}</div>
+      <div className="muted small" style={{ marginTop: 8 }}>{t('Reach the top of the rep range on every set and the weight goes up next time.')}</div>
+    </div>
+    <div className="wd-foot">
+      <Button variant="primary" disabled={!entries.length} onClick={start}>{t('Start workout')}</Button>
+    </div>
+  </div>
+}
+
 // Shuffle: the same day type one step further down each muscle's list. Only before anything is
 // logged — the workout hides the button after the first ticked set.
 export function shuffleGenerated() {
   const A = S().active
-  if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
+  if (!A?.gen || Number.isInteger(A.gen.day) || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
   const shift = (A.gen.shift || 0) + 1
   const setup = A.gen.setup || null
   const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift, share: programShare(S(), A.gen.type) }), setup)

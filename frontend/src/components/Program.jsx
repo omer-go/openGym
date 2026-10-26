@@ -4,16 +4,19 @@ import { useUI } from '../store/useUI.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { DAYS, fmtDate, fmtNum, isoOf, startOfWeek, todayISO, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { GEN_NAME, genDefaults, genScheme, generateWorkout } from '../lib/generate.js'
+import { genDefaults, genScheme, generateWorkout } from '../lib/generate.js'
 import { weeklyDone } from '../lib/coverage.js'
 import {
-  DEFAULT_GOAL, GOAL_PRESETS, MAX_GOAL, MIN_GOAL, baseGoalOf, defaultTargetFor, goalEstimate, goalGroups,
+  GOAL_PRESETS, MAX_GOAL, MIN_GOAL, baseGoalOf, defaultTargetFor, goalEstimate, goalGroups,
   sessionMinutes, weeklyTargets,
 } from '../lib/goals.js'
 import {
-  DEFAULT_WEEKS, PROGRAM_TEMPLATES, PROGRAM_WEEKS, isProgram, newProgram, programForecast, programLayout, programOver, planAhead, programShare, programWeek, sizeDay,
-  suggestDay, templateOf,
+  DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, newPlanProgram, planExclude, programForecast, programLayout, programOver, planAhead,
+  programShare, programWeek, sizeDay, suggestDay, templateOf,
 } from '../lib/program.js'
+import {
+  DAY_TYPES, EQUIPMENT, LEVELS, PLAN_BASES, PLAN_DAYS, PLAN_DEFAULTS, PLAN_MINUTES, PLAN_TEMPLATES, SCHEMES, blocker, configOf, fixFor, plan, scheduleOf,
+} from '../lib/planner.js'
 import { KIND_COLOR } from '../lib/workout-kind.js'
 import { glyphOf } from '../lib/glyphs.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
@@ -31,9 +34,9 @@ import { Thumb } from './Media.jsx'
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
 // Schedule with Program chosen, the setup before a program starts, and Home's next-day and this-week cards.
 
-const SHORT = { full: 'Full', pull: 'Pull', push: 'Push', legs: 'Legs' }
+const SHORT = { full: 'Full', pull: 'Pull', push: 'Push', legs: 'Legs', upper: 'Upper', lower: 'Lower' }
 export const PROGRAM_SHORT = SHORT
-const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs' }
+export const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs', upper: 'arm', lower: 'legs' }
 const update = fn => useStore.getState().update(fn)
 const ui = () => useUI.getState()
 
@@ -47,9 +50,11 @@ export function DayChip({ type, done, next }) {
 /**
  * About how long a `type` day runs for `S`: exercises, work sets and minutes. Built as the Start
  * sheet builds it (sheets.jsx GenSetup), or the two say different numbers: the setup kept for the
- * day, sized to its share of the week on a program day.
+ * day, sized to its share of the week on a program day. A plan program's day `k` is its own lifts.
  */
-function dayEstimate(S, type) {
+function dayEstimate(S, type, k) {
+  const day = isPlanProgram(S.program) ? S.program.week[k] : null
+  if (day) return { count: day.items.length, sets: day.items.reduce((n, i) => n + i.sets, 0), minutes: day.minutes }
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
   if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
   const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
@@ -124,26 +129,100 @@ export const goalSheet = () => ui().openSheet(close => <GoalSheet close={close} 
 
 /* ============================ program setup ============================ */
 
-// A template's days, the goal they are sized to (presets or your own), and how many weeks; each
-// day shows about how long it runs. Start makes it the program, and the goal the weekly goal.
-function ProgramSetup({ template, close }) {
+const SETTING_NAME = { template: 'Split', goal: 'Training goal', level: 'Level', equipment: 'Equipment', days: 'Days a week', base: 'Sets a week per group', minutes: 'Session length' }
+const CAUSE = {
+  time: 'the sessions are too short', accessories: 'the level allows too few accessories a day',
+  equipment: 'the equipment has too few lifts for it', caps: 'its lifts are capped a day', template: 'no day of the split trains it',
+}
+const fixText = (f, o) => [f.days !== o.days && t('{0} days', f.days), f.minutes !== o.minutes && t('{0} min', f.minutes)].filter(Boolean).join(' · ')
+const groupName = g => t(ADD_GROUPS.find(x => x.id === g)?.n || g)
+/** A plan program's settings in a line: goal · level · equipment · minutes. */
+const planSummary = pl => [t(SCHEMES[pl.goal]?.n), t(LEVELS[pl.level]?.n), t(EQUIPMENT[pl.equipment]?.n), t('{0} min', pl.minutes)].join(' · ')
+
+/** A program day's lift: sets × reps (a range) and its rest. */
+const liftLine = i => `${i.sets} × ${i.lo === i.hi ? i.lo : `${i.lo}–${i.hi}`}` + (i.rest ? ` · ${t('{0} rest', i.rest >= 120 && i.rest % 60 === 0 ? `${i.rest / 60} min` : `${i.rest}s`)}` : '')
+
+/** One day of a plan being set up: its size, folded open to its lifts. */
+function PreviewDay({ day, k }) {
+  const [open, setOpen] = useState(k === 0)
+  const color = KIND_COLOR[day.type]
+  return <div className={'ahead-day plan-prev' + (open ? ' open' : '')} style={{ '--kind': color }}>
+    <button type="button" className="ahead-h" aria-expanded={open} onClick={() => setOpen(v => !v)}>
+      <span className="lrow-i" style={{ background: `color-mix(in srgb,${color} 22%,transparent)`, color }}><Icon name={glyphOf(KIND_ICON[day.type])} /></span>
+      <div className="grow">
+        <div className="tt">{t('Day {0}', k + 1)} · {t(DAY_NAME[day.type])}</div>
+        <div className="ss">{tn('{0} exercise', '{0} exercises', day.items.length)} · {tn('{0} set', '{0} sets', day.sets)} · {t('≈ {0} min', day.minutes)}</div>
+      </div>
+      <Icon name="chevronRight" />
+    </button>
+    {open && <div className="ahead-b"><div className="list">{day.items.map(i => {
+      const ex = exOr(i.ex.id)
+      return <div key={i.ex.id} className="item">
+        <Thumb ex={ex} />
+        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
+          <div className="ss">{groupName(i.ex.p[0])} · {liftLine({ sets: i.sets, ...i.rx })}</div></div>
+      </div>
+    })}</div></div>}
+  </div>
+}
+
+/**
+ * A program from settings (lib/planner.js): the split, goal, level, equipment, days, sets and
+ * session length, and the week they build, each day's lifts fixed for the program. A setting
+ * that can't reach the weekly goal at these days and minutes brings the ones it needs (marked +),
+ * or can't be picked when no number of them would. Start makes it the program, and its sets the
+ * weekly goal.
+ */
+function PlanBuilder({ template, close }) {
   const S = useStore(s => s.S)
-  const tpl = templateOf(template)
-  const [goal, setGoal] = useState(() => baseGoalOf(S))
-  const [weeks, setWeeks] = useState(DEFAULT_WEEKS)
-  const custom = !GOAL_PRESETS.some(p => p.sets === goal)
-  const types = [...new Set(tpl.days)]
-  // Day picks count muscles by role (lib/muscle-roles.js), which load after the first render.
-  useMuscleRoles()
-  const est = useMemo(() => {
-    const draft = { ...S, program: newProgram(template, { weeks }), goals: { ...(S.goals || {}), weeklySets: goal } }
-    return Object.fromEntries(types.map(type => [type, dayEstimate(draft, type)]))
-  }, [S, template, goal, weeks, rolesLoaded()])
+  const running = isPlanProgram(S.program) ? S.program : null
+  const exclude = useMemo(() => planExclude(S), [S])
+  const [o, setO] = useState(() => {
+    const from = running?.template === template ? running.plan : {}
+    const start = { ...PLAN_DEFAULTS, ...from, template }
+    const fix = blocker({ ...start, exclude }).length ? fixFor({ ...start, exclude }) : null
+    return fix ? { ...start, ...fix } : start
+  })
+  const [weeks, setWeeks] = useState(() => running?.weeks || DEFAULT_WEEKS)
+  const [note, setNote] = useState('')
+  // The planner is quick, but the controls ask it a hundred times; once each is plenty.
+  const memo = useMemo(() => new Map(), [exclude])
+  const blocked = x => {
+    const key = JSON.stringify(x)
+    if (!memo.has(key)) memo.set(key, blocker({ ...x, exclude }))
+    return memo.get(key)
+  }
+  const week = useMemo(() => plan({ ...o, exclude }), [o, exclude])
+  const cfg = week.cfg
+
+  const pick = (key, v) => {
+    const next = { ...o, [key]: v }
+    const fix = blocked(next).length ? fixFor({ ...next, exclude }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, exclude }) : null
+    setNote(fix ? t('{0} needs more training time, so it also set {1}.', t(SETTING_NAME[key]), fixText(fix, o)) : '')
+    setO(fix ? { ...next, ...fix } : next)
+  }
+  const options = (key, values, label) => values.map(v => {
+    const opt = { value: v, label: label(v) }
+    if (v === o[key]) return opt
+    const next = { ...o, [key]: v }
+    if (!blocked(next).length) return opt
+    const fix = fixFor({ ...next, exclude }, key === 'days' || key === 'minutes' ? key : undefined, { ...o, exclude })
+    return fix ? { ...opt, needs: true, title: t('Needs {0}. Picking it changes that too.', fixText(fix, o)) }
+      : { ...opt, disabled: true, title: t("Can't reach the weekly goal with this.") }
+  })
+  const seg = (key, values, label) => <>
+    <h4 className="sec">{t(SETTING_NAME[key])}</h4>
+    <Segmented value={o[key]} onChange={v => pick(key, v)} options={options(key, values, label)} />
+  </>
+  const short = week.short.filter(x => x.cause !== 'planner')
+
   const start = () => {
     const go = () => {
+      const program = newPlanProgram(o, { weeks, today: todayISO(), exclude })
+      if (!program) return
       update(s => {
-        s.program = newProgram(template, { weeks, today: todayISO() })
-        s.goals = { ...(s.goals || {}), weeklySets: goal, days: tpl.days.length }
+        s.program = program
+        s.goals = { ...(s.goals || {}), weeklySets: cfg.base, days: cfg.days }
       })
       ui().toast(t('Program started. Home shows your next day.'))
     }
@@ -155,27 +234,32 @@ function ProgramSetup({ template, close }) {
   const hasSchedule = !!S.queue || Object.values(S.week || {}).some(v => [].concat(v || []).length)
   return <div className="wd-fit">
     <div style={{ flex: 'none' }}>
-      <h3>{t(tpl.n)}</h3>
-      <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{t(tpl.sub)}</div>
+      <h3>{t(PLAN_TEMPLATES[o.template].n)}</h3>
+      <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{t(PLAN_TEMPLATES[o.template].sub)}</div>
     </div>
-    <div className="wd-scroll sheet-scroll">
-      <h4 className="sec">{t('Sets a week per group')}</h4>
-      <Segmented value={custom ? 'custom' : goal} onChange={v => setGoal(v === 'custom' ? (custom ? goal : goal + 2) : v)}
-        options={[...GOAL_PRESETS.filter(p => p.sets >= DEFAULT_GOAL).map(p => ({ value: p.sets, label: String(p.sets) })), { value: 'custom', label: t('Custom') }]} />
-      {custom && <div className="row cfgrow" style={{ marginTop: 10 }}>
-        <Stepper label={t('Sets a week per group')} value={goal} step={1} min={MIN_GOAL} max={MAX_GOAL} decimal={false} onChange={setGoal} />
-      </div>}
+    <div className="wd-scroll sheet-scroll plan-build">
+      {seg('template', Object.keys(PLAN_TEMPLATES), v => t(SHORT_TEMPLATE[v]))}
+      {seg('goal', Object.keys(SCHEMES), v => t(SCHEMES[v].n))}
+      {seg('level', Object.keys(LEVELS), v => t(LEVELS[v].n))}
+      {seg('equipment', Object.keys(EQUIPMENT), v => t(EQUIPMENT[v].n))}
+      {seg('days', PLAN_DAYS, v => String(v))}
+      {seg('base', ['auto', ...PLAN_BASES], v => (v === 'auto' ? t('Auto · {0}', SCHEMES[o.goal].base) : String(v)))}
+      {seg('minutes', PLAN_MINUTES, v => String(v))}
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Minutes a session, rests and warm-up sets included.')}</div>
+      {note && <div className="plan-note" data-plan-note>{note}</div>}
+
+      <div className="goal-est" data-goal-estimate>
+        {t('{0} days · {1} sets a week per group · up to {2} min', cfg.days, cfg.base, cfg.minutes)}
+      </div>
+      {short.length > 0 && <div className="plan-note warn">{t('Short of the weekly goal: {0}.', short.map(x => `${groupName(x.g)} ${x.total}/${x.goal} (${t(CAUSE[x.cause])})`).join(', '))}</div>}
 
       <h4 className="sec">{t('Each week')}</h4>
-      <div className="list">{tpl.days.map((type, i) => {
-        const e = est[type]
-        return <div key={i} className="item">
-          <span className="lrow-i" style={{ background: `color-mix(in srgb,${KIND_COLOR[type]} 22%,transparent)`, color: KIND_COLOR[type] }}><Icon name={glyphOf(KIND_ICON[type])} /></span>
-          <div className="grow"><div className="tt">{t(GEN_NAME[type])}</div>
-            <div className="ss">{t('≈ {0} exercises · {1} sets · {2} min', e.count, e.sets, e.minutes)}</div></div>
-        </div>
-      })}</div>
-      <div className="muted small" style={{ marginTop: 6 }}>{t('In any order, on any days. A day sizes itself to what the week still needs, so these shift as you train.')}</div>
+      <div className="ahead-days">{week.days.map((d, k) => <PreviewDay key={`${k}-${d.type}-${d.items.map(i => i.ex.id).join()}`} day={d} k={k} />)}</div>
+      <Button variant="tinted" icon="shuffle" style={{ marginTop: 10 }} onClick={() => {
+        // Another week of lifts, as long as it still reaches the goal.
+        for (let seed = o.seed + 1, n = 0; n < 30; seed++, n++) if (!blocked({ ...o, seed }).length) return setO({ ...o, seed })
+      }}>{t('Other lifts')}</Button>
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Each day keeps its lifts for the whole program; the weight and reps move on as you log them.')}</div>
 
       <h4 className="sec">{t('Length')}</h4>
       <Segmented value={weeks} onChange={setWeeks} options={PROGRAM_WEEKS.map(n => ({ value: n, label: t('{0} wk', n) }))} />
@@ -186,16 +270,18 @@ function ProgramSetup({ template, close }) {
     </div>
   </div>
 }
-export const programSetupSheet = template => ui().openSheet(close => <ProgramSetup template={template} close={close} />)
+export const programSetupSheet = template => ui().openSheet(close => <PlanBuilder template={template} close={close} />)
+
+const SHORT_TEMPLATE = { full: 'Full body', ul: 'Upper/lower', ppl: 'PPL' }
 
 /* ===================== Plan → Schedule, Program chosen ===================== */
 
-function TemplateList({ active }) {
-  return <div className="list">{PROGRAM_TEMPLATES.map(p => <div key={p.id} className="item" role="button" {...tappable(() => programSetupSheet(p.id))}>
+function TemplateList({ active, days }) {
+  return <div className="list">{Object.entries(PLAN_TEMPLATES).map(([id, p]) => <div key={id} className="item" role="button" {...tappable(() => programSetupSheet(id))}>
     <div className="grow">
-      <div className="tt">{t(p.n)}{active === p.id && <span className="muted"> · {t('running')}</span>}</div>
+      <div className="tt">{t(p.n)}{active === id && <span className="muted"> · {t('running')}</span>}</div>
       <div className="ss">{t(p.sub)}</div>
-      <div className="prog-chips" style={{ marginTop: 6 }}>{p.days.map((d, i) => <DayChip key={i} type={d} />)}</div>
+      <div className="prog-chips" style={{ marginTop: 6 }}>{scheduleOf(configOf({ template: id, days })).map((d, i) => <DayChip key={i} type={d} />)}</div>
     </div>
     <Icon name="chevronRight" className="menu-chev" />
   </div>)}</div>
@@ -215,9 +301,9 @@ function ProgramWeek({ S, ahead }) {
   const today = todayISO()
   const ws = weekStartOf(S)
   const days = useMemo(() => programLayout(S, isoOf(startOfWeek(today, ws))), [S, today, ws])
-  const nextType = days?.flatMap(d => d.items).find(it => it.state === 'next')?.type
+  const nextDay = days?.flatMap(d => d.items).find(it => it.state === 'next')
   useMuscleRoles()
-  const est = useMemo(() => (nextType ? dayEstimate(S, nextType) : null), [S, nextType, rolesLoaded()])
+  const est = useMemo(() => (nextDay ? dayEstimate(S, nextDay.type, nextDay.k) : null), [S, nextDay?.type, nextDay?.k, rolesLoaded()])
   // This program week's days the forecast puts past Sunday.
   const carry = useMemo(() => {
     const left = programWeek(S)?.items.filter(it => !it.w).length || 0
@@ -233,7 +319,7 @@ function ProgramWeek({ S, ahead }) {
       const before = !it && iso < S.program.startedAt
       const next = items.find(x => x.state === 'next')
       const planned = !next && it?.state === 'planned' ? ahead?.find(d => d.iso === iso) : null
-      const tap = next && !S.active ? { role: 'button', 'aria-label': t('Start {0}', t(GEN_NAME[next.type])), ...tappable(() => startGenerated(next.type)) }
+      const tap = next && !S.active ? { role: 'button', 'aria-label': t('Start {0}', t(DAY_NAME[next.type])), ...tappable(() => startGenerated(next.type, next.k)) }
         : it?.state === 'planned' ? { role: 'button', 'aria-label': t('Show {0}', fmtDate(iso, true)), ...tappable(() => plannedSheet(iso)) } : {}
       const sub = !it ? '' : it.state === 'done' ? t('Done')
         : it.state === 'next' ? (est ? t('Next · ≈ {0} exercises · {1} min', est.count, est.minutes) : t('Next'))
@@ -243,7 +329,7 @@ function ProgramWeek({ S, ahead }) {
         <span className={'lrow-i' + (it ? '' : ' rest')} style={it ? { background: `color-mix(in srgb,${KIND_COLOR[it.type]} 22%,transparent)`, color: KIND_COLOR[it.type] } : undefined}>
           <Icon name={it ? glyphOf(KIND_ICON[it.type]) : 'moon'} /></span>
         <div className="grow">
-          <div className="tt">{it ? items.map(x => t(GEN_NAME[x.type])).join(' + ') : before ? t('Before the program') : t('Rest day')}</div>
+          <div className="tt">{it ? items.map(x => t(DAY_NAME[x.type])).join(' + ') : before ? t('Before the program') : t('Rest day')}</div>
           {sub && <div className="ss">{sub}</div>}
         </div>
         {it?.state === 'done' && <Icon name="check" className="prog-done" />}
@@ -251,7 +337,7 @@ function ProgramWeek({ S, ahead }) {
         {!next && it?.state === 'planned' && <Icon name="chevronRight" className="menu-chev" />}
       </div>
     })}</div>
-    {carry.length > 0 && <p className="sect-f">{t('Moves to next week: {0}.', carry.map(x => t(GEN_NAME[x])).join(', '))}</p>}
+    {carry.length > 0 && <p className="sect-f">{t('Moves to next week: {0}.', carry.map(x => t(DAY_NAME[x])).join(', '))}</p>}
     <p className="sect-f">{t('A forecast, not a booking: train on any day, and the days left move along.')}</p>
   </>
 }
@@ -262,7 +348,7 @@ function ProgramWeek({ S, ahead }) {
 // ones before it were done as planned: how big each is, what it gives each group, and its lifts.
 // A day done differently, or a day skipped, changes the ones after it.
 
-const groupsOf = (S, type) => ({ ...genDefaults(type), ...(S.genSetup?.[type] || {}) }).groups
+const groupsOf = (S, type) => (isPlanProgram(S.program) ? DAY_TYPES[type].groups : ({ ...genDefaults(type), ...(S.genSetup?.[type] || {}) }).groups)
 const useAhead = (S, days) => {
   useMuscleRoles()
   return useMemo(() => (days > 0 ? planAhead(S, { days }) : []), [S, days, rolesLoaded()])
@@ -276,7 +362,7 @@ function AheadDay({ S, day, next, open: opened = false }) {
     <button type="button" className="ahead-h" aria-expanded={open} onClick={() => setOpen(v => !v)}>
       <span className="lrow-i" style={{ background: `color-mix(in srgb,${color} 22%,transparent)`, color }}><Icon name={glyphOf(KIND_ICON[day.type])} /></span>
       <div className="grow">
-        <div className="tt">{fmtDate(day.iso, true)} · {t(GEN_NAME[day.type])}<span className="ahead-next">{next ? t('Next') : t('Planned')}</span></div>
+        <div className="tt">{fmtDate(day.iso, true)} · {t(DAY_NAME[day.type])}<span className="ahead-next">{next ? t('Next') : t('Planned')}</span></div>
         <div className="ss">{tn('{0} exercise', '{0} exercises', day.entries.length)} · {tn('{0} set', '{0} sets', day.sets)} · {t('≈ {0} min', day.minutes)}</div>
       </div>
       <Icon name="chevronRight" />
@@ -291,10 +377,11 @@ function AheadBody({ S, day }) {
     <CoverageStrip groups={groupsOf(S, day.type)} adds={day.groups} goals={weeklyTargets(S)} label={t('Sets per group this day, toward your weekly goal')} />
     <div className="list">{day.entries.map(e => {
       const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
-      const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${e.target?.reps ?? ''}`
+      const reps = e.target?.repsMin > 0 && e.target.repsMin < e.target.reps ? `${e.target.repsMin}–${e.target.reps}` : e.target?.reps ?? ''
+      const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${reps}`
       const w = work.find(x => x.w > 0)?.w
       const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching')
-        : `${t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}` + (w ? ` · ${fmtNum(w)} ${S.unit}` : '')
+        : `${e.gen?.g ? groupName(e.gen.g) : t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}` + (w ? ` · ${fmtNum(w)} ${S.unit}` : '')
       return <div key={e.id} className="item">
         <Thumb ex={ex} />
         <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
@@ -354,11 +441,11 @@ export function PlannedOn({ iso, close }) {
   const next = all[0].iso === iso
   const n = ahead.reduce((a, d) => ({ ex: a.ex + d.entries.length, sets: a.sets + d.sets, min: a.min + d.minutes }), { ex: 0, sets: 0, min: 0 })
   return <>
-    <h3 style={{ '--kind': KIND_COLOR[ahead[0].type] }}>{ahead.map(d => t(GEN_NAME[d.type])).join(' + ')}<span className="ahead-next">{t('Planned')}</span></h3>
+    <h3 style={{ '--kind': KIND_COLOR[ahead[0].type] }}>{ahead.map(d => t(DAY_NAME[d.type])).join(' + ')}<span className="ahead-next">{t('Planned')}</span></h3>
     <div className="muted small">{fmtDate(iso, true)} · {tn('{0} exercise', '{0} exercises', n.ex)} · {tn('{0} set', '{0} sets', n.sets)} · {t('≈ {0} min', n.min)}</div>
     <p className="sect-f" style={{ marginTop: 4 }}>{t('If you do the days before it as planned.')}</p>
     {ahead.map(d => <div key={d.type} className="ahead-day planned-one" style={{ '--kind': KIND_COLOR[d.type] }}><AheadBody S={S} day={d} /></div>)}
-    {next && !S.active && <Button icon="play" onClick={() => { close?.(); startGenerated(ahead[0].type) }}>{t('Start {0}', t(GEN_NAME[ahead[0].type]))}</Button>}
+    {next && !S.active && <Button icon="play" onClick={() => { close?.(); startGenerated(ahead[0].type, ahead[0].k) }}>{t('Start {0}', t(DAY_NAME[ahead[0].type]))}</Button>}
   </>
 }
 const plannedSheet = iso => ui().openSheet(close => <PlannedOn iso={iso} close={close} />)
@@ -369,7 +456,7 @@ export function ProgramMode() {
   const p = isProgram(S.program) ? S.program : null
   const pw = p ? programWeek(S) : null
   const over = p && programOver(S)
-  const tpl = p ? templateOf(p.template) : null
+  const tpl = !p ? null : isPlanProgram(p) ? PLAN_TEMPLATES[p.template] : templateOf(p.template)
   // The days ahead: two program weeks, a week more a tap, as far as the program goes.
   const left = useMemo(() => (p && !over ? programForecast(S).length : 0), [S, p, over])
   const [weeksAhead, setWeeksAhead] = useState(2)
@@ -377,7 +464,8 @@ export function ProgramMode() {
   return <>
     {p && <div className="card prog-card" data-program>
       <div className="row between">
-        <div><div className="eyebrow">{over ? t('Program done') : t('Week {0} of {1}', pw.week, p.weeks)}</div><h2 style={{ margin: '2px 0 0' }}>{tpl ? t(tpl.n) : t('Program')}</h2></div>
+        <div><div className="eyebrow">{over ? t('Program done') : t('Week {0} of {1}', pw.week, p.weeks)}</div><h2 style={{ margin: '2px 0 0' }}>{tpl ? t(tpl.n) : t('Program')}</h2>
+          {isPlanProgram(p) && <div className="small muted">{planSummary(p.plan)}</div>}</div>
         <Button size="sm" variant="plain" onClick={() => endProgram()}>{t('End')}</Button>
       </div>
       {!over && <>
@@ -408,7 +496,7 @@ export function ProgramMode() {
       </div>
     </div>}
     <h4 className="sec" style={{ marginTop: 18 }}>{p ? t('Switch program') : t('Choose a program')}</h4>
-    <TemplateList active={p?.template} />
+    <TemplateList active={isPlanProgram(p) ? p.template : null} days={isPlanProgram(p) ? p.plan.days : S.goals?.days || PLAN_DEFAULTS.days} />
   </>
 }
 
@@ -424,8 +512,9 @@ export function NextDayCard({ onPrograms }) {
   // As the Start sheet (sheets.jsx GenSetup): picked again once muscle roles are in, or the
   // estimate is of a different day than Start builds.
   useMuscleRoles()
-  const est = useMemo(() => (type ? dayEstimate(S, type) : null), [S, type, rolesLoaded()])
-  const tpl = p ? templateOf(p.template) : null
+  const k = pw?.next != null ? pw.items[pw.next].k : undefined
+  const est = useMemo(() => (type ? dayEstimate(S, type, k) : null), [S, type, k, rolesLoaded()])
+  const tpl = !p ? null : isPlanProgram(p) ? PLAN_TEMPLATES[p.template] : templateOf(p.template)
   const head = p
     ? (over ? t('Program done') : t('Program · week {0} of {1}', pw.week, p.weeks))
     : t('Suggested next')
@@ -434,11 +523,11 @@ export function NextDayCard({ onPrograms }) {
       <div style={{ minWidth: 0 }}><div className="eyebrow">{head}</div>{tpl && <div className="small muted">{t(tpl.n)}</div>}</div>
       {!p && <Button size="sm" variant="plain" onClick={onPrograms}>{t('Programs')}</Button>}
     </div>
-    {type ? <div className="gen-tile kind next-tile" style={{ '--kind': KIND_COLOR[type] }} role="button" aria-label={t('Start {0}', t(GEN_NAME[type]))} {...tappable(() => startGenerated(type))}>
+    {type ? <div className="gen-tile kind next-tile" style={{ '--kind': KIND_COLOR[type] }} role="button" aria-label={t('Start {0}', t(DAY_NAME[type]))} {...tappable(() => startGenerated(type, k))}>
       <div className="row" style={{ gap: 10 }}>
         <span className="lrow-i" style={{ width: 36, height: 36, borderRadius: 10, fontSize: 20 }}><Icon name={glyphOf(KIND_ICON[type])} /></span>
         <div className="grow" style={{ minWidth: 0 }}>
-          <div className="tt">{t(GEN_NAME[type])}</div>
+          <div className="tt">{t(DAY_NAME[type])}</div>
           {est && <div className="ss" style={{ marginTop: 2 }}>{t('≈ {0} exercises · {1} sets · {2} min', est.count, est.sets, est.minutes)}</div>}
         </div>
         <span className="tag" style={{ color: KIND_COLOR[type], background: `color-mix(in srgb,${KIND_COLOR[type]} 16%,transparent)` }}>{t('Start')}</span>

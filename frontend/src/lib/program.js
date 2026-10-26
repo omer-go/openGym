@@ -7,17 +7,28 @@
 //
 // `S.program = { template, days: ['push', 'pull', …], startedAt: 'YYYY-MM-DD', weeks }`.
 //
+// A program built on the program page (lib/planner.js) also keeps its settings and the week it
+// built: `plan: { goal, level, equipment, days, minutes, base, seed }` and `week`, a list of days
+// `{ type, minutes, items: [{ id, sets, slot, lo, hi, rir, rest }] }` in order, `days` their types.
+// Its days are the same lifts every week (planEntries builds one, with progression), and a
+// session done as one of them keeps which (`programDay`, finish-workout.js).
+//
 // Sizing. A program day is as long as the week's goal needs (goals.js): what a group still
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
 // takes as many exercises as reach its share. The picks are greedy (coverage.js pickForCoverage), so the first
 // n of a long run are about what a run of n would pick.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genScheme, generateWorkout, generatedEntries } from './generate.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genScheme, generateWorkout, generatedEntries } from './generate.js'
 import { USEFUL, entryWeights, groupCredit, plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
-import { sessionMinutes, weeklyTargetOf } from './goals.js'
+import { OVERLAP, sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { isWarmupRow } from './workout-model.js'
+import { DAY_TYPES, plan as planWeek, planLift } from './planner.js'
+import { defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
+import { buildPlannedEntry } from './session-start.js'
+import { EXIDX } from './exercises.js'
+import { suggestable } from './skipped.js'
 
 export const PROGRAM_TEMPLATES = [
   { id: 'full-3', n: 'Full body', sub: 'Three full-body days', days: ['full', 'full', 'full'] },
@@ -29,6 +40,9 @@ export const PROGRAM_WEEKS = [4, 6, 8, 12]
 export const DEFAULT_WEEKS = 8
 export const MIN_DAY = 3   // exercises a sized day never goes under
 
+// English names of a program's day types, used as i18n keys (t(DAY_NAME[type])).
+export const DAY_NAME = { ...GEN_NAME, upper: 'Upper body', lower: 'Lower body' }
+
 const DAY = 864e5
 export const templateOf = id => PROGRAM_TEMPLATES.find(p => p.id === id) || null
 
@@ -39,9 +53,55 @@ export function newProgram(template, { weeks = DEFAULT_WEEKS, today = isoOf(new 
   return { template: tpl.id, days: [...tpl.days], startedAt: today, weeks }
 }
 
+/**
+ * A program built from the program page's settings (lib/planner.js), starting on `today`.
+ * `exclude`: exercise ids not to pick. Null when the settings build no days.
+ */
+export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new Date()), exclude } = {}) {
+  const p = planWeek({ ...opts, exclude })
+  if (!p.days.length) return null
+  const c = p.cfg
+  return {
+    template: c.template,
+    plan: { goal: c.goal, level: c.level, equipment: c.equipment, days: c.days, minutes: c.minutes, base: opts.base > 0 ? opts.base : 'auto', seed: c.seed },
+    week: p.days.map(d => ({
+      type: d.type, minutes: d.minutes,
+      items: d.items.map(i => ({ id: i.ex.id, sets: i.sets, slot: i.slot, lo: i.rx.lo, hi: i.rx.hi, rir: i.rx.rir, rest: i.rx.rest })),
+    })),
+    days: p.days.map(d => d.type), startedAt: today, weeks,
+  }
+}
+
+/** The exercise ids a plan should not pick for `S`: skipped, or the kit isn't there. */
+export const planExclude = S => Object.values(EXIDX).filter(ex => !suggestable(S, ex)).map(ex => ex.id)
+
+/** Is `p` a program built from the program page's settings, with its week of lifts? */
+export const isPlanProgram = p => !!p?.plan && Array.isArray(p.week) && Array.isArray(p.days)
+  && p.week.length === p.days.length && p.days.every(d => DAY_TYPES[d])
+
 /** Is `p` a program this build can run? */
-export const isProgram = p => !!p && Array.isArray(p.days) && p.days.length > 0
-  && p.days.every(d => GEN_TYPES[d]) && typeof p.startedAt === 'string'
+export const isProgram = p => !!p && Array.isArray(p.days) && p.days.length > 0 && typeof p.startedAt === 'string'
+  && (isPlanProgram(p) || p.days.every(d => GEN_TYPES[d]))
+
+/**
+ * Session entries for a plan program's day: each lift at its sets, a rep range from its lo to
+ * its hi (a per-side count being both sides'), double progression and its rest, built the way a
+ * routine's are (session-start.js buildPlannedEntry), so the weight moves on from last time.
+ */
+export function planEntries(S, items) {
+  return (items || []).filter(it => EXIDX[it.id]).map(it => {
+    const id = it.id
+    const base = freestyleConfig(S, { id, ...defaultConfig(id) })
+    const cfg = { id, ...defaultConfig(id, modeOf({ ...base, id })), sets: it.sets }
+    for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) cfg[k] = base[k]
+    if (it.rest > 0) cfg.restSec = it.rest
+    if (modeOf(cfg) === 'reps') {
+      const per = isPerSide(cfg) ? 2 : 1
+      Object.assign(cfg, { reps: it.hi * per, repsMin: it.lo * per, prog: 'double' })
+    }
+    return { id, ...buildPlannedEntry(S, cfg, null), gen: { g: planLift(id)?.p[0] || null } }
+  })
+}
 
 const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoOf(d) }
 const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / DAY)
@@ -56,18 +116,21 @@ const byTime = (a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : (a.start || 0) - (b.s
 function programRounds(S, now = Date.now()) {
   const p = S.program
   const today = isoOf(new Date(now))
-  const open = () => p.days.map(type => ({ type, w: null }))
+  const open = () => p.days.map((type, k) => ({ type, k, w: null }))
   const rounds = []
   const sessions = (S.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= p.startedAt && w.d <= today).sort(byTime)
   for (const w of sessions) {
     const kind = workoutKind(w)
     if (!p.days.includes(kind)) continue
+    // A program day done as itself counts for that day; any other session of its kind, the first open.
+    const day = Number.isInteger(w.programDay) && p.days[w.programDay] === kind ? w.programDay : null
+    const fits = it => !it.w && it.type === kind && (day == null || it.k === day)
     let slot = null
-    for (const r of rounds) if ((slot = r.find(it => !it.w && it.type === kind))) break
+    for (const r of rounds) if ((slot = r.find(fits))) break
     if (!slot) {
       if (p.weeks > 0 && rounds.length >= p.weeks) continue
       rounds.push(open())
-      slot = rounds[rounds.length - 1].find(it => it.type === kind)
+      slot = rounds[rounds.length - 1].find(fits)
     }
     slot.w = w
   }
@@ -104,7 +167,7 @@ export function programWeek(S, now = Date.now()) {
 }
 
 /**
- * The days a program has left, dated, in order: `[{ type, iso }]`. A forecast, not a booking: it
+ * The days a program has left, dated, in order: `[{ type, k, iso }]`, `k` the day's place in the week. A forecast, not a booking: it
  * starts today, or a rest day after the last session, and leaves a rest day between two days
  * when its week has room for that (four days or fewer), else none. A new week starts as many
  * days after the last one started as keep it on a seven-day beat, and never without a rest day.
@@ -130,7 +193,7 @@ export function programForecast(S, now = Date.now()) {
       if (it.w) continue
       const step = first && !round.some(x => x.w) ? between : gap
       d = d ? addDays(d, step) : lastDone ? (daysBetween(lastDone, today) >= step ? today : addDays(lastDone, step)) : today
-      out.push({ type: it.type, iso: d })
+      out.push({ type: it.type, k: it.k, iso: d })
       first = false
     }
   }
@@ -150,13 +213,13 @@ export function suggestDay(S, now = Date.now()) {
 }
 
 const CATCH_UP = 1.5   // a day takes at most this many times its even part of a group's goal
+const EVEN_ROOM = 1.5  // sets a day may go past its even part (evenCount)
 
 /**
  * Group id -> sets this `type` day should add: what each group still lacks this week (coverage.js
- * weeklyLack, its parts' minimums too), shared out
- * over the program days forecast for the rest of the week (this one included) that train it.
- * A day never takes more than half again its even part of the goal (the goal over the
- * program's days that train the group), and in the week the program started no more than its
+ * weeklyLack), shared out over the program days forecast for the rest of the week (this one
+ * included) that train it. A day never takes more than half again its even part of the goal (the
+ * goal over the program's days that train the group), and in the week the program started no more than its
  * even part: a program started late in the week, or a week whose last day falls past its end,
  * would otherwise pile the whole week onto one day.
  */
@@ -164,11 +227,9 @@ export function dayShare(S, type, now = Date.now()) {
   const groups = genGroupsOf(type)
   const lacks = weeklyLack(S, groups, now)
   const weekStart = isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S)))
-  const weekEnd = addDays(weekStart, 6)
   // A program started this week has missed nothing yet: no day of it catches up.
   const most = isProgram(S?.program) && S.program.startedAt > weekStart ? 1 : CATCH_UP
-  const left = programForecast(S, now).filter(f => f.iso <= weekEnd).map(f => f.type)
-  if (!left.includes(type)) left.push(type)
+  const left = daysLeft(S, type, now)
   const days = isProgram(S?.program) ? S.program.days : [type]
   const out = {}
   for (const g of groups) {
@@ -181,15 +242,24 @@ export function dayShare(S, type, now = Date.now()) {
   return out
 }
 
+// The program days forecast for the rest of the calendar week, a `type` day among them.
+function daysLeft(S, type, now) {
+  const weekEnd = addDays(isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S))), 6)
+  const left = programForecast(S, now).filter(f => f.iso <= weekEnd).map(f => f.type)
+  if (!left.includes(type)) left.push(type)
+  return left
+}
+
 /** A `type` day's dayShare when the program S runs has that day, else null (generateWorkout's `share`). */
 export const programShare = (S, type, now = Date.now()) =>
-  (isProgram(S?.program) && S.program.days.includes(type) ? dayShare(S, type, now) : null)
+  (isProgram(S?.program) && !isPlanProgram(S.program) && S.program.days.includes(type) ? dayShare(S, type, now) : null)
 
 /**
  * How many exercises a `type` day takes to give its share (dayShare), from MIN_DAY to
  * MAX_GEN_COUNT; the generator's own count when nothing is lacking. `setup` is the one-tap
  * setup, for its sets per exercise. Every group is filled to its own share: the day ends with the
- * last exercise that still gives a group a set it lacks (USEFUL), not when the sum looks close.
+ * last exercise that still gives a group a set it lacks (USEFUL), not when the sum looks close,
+ * and no later than its even part of the week's sets (evenCount).
  */
 export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const share = dayShare(S, type, now)
@@ -209,7 +279,27 @@ export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
     }
     if (adds >= USEFUL) n = i + 1
   }
-  return Math.min(picks.length, Math.max(MIN_DAY, n))
+  return Math.min(picks.length, Math.max(MIN_DAY, Math.min(n, evenCount(S, type, picks, share, setup, now))))
+}
+
+/**
+ * How many of `picks` (in the order picked) make a `type` day's even part of the sets its share
+ * adds up to: the shares' sum less what lifts count twice (a squat is quads and glutes both,
+ * goals.js OVERLAP), and a set and a half more. The week's last program day takes one exercise
+ * more, for what the others left: uncapped, it closed every gap a set at a time with a second
+ * curl, a second press and a second ab lift (13 or 14 exercises). Without a cap the first day of
+ * a week takes the most and the last the least: what the first overshoots, the last no longer
+ * lacks (13, 12 and 9 exercises in place of 11 or 12 each).
+ */
+export function evenCount(S, type, picks, share, setup, now) {
+  const extra = daysLeft(S, type, now).length <= 1 ? 1 : 0
+  const budget = Object.values(share).reduce((a, b) => a + b, 0) / OVERLAP + EVEN_ROOM
+  let sets = 0
+  for (let i = 0; i < picks.length; i++) {
+    sets += genScheme(picks[i].id, setup).sets || 0
+    if (sets >= budget) return Math.min(picks.length, i + 1 + extra)
+  }
+  return picks.length
 }
 
 /** Group id -> sets done this week and the goal, for the groups a program's days train. */
@@ -220,7 +310,7 @@ export function weekProgress(S, groups, now = Date.now()) {
 
 /**
  * The seven days of the week starting `weekStart` (ISO), each with the program days on it:
- * `[{ iso, items: [{ type, state, w }] }]`. A day done sits on the date it was done ('done'); the
+ * `[{ iso, items: [{ type, k, state, w }] }]`. A day done sits on the date it was done ('done'); the
  * ones left are where programForecast puts them, the next first ('next', then 'planned').
  * Null without a program.
  */
@@ -231,8 +321,8 @@ export function programLayout(S, weekStart, now = Date.now()) {
   const on = iso => days.find(d => d.iso === iso)
   const { rounds } = programRounds(S, now)
   rounds.flat().filter(it => it.w).sort((a, b) => byTime(a.w, b.w))
-    .forEach(it => on(it.w.d)?.items.push({ type: it.type, state: 'done', w: it.w }))
-  programForecast(S, now).forEach((f, i) => on(f.iso)?.items.push({ type: f.type, state: i === 0 ? 'next' : 'planned', w: null }))
+    .forEach(it => on(it.w.d)?.items.push({ type: it.type, k: it.k, state: 'done', w: it.w }))
+  programForecast(S, now).forEach((f, i) => on(f.iso)?.items.push({ type: f.type, k: f.k, state: i === 0 ? 'next' : 'planned', w: null }))
   return days
 }
 
@@ -251,22 +341,33 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
     const f = programForecast(s, at)[0]
     if (!f) break
     const t = k ? new Date(f.iso + 'T12:00:00').getTime() : at
-    const setup = { ...genDefaults(f.type), ...(s.genSetup?.[f.type] || {}) }
-    const count = sizeDay(s, f.type, { now: t, groups: setup.groups, setup })
-    const picks = generateWorkout(s, f.type, { ...setup, count, now: t, share: programShare(s, f.type, t) })
-    const entries = generatedEntries(s, picks, setup)
+    const entries = programDayEntries(s, f, t)
     const work = e => e.sets.filter(x => !isWarmupRow(x))
     const sets = entries.reduce((n, e) => n + work(e).length, 0)
-    out.push({ type: f.type, iso: f.iso, entries, sets, minutes: sessionMinutes(sets), groups: plannedSets(entries) })
+    // A plan program's day knows its length, rests and all (planner.js).
+    const minutes = isPlanProgram(s.program) ? s.program.week[f.k].minutes : sessionMinutes(sets)
+    out.push({ type: f.type, k: f.k, iso: f.iso, entries, sets, minutes, groups: plannedSets(entries) })
     // Logged as done on its day, every work set, an hour long.
     const on = Math.max(t, new Date(f.iso + 'T12:00:00').getTime())
     const done = x => (x.sides ? { ...x, sides: { L: { ...x.sides.L, done: true }, R: { ...x.sides.R, done: true } } } : { ...x, done: true })
     const w = {
-      id: 'ahead-' + k, d: f.iso, start: on, end: on + 36e5, name: f.type, genType: f.type, routineIds: [],
+      id: 'ahead-' + k, d: f.iso, start: on, end: on + 36e5, name: f.type, genType: f.type, programDay: f.k, routineIds: [],
       entries: entries.map(e => ({ id: e.id, target: e.target, sets: work(e).map(done) })),
     }
     s = { ...s, workouts: [...(s.workouts || []), w] }
     at = on + 2 * 36e5
   }
   return out
+}
+
+/**
+ * The session entries of program day `f` (`{ type, k }`) on `now`: a plan program's lifts for
+ * that day (planEntries), else the one-tap day the Start sheet would build, sized to its share.
+ */
+export function programDayEntries(S, f, now = Date.now()) {
+  if (isPlanProgram(S?.program)) return planEntries(S, S.program.week[f.k]?.items)
+  const setup = { ...genDefaults(f.type), ...(S.genSetup?.[f.type] || {}) }
+  const count = sizeDay(S, f.type, { now, groups: setup.groups, setup })
+  const picks = generateWorkout(S, f.type, { ...setup, count, now, share: programShare(S, f.type, now) })
+  return generatedEntries(S, picks, setup)
 }

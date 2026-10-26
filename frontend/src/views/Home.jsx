@@ -31,7 +31,7 @@ const GEN_TILES = [
 ]
 
 // A tile's glyph per kind, so a day's sessions wear the icon of the tile they came from.
-const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs' }
+const KIND_ICON = { full: 'figureStrength', pull: 'pullup', push: 'barbell', legs: 'legs', upper: 'arm', lower: 'legs' }
 
 // A day in the week strip: the sessions actually logged that day, each opening its detail. A day
 // ahead with a program day planned is said to be planned and shows it as Start would build it

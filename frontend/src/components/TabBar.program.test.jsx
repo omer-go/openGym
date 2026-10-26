@@ -56,7 +56,7 @@ describe('Start while a program runs', () => {
     const onStart = vi.fn()
     act(() => { root.render(<TabBar onStart={onStart} />) })
     tapStart()
-    expect(startGenerated).toHaveBeenCalledWith('push')
+    expect(startGenerated).toHaveBeenCalledWith('push', 0)
     expect(onStart).not.toHaveBeenCalled()
   })
 })

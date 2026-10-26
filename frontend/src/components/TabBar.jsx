@@ -42,7 +42,7 @@ export default function TabBar({ onStart }) {
       // goal in the setup), and the picker once the week's days, or all its weeks, are done. A
       // weekday routine never starts in its place (lib/program-span.js).
       const pw = programOver(S) ? null : programWeek(S)
-      if (pw?.next != null) { startGenerated(pw.items[pw.next].type); return }
+      if (pw?.next != null) { startGenerated(pw.items[pw.next].type, pw.items[pw.next].k); return }
       nav('/workout'); return
     }
     if (!S.active) {

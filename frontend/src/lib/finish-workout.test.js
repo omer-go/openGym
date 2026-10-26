@@ -103,6 +103,16 @@ describe('completed workout boundary', () => {
     expect(freestyle.routineId).toBe(null)
   })
 
+  it('keeps a program day\'s type and its place in the week, written only when set', () => {
+    const base = {
+      id: 'w', d: '2026-08-08', start: 1,
+      entries: [{ id: '0025', sets: [{ done: true, w: 60, r: 8 }], target: { sets: 1, reps: 8 } }],
+    }
+    const day = buildCompletedWorkout({ ...base, gen: { type: 'upper', day: 2 } })
+    expect([day.genType, day.programDay]).toEqual(['upper', 2])
+    expect('programDay' in buildCompletedWorkout({ ...base, gen: { type: 'push', shift: 0 } })).toBe(false)
+  })
+
   it('carries per-entry rid and noProg onto the saved entry, written only when set', () => {
     const active = {
       id: 'w', d: '2026-08-08', start: 1, routineIds: ['strength', 'rehab'],

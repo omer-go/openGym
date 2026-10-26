@@ -1,9 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, dayShare, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, genDefaults, generateWorkout } from './generate.js'
+import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, evenCount, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MAX_GEN_COUNT, genDefaults, genScheme, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { USEFUL, entryWeights, groupCredit } from './coverage.js'
 import { loadMuscleRoles } from './muscle-roles.js'
+import { OVERLAP } from './goals.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -119,11 +120,12 @@ describe('sizing a day to the goal', () => {
       }
     })
     // Each group to its own share, not 85% of the sum: that stopped a day at six with back,
-    // biceps and hamstrings each a set or more short, chest over.
+    // biceps and hamstrings each a set or more short, chest over. On the week's last program day,
+    // which its even part caps one exercise later.
     it('fills every group to its share, and ends with the last exercise that adds a set', () => {
-      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 15 },
-        workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4)] })
-      const now = at(2026, 9, 16)
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 10 },
+        workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4), session('2026-09-16', 'full', ['0652', '0085'], 3)] })
+      const now = at(2026, 9, 18)
       const share = dayShare(st, 'full', now)
       const n = sizeDay(st, 'full', { now })
       const picks = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now, share }).sort((a, b) => a.at - b.at)
@@ -139,6 +141,30 @@ describe('sizing a day to the goal', () => {
       }
       expect(adds[n - 1]).toBeGreaterThanOrEqual(USEFUL)
       expect(adds.slice(n).every(a => a < USEFUL)).toBe(true)
+    })
+    // The first day of a week took 13 exercises and the last 9: what the first overshot, the last
+    // no longer lacked. A day with days after it stops near its even part of the sets. The last,
+    // uncapped, took 14: a second curl, press and ab lift for a set or two each.
+    it('a day with more to come this week stops near its even part; the last one exercise later', () => {
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 15 } })
+      const mon = at(2026, 9, 14)
+      const share = dayShare(st, 'full', mon)
+      const n = sizeDay(st, 'full', { now: mon })
+      const picks = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now: mon, share }).sort((a, b) => a.at - b.at)
+      const setsOf = p => genScheme(p.id).sets
+      const sets = picks.slice(0, n).reduce((a, p) => a + setsOf(p), 0)
+      const sum = Object.values(share).reduce((a, b) => a + b, 0)
+      expect(sets - setsOf(picks[n - 1])).toBeLessThan(sum / OVERLAP + 1.5)
+      expect(n).toBeGreaterThanOrEqual(MIN_DAY)
+      const fri = at(2026, 9, 18)
+      expect(sizeDay(st, 'full', { now: fri })).toBeGreaterThan(sizeDay(st, 'full', { now: fri - 2 * 864e5 }))
+      // Fourteen lifts of three sets, a share of 42: the even part is 42 / OVERLAP + 1.5 = 31.5 sets,
+      // reached at the eleventh. Friday, Monday and Wednesday done, is the week's last day: one more.
+      const lifts = Array.from({ length: 14 }, () => ({ id: '0025' }))
+      const even = { chest: 42 }
+      expect(evenCount(st, 'full', lifts, even, undefined, mon)).toBe(11)
+      const done = { ...st, workouts: [session('2026-09-14', 'full'), session('2026-09-16', 'full')] }
+      expect(evenCount(done, 'full', lifts, even, undefined, fri)).toBe(12)
     })
   })
   it('a program started this week does not catch up on the days before it', () => {
@@ -178,7 +204,7 @@ describe('the days ahead', () => {
 
   it('is next today after a rest day, or after a long break', () => {
     const st = state({ program: PPLF, workouts: [session('2026-09-03', 'push')] })
-    expect(programForecast(st, THU)[0]).toEqual({ type: 'pull', iso: '2026-09-17' })
+    expect(programForecast(st, THU)[0]).toEqual({ type: 'pull', k: 1, iso: '2026-09-17' })
   })
 
   it('keeps a three-day week on a seven-day beat, and a six-day one rests a day after it', () => {
@@ -234,5 +260,60 @@ describe('planning the days ahead', () => {
     const next = new Date(plan[1].iso + 'T12:00:00').getTime()   // built on its own day
     expect(ids(planAhead(done, { days: 1, now: next })[0])).toEqual(ids(plan[1]))
     expect(ids(plan[1])).not.toEqual(ids(plan[0]))
+  })
+})
+
+describe('a program built from settings', () => {
+  const UL = newPlanProgram({ template: 'ul', goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60 }, { weeks: 6, today: '2026-09-14' })
+  const planSession = (d, k, start = 0) => ({ ...session(d, UL.days[k], [UL.week[k].items[0].id], 3, start), programDay: k })
+
+  it('keeps its settings and the week they build', () => {
+    expect(UL.days).toEqual(['upper', 'lower', 'upper', 'lower'])
+    expect(UL.plan).toEqual({ goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60, base: 'auto', seed: 1 })
+    expect(UL.week).toHaveLength(4)
+    for (const d of UL.week) expect(d.items[0]).toMatchObject({ slot: 'lead', lo: 6, hi: 8, rest: 180 })
+    expect(isProgram(UL)).toBe(true)
+    expect(isPlanProgram(UL)).toBe(true)
+    expect(isPlanProgram(PPLF)).toBe(false)
+    expect(DAY_NAME.upper).toBe('Upper body')
+  })
+
+  it('leaves out what is excluded', () => {
+    const ids = p => p.week.flatMap(d => d.items.map(i => i.id))
+    const lead = UL.week[0].items[0].id
+    expect(ids(newPlanProgram({ template: 'ul', days: 4 }, { exclude: [lead] }))).not.toContain(lead)
+  })
+
+  it('ticks the day a session was done as, not the first of its kind', () => {
+    const st = state({ program: UL, workouts: [planSession('2026-09-15', 2)] })
+    const pw = programWeek(st, at(2026, 9, 16))
+    expect(pw.items.map(it => !!it.w)).toEqual([false, false, true, false])
+    expect(pw.next).toBe(0)
+    // A session of its kind without a day still takes the first open one.
+    const free = state({ program: UL, workouts: [session('2026-09-15', 'upper')] })
+    expect(programWeek(free, at(2026, 9, 16)).items.map(it => !!it.w)).toEqual([true, false, false, false])
+  })
+
+  it('forecasts each day with its place in the week', () => {
+    const st = state({ program: UL, workouts: [planSession('2026-09-14', 0)] })
+    expect(programForecast(st, at(2026, 9, 15)).slice(0, 3).map(f => f.k)).toEqual([1, 2, 3])
+  })
+
+  it('builds a day from its own lifts, a rep range on double progression and its rest', () => {
+    const items = [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }, { id: '2290', sets: 3, lo: 8, hi: 12, rest: 120 }]
+    const [bench, split] = planEntries(state(), items)
+    expect(bench.target).toMatchObject({ sets: 4, reps: 8, repsMin: 6, prog: 'double', restSec: 180 })
+    expect(bench.sets.filter(x => !x.warmup && !x.wu).length).toBeGreaterThanOrEqual(4)
+    // A one-leg lift counts both legs.
+    expect(split.target).toMatchObject({ reps: 24, repsMin: 16 })
+    expect(bench.gen.g).toBe('chest')
+  })
+
+  it('plans the days ahead from the week it built', () => {
+    const st = state({ program: UL })
+    const ahead = planAhead(st, { days: 4, now: at(2026, 9, 14) })
+    expect(ahead.map(d => d.k)).toEqual([0, 1, 2, 3])
+    for (const d of ahead) expect(d.entries.map(e => e.id)).toEqual(UL.week[d.k].items.map(i => i.id))
+    expect(programDayEntries(st, { type: 'lower', k: 1 }).map(e => e.id)).toEqual(UL.week[1].items.map(i => i.id))
   })
 })

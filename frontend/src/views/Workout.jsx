@@ -2126,7 +2126,8 @@ function ActiveWorkout() {
     {editing && <p className="muted small">{t('Editing a saved workout. Date and duration stay unchanged.')}</p>}
     {A.backfill && <div className="muted small" style={{ marginBottom: 8 }}>{t('Logging a past workout, so no rest timers.')}</div>}
     {/* A one-tap workout (lib/generate.js) can be rebuilt until its first set is ticked. */}
-    {A.gen && !done && <div className="gen-bar">
+    {/* A program day built from settings keeps the lifts the program chose: no Shuffle. */}
+    {A.gen && !done && !Number.isInteger(A.gen.day) && <div className="gen-bar">
       <div className="grow">
         <div className="tt">{t('{0} · {1} exercises', A.name, A.entries.length)}</div>
         <div className="ss">{t('Least-trained muscles first. Swap any exercise, or shuffle them all.')}</div>
