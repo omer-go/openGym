@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps } from './coverage.js'
+import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -85,6 +85,11 @@ describe('group sets over a period (Stats)', () => {
     expect(groupSetsOf(ws).back).toBe(6)
     const total = g => Object.values(split[g]).reduce((a, b) => a + b, 0)
     for (const g of Object.keys(split)) expect(groupSetsOf(ws)[g]).toBeCloseTo(total(g))
+  })
+  it('cardio is no hard set for a muscle: a treadmill run counts toward no group or part', () => {
+    const run = session('2026-09-14', ['2197'], sets(3))
+    expect(groupSplitOf([run])).toEqual({})
+    expect(groupSetsOf([run])).toEqual({})
   })
   it('a set counts once for a group even when it works several of its muscles', () => {
     // a squat works quads, glutes and adductors: glutes & hips gets 1, under the glutes
@@ -287,9 +292,10 @@ describe('the parts of a muscle', () => {
   describe('with the catalogue roles', () => {
     beforeAll(loadMuscleRoles)
     const targets = p => muscleRolesOf(p.id)?.target || []
-    it('after pulldowns, a pull day opens on the mid back', () => {
+    // Picked first; a pull-up may still run first, its helpers counting for more groups.
+    it('after pulldowns, a pull day picks the mid back first', () => {
       const st = state({ workouts: [session('2026-09-10', ['2330'])] })
-      const [first] = generateWorkout(st, 'pull', { now: NOW })
+      const [first] = generateWorkout(st, 'pull', { now: NOW }).sort((a, b) => a.at - b.at)
       expect(targets(first)).toContain('middle-trap')
     })
     it('a pull day pairs lat work with a row', () => {
@@ -430,7 +436,8 @@ describe('gaps: the part of a group the last two weeks left out', () => {
       const days = ['2026-10-05', '2026-10-07', '2026-10-09', '2026-10-12']
       const st = state({ workouts: days.map(d => session(d, [OHP, BENCH])) })
       const now = at(2026, 10, 14)
-      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['rear-delt'] }) // presses help the side delt
+      // both short of their minimum this week, the rear delts most: presses help the side delts
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['rear-delt', 'side-delt'] })
       const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
       expect(muscleRolesOf(shoulders[0].id).target).toContain('rear-delt')
     })
@@ -438,9 +445,62 @@ describe('gaps: the part of a group the last two weeks left out', () => {
       // 3 sets of presses and a bench press helped the side delts; 2 of rear flies targeted the rear
       const st = state({ workouts: [session('2026-10-19', [OHP, BENCH]), session('2026-10-20', ['0378'], sets(2))] })
       const now = at(2026, 10, 22)
-      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt'] })
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt', 'rear-delt'] })
       const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
       expect(muscleRolesOf(shoulders[0].id).target).toContain('side-delt')
+    })
+  })
+})
+
+describe('the spare slot: a part short of its minimum, not a second curl', () => {
+  const CURL = '0031', HAMMER = '0313', ROW = '0027'
+  const ROLES = { [CURL]: { target: ['biceps'] }, [HAMMER]: { target: ['brachialis'] }, [ROW]: { target: ['lats'] }, [SHRUG]: { target: ['upper-trap'] } }
+  const rolesOf = id => ROLES[id] || null
+  const opts = { count: 3, groups: ['biceps', 'back'], need: { biceps: 1, back: 1 }, share: { biceps: 6, back: 3 }, rolesOf }
+  const ids = picks => picks.map(p => p.id).sort()
+  const TRAPS = { group: 'back', name: 'Upper traps', muscles: ['upper-trap'] }
+
+  it('without a part short, the leftover slot fills the share furthest short', () => {
+    const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
+    expect(ids(pickForCoverage(cands, opts))).toEqual([CURL, ROW, HAMMER].sort())
+  })
+  it('with the upper traps short, it goes to a shrug', () => {
+    const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
+    expect(ids(pickForCoverage(cands, { ...opts, spare: [TRAPS] }))).toEqual([CURL, ROW, SHRUG].sort())
+  })
+  it('one slot a day: the next goes back to the shares', () => {
+    const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
+    expect(ids(pickForCoverage(cands, { ...opts, count: 4, spare: [TRAPS] }))).toEqual([CURL, ROW, SHRUG, HAMMER].sort())
+  })
+  it('a part the day already targets is passed over for the next', () => {
+    const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
+    const lats = { group: 'back', name: 'Lats', muscles: ['lats'] }
+    expect(ids(pickForCoverage(cands, { ...opts, spare: [lats, TRAPS] }))).toEqual([CURL, ROW, SHRUG].sort())
+  })
+  it('`spareOnly` lifts are for that slot alone', () => {
+    const cands = [CURL, ROW, HAMMER].map((id, rank) => ({ id, rank }))
+    const spareOnly = [{ id: SHRUG, rank: 100 }]
+    expect(ids(pickForCoverage(cands, { ...opts, spare: [TRAPS], spareOnly }))).toEqual([CURL, ROW, SHRUG].sort())
+    expect(ids(pickForCoverage(cands, { ...opts, count: 4, spareOnly }))).not.toContain(SHRUG)
+  })
+
+  describe('with the catalogue roles', () => {
+    beforeAll(loadMuscleRoles)
+    it('a new week starts with the parts the last two weeks gave least: not the front delts presses trained', () => {
+      const st = state({ workouts: [session('2026-10-05', [OHP, BENCH]), session('2026-10-08', [OHP])] })
+      const now = at(2026, 10, 15)
+      const short = partsShort(st, ['shoulders'], now).shoulders
+      expect(short.map(p => p.sets)).toEqual([0, 0, 0])
+      expect(short[2].name).toBe('Front delts')
+      expect(spareParts(st, ['shoulders'], now).at(-1).name).toBe('Front delts')
+    })
+    it('a program day takes a shrug for the upper traps no back exercise trained', () => {
+      const days = ['2026-10-12', '2026-10-14']
+      const st = state({ workouts: days.map(d => session(d, [ROW, CURL])) })
+      const now = at(2026, 10, 16)
+      expect(spareParts(st, ['back', 'biceps'], now)[0].name).toBe('Upper traps')
+      const picks = generateWorkout(st, 'full', { now, groups: ['back', 'biceps'], count: 3, share: { back: 3, biceps: 6 } })
+      expect(picks.map(p => muscleRolesOf(p.id)?.target || []).flat()).toContain('upper-trap')
     })
   })
 })
@@ -473,5 +533,25 @@ describe('roundSplit', () => {
     expect(roundSplit({ a: 3.4, b: 3.4, c: 3.4 })).toEqual({ a: 4, b: 3, c: 3 })
     expect(roundSplit({ a: 2.6, b: 0.3 })).toEqual({ a: 3, b: 0 })
     expect(roundSplit({})).toEqual({})
+  })
+})
+
+describe('counting from the muscle roles', () => {
+  beforeAll(loadMuscleRoles)
+  const LATERAL = '0334'
+  it('an exercise with roles counts its target 1, its helpers 0.4 and its stabilizers not at all', () => {
+    const r = muscleRolesOf(SQUAT)
+    expect(r.target.length).toBeGreaterThan(0)
+    const w = entryWeights({ id: SQUAT })
+    expect(w).toMatchObject({ quadriceps: 1, gluteal: 1 })
+    expect(w.abs).toBeUndefined()   // a squat's abs hold the trunk steady
+  })
+  it('a press helps the side delts, it does not count as a lateral raise', () => {
+    const split = groupSplitOf([session('2026-09-14', [OHP, LATERAL])])
+    expect(split.shoulders.deltoids).toBe(6)
+    expect(entryWeights({ id: LATERAL }).deltoids).toBe(1)
+  })
+  it('falls back to the catalogue muscles without roles', () => {
+    expect(entryWeights({ id: SQUAT }, () => null)).toEqual(musclesOf(EXIDX[SQUAT]))
   })
 })

@@ -13,7 +13,7 @@
 // n of a long run are about what a run of n would pick.
 import { ADD_GROUPS } from './add-exercise.js'
 import { GEN_TYPES, MAX_GEN_COUNT, genCount, genGroupsOf, genScheme, generateWorkout } from './generate.js'
-import { USEFUL, entryWeights, groupCredit, weeklyDone, weeklyNeed } from './coverage.js'
+import { USEFUL, entryWeights, groupCredit, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
@@ -151,7 +151,8 @@ export function suggestDay(S, now = Date.now()) {
 const CATCH_UP = 1.5   // a day takes at most this many times its even part of a group's goal
 
 /**
- * Group id -> sets this `type` day should add: what each group still lacks this week, shared out
+ * Group id -> sets this `type` day should add: what each group still lacks this week (coverage.js
+ * weeklyLack, its parts' minimums too), shared out
  * over the program days forecast for the rest of the week (this one included) that train it.
  * A day never takes more than half again its even part of the goal (the goal over the
  * program's days that train the group), and in the week the program started no more than its
@@ -160,7 +161,7 @@ const CATCH_UP = 1.5   // a day takes at most this many times its even part of a
  */
 export function dayShare(S, type, now = Date.now()) {
   const groups = genGroupsOf(type)
-  const done = weeklyDone(S, now)
+  const lacks = weeklyLack(S, groups, now)
   const weekStart = isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S)))
   const weekEnd = addDays(weekStart, 6)
   // A program started this week has missed nothing yet: no day of it catches up.
@@ -171,7 +172,7 @@ export function dayShare(S, type, now = Date.now()) {
   const out = {}
   for (const g of groups) {
     const goal = weeklyTargetOf(S, g)
-    const lack = Math.max(0, goal - (done[g] || 0))
+    const lack = lacks[g]
     const hits = left.filter(t => genGroupsOf(t).includes(g)).length || 1
     const even = goal / (days.filter(t => genGroupsOf(t).includes(g)).length || 1)
     if (lack > 0) out[g] = Math.min(lack / hits, even * most)

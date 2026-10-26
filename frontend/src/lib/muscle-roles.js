@@ -81,6 +81,38 @@ export const REGION_PARTS = {
 // muscle counts on the body map (lib/muscles.js SECONDARY), a stabilizer not at all.
 export const ROLE_WEIGHT = { target: 1, synergists: 0.4 }
 
+// The body-map region (lib/muscles.js MUSCLES) each role muscle belongs to. The neck muscles and
+// the coracobrachialis have none: no muscle group counts them.
+const REGION_OF = {
+  'front-delt': 'deltoids', 'side-delt': 'deltoids', 'rear-delt': 'deltoids', supraspinatus: 'deltoids',
+  infraspinatus: 'deltoids', 'teres-minor': 'deltoids', subscapularis: 'deltoids',
+  'upper-trap': 'trapezius', 'middle-trap': 'trapezius', 'lower-trap': 'trapezius', 'levator-scapulae': 'trapezius',
+  lats: 'upper-back', rhomboids: 'upper-back', 'teres-major': 'upper-back',
+  'pec-major-sternal': 'chest', 'pec-major-clavicular': 'chest', 'pec-minor': 'chest',
+  biceps: 'biceps', brachialis: 'biceps', triceps: 'triceps', 'triceps-long-head': 'triceps',
+  brachioradialis: 'forearm', 'wrist-flexors': 'forearm', 'wrist-extensors': 'forearm',
+  'rectus-abdominis': 'abs', 'transverse-abdominis': 'abs', obliques: 'obliques', 'serratus-anterior': 'serratus',
+  'erector-spinae': 'lower-back', 'quadratus-lumborum': 'lower-back',
+  'glute-max': 'gluteal', 'glute-med': 'gluteal', adductors: 'adductors', 'adductor-magnus': 'adductors',
+  'hip-flexors': 'hip-flexors', quads: 'quadriceps', hamstrings: 'hamstring', calves: 'calves',
+  'tibialis-anterior': 'tibialis',
+}
+
+/**
+ * Region -> weight from an exercise's roles (`r`): 1 where it targets a muscle of the region,
+ * 0.4 where one only helps (ROLE_WEIGHT), nothing where the region only holds steady. Null
+ * without roles, so the caller falls back to the coarse muscles (lib/muscles.js musclesOf).
+ */
+export function roleWeights(r) {
+  if (!r || !r.target?.length) return null
+  const out = {}
+  for (const role in ROLE_WEIGHT) for (const m of r[role] || []) {
+    const region = REGION_OF[m]
+    if (region) out[region] = Math.max(out[region] || 0, ROLE_WEIGHT[role])
+  }
+  return Object.keys(out).length ? out : null
+}
+
 /**
  * One body-map region's sets split into its parts, counted from the exercises that have roles.
  * `items` are [{ id, ex, sets }] (muscles.js doneSetItems). `total` is the region's sets as the

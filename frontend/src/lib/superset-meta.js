@@ -54,3 +54,39 @@ export function syncSupersetMeta(ex) {
   for (const [sg, g] of groups) setSupersetMeta(ex, sg, g)
   return ex
 }
+
+/**
+ * The session-entry side of syncSupersetMeta: a member that joined a combo (paired onto it, or
+ * saved before pairing carried the flag) takes the group's combo flag, kind, name and rest on its
+ * `target`, so it counts as the rest of the combo does (lib/conditioning.js). Only adds what a
+ * member lacks; a group without a combo member is left as it is. Changes `entries` in place and
+ * says whether it changed any.
+ */
+export function syncComboEntries(entries) {
+  const groups = new Map()
+  for (const e of entries || []) {
+    const f = e?.sg && e.target
+    if (!f || f.sgCombo !== true) continue
+    const g = groups.get(e.sg) || {}
+    if (f.sgKind === 'strength') g.sgKind = 'strength'
+    if (!g.sgName && typeof f.sgName === 'string' && f.sgName.trim()) g.sgName = f.sgName
+    if (!g.sgRest && Number(f.sgRest) > 0) g.sgRest = f.sgRest
+    groups.set(e.sg, g)
+  }
+  let changed = false
+  for (const e of entries || []) {
+    const g = e?.sg && groups.get(e.sg)
+    if (!g || e.target?.sgCombo === true) continue
+    e.target = { ...(e.target || {}), sgCombo: true, ...g }
+    changed = true
+  }
+  return changed
+}
+
+/** syncComboEntries over a state's saved workouts and its active one; true when any changed. */
+export function syncComboState(s) {
+  let changed = false
+  for (const w of s?.workouts || []) if (Array.isArray(w?.entries) && syncComboEntries(w.entries)) changed = true
+  if (Array.isArray(s?.active?.entries) && syncComboEntries(s.active.entries)) changed = true
+  return changed
+}

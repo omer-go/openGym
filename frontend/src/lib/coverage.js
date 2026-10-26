@@ -50,8 +50,9 @@ import { fatigueOf } from './recovery.js'
 import { weeklyTargetOf, windowWorkouts } from './goals.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
-import { muscleRolesOf } from './muscle-roles.js'
+import { muscleRolesOf, roleWeights, rolesLoaded, ROLE_WEIGHT } from './muscle-roles.js'
 import { isConditioning } from './conditioning.js'
+import { isoOf } from './format.js'
 
 /** The default weekly goal; the one in use is goals.js weeklyTargetOf. */
 export const WEEKLY_TARGET = 10
@@ -65,10 +66,14 @@ const SAME_SHAPE = 1      // credit profiles this close cover the same, so varie
 const CLOSE = 0.85         // a gain this close to the best still loses to a bigger compound
 export const USEFUL = 1    // a group less than one set short of its day's share is served
 
-/** The muscle weights of a logged entry: the catalogue's, else what was saved with it. */
-export function entryWeights(entry) {
+/**
+ * The muscle weights of a logged entry: from the exercise's muscle roles where it has them
+ * (muscle-roles.js roleWeights: what it works 1, what helps 0.4, what holds steady nothing), else
+ * the catalogue's muscles, else what was saved with it.
+ */
+export function entryWeights(entry, rolesOf = muscleRolesOf) {
   const ex = EXIDX[entry?.id]
-  if (ex) return musclesOf(ex)
+  if (ex) return roleWeights(rolesOf(entry.id)) || musclesOf(ex)
   const snap = entry?.muscleSnapshot?.muscleWeights || entry?.muscleWeights
   if (snap && typeof snap === 'object') return snap
   return entry?.exercise ? musclesOf(entry.exercise) : {}   // a custom exercise logged with its muscles
@@ -130,7 +135,8 @@ export function groupSplitOf(workouts, keep = null) {
   const out = {}
   for (const w of workouts || []) {
     for (const entry of w?.entries || []) {
-      if (isConditioning(entry)) continue  // not a hard set (lib/conditioning.js)
+      // Neither a conditioning combo (lib/conditioning.js) nor cardio is a hard set for a muscle
+      if (isConditioning(entry) || isCardio(entry?.id)) continue
       const n = keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry)
       if (!n) continue
       for (const [g, [c, m]] of Object.entries(creditBy(entryWeights(entry)))) {
@@ -212,15 +218,106 @@ export function weeklyDone(S, now = Date.now()) {
   return groupSetsOf(windowWorkouts(S, now))
 }
 
-/** Group id -> how much it still needs this week, 0–1, for the `groups` given. */
+// The parts of a group lifters train on purpose, each with a weekly minimum of its own: a
+// shoulder week of presses is a front-delt week, the side and rear delts only helped. English
+// names, also the i18n keys; each part is the role muscles (muscle-roles.js) that make it up.
+export const GROUP_PARTS = {
+  shoulders: [['Front delts', ['front-delt']], ['Side delts', ['side-delt']], ['Rear delts', ['rear-delt']]],
+  back: [['Lats', ['lats']], ['Mid back', ['rhomboids', 'middle-trap']], ['Upper traps', ['upper-trap']]],
+  glutes: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']], ['Inner thighs', ['adductors', 'adductor-magnus']]],
+}
+// Each part's minimum, as a share of its group's weekly goal: 4.5 sets of a goal of 15.
+export const PART_SHARE = 0.3
+/** The weekly minimum of each part of `group` (GROUP_PARTS). */
+export const partGoalOf = (S, group) => weeklyTargetOf(S, group) * PART_SHARE
+
+/**
+ * Group id -> part name -> { targeted, helped }: the completed work sets of the logged workouts
+ * that targeted the part, and those that only helped it at ROLE_WEIGHT's 0.4, from the
+ * exercises with muscle roles (GROUP_PARTS). A conditioning combo counts no hard sets.
+ */
+export function partSplitOf(workouts, rolesOf = muscleRolesOf, keep = null) {
+  const out = {}
+  for (const w of workouts || []) {
+    for (const entry of w?.entries || []) {
+      if (isConditioning(entry) || isCardio(entry?.id)) continue
+      const r = rolesOf(entry?.id)
+      const n = r && (keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry))
+      if (!n) continue
+      for (const [g, parts] of Object.entries(GROUP_PARTS)) for (const [name, muscles] of parts) {
+        const has = role => muscles.some(m => (r[role] || []).includes(m))
+        const k = has('target') ? 'targeted' : has('synergists') ? 'helped' : null
+        if (!k) continue
+        const at = (out[g] ||= {})[name] ||= { targeted: 0, helped: 0 }
+        at[k] += k === 'targeted' ? n : n * ROLE_WEIGHT.synergists
+      }
+    }
+  }
+  return out
+}
+
+/**
+ * Group id -> the parts short of their weekly minimum over the goal's week, most short first:
+ * [{ name, muscles, sets, goal, targeted, helped }]. Only for the `groups` given; nothing until
+ * the muscle roles are loaded, which the parts are counted from.
+ */
+export function partsShort(S, groups, now = Date.now()) {
+  if (!rolesLoaded()) return {}
+  const split = partSplitOf(windowWorkouts(S, now))
+  // Ties (a new week, every part at nothing) go to the part the last two weeks gave least: the
+  // side and rear delts before the front ones every bench press helped.
+  const from = isoOf(new Date(now - 13 * 864e5)), to = isoOf(new Date(now))
+  const past = partSplitOf((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= to))
+  const pastOf = (g, name) => (past[g]?.[name]?.targeted || 0) + (past[g]?.[name]?.helped || 0)
+  const out = {}
+  for (const g of groups) {
+    const goal = partGoalOf(S, g)
+    const rows = (GROUP_PARTS[g] || []).map(([name, muscles]) => {
+      const { targeted = 0, helped = 0 } = split[g]?.[name] || {}
+      return { name, muscles, sets: targeted + helped, goal, targeted, helped, past: pastOf(g, name) }
+    }).filter(p => goal > 0 && p.sets < goal).sort((a, b) => a.sets - b.sets || a.past - b.past)
+    if (rows.length) out[g] = rows
+  }
+  return out
+}
+
+/**
+ * The parts short of their minimum (partsShort) across the `groups` given, furthest short of it
+ * first, then the one the last two weeks gave least: [{ group, name, muscles, sets, goal, … }].
+ * A program day's spare slot goes to the first of them no exercise of the day targets.
+ */
+export function spareParts(S, groups, now = Date.now()) {
+  return Object.entries(partsShort(S, groups, now)).flatMap(([group, rows]) => rows.map(p => ({ group, ...p })))
+    .sort((a, b) => a.sets / a.goal - b.sets / b.goal || a.past - b.past)
+}
+
+/**
+ * Group id -> the sets it still lacks this week: what is left of its goal, or what its parts
+ * lack of their minimums (partsShort) if that is more, for the `groups` given.
+ */
+export function weeklyLack(S, groups, now = Date.now()) {
+  const done = weeklyDone(S, now)
+  const short = partsShort(S, groups, now)
+  return Object.fromEntries(groups.map(g => [g, Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0),
+    (short[g] || []).reduce((n, p) => n + p.goal - p.sets, 0))]))
+}
+
+/**
+ * Group id -> how much it still needs this week, 0–1, for the `groups` given: its goal's need, or
+ * that of its part furthest short of its minimum (partsShort), whichever is more, scaled by how
+ * rested the group is.
+ */
 const needOf = (done, target) => (target > 0 ? Math.max(0, 1 - done / target) : 0)
 export function weeklyNeed(S, groups, now = Date.now()) {
   const done = weeklyDone(S, now)
+  const short = partsShort(S, groups, now)
   const fatigue = fatigueOf(S?.workouts || [], now, { unit: S?.unit })
   const need = {}
   for (const id of groups) {
     const g = ADD_GROUPS.find(x => x.id === id)
-    if (g) need[id] = needOf(done[id] || 0, weeklyTargetOf(S, id)) * (1 - (fatigue[g.m[0]] || 0))
+    if (!g) continue
+    const part = Math.max(0, ...(short[id] || []).map(p => needOf(p.sets, p.goal)))
+    need[id] = Math.max(needOf(done[id] || 0, weeklyTargetOf(S, id)), part) * (1 - (fatigue[g.m[0]] || 0))
   }
   return need
 }
@@ -266,7 +363,7 @@ function itemOf(id, rank, on, rolesOf) {
   const slug = primaryMuscleOf(ex)?.slug
   const g = groupOf(slug)
   if (!g || !on.has(g.id)) return null
-  const full = groupCredit(musclesOf(ex))
+  const full = groupCredit(entryWeights({ id }, rolesOf))
   return {
     id, rank, slug, ex, group: g.id, main: g.m[0] === slug, variant: variantOf(ex),
     parts: rolesOf(id)?.target || null, helpers: helpersOf(rolesOf(id)),
@@ -367,13 +464,16 @@ const runOrder = (a, b) => b.compound - a.compound
  * the ticked `groups` best for their `need` (weeklyNeed), compounds first. `history` is
  * variantHistory; `shift` walks each choice one further (Shuffle). `rolesOf` gives the muscle
  * roles the parts of a group rotate by. `anchor` is the group ids one compound must come from;
- * `gaps` maps a group id to the target muscles of the part it trained least (partFocus's `muscles`).
+ * `gaps` maps a group id to the target muscles of the parts it is short of, the one furthest short
+ * first (generate.js partGaps).
  * `share` maps a group id to
  * the sets the day should give it (program.js dayShare), `setsOf` an id to the sets it takes:
- * once every group has its exercise, the next go to the group furthest short of its share.
+ * once every group has its exercise, one goes to the first `spare` part (spareParts) the day
+ * leaves out, from `candidates` or `spareOnly` (which nothing else picks from), and the next to
+ * the group furthest short of its share.
  */
 export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {},
-  share = null, setsOf = () => 3 }) {
+  share = null, setsOf = () => 3, spare = [], spareOnly = [] }) {
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
@@ -391,10 +491,31 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   // Sets each group is still short of its share, while the picks go to the shares (`filling`).
   const got = {}
   const short = g => Math.max(0, (share?.[g] || 0) - (got[g] || 0))
-  let cap = 1, relaxed = false, spill = false, filling = false, filled = !share
+  let cap = 1, relaxed = false, spill = false, filling = false, filled = !share, spared = false
+  const credit = pick => {
+    picks.push(pick)
+    for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }
+  }
   while (picks.length < count) {
+    // Once every group has its exercise, one slot goes to the part furthest short of its minimum
+    // that no exercise of the day targets (`spare`): side delts, rear delts, upper traps, side
+    // glutes or inner thighs in turn, where a second curl would have gone.
+    if (filling && !spared) {
+      spared = true
+      const s = spare.find(p => on.has(p.group) && !picks.some(c => c.parts?.some(m => p.muscles.includes(m))))
+      const extra = s ? spareOnly.filter(x => !pool.some(c => c.id === x.id)).map(x => itemOf(x.id, x.rank, on, rolesOf)).filter(Boolean) : []
+      const fits = s ? [...pool, ...extra].filter(c => !picks.includes(c) && c.group === s.group && c.parts?.some(m => s.muscles.includes(m))
+        && !picks.some(p => sameMove(p, c))) : []
+      // A lift for that part first of all: a lateral raise for the side delts, not a cuban press.
+      const own = fits.filter(c => s.muscles.includes(c.parts[0]))
+      if (fits.length) {
+        const ranked = fresher((own.length ? own : fits).sort((a, b) => a.rank - b.rank))
+        credit(ranked[shift % ranked.length])
+        continue
+      }
+    }
     const last = picks.length === count - 1 && !anchored()
-    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL && !full(c)
+    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL
       : covered[c.group] < cap && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c)))
     // A movement already in the session is out before a near twin is: a leg curl after a
     // stiff-legged deadlift covers alike, a romanian deadlift is the same lift again.
@@ -417,15 +538,16 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     const fills = c => c.group === top.c.group && c.parts?.some(m => gap.includes(m))
     // Filling a share, only one about as good: a shrug for the traps is no pull-up for a back
     // and biceps both short.
-    const fillers = gap && !picks.some(fills) ? scored.filter(x => fills(x.c) && (!filling || within(x.g, top.g, NEAR))) : []
+    const fit = gap && !picks.some(fills) ? scored.filter(x => fills(x.c) && (!filling || within(x.g, top.g, NEAR))) : []
+    // The part furthest short comes first: `gaps` lists it first.
+    const at = c => Math.min(...c.parts.map(m => gap.indexOf(m)).filter(i => i >= 0))
+    const fillers = fit.filter(x => at(x.c) === Math.min(...fit.map(y => at(y.c))))
     // Among those, the movement the session is short of comes first (a row after a bench press),
     // the staler variation within it.
     const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
       && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
       .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks))
-    const pick = near[shift % near.length]
-    picks.push(pick)
-    for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }
+    credit(near[shift % near.length])
   }
   return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at })).sort((a, b) => runOrder(picks[a.at], picks[b.at]))
 }

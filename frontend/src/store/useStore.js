@@ -27,6 +27,7 @@ import { DEFAULT_TEMPLATE_ID } from '../lib/structuralBalanceTemplates.js'
 
 import { WC_DEFAULT } from '../lib/workout-controls.js'
 import { sanitizeAccent } from '../lib/accent.js'
+import { syncComboState } from '../lib/superset-meta.js'
 import { listByDefault } from '../lib/workout-view.js'
 
 const KEY = 'gym_state_v1'
@@ -266,12 +267,16 @@ export function restartedState(cur) {
   return s
 }
 
+// A copy as it is read in: its accent made safe, and a member paired onto a combo before pairing
+// carried the combo flag given it (lib/superset-meta.js syncComboEntries).
+const sanitized = s => { syncComboState(s); return sanitizeAccent(s) }
+
 function loadState() {
   try {
     const raw = localStorage.getItem(KEY)
     if (raw) {
       const saved = JSON.parse(raw)
-      const s = sanitizeAccent(Object.assign(clone(DEF), saved))
+      const s = sanitized(Object.assign(clone(DEF), saved))
       if (!saved.lang) s.lang = detectedLang()
       return s
     }
@@ -290,7 +295,7 @@ const hasData = st => !!((st.workouts || []).length || (st.routines || []).lengt
 // session belongs to the device that is currently running it.
 export function restoredStateFor(local, remote, dirty = false) {
   if (!remote || (hasData(local) && (dirty || (remote._ts || 0) < (local._ts || 0)))) return null
-  const next = sanitizeAccent(Object.assign(clone(DEF), remote))
+  const next = sanitized(Object.assign(clone(DEF), remote))
   if (local.active) next.active = local.active
   return next
 }
@@ -836,7 +841,7 @@ export const useStore = create((set, get) => {
     if (readOwner() !== seenOwner || readWidOwner() !== (seenOwner || '')) return false
     const theirs = readSaved()
     if (!theirs) return false
-    const S = sanitizeAccent(theirs)
+    const S = sanitized(theirs)
     seenWid = readWid()
     handedOver = false
     meta.set(S, { base: readStoredSync(), owed: storedOwed() })
@@ -1142,7 +1147,7 @@ export const useStore = create((set, get) => {
       try { const r = await api('/api/data'); if (r && r.state) ({ state, rev } = r) } catch { /* the first read */ }
     }
     const takeServer = () => {
-      const copy = sanitizeAccent(Object.assign(clone(DEF), state))
+      const copy = sanitized(Object.assign(clone(DEF), state))
       copy.active = carryActive(get().S, copy)
       if (rev != null) adopt(copy, rev)
       else { dropSync(); persist(copy, false, false); markOwed(false) }
@@ -1268,7 +1273,7 @@ export const useStore = create((set, get) => {
     if (!who || of?.owner !== who || (owner && owner !== who) || of.ts !== (saved._ts || 0)) return
     try { if (!owner) localStorage.setItem('gym_owner', who) } catch { /* setUser writes it again */ }
     seenOwner = readOwner()
-    persist(sanitizeAccent(Object.assign(clone(DEF), saved)), false, false)
+    persist(sanitized(Object.assign(clone(DEF), saved)), false, false)
     dropSync()
     markOwed(true)
   }
@@ -1413,7 +1418,7 @@ export const useStore = create((set, get) => {
       importRead = null
       const server = read?.state || null
       const now = Math.max(Date.now(), highestStamp(cur) + 1, highestStamp(server) + 1, highestStamp(backup) + 1)
-      const next = sanitizeAccent(Object.assign(clone(DEF), backup))
+      const next = sanitized(Object.assign(clone(DEF), backup))
       // A workout running here lives on this device only: no backup and no server copy holds it,
       // so the import keeps it (in the backup's unit). Only with none running does a backup taken
       // mid-workout bring its own session back. Both the replace and "Merge them in" dropped it.
@@ -1623,7 +1628,7 @@ export const useStore = create((set, get) => {
           if (!serverMoved) { if (changed) await get().pushState(); else confirmed(S); return }
           if (!state) { writeSync(rev, 0); if (hasData(S)) await get().pushState(); return }
           if (!descends) { mergeInto(S, state, rev); pushPending = false; await get().pushState(); return }
-          if (!changed) { const next = sanitizeAccent(Object.assign(clone(DEF), state)); next.active = carryActive(S, next); adopt(next, rev); confirmed(get().S); return }
+          if (!changed) { const next = sanitized(Object.assign(clone(DEF), state)); next.active = carryActive(S, next); adopt(next, rev); confirmed(get().S); return }
           mergeInto(S, state, rev)
           pushPending = false
           await get().pushState()
@@ -1871,7 +1876,7 @@ export const useStore = create((set, get) => {
         const saved = await nativeLoad()
         const S = get().S
         if (saved && (!hasData(S) || (saved._ts || 0) >= (S._ts || 0))) {
-          persist(sanitizeAccent(Object.assign(clone(DEF), saved)), false, false)
+          persist(sanitized(Object.assign(clone(DEF), saved)), false, false)
         } else if (hasData(S)) {
           nativePersist(true)   // first run after an update from a file-less version: seed the mirror
         }

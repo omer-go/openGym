@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows, roleChips, regionBreakdown, REGION_PARTS, partFocus, targetParts } from './muscle-roles.js'
+import { loadMuscleRoles, muscleRolesOf, ROLE_MUSCLE_NAME, roleRows, roleChips, regionBreakdown, REGION_PARTS, partFocus, targetParts, roleWeights } from './muscle-roles.js'
 import { doneSetItems, MUSCLES } from './muscles.js'
 import data from './exercise-roles.json'
 
@@ -154,5 +154,26 @@ describe('partFocus on the traps', () => {
     const items = doneSetItems([{ entries: [{ id: 'row', exercise: row, sets: Array(8).fill({ done: true }) }] }])
     expect(regionBreakdown(items, 'trapezius', rolesOf).rows[0]).toEqual({ name: 'Upper traps', sets: 0 })
     expect(partFocus(items, 'trapezius', { rolesOf })).toBe(null)
+  })
+})
+
+describe('roleWeights', () => {
+  it('counts what an exercise works 1, what helps 0.4 and what holds steady nothing', () => {
+    const r = { target: ['side-delt'], synergists: ['upper-trap', 'supraspinatus'], stabilizers: ['wrist-extensors'], dynamicStabilizers: ['rectus-abdominis'] }
+    expect(roleWeights(r)).toEqual({ deltoids: 1, trapezius: 0.4 })
+  })
+  it('a region takes its strongest role', () => {
+    expect(roleWeights({ target: ['middle-trap', 'lats'], synergists: ['rear-delt', 'upper-trap'] })).toEqual({ trapezius: 1, 'upper-back': 1, deltoids: 0.4 })
+  })
+  it('leaves an exercise without roles to the coarse muscles', () => {
+    expect(roleWeights(null)).toBe(null)
+    expect(roleWeights({ target: [], synergists: ['biceps'] })).toBe(null)
+    expect(roleWeights({ target: ['sternocleidomastoid'] })).toBe(null)
+  })
+  it('places every muscle the catalogue targets or helps with in a region, the neck aside', () => {
+    const used = new Set(Object.values(data).flatMap(r => [...(r.target || []), ...(r.synergists || [])]))
+    const lost = [...used].filter(m => !['sternocleidomastoid', 'neck-extensors', 'coracobrachialis'].includes(m) && !roleWeights({ target: [m] }))
+    expect(lost).toEqual([])
+    for (const m of used) for (const region of Object.keys(roleWeights({ target: [m] }) || {})) expect(MUSCLES).toContain(region)
   })
 })

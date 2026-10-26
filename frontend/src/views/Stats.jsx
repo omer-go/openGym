@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
-import { EXIDX, matchExercise, betterWeight, isAssisted } from '../lib/exercises.js'
+import { EXIDX, matchExercise, betterWeight, isAssisted, isCardio } from '../lib/exercises.js'
 import { lastBW, streakWeeks, setLabel, modeOf, effortOf, entriesForExercise, metricEntriesForExercise, metricModeForEntry, bestWeightForEntry, completedRepsOf, workoutDay, workoutAt } from '../lib/history.js'
 import { fmtNum, fmtDate, fmtVol, todayISO, isoOf, exerciseNameText } from '../lib/format.js'
 import { speedUnitOf, speedLabel, toSpeed } from '../lib/speed.js'
@@ -29,7 +29,7 @@ import { anchorsByWorkout, resolveSetRir } from '../lib/recovery.js'
 import { Button, Segmented, SelectRow } from '../components/ui.jsx'
 import CoverageStrip, { shown } from '../components/CoverageStrip.jsx'
 import { weeklyTargets } from '../lib/goals.js'
-import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit } from '../lib/coverage.js'
+import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit, partSplitOf, partGoalOf, GROUP_PARTS } from '../lib/coverage.js'
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
@@ -181,7 +181,36 @@ function MuscleBalance({ S }) {
   // The group's main region split into its parts. It counts in full in its group, so the parts
   // speak to the same sets.
   const main = group?.m[0]
-  const parts = main ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null), main) : null
+  const parts = main && !GROUP_PARTS[group.id] ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null).filter(x => !isCardio(x.id)), main) : null
+  // A group with parts of its own to train (shoulders, back, glutes) shows each against its
+  // weekly minimum instead (lib/coverage.js partGoalOf): a set aimed at the part counts in full,
+  // one that only helped it at 0.4, so a week of rows reads as rear delts helped, not trained.
+  const own = group && GROUP_PARTS[group.id] && (() => {
+    const got = partSplitOf(inWin, undefined, on ? isHardSet : null)[group.id] || {}
+    const goal = partGoalOf(S, group.id)
+    // To the tenth: the minimum is 4.5 sets, and rounded it would read as 5.
+    const tenth = v => String(Math.round(v * 10) / 10)
+    if (!goal) return null
+    return <div className="mparts" data-group-parts={group.id}>
+      {GROUP_PARTS[group.id].map(([name]) => {
+        const { targeted = 0, helped = 0 } = got[name] || {}
+        const sets = targeted + helped
+        const pct = Math.min(100, Math.round(sets / goal * 100))
+        return <div key={name} data-part={name}>
+          <div className="mrow">
+            <span className="nm">{t(name)}</span>
+            <span className="bar" role="img" aria-label={t('{0}: {1} of a minimum of {2} sets', t(name), tenth(sets), tenth(goal))}>
+              <i style={{ width: pct + '%', ...bar, ...(sets < goal ? { opacity: 0.55 } : {}) }} /></span>
+            <span className="v">{tenth(sets)}/{tenth(goal)}</span>
+          </div>
+          {sets > 0 && <div className="muted small" style={{ marginTop: -2, marginBottom: 4 }}>{targeted > 0 && helped > 0
+            ? t('{0} aimed at it, {1} from helping in other lifts', tenth(targeted), tenth(helped))
+            : targeted > 0 ? t('{0} aimed at it', tenth(targeted)) : t('{0} from helping in other lifts, none aimed at it', tenth(helped))}</div>}
+        </div>
+      })}
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part needs {0} sets a week. A lift aimed at it counts in full, one that only helps it 0.4.', tenth(goal))}</div>
+    </div>
+  })()
   // Bars only: the parts are counted per exercise (a target 1, a helper 0.4) and overlap, so
   // their numbers would not add up to the muscle's. Their lengths say which part lags.
   const partRows = parts && (() => {
@@ -222,10 +251,11 @@ function MuscleBalance({ S }) {
             <span className="bar"><i style={{ width: Math.round(sets / top * 100) + '%', ...bar }} /></span>
             <span className="v">{v}</span>
           </div>
-          {m === main && partRows}
+          {m === main && !own && partRows}
         </div>)}
         <div className="muted small" style={{ marginTop: 6 }}>{t('A set counts once for its group, under the muscle it works most: {0} in full, the others a quarter.', t(MUSCLE_NAME[main]))}</div>
-      </> : partRows}
+        {own}
+      </> : own || partRows}
     </div>
   })()
   // The conditioning layer: the combo sets of the same days, counted apart

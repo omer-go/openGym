@@ -22,7 +22,7 @@ import { insertionIndexAfterCurrentUnit, nextUnfinishedUnit, setProgressHighWate
 import Media from '../components/Media.jsx'
 import WorkoutScrollAnchor from '../components/WorkoutScrollAnchor.jsx'
 import WorkoutChips from '../components/WorkoutChips.jsx'
-import { supersetMeta } from '../lib/superset-meta.js'
+import { supersetMeta, syncComboEntries } from '../lib/superset-meta.js'
 import ComboCard from '../components/ComboCard.jsx'
 import { asComboMember, asComboSwap, comboSwapSeed } from '../lib/combo.js'
 import WorkoutThumb, { hasWorkoutMedia } from '../components/WorkoutThumb.jsx'
@@ -1260,6 +1260,8 @@ function ActiveWorkout() {
   const pairAt = (first, second) => update(s => {
     if (focusMode) focusPointerEpoch.current++
     s.active.entries = pairAdjacent(s.active.entries, first, second)
+    // Paired onto a combo, the exercise joins it: the combo's flag and kind (lib/superset-meta.js).
+    syncComboEntries(s.active.entries)
   })
   const unpairAt = idx => update(s => {
     if (focusMode) focusPointerEpoch.current++

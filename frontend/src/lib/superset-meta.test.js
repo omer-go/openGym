@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { supersetMeta, setSupersetMeta, syncSupersetMeta } from './superset-meta.js'
+import { supersetMeta, setSupersetMeta, syncSupersetMeta, syncComboEntries, syncComboState } from './superset-meta.js'
+import { isConditioning, strengthWorkouts } from './conditioning.js'
+import { pairAdjacent } from './history.js'
 import { restSecFor } from './supersetFlow.js'
 
 describe('a superset\'s name and rest between rounds (#292)', () => {
@@ -46,5 +48,45 @@ describe('a superset\'s name and rest between rounds (#292)', () => {
     expect(ex[3].sgCombo).toBe(true)
     setSupersetMeta(ex, 'g', { name: 'Core', rest: 60 })
     expect(ex[0].sgCombo).toBeUndefined()
+  })
+})
+
+describe('a member paired onto a combo joins it', () => {
+  const combo = { sgCombo: true, sgName: 'Abs combo', sgRest: 60 }
+  const done = { w: 0, r: 15, done: true }
+  const abs = () => [
+    { id: '0622', sg: 'g1', target: { sets: 3, ...combo }, sets: [done] },
+    { id: '0274', sg: 'g1', target: { sets: 3, ...combo }, sets: [done] },
+    { id: '4156', target: { sets: 3 }, sets: [done] },
+  ]
+
+  it('pairing then syncing gives the new member the combo flag, name and rest', () => {
+    const next = pairAdjacent(abs(), 1, 2)
+    expect(syncComboEntries(next)).toBe(true)
+    expect(next[2].sg).toBe('g1')
+    expect(next[2].target).toMatchObject({ sets: 3, sgCombo: true, sgName: 'Abs combo', sgRest: 60 })
+    expect(isConditioning(next[2])).toBe(true)
+  })
+
+  it('a strength combo passes its kind on', () => {
+    const list = abs().map(e => ({ ...e, sg: 'g1', target: { ...e.target, ...(e.id === '0622' ? { sgKind: 'strength' } : {}) } }))
+    syncComboEntries(list)
+    expect(list[2].target.sgKind).toBe('strength')
+    expect(isConditioning(list[2])).toBe(false)
+  })
+
+  it('a plain superset is left as it is', () => {
+    const list = [{ id: 'a', sg: 's', target: {} }, { id: 'b', sg: 's', target: {} }]
+    expect(syncComboEntries(list)).toBe(false)
+    expect(list[1].target).toEqual({})
+  })
+
+  it('a saved workout that lost the flag is repaired, so its sets leave the strength counts', () => {
+    const w = { d: '2026-10-23', entries: abs().map(e => ({ ...e, sg: 'g1' })) }
+    w.entries[2].target = { sets: 3 }
+    const S = { workouts: [w] }
+    expect(syncComboState(S)).toBe(true)
+    expect(strengthWorkouts(S.workouts)[0].entries).toHaveLength(0)
+    expect(syncComboState(S)).toBe(false)
   })
 })

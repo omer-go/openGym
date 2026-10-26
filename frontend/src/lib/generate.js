@@ -28,8 +28,8 @@ import { EXIDX, isCardio } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
-import { partFocus } from './muscle-roles.js'
-import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind } from './coverage.js'
+import { partFocus, muscleRolesOf } from './muscle-roles.js'
+import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts } from './coverage.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { suggestable } from './skipped.js'
 import { favIds } from './favourites.js'
@@ -128,6 +128,15 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
   return [...logged, ...starred, ...staples, ...more]
 }
 
+// The listed lifts on `slug` that target a part a program day's spare slot may go to
+// (coverage.js spareParts), past the staples: a hip abduction for the side glutes when the
+// deadlifts and hip thrusts never get to them. Only the spare slot takes them.
+function spareCandidates(S, slug, spare) {
+  const muscles = new Set(spare.flatMap(p => p.muscles))
+  if (!muscles.size) return []
+  return (LISTED[slug] || []).filter(id => EXIDX[id] && !isCardio(EXIDX[id]) && suggestable(S, EXIDX[id])
+    && (muscleRolesOf(id)?.target || []).some(m => muscles.has(m)))
+}
 
 /** How many exercises a `type` session has unless the setup says otherwise. */
 export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
@@ -178,15 +187,18 @@ function stretchCandidates(S, index, slugs) {
 export const GEN_STRETCHES = 2
 
 /**
- * Group id -> the target muscles of the part of it the 14 days up to `now` trained least
- * (muscle-roles.js partFocus, as Add exercise marks it), for the `groups` given.
+ * Group id -> the target muscles of the parts of it short of their weekly minimum (coverage.js
+ * partsShort), else of the part the 14 days up to `now` trained least (muscle-roles.js
+ * partFocus, as Add exercise marks it), for the `groups` given.
  */
 export function partGaps(S, groups, now = Date.now()) {
   const today = isoOf(new Date(now)), from = isoOf(new Date(now - 13 * 864e5))
   const items = doneSetItems(strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= today))
+  const short = partsShort(S, groups, now)
   const gaps = {}
   for (const g of ADD_GROUPS) {
     if (!groups.includes(g.id)) continue
+    if (short[g.id]) { gaps[g.id] = short[g.id].flatMap(p => p.muscles); continue }
     for (const slug of g.m) {
       const gap = partFocus(items, slug)
       if (gap) gaps[g.id] = [...(gaps[g.id] || []), ...gap.muscles]
@@ -202,18 +214,21 @@ export function partGaps(S, groups, now = Date.now()) {
  * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
  * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week. A
  * program day passes its `share` (program.js dayShare) and the setup's `byKind` and `sets`, so
- * the exercises past the first of each group go where the day is furthest short.
+ * the exercises past the first of each group go to a part short of its minimum (spareParts),
+ * then where the day is furthest short.
  */
 export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets } = {}) {
   if (!GEN_TYPES[type]) return []
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
-  const candidates = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
-    .flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
+  const spare = share ? spareParts(S, ticked, now) : []
+  const slugs = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
+  const candidates = slugs.flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
+  const spareOnly = slugs.flatMap(slug => spareCandidates(S, slug, spare).map((id, rank) => ({ id, rank: 100 + rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
-    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0 })
+    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
