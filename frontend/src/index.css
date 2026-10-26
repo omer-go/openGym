@@ -2233,6 +2233,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
 .cu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:10px 12px;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.12)}
 .cu-count{text-align:center;margin:-6px 0 10px}
+.cu-next{text-align:center;color:var(--acc);font-weight:600;margin:-6px 0 8px}
 .cu-card{position:relative;touch-action:none;user-select:none;cursor:grab;transition:transform .2s ease;padding:12px}
 .cu-card.drag{transition:none;cursor:grabbing}
 .cu-media{border-radius:var(--r-md,12px);overflow:hidden}

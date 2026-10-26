@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, pilesOf, progressOf, deckOf, decide, reviewedIds, listOf, toggleListed } from './curate.js'
+import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed } from './curate.js'
 import { ALL_EQUIPMENT } from './equipment.js'
+import { ADD_GROUPS } from './add-exercise.js'
 import { kitOf } from './exercise-facets.js'
 import { POPULAR_IDS } from './popular.js'
 import { CATALOGUE, isCardio } from './exercises.js'
@@ -73,10 +74,10 @@ describe('a pile', () => {
     const pool = groupPool({}, 'chest', GYM.filter(e => e !== 'bench'))
     expect(pool.map(e => e.id)).not.toContain(DBBENCH)
   })
-  it('splits a group into a pile per kit, Other last', () => {
-    const piles = pilesOf({}, groupPool({}, 'chest', GYM))
-    expect(piles.map(p => p.id)).toEqual(['barbell', 'dumbbell', 'cable', 'machine', 'body'])
-    for (const p of piles) expect(p.list.every(e => kitOf(e) === p.id)).toBe(true)
+  it('deals a group with all its kit together, the popular lifts first', () => {
+    const pool = groupPool({}, 'chest', GYM)
+    expect(pool[0].id).toBe(BENCH)
+    expect(new Set(pool.filter(onList).map(kitOf)).size).toBeGreaterThan(1)
   })
   it('puts the popular lifts and your own on the list, not the rest', () => {
     expect(onList(CATALOGUE.find(e => e.id === BENCH))).toBe(true)
@@ -124,6 +125,19 @@ describe('the deck', () => {
     decide(s, BENCH, null)
     expect(s).toMatchObject({ favEx: ['other'], skipEx: [] })
     expect(reviewedIds(s).has(BENCH)).toBe(false)
+  })
+  it('goes on to the next group with lifts to go, round to the first, none when all are done', () => {
+    expect(nextGroup({}, 'chest', GYM).id).toBe(ADD_GROUPS[ADD_GROUPS.findIndex(g => g.id === 'chest') + 1].id)
+    const last = ADD_GROUPS[ADD_GROUPS.length - 1].id
+    expect(nextGroup({}, last, GYM).id).toBe(ADD_GROUPS[0].id)
+    // the group after chest gone through: it is skipped
+    const after = ADD_GROUPS[ADD_GROUPS.findIndex(g => g.id === 'chest') + 1].id
+    const skipEx = deckOf({}, groupPool({}, after, GYM)).map(e => e.id)
+    expect(nextGroup({ skipEx }, 'chest', GYM).id).not.toBe(after)
+    // or passed on this time round
+    expect(nextGroup({}, 'chest', GYM, skipEx).id).not.toBe(after)
+    const all = ADD_GROUPS.flatMap(g => deckOf({}, groupPool({}, g.id, GYM)).map(e => e.id))
+    expect(nextGroup({ skipEx: all }, 'chest', GYM)).toBe(null)
   })
   it('counts how far along a pile is', () => {
     const p0 = progressOf({}, pool)

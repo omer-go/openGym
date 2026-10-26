@@ -1,11 +1,11 @@
-// Choose your exercises (views/Curate.jsx): go through the catalogue one small pile at a time and
+// Choose your exercises (views/Curate.jsx): go through the catalogue a muscle group at a time and
 // keep or drop each lift. Pure: reads state, and the two writers below change a state draft.
 //
 // Your gym comes first: it is the active equipment profile (lib/equipment.js), and what it rules
-// out never shows up here again. A pile is one muscle group (Add exercise's ADD_GROUPS) with one
-// kind of kit (exercise-facets.js KITS), as Add exercise's "What are you using?" asks. A pile
-// deals the lifts on your list first: the popular lifts (lib/popular.js), most popular first, and
-// your own. The rest of the catalogue only when asked for, plainly named ones first.
+// out never shows up here again. A pile is one muscle group (Add exercise's ADD_GROUPS), all its
+// kit together; when one is gone through, the next group with lifts to go follows (nextGroup). A
+// pile deals the lifts on your list first: the popular lifts (lib/popular.js), most popular
+// first, and your own. The rest of the catalogue only when asked for, plainly named ones first.
 //
 // Your list is what one-tap and program days pick from: the popular lifts you have not dropped,
 // and whatever you have kept. Keeping a lift stars it (lib/favourites.js), which adds it to the
@@ -16,7 +16,7 @@ import { isStretch } from './activities.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ALL_EQUIPMENT, ACC_V, accessoriesOf, activeProfile, eqAvailable, newProfile, profileEquipment } from './equipment.js'
-import { KITS, kitOf, isTail, isDemo, rareWords } from './exercise-facets.js'
+import { isTail, isDemo, rareWords } from './exercise-facets.js'
 import { popularRank, isPopular } from './popular.js'
 import { favIds } from './favourites.js'
 import { skipIds } from './skipped.js'
@@ -172,22 +172,22 @@ export function progressOf(S, list) {
 }
 
 /**
- * A group's piles: one per kind of kit that has exercises in `pool`, in KITS order (Other
- * last), each with its progressOf.
- */
-export function pilesOf(S, pool) {
-  return KITS.map(k => ({ id: k.id, n: k.n, list: pool.filter(ex => kitOf(ex) === k.id) }))
-    .filter(p => p.list.length)
-    .map(p => ({ ...p, ...progressOf(S, p.list) }))
-}
-
-/**
  * What a pile deals now: what you have not reviewed nor `passed` (skipped this time round), the
  * ones on the list only unless `all`.
  */
 export function deckOf(S, list, { all = false, passed = [] } = {}) {
   const done = reviewedIds(S), skip = new Set(passed)
   return list.filter(ex => !done.has(ex.id) && !skip.has(ex.id) && (all || onList(ex)))
+}
+
+/**
+ * The group that follows `groupId` when its pile is gone through: the next ADD_GROUPS group, going
+ * round, that still has lifts on the list to deal (deckOf, with `passed` left out). Null when none.
+ */
+export function nextGroup(S, groupId, have = gymOf(S), passed = []) {
+  const i = ADD_GROUPS.findIndex(g => g.id === groupId)
+  const order = [...ADD_GROUPS.slice(i + 1), ...ADD_GROUPS.slice(0, Math.max(0, i))]
+  return order.find(g => deckOf(S, groupPool(S, g.id, have), { passed }).length) || null
 }
 
 /**

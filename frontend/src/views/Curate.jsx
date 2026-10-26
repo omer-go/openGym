@@ -1,10 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, pilesOf, progressOf, deckOf, decide, onList, listOf, toggleListed } from '../lib/curate.js'
+import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, progressOf, deckOf, nextGroup, decide, onList, listOf, toggleListed } from '../lib/curate.js'
 import { activeProfile } from '../lib/equipment.js'
-import { kitOf } from '../lib/exercise-facets.js'
 import { isCustomEx } from '../lib/exercises.js'
 import { roleChips } from '../lib/muscle-roles.js'
 import { groupColor, mcStyle } from '../lib/muscle-colors.js'
@@ -19,14 +18,14 @@ import Media, { Thumb } from '../components/Media.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button } from '../components/ui.jsx'
 
-// Choose your exercises (Library): say what your gym has, then go through the catalogue one pile
-// at a time — a muscle group, then the kit, as Add exercise asks — and swipe each lift: right
-// keeps it (a star), left drops it (Not suggested), up passes for now. Your list starts as the
+// Choose your exercises (Library): say what your gym has, then go through the catalogue a muscle
+// group at a time, all its kit together, and swipe each lift: right keeps it (a star), left drops
+// it (Not suggested), up passes for now. When a group is gone through the next one follows, until
+// you stop or go back. Your list starts as the
 // popular lifts (lib/popular.js); one-tap workouts and program days pick from it. Your list shows
 // it whole, a group at a time, to take a lift off or put one back without swiping. The piles,
 // their order and what counts as on the list live in lib/curate.js.
 
-const KIT_NAME = { barbell: 'Barbell', dumbbell: 'Dumbbell', kettlebell: 'Kettlebell', cable: 'Cable', machine: 'Machine', body: 'Body weight', band: 'Band', other: 'Other' }
 const FLING = 90     // px a card travels before letting go of it decides it
 const EDGE = 24      // px from the screen's side where a touch is the phone's back gesture
 
@@ -37,17 +36,19 @@ export default function Curate() {
   const body = S.body === 'female' ? 'female' : 'male'
   // Each step has its own path, so Back (the header's, the phone's or a swipe from the edge) goes
   // up one step, never out of the deck: /library/pick is the groups (Your gym on a first visit,
-  // with no gym saved), /library/pick/gym Your gym, /library/pick/list Your list, /library/pick/<group> its kits and
-  // /library/pick/<group>/<kit> the deck; ?all deals the rarer ones too.
-  const { group: gp, kit } = useParams()
+  // with no gym saved), /library/pick/gym Your gym, /library/pick/list Your list and
+  // /library/pick/<group> its deck; ?all deals the rarer ones too. Going on to the next group
+  // replaces the path, so Back leaves the deck wherever you are in it, and hands the deck what it
+  // has done so far in the history state (the page is remounted on every path).
+  const { group: gp } = useParams()
   const [search, setSearch] = useSearchParams()
   const gymStep = gp === 'gym' || (!gp && !activeProfile(S))
   const listStep = gp === 'list'
   const group = gymStep || listStep ? null : gp
-  const step = gymStep ? 'gym' : listStep ? 'list' : !group ? 'groups' : !kit ? 'kits' : 'deck'
+  const step = gymStep ? 'gym' : listStep ? 'list' : !group ? 'groups' : 'deck'
   const have = gymOf(S)
 
-  const up = step === 'deck' ? `/library/pick/${group}` : step === 'kits' || gp === 'gym' || listStep ? '/library/pick' : '/library'
+  const up = step === 'deck' || gp === 'gym' || listStep ? '/library/pick' : '/library'
   // Back to where we came from when that is in the history, else (opened from a link) one step up.
   const back = () => ((window.history.state?.idx || 0) > 0 ? nav(-1) : nav(up, { replace: true }))
   const g = ADD_GROUPS.find(x => x.id === group)
@@ -67,23 +68,10 @@ export default function Curate() {
   </>
 
   if (!g) return null
-  const pool = groupPool(S, group, have)
-  if (step === 'kits') return <>
-    {head(t(g.n), t('What are you using?'))}
-    <div className="ax-gts">
-      {pilesOf(S, pool).map(p => <button key={p.id} className="ax-gt" onClick={() => nav(`/library/pick/${group}/${p.id}` + (p.left === 0 ? '?all' : ''))}>
-        <span className="ax-m"><b>{t(p.n)}</b><span className="muted small">{p.left > 0
-          ? t('{0} to go', fmtNum(p.left))
-          : p.rare > 0 ? t('{0} rarer ones', fmtNum(p.rare)) : t('All done')}{p.listed > 0 && ' · ' + t('{0} in your list', fmtNum(p.listed))}</span></span>
-        {p.left === 0 && p.rare === 0 && <Icon name="checkCircle" className="cu-done" />}
-      </button>)}
-    </div>
-  </>
-
-  const list = pool.filter(ex => kitOf(ex) === kit)
   return <>
-    {head(t(g.n) + ' · ' + t(KIT_NAME[kit] || 'Other'), null)}
-    <Deck S={S} update={update} list={list} all={search.has('all')} onAll={() => setSearch({ all: '' }, { replace: true })} onDone={back} />
+    {head(t(g.n), null)}
+    <Deck S={S} update={update} group={group} have={have} all={search.has('all')} onAll={() => setSearch({ all: '' }, { replace: true })}
+      onGo={(id, deck) => nav(`/library/pick/${id}`, { replace: true, state: { deck } })} onDone={back} />
   </>
 }
 
@@ -177,44 +165,61 @@ function YourList({ S, update, have, head, onGroup }) {
   </>
 }
 
-// One pile's cards. What you keep or drop is written at once (lib/curate.js decide); what you
-// pass on is only left out until you leave the pile. Undo takes back the last card either way.
-function Deck({ S, update, list, all, onAll, onDone }) {
-  const [passed, setPassed] = useState([])
-  const [done, setDone] = useState([])         // [{ id, verdict }], newest last
+// A group's cards, and the next group's when it is gone through. What you keep or drop is written
+// at once (lib/curate.js decide); what you pass on is only left out until you leave the deck. Undo
+// takes back the last card either way, going back to its group if the deck has moved on.
+function Deck({ S, update, group, have, all, onAll, onGo, onDone }) {
+  const carried = useLocation().state?.deck   // from the group before, when the deck moved on
+  const [passed, setPassed] = useState(() => carried?.passed || [])
+  const [done, setDone] = useState(() => carried?.done || [])   // [{ id, group, verdict }], newest last
+  const [from, setFrom] = useState(() => carried?.from || null) // the group just gone through, named over the next one's first card
+  const list = groupPool(S, group, have)
   const deck = deckOf(S, list, { all, passed })
   const p = progressOf(S, list)
   const ex = deck[0]
+  const next = ex ? null : nextGroup(S, group, have, passed)
+  const last = done[done.length - 1]
+  // The last card of a group swiped: on to the next group with lifts to go. Opening a group that
+  // is already gone through shows its end instead, with the rarer ones on offer.
+  useEffect(() => {
+    if (!ex && next && last?.group === group) onGo(next.id, { passed, done, from: group })
+  }, [ex, next?.id, last, group])
   const act = verdict => {
     if (!ex) return
     if (verdict === 'pass') setPassed(x => [...x, ex.id])
     else update(s => { decide(s, ex.id, verdict) })
-    setDone(x => [...x, { id: ex.id, verdict }])
+    setDone(x => [...x, { id: ex.id, group, verdict }])
+    setFrom(null)
   }
   const undo = () => {
-    const last = done[done.length - 1]
     if (!last) return
-    if (last.verdict === 'pass') setPassed(x => x.filter(id => id !== last.id))
-    else update(s => { decide(s, last.id, null) })
-    setDone(x => x.slice(0, -1))
+    const left = last.verdict === 'pass' ? passed.filter(id => id !== last.id) : passed
+    if (last.verdict !== 'pass') update(s => { decide(s, last.id, null) })
+    if (last.group !== group) return onGo(last.group, { passed: left, done: done.slice(0, -1) })
+    setPassed(left)
+    setDone(done.slice(0, -1))
+    setFrom(null)
   }
   const kept = done.filter(d => d.verdict === 'keep').length, dropped = done.filter(d => d.verdict === 'drop').length
+  const nameOf = id => t(ADD_GROUPS.find(x => x.id === id)?.n || id)
 
   if (!ex) {
     const rare = all ? 0 : p.rare
     return <div className="card cu-end">
       <Icon name="checkCircle" className="cu-end-ico" />
-      <h3>{passed.length ? t('Pile gone through') : t('Pile done')}</h3>
+      <h3>{next ? t('{0} gone through', nameOf(group)) : t('Every group gone through')}</h3>
       <div className="muted">{t('{0} kept · {1} dropped', fmtNum(kept), fmtNum(dropped))}{passed.length > 0 && ' · ' + t('{0} for later', fmtNum(passed.length))}</div>
       <div className="cu-end-btns">
+        {next && <Button variant="primary" onClick={() => onGo(next.id, { passed, done })}>{t('On to {0}', t(next.n))}</Button>}
         {rare > 0 && <Button variant="tinted" onClick={onAll}>{t('Show {0} rarer ones', fmtNum(rare))}</Button>}
         {passed.length > 0 && <Button variant="tinted" onClick={() => setPassed([])}>{t('Go over the passed ones')}</Button>}
-        <Button variant="primary" onClick={onDone}>{t('Next pile')}</Button>
+        <Button variant={next ? 'plain' : 'primary'} onClick={onDone}>{t('Done')}</Button>
         {done.length > 0 && <Button variant="plain" icon="undo" onClick={undo}>{t('Undo')}</Button>}
       </div>
     </div>
   }
   return <>
+    {from && from !== group && <div className="cu-next small">{t('{0} done. On to {1}.', nameOf(from), nameOf(group))}</div>}
     <div className="cu-count muted small">{t('{0} to go', fmtNum(deck.length))}{!all && p.rare > 0 && ' · ' + t('popular lifts first')}</div>
     <Card key={ex.id} ex={ex} onVerdict={act} />
     <div className="cu-btns">
