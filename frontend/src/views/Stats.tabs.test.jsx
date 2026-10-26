@@ -67,6 +67,30 @@ describe('Stats tabs', () => {
     expect(titles()).not.toContain('Exercise progress')
   })
 
+  it('says what fills in after a first workout on Muscles and Activity, when there is none', () => {
+    window.location.hash = '#/stats?tab=muscles'
+    mocks.S = state({ workouts: [] })
+    render()
+    expect(host.textContent).toContain('Finish your first workout and your muscle balance will show up here.')
+    act(() => tab('Activity').click())
+    expect(host.querySelector('[data-activity-empty]')).toBeTruthy()
+    mocks.S = state()
+    render()
+    expect(host.querySelector('[data-activity-empty]')).toBeNull()
+  })
+
+  it('tells why Fatigue is all rested after a break, with the last workout', () => {
+    window.location.hash = '#/stats?tab=muscles'
+    const old = { ...workout, d: '2026-01-05', start: new Date('2026-01-05T12:00:00').getTime() }
+    mocks.S = state({ workouts: [old] })
+    render()
+    act(() => [...host.querySelectorAll('button')].find(b => b.textContent === 'Fatigue').click())
+    expect(host.querySelector('[data-fatigue-empty]').textContent).toContain('Your last workout was on')
+    mocks.S = state()
+    render()
+    expect(host.querySelector('[data-fatigue-empty]')).toBeNull()
+  })
+
   it('comes back to the tab you were on, and Plan’s weekly-volume link opens Muscles', () => {
     mocks.S = state()
     render()

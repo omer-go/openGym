@@ -180,7 +180,19 @@ describe('Stats — muscle balance by group', () => {
     expect(host.querySelector('[data-body-map-legend]')).toBeTruthy()
     expect(Object.values(mapLoad()).every(v => v === 0)).toBe(true)
     expect(groupBar('chest')).toBeTruthy()
+    expect(comparison().textContent).toContain('Nothing logged in these 7 days. Your last workout before them was on')
+    // the button steps back to the week that holds it
+    const jump = [...comparison().querySelectorAll('button')].find(b => b.textContent === 'Show that week')
+    act(() => jump.click())
+    expect(Object.values(mapLoad()).some(v => v > 0)).toBe(true)
+    expect(comparison().querySelector('[data-empty-period]')).toBeNull()
+  })
+
+  it('says so plainly when no workout comes before an empty 7 days', () => {
+    mocks.S = state({ workouts: [] })
+    mount()
     expect(comparison().textContent).toContain('No workouts in this period yet.')
+    expect(comparison().textContent).not.toContain('Show that week')
   })
 
   it('leaves a group the plan gives no credit out of the planned numbers', () => {

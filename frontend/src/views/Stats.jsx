@@ -157,7 +157,9 @@ function MuscleBalance({ S }) {
   // A week's dose: the 7 days up to today, or the 7 before that, and so on. Longer periods are
   // not offered: sets per muscle are a weekly measure, and how training went over months is the
   // Progress tab's question, not a number per group.
-  const end = now - back * 7 * 86400000
+  // Whole days, as the period row names them: the window ends at midnight tonight, back weeks ago.
+  const dayEnd = back => { const d = new Date(now); d.setHours(24, 0, 0, 0); d.setDate(d.getDate() - back * 7); return d.getTime() - 1 }
+  const end = dayEnd(back)
   const inWin = muscleBalanceWindow(sw, 7, end)
   // Counting only the sets taken near failure turns the map from "where did the volume go"
   // into "where did the stimulus go" — a muscle can lead on sets and still never be trained
@@ -261,6 +263,19 @@ function MuscleBalance({ S }) {
   // The conditioning layer: the combo sets of the same days, counted apart
   const condIn = conditioningWorkouts(muscleBalanceWindow(workouts, 7, end))
   const condSets = condIn.reduce((n, w) => n + w.entries.reduce((m, e) => m + (e.sets || []).filter(x => x.done && !isWarmupRow(x)).length, 0), 0)
+  // An empty 7 days says when the last workout before them was and steps there, rather than
+  // leaving a grey body and empty bars to read as "you trained nothing".
+  const lastBefore = inWin.length ? null : sw.reduce((m, w) => {
+    const at = workoutAt(w)
+    return at <= end && (m == null || at > m) ? at : m
+  }, null)
+  const emptyWin = <div className="muted small" data-empty-period style={{ marginTop: 10 }}>
+    {lastBefore == null
+      ? t('No workouts in this period yet.')
+      : <>{t('Nothing logged in these 7 days. Your last workout before them was on {0}.', fmtDate(isoOf(new Date(lastBefore)), true))}
+        <div style={{ marginTop: 8 }}><Button size="sm" variant="tinted" icon="chevronLeft"
+          onClick={() => { setBack(Math.floor((dayEnd(0) - lastBefore) / (7 * 86400000))); setGrp(null) }}>{t('Show that week')}</Button></div></>}
+  </div>
   const groupBars = <div data-group-sets style={{ margin: '14px 0 6px' }}>
     <h4 className="sec" style={{ marginTop: 0 }}>{t('Muscle groups')}</h4>
     <CoverageStrip adds={groupSets} goals={weeklyTargets(S)} ofGoal onGroup={toggleGrp} selected={grp} label={back
@@ -336,12 +351,17 @@ function MuscleBalance({ S }) {
         {groupSplit}
         {inWin.length
           ? <>{!group && <div className="muted small" style={{ marginTop: 10 }}>{t('Tap a group to see how its sets split.')}</div>}{completionSummary}</>
-          : <div className="muted small">{t('No workouts in this period yet.')}</div>}
+          : emptyWin}
       </div>
     </> : view === 'fatigue' ? <>
       {otherHead(t('Fatigue'), t('Fatigue shows how recently each muscle was trained. High means rest.'))}
       <BodyMap className="tappable hm-fatigue" load={fatigue} thresholds={FATIGUE_LEVELS} body={S.body} selected={sel} onMuscle={toggleSel} />
       <FatigueLegend />
+      {/* Fatigue fades in days, so after a break the whole body reads Ready; say why */}
+      {!sel && !Object.values(fatigue).some(v => v >= FATIGUE_LEVELS[1].at) && <div className="muted small" data-fatigue-empty style={{ marginTop: 10 }}>
+        {sw.length
+          ? t('Every muscle is rested: nothing logged in the last few days. Your last workout was on {0}.', fmtDate(isoOf(new Date(Math.max(...sw.map(workoutAt)))), true))
+          : t('No workouts yet, so every muscle is rested.')}</div>}
       {sel && <div className="mrow" style={{ borderTop: 'var(--hair) solid var(--sep)', marginTop: 4, paddingTop: 10 }}>
         <span className="nm"><b>{t(MUSCLE_NAME[sel])}</b></span>
         <span className="v">{fatigueLabel(fatigue[sel])}</span>
@@ -744,7 +764,7 @@ export default function Stats() {
     {tab === 'muscles' && <>
       {(workouts.length > 0 || Object.keys(loadOfWeeklyPlan(S)).length > 0) && <MuscleBalance S={S} />}
       {S.routines.length > 0 && <WeeklyPlanVolume S={S} />}
-      {!(workouts.length > 0 || Object.keys(loadOfWeeklyPlan(S)).length > 0 || S.routines.length > 0) && <div className="card muted small">{t('Finish your first workout and your progress curves will show up here.')}</div>}
+      {!(workouts.length > 0 || Object.keys(loadOfWeeklyPlan(S)).length > 0 || S.routines.length > 0) && <div className="card muted small">{t('Finish your first workout and your muscle balance will show up here.')}</div>}
     </>}
 
     {tab === 'progress' && <>
@@ -841,6 +861,8 @@ export default function Stats() {
         <div className="tile"><div className="l"><Icon name="flame" />{t('Week streak')}</div><div className="v">{streakWeeks(S)}</div></div>
         <div className="tile"><div className="l"><Icon name="scale" />{t('Weight 30d')}</div><div className="v" style={{ fontSize: 22, color: bwDelta30 === null ? 'inherit' : bwDeltaColor(bwDelta30, (lastBW(S) || {}).w || 0) }}>{bwDelta30 === null ? '–' : (bwDelta30 > 0 ? '+' : '') + fmtNum(bwDelta30) + ' ' + S.unit}</div></div>
       </div>
+
+      {!workouts.length && <div className="card muted small" data-activity-empty>{t('Finish your first workout and your training days will fill in here.')}</div>}
 
       <div className="card">
         <h2>{t('Activity (last 12 months)')}</h2>
