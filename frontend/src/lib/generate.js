@@ -29,8 +29,7 @@ import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
 import { partFocus, muscleRolesOf } from './muscle-roles.js'
-import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts } from './coverage.js'
-import { primaryMuscleOf } from './strength-exercises.js'
+import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts, slotMuscleOf } from './coverage.js'
 import { suggestable } from './skipped.js'
 import { favIds } from './favourites.js'
 import { POPULAR_IDS, popularBySlug } from './popular.js'
@@ -111,21 +110,32 @@ export function trainingIndex(S) {
 const staleKey = d => d || ''
 const staler = (a, b) => (staleKey(a) < staleKey(b) ? -1 : staleKey(a) > staleKey(b) ? 1 : 0)
 
+// A skill that takes years to learn (a handstand push-up, a muscle-up, a pistol squat): never
+// offered ahead of an ordinary lift for the muscle, only once you have logged or starred it.
+const SKILL = /\bhandstand\b|\bmuscle[- ]up\b|\bplanche\b|\bfront lever\b|\bback lever\b|\bhuman flag\b|\bpistol\b|\barcher\b|\bdragon flag\b|\bone arm (push|pull|chin)/
+export const isSkill = ex => !!ex && SKILL.test(ex.n || '')
+
 /** The exercises a slot on `slug` may use, in the order they are offered. */
 export function candidatesFor(S, slug, index = trainingIndex(S)) {
   // A stretch is filed under the muscle it lengthens; it is no strength slot's lift.
   const usable = ex => ex && !isCardio(ex) && ex.cat !== 'stretching' && suggestable(S, ex)
+  // The slot an exercise fills is its main muscle's (coverage.js slotMuscleOf), not always the
+  // catalogue's: a handstand push-up is a shoulder lift.
+  const on = id => slotMuscleOf(EXIDX[id]) === slug
   const logged = Object.entries(index.exercises)
-    .filter(([id]) => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug)
+    .filter(([id]) => usable(EXIDX[id]) && on(id))
     .sort(([a, x], [b, y]) => staler(x.d, y.d) || y.n - x.n || (a < b ? -1 : 1))
     .map(([id]) => id)
-  const starred = favIds(S).filter(id => usable(EXIDX[id]) && primaryMuscleOf(EXIDX[id])?.slug === slug && !logged.includes(id))
+  const starred = favIds(S).filter(id => usable(EXIDX[id]) && on(id) && !logged.includes(id))
+  // The staples are listed by hand under the slot they fill: a leg press is a quad staple,
+  // whichever muscle the catalogue files it under.
   const fresh = id => usable(EXIDX[id]) && !logged.includes(id) && !starred.includes(id)
   const staples = (STAPLES[slug] || []).filter(fresh)
   // The rest of the list only once the staples run short: the session is built from the best
   // few, and a long tail of candidates would let an odd lift outscore them on coverage.
   const more = starred.length + staples.length < 2 ? (LISTED[slug] || []).filter(fresh) : []
-  return [...logged, ...starred, ...staples, ...more]
+  const plain = [...staples, ...more]
+  return [...logged, ...starred, ...plain.filter(id => !isSkill(EXIDX[id])), ...plain.filter(id => isSkill(EXIDX[id]))]
 }
 
 // The listed lifts on `slug` that target a part a program day's spare slot may go to
@@ -207,6 +217,16 @@ export function partGaps(S, groups, now = Date.now()) {
   return gaps
 }
 
+/** The lifts of the last strength session before `now`, by id: what a new one goes easy on repeating. */
+export function lastSessionIds(S, now = Date.now()) {
+  const today = isoOf(new Date(now))
+  const at = w => w.start || 0
+  const last = strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d <= today && at(w) < now
+    && Array.isArray(w.entries) && w.entries.length)
+    .reduce((a, w) => (!a || w.d > a.d || (w.d === a.d && at(w) > at(a)) ? w : a), null)
+  return last ? last.entries.map(e => e?.id).filter(id => id != null) : []
+}
+
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
  * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
@@ -228,7 +248,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
-    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly })
+    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly, recent: lastSessionIds(S, now) })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

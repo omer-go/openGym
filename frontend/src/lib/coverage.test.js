@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts } from './coverage.js'
+import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, slotMuscleOf, weeklyLack } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -456,7 +456,7 @@ describe('the spare slot: a part short of its minimum, not a second curl', () =>
   const CURL = '0031', HAMMER = '0313', ROW = '0027'
   const ROLES = { [CURL]: { target: ['biceps'] }, [HAMMER]: { target: ['brachialis'] }, [ROW]: { target: ['lats'] }, [SHRUG]: { target: ['upper-trap'] } }
   const rolesOf = id => ROLES[id] || null
-  const opts = { count: 3, groups: ['biceps', 'back'], need: { biceps: 1, back: 1 }, share: { biceps: 6, back: 3 }, rolesOf }
+  const opts = { count: 3, groups: ['biceps', 'back'], need: { biceps: 1, back: 1 }, share: { biceps: 6, back: 6 }, rolesOf }
   const ids = picks => picks.map(p => p.id).sort()
   const TRAPS = { group: 'back', name: 'Upper traps', muscles: ['upper-trap'] }
 
@@ -476,6 +476,10 @@ describe('the spare slot: a part short of its minimum, not a second curl', () =>
     const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
     const lats = { group: 'back', name: 'Lats', muscles: ['lats'] }
     expect(ids(pickForCoverage(cands, { ...opts, spare: [lats, TRAPS] }))).toEqual([CURL, ROW, SHRUG].sort())
+  })
+  it('a group already at its share gets no spare slot: the row gave the back its 3 sets', () => {
+    const cands = [CURL, ROW, HAMMER, SHRUG].map((id, rank) => ({ id, rank }))
+    expect(ids(pickForCoverage(cands, { ...opts, share: { biceps: 6, back: 3 }, spare: [TRAPS] }))).toEqual([CURL, ROW, HAMMER].sort())
   })
   it('`spareOnly` lifts are for that slot alone', () => {
     const cands = [CURL, ROW, HAMMER].map((id, rank) => ({ id, rank }))
@@ -499,9 +503,88 @@ describe('the spare slot: a part short of its minimum, not a second curl', () =>
       const st = state({ workouts: days.map(d => session(d, [ROW, CURL])) })
       const now = at(2026, 10, 16)
       expect(spareParts(st, ['back', 'biceps'], now)[0].name).toBe('Upper traps')
-      const picks = generateWorkout(st, 'full', { now, groups: ['back', 'biceps'], count: 3, share: { back: 3, biceps: 6 } })
+      const picks = generateWorkout(st, 'full', { now, groups: ['back', 'biceps'], count: 3, share: { back: 6, biceps: 6 } })
       expect(picks.map(p => muscleRolesOf(p.id)?.target || []).flat()).toContain('upper-trap')
     })
+  })
+})
+
+describe('rotation: the last session’s lifts give way', () => {
+  beforeAll(loadMuscleRoles)
+  const LUNGE = '0054'
+  const opts = { count: 1, groups: ['hamstrings', 'glutes', 'quads'], need: { hamstrings: 1, glutes: 1, quads: 1 } }
+  const cands = [DEADLIFT, LUNGE].map((id, rank) => ({ id, rank }))
+  it('a deadlift that covers more still gives way to a lunge the day after it', () => {
+    expect(pickForCoverage(cands, opts)[0].id).toBe(DEADLIFT)
+    expect(pickForCoverage(cands, { ...opts, recent: [DEADLIFT] })[0].id).toBe(LUNGE)
+  })
+  it('a hinge gives way more: two deadlift days in a row are hard on the back', () => {
+    expect(REPEAT_HINGE).toBeLessThan(REPEAT)
+    expect(REPEAT).toBeLessThan(1)
+  })
+})
+
+describe('a leg isolation waits for the lower-body compound', () => {
+  beforeAll(loadMuscleRoles)
+  const HIP_THRUST = '1060', ABDUCTION = '1034'
+  // The side glutes are the gap: picked first, the abduction left the anchor rule to add a hip
+  // thrust in the chest's place.
+  it('a hip abduction for a side-glute gap comes after the hip thrust, not in the chest’s place', () => {
+    const cands = [HIP_THRUST, ABDUCTION, BENCH, SQUAT, RDL].map((id, rank) => ({ id, rank }))
+    const picks = pickForCoverage(cands, { count: 2, groups: ['glutes', 'chest'], need: { glutes: 1, chest: 1 },
+      anchor: ['quads', 'hamstrings', 'glutes'], gaps: { glutes: ['glute-med'] } })
+    expect(picks.map(p => p.id)).toEqual([HIP_THRUST, BENCH])
+  })
+})
+
+describe('weeklyLack', () => {
+  beforeAll(loadMuscleRoles)
+  // Counted in, the delts the presses and rows had already given their week still lacked a lift
+  // each: 21 shoulder sets of 15.
+  it('what is left of the goal; a part short of its minimum adds nothing', () => {
+    const st = state({ workouts: [session('2026-10-19', [OHP], sets(12))] })
+    const now = at(2026, 10, 22)
+    expect(partsShort(st, ['shoulders'], now).shoulders.map(p => p.name)).toContain('Side delts')
+    expect(weeklyLack(st, ['shoulders'], now)).toEqual({ shoulders: 0 })
+  })
+})
+
+describe('filling a share', () => {
+  beforeAll(loadMuscleRoles)
+  // Shrugs credit the back a quarter a set: three of them are no back exercise, and a back short
+  // of its share after a row gets nothing from them but a slot the biceps needed.
+  it('takes a lift that gives its own group a set or more: a second curl, not shrugs for the back', () => {
+    const cands = ['0027', SHRUG, '0031', '0294'].map((id, rank) => ({ id, rank }))
+    const picks = pickForCoverage(cands, { count: 3, groups: ['back', 'biceps'], need: { back: 1, biceps: 1 },
+      share: { back: 6, biceps: 6 }, gaps: { back: ['upper-trap'] } })
+    expect(picks.map(p => p.id)).not.toContain(SHRUG)
+  })
+})
+
+describe('partSets', () => {
+  it('counts a set aimed at a part in full, one that only helps it at HELPED_PART', () => {
+    expect(partSets({ targeted: 3, helped: 4 })).toBeCloseTo(3 + 4 * HELPED_PART)
+    expect(partSets({ helped: 6 })).toBeLessThan(6)
+    expect(partSets()).toBe(0)
+  })
+  it('the side delts a press helped count 0.2 a set: 3 sets of presses are 0.6 of their minimum', () => {
+    const st = state({ workouts: [session('2026-10-19', [OHP, BENCH])] })
+    const side = partsShort(st, ['shoulders'], at(2026, 10, 22)).shoulders.find(p => p.name === 'Side delts')
+    expect(side.helped).toBeCloseTo(1.2)
+    expect(side.sets).toBeCloseTo(0.6)
+  })
+})
+
+describe('slotMuscleOf', () => {
+  beforeAll(loadMuscleRoles)
+  it('the main muscle by the roles when they aim elsewhere: a handstand push-up is a shoulder lift', () => {
+    expect(EXIDX['0471'].n).toMatch(/handstand/)
+    expect(slotMuscleOf(EXIDX['0471'])).toBe('deltoids')
+    expect(slotMuscleOf(EXIDX['0471'], () => null)).toBe('triceps')
+  })
+  it('the catalogue’s own when the roles agree: a bench press is a chest lift', () => {
+    expect(slotMuscleOf(EXIDX[BENCH])).toBe('chest')
+    expect(slotMuscleOf(EXIDX[BENCH], () => null)).toBe('chest')
   })
 })
 

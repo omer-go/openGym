@@ -341,6 +341,9 @@ describe('defaultConfig', () => {
     expect(defaultConfig('0979').mode).toBe('reps')
     expect(defaultConfig('4170', 'reps').mode).toBe('reps')
   })
+  it('times a carry: a farmer’s walk is 3 × 45 s, not reps', () => {
+    expect(defaultConfig('2133')).toMatchObject({ sets: 3, sec: 45, mode: 'time' })
+  })
   it('logs a one-arm or one-leg exercise per side, 10 a side', () => {
     // dumbbell single leg split squat, side plank (a hold), barbell bench press
     expect(defaultConfig('0410')).toEqual({ sets: 3, reps: 20, weight: 0, mode: 'reps', side: true })

@@ -234,7 +234,8 @@ export function doneLine(entry, unit, speedUnit) {
 // A stretch is held for time, not counted (lib/activities.js times it with a stopwatch): two
 // 30-second holds. A hold (the catalogue's isometric: a plank, a wall sit, an L-sit) is timed
 // too, a pallof press aside: that one is pressed out and counted.
-const isHold = ex => ex?.cat === 'isometric' && !/pallof/.test(ex.n || '')
+// A carry is walked for a time, not counted: a farmer's walk is 3 × 45 s with the dumbbells.
+const isHold = ex => (ex?.cat === 'isometric' && !/pallof/.test(ex.n || '')) || ex?.pt === 'carry'
 export function defaultConfig(id, mode) {
   if (!mode && EXIDX[id]?.cat === 'stretching') return { sets: 2, sec: 30, weight: 0, mode: 'time', bodyweight: true }
   const m = mode || (isHold(EXIDX[id]) ? 'time' : modeOf({ id }))

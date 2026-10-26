@@ -98,6 +98,21 @@ export function groupCredit(weights) {
 }
 
 const groupOf = slug => ADD_GROUPS.find(g => g.m.includes(slug)) || null
+
+/**
+ * The muscle an exercise's slot is for: the catalogue's primary (strength-exercises.js
+ * primaryMuscleOf), unless the muscle roles say the exercise aims at another group's muscle and
+ * none of the primary's own. A handstand push-up the catalogue files under triceps aims at the
+ * front delts, so it fills a shoulder slot. `ex` is an exercise or a logged entry.
+ */
+export function slotMuscleOf(ex, rolesOf = muscleRolesOf) {
+  const slug = primaryMuscleOf(ex)?.slug || null
+  const weights = roleWeights(rolesOf(ex?.id))
+  if (!weights) return slug
+  const aimed = Object.keys(weights).filter(m => weights[m] >= ROLE_WEIGHT.target && groupOf(m))
+  const own = groupOf(slug)
+  return !aimed.length || aimed.some(m => groupOf(m) === own) ? slug : aimed[0]
+}
 const isLift = ex => !!ex && !isCardio(ex) && ex.cat !== 'stretching'
 
 /**
@@ -230,6 +245,12 @@ export const GROUP_PARTS = {
 export const PART_SHARE = 0.3
 /** The weekly minimum of each part of `group` (GROUP_PARTS). */
 export const partGoalOf = (S, group) => weeklyTargetOf(S, group) * PART_SHARE
+// Toward a part's minimum, a set that only helped it counts half what it counts for the group
+// (0.2, not 0.4): a week of presses and rows is no shoulder week, and the side and rear delts
+// get a lift of their own, the front delts an overhead press now and then.
+export const HELPED_PART = 0.5
+/** The sets a part's `{ targeted, helped }` (partSplitOf) give toward its minimum. */
+export const partSets = ({ targeted = 0, helped = 0 } = {}) => targeted + helped * HELPED_PART
 
 /**
  * Group id -> part name -> { targeted, helped }: the completed work sets of the logged workouts
@@ -268,13 +289,13 @@ export function partsShort(S, groups, now = Date.now()) {
   // side and rear delts before the front ones every bench press helped.
   const from = isoOf(new Date(now - 13 * 864e5)), to = isoOf(new Date(now))
   const past = partSplitOf((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= to))
-  const pastOf = (g, name) => (past[g]?.[name]?.targeted || 0) + (past[g]?.[name]?.helped || 0)
+  const pastOf = (g, name) => partSets(past[g]?.[name])
   const out = {}
   for (const g of groups) {
     const goal = partGoalOf(S, g)
     const rows = (GROUP_PARTS[g] || []).map(([name, muscles]) => {
       const { targeted = 0, helped = 0 } = split[g]?.[name] || {}
-      return { name, muscles, sets: targeted + helped, goal, targeted, helped, past: pastOf(g, name) }
+      return { name, muscles, sets: partSets({ targeted, helped }), goal, targeted, helped, past: pastOf(g, name) }
     }).filter(p => goal > 0 && p.sets < goal).sort((a, b) => a.sets - b.sets || a.past - b.past)
     if (rows.length) out[g] = rows
   }
@@ -292,14 +313,15 @@ export function spareParts(S, groups, now = Date.now()) {
 }
 
 /**
- * Group id -> the sets it still lacks this week: what is left of its goal, or what its parts
- * lack of their minimums (partsShort) if that is more, for the `groups` given.
+ * Group id -> the sets it still lacks this week: what is left of its goal, for the `groups`
+ * given. A part short of its minimum (partsShort) adds none: it decides which lift the group's
+ * sets go to (the day's `gaps` and spare slot), not how many. Counted in, the presses and rows
+ * that had already given the shoulders their week still left the three delts short, and each
+ * got a lift on top (21 sets of 15).
  */
 export function weeklyLack(S, groups, now = Date.now()) {
   const done = weeklyDone(S, now)
-  const short = partsShort(S, groups, now)
-  return Object.fromEntries(groups.map(g => [g, Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0),
-    (short[g] || []).reduce((n, p) => n + p.goal - p.sets, 0))]))
+  return Object.fromEntries(groups.map(g => [g, Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0))]))
 }
 
 /**
@@ -334,7 +356,7 @@ export function variantHistory(S, rolesOf = muscleRolesOf) {
     if (typeof w?.d !== 'string') continue
     for (const entry of w.entries || []) {
       const ex = EXIDX[entry.id]
-      const g = ex && workSets(entry) ? groupOf(primaryMuscleOf(entry)?.slug)?.id : null
+      const g = ex && workSets(entry) ? groupOf(slotMuscleOf(entry, rolesOf))?.id : null
       if (!g) continue
       const v = variantOf(ex), roles = rolesOf(entry.id)
       const seen = last[g] || (last[g] = { part: {}, helpers: {}, tool: {}, position: {} })
@@ -360,7 +382,7 @@ const SMALL = new Set(['calves', 'forearms', 'abs'])
 // `last` is the day it was last logged, null when never.
 function itemOf(id, rank, on, rolesOf) {
   const ex = EXIDX[id]
-  const slug = primaryMuscleOf(ex)?.slug
+  const slug = slotMuscleOf(ex, rolesOf)
   const g = groupOf(slug)
   if (!g || !on.has(g.id)) return null
   const full = groupCredit(entryWeights({ id }, rolesOf))
@@ -381,7 +403,7 @@ function itemOf(id, rank, on, rolesOf) {
  */
 export function liftKind(id) {
   const ex = EXIDX[id]
-  const g = ex && groupOf(primaryMuscleOf(ex)?.slug)
+  const g = ex && groupOf(slotMuscleOf(ex))
   if (g && SMALL.has(g.id)) return 'small'
   return g && Object.values(groupCredit(musclesOf(ex))).filter(c => c >= 0.4).length >= 3 ? 'compound' : 'isolation'
 }
@@ -472,8 +494,16 @@ const runOrder = (a, b) => b.compound - a.compound
  * leaves out, from `candidates` or `spareOnly` (which nothing else picks from), and the next to
  * the group furthest short of its share.
  */
+// A lift the last session did, picked again: its gain counts a quarter less, a hinge's half. A
+// leg extension every session leaves the other quad lifts unturned, and the same stiff-legged
+// deadlift twice running is the lower back's again before it has come back.
+export const REPEAT = 0.75
+export const REPEAT_HINGE = 0.5
+const repeatOf = (c, recent) => (!recent.has(c.id) ? 1 : c.pattern === 'hinge' ? REPEAT_HINGE : REPEAT)
+
 export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {},
-  share = null, setsOf = () => 3, spare = [], spareOnly = [] }) {
+  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [] }) {
+  const again = new Set(recent)
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
@@ -486,6 +516,9 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const fresher = fresherFor(history, picks)
   const anchors = c => c.compound && anchor.includes(c.group)
   const anchored = () => !pool.some(anchors) || picks.some(anchors)
+  // A leg isolation waits for the day's lower-body compound: the squat gives the glutes their
+  // sets, and a hip abduction picked before it is one exercise more than the glutes needed.
+  const waits = c => !c.compound && anchor.includes(c.group) && !anchored()
   // A small group past its one exercise waits until every other group, rested ones too, is served.
   const full = c => !spill && SMALL.has(c.group) && picks.some(p => p.group === c.group)
   // Sets each group is still short of its share, while the picks go to the shares (`filling`).
@@ -498,11 +531,15 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   }
   while (picks.length < count) {
     // Once every group has its exercise, one slot goes to the part furthest short of its minimum
-    // that no exercise of the day targets (`spare`): side delts, rear delts, upper traps, side
-    // glutes or inner thighs in turn, where a second curl would have gone.
+    // that no exercise of the day targets (`spare`) and whose group is still short of its share:
+    // side delts, rear delts, upper traps, side glutes or inner thighs in turn, where a second
+    // curl would have gone.
     if (filling && !spared) {
       spared = true
-      const s = spare.find(p => on.has(p.group) && !picks.some(c => c.parts?.some(m => p.muscles.includes(m))))
+      // Not for a group the day's compounds have already given its share: after a squat and a
+      // deadlift the glutes have theirs, and a hip abduction on top only piles more on them.
+      const s = spare.find(p => on.has(p.group) && (!share || short(p.group) >= USEFUL)
+        && !picks.some(c => c.parts?.some(m => p.muscles.includes(m))))
       const extra = s ? spareOnly.filter(x => !pool.some(c => c.id === x.id)).map(x => itemOf(x.id, x.rank, on, rolesOf)).filter(Boolean) : []
       const fits = s ? [...pool, ...extra].filter(c => !picks.includes(c) && c.group === s.group && c.parts?.some(m => s.muscles.includes(m))
         && !picks.some(p => sameMove(p, c))) : []
@@ -510,13 +547,15 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       const own = fits.filter(c => s.muscles.includes(c.parts[0]))
       if (fits.length) {
         const ranked = fresher((own.length ? own : fits).sort((a, b) => a.rank - b.rank))
+          .sort((a, b) => again.has(a.id) - again.has(b.id))
         credit(ranked[shift % ranked.length])
         continue
       }
     }
     const last = picks.length === count - 1 && !anchored()
-    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL
-      : covered[c.group] < cap && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c)))
+    // Filling, a lift gives its own group a set or more: three sets of shrugs are not one of back.
+    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL && c.credit[c.group] * setsOf(c.id) >= USEFUL
+      : covered[c.group] < cap && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c) && !waits(c)))
     // A movement already in the session is out before a near twin is: a leg curl after a
     // stiff-legged deadlift covers alike, a romanian deadlift is the same lift again.
     const fresh = open.filter(c => !picks.some(p => sameMove(p, c)))
@@ -529,7 +568,10 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       else if (!relaxed) { relaxed = true; cap = 1 } else if (!spill) { spill = true; cap = 1 } else break
       continue
     }
-    const gain = c => (filling ? fillOf(c, setsOf(c.id), short) : gainOf(c, covered, cap, weight))
+    const gain = c => {
+      const g = filling ? fillOf(c, setsOf(c.id), short) : gainOf(c, covered, cap, weight)
+      return g > 0 ? g * repeatOf(c, again) : g
+    }
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
     const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
@@ -546,7 +588,7 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     // the staler variation within it.
     const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
       && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
-      .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks))
+      .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks) || again.has(a.id) - again.has(b.id))
     credit(near[shift % near.length])
   }
   return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at })).sort((a, b) => runOrder(picks[a.at], picks[b.at]))

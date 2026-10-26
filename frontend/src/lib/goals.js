@@ -31,7 +31,7 @@ export const UNTRACKED = ['forearms']
 
 // A set of a compound credits more than one group (a squat: quads and glutes, a little of the
 // rest), so a week reaches every group's goal in fewer sets than the goals add up to.
-const OVERLAP = 1.4
+export const OVERLAP = 1.4
 const MIN_PER_SET = 2.5   // a work set and its rest
 const MIN_SESSION = 5     // getting set up, warming up
 

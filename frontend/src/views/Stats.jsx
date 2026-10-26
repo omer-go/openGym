@@ -29,7 +29,7 @@ import { anchorsByWorkout, resolveSetRir } from '../lib/recovery.js'
 import { Button, Segmented, SelectRow } from '../components/ui.jsx'
 import CoverageStrip, { shown } from '../components/CoverageStrip.jsx'
 import { weeklyTargets } from '../lib/goals.js'
-import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit, partSplitOf, partGoalOf, GROUP_PARTS } from '../lib/coverage.js'
+import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit, partSplitOf, partGoalOf, partSets, HELPED_PART, GROUP_PARTS } from '../lib/coverage.js'
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
@@ -186,7 +186,8 @@ function MuscleBalance({ S }) {
   const parts = main && !GROUP_PARTS[group.id] ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null).filter(x => !isCardio(x.id)), main) : null
   // A group with parts of its own to train (shoulders, back, glutes) shows each against its
   // weekly minimum instead (lib/coverage.js partGoalOf): a set aimed at the part counts in full,
-  // one that only helped it at 0.4, so a week of rows reads as rear delts helped, not trained.
+  // one that only helped it at 0.2 (partSets), so a week of rows reads as rear delts helped, not
+  // trained.
   const own = group && GROUP_PARTS[group.id] && (() => {
     const got = partSplitOf(inWin, undefined, on ? isHardSet : null)[group.id] || {}
     const goal = partGoalOf(S, group.id)
@@ -195,8 +196,9 @@ function MuscleBalance({ S }) {
     if (!goal) return null
     return <div className="mparts" data-group-parts={group.id}>
       {GROUP_PARTS[group.id].map(([name]) => {
-        const { targeted = 0, helped = 0 } = got[name] || {}
-        const sets = targeted + helped
+        const { targeted = 0 } = got[name] || {}
+        const sets = partSets(got[name])
+        const helped = (got[name]?.helped || 0) * HELPED_PART
         const pct = Math.min(100, Math.round(sets / goal * 100))
         return <div key={name} data-part={name}>
           <div className="mrow">
@@ -210,7 +212,7 @@ function MuscleBalance({ S }) {
             : targeted > 0 ? t('{0} aimed at it', tenth(targeted)) : t('{0} from helping in other lifts, none aimed at it', tenth(helped))}</div>}
         </div>
       })}
-      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part needs {0} sets a week. A lift aimed at it counts in full, one that only helps it 0.4.', tenth(goal))}</div>
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part needs {0} sets a week. A lift aimed at it counts in full, one that only helps it 0.2.', tenth(goal))}</div>
     </div>
   })()
   // Bars only: the parts are counted per exercise (a target 1, a helper 0.4) and overlap, so

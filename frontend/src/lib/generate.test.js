@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, lastSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
 import { liftKind } from './coverage.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -76,6 +76,33 @@ describe('candidatesFor', () => {
     const list = candidatesFor(st, 'chest')
     expect(list).not.toContain(BENCH)
     expect(list).toContain('0289')
+  })
+  describe('with muscle roles', () => {
+    beforeAll(loadMuscleRoles)
+    // The catalogue files a handstand push-up under the triceps; it is aimed at the front delts.
+    it('offers a lift for the slot of the muscle it is aimed at: a handstand push-up is a shoulder lift', () => {
+      const HSPU = '0471'
+      const st = state({ favEx: [HSPU] })
+      expect(candidatesFor(st, 'deltoids')).toContain(HSPU)
+      expect(candidatesFor(st, 'triceps')).not.toContain(HSPU)
+    })
+  })
+  it('tells a skill from a lift', () => {
+    expect(isSkill(EXIDX['0471'])).toBe(true)   // handstand push-up
+    expect(isSkill(EXIDX['0426'])).toBe(false)  // dumbbell standing overhead press
+  })
+})
+
+describe('lastSessionIds', () => {
+  const NOW = new Date(2026, 8, 16, 12).getTime()
+  it('the lifts of the last strength session before now', () => {
+    const st = state({ workouts: [session('2026-09-10', ['0025']), session('2026-09-14', ['0043', '0085']), session('2026-09-12', ['0652'])] })
+    expect(lastSessionIds(st, NOW)).toEqual(['0043', '0085'])
+  })
+  it('not one planned for later, nor an empty one; none at all is no lifts', () => {
+    const st = state({ workouts: [session('2026-09-14', ['0043']), session('2026-09-20', ['0025']), { id: 'e', d: '2026-09-15', entries: [] }] })
+    expect(lastSessionIds(st, NOW)).toEqual(['0043'])
+    expect(lastSessionIds(state(), NOW)).toEqual([])
   })
 })
 
