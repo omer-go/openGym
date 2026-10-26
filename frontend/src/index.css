@@ -2419,6 +2419,10 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .ahead-day{border-radius:var(--r-lg);background:var(--surface);overflow:hidden;border:1.5px dashed color-mix(in srgb,var(--kind) 45%,var(--sep))}
 .ahead-day.planned-one{margin:10px 0}
 .ahead-day.planned-one .ahead-b{padding-top:12px}
+/* A logged workout reads like a planned day, in a solid card: done is drawn, ahead is dashed. */
+.ahead-day.logged-one{border-style:solid;border-color:var(--sep)}
+.ahead-day.logged-one .ahead-b{padding-top:12px}
+.ahead-day.logged-one .wd-ex .ss{font-size:13px;color:var(--label-2)}
 .ahead-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;color:var(--label);text-align:start}
 .ahead-h .grow{flex:1;min-width:0}
 .ahead-h .tt{font-weight:600}
@@ -2430,6 +2434,9 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .ahead-next{margin-inline-start:8px;font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px;color:var(--kind);background:color-mix(in srgb,var(--kind) 16%,transparent)}
 .ahead-b{padding:4px 14px 12px;display:flex;flex-direction:column;gap:10px}
 .ahead-b .list{background:none}
+/* Lifts sit as close as a logged workout's (sheets.jsx WorkoutDetail .wd-ex). */
+.ahead-b .list .item{padding:0;min-height:0;margin-bottom:12px}
+.ahead-b .list .item:last-child{margin-bottom:0}
 .ahead-sum{margin:8px 4px 0}
 .ahead-sum summary{cursor:pointer;font-size:13px;color:var(--acc);font-weight:500}
 .ahead-sum[open] summary{margin-bottom:8px}

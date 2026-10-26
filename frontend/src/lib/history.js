@@ -210,6 +210,26 @@ export function setLabel(id, s, cfg, speedUnit) {
   // rather than "0×12", which says a set was performed with no weight and means nothing.
   return oneSide(s) + fail + effortTail(s)
 }
+/**
+ * What an entry of a logged workout did, in one line (the workout's detail sheet): "3 × 8 · 60 kg"
+ * when every work set was the same plain set, the way a planned day reads; else each set's label,
+ * as the history shows it. Warm-ups left out; null when no work set was done.
+ */
+export function doneLine(entry, unit, speedUnit) {
+  // The effort each set was rated at is left to the exercise's history, a tap away.
+  const bare = s => { const { rir, rpe, ...rest } = s; return rest }
+  const sets = (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s)).map(bare)
+  if (!sets.length) return null
+  const labels = sets.map(s => setLabel(entry.id, s, entry.target, speedUnit))
+  const n = sets.length, w = sets[0].w || 0
+  // Plain sets at one weight: "3 × 8 · 60 kg", or "3 × 10/10/9 · 60 kg" when the reps fell off.
+  if (labels.every((l, i) => l === `${fmtNum(w)}×${sets[i].r}`)) {
+    const reps = sets.map(s => s.r)
+    return `${n} × ${reps.every(r => r === reps[0]) ? reps[0] : reps.join('/')}` + (w > 0 ? ` · ${fmtNum(w)} ${unit}` : '')
+  }
+  if (labels.some(l => l !== labels[0])) return labels.join(', ')
+  return n > 1 ? `${n} × ${labels[0]}` : labels[0]
+}
 // Default config for a freshly added exercise.
 // A stretch is held for time, not counted (lib/activities.js times it with a stopwatch): two
 // 30-second holds. A hold (the catalogue's isometric: a plank, a wall sit, an L-sit) is timed

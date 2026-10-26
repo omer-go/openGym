@@ -6,7 +6,7 @@ import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
 import { capFirst, fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
-import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
+import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, doneLine, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
 import { usesBar, defaultBarWeight, hasBarOverride, isNoBar } from './lib/bar.js'
 import { PLATE_SIZES, pairsOf, ownsPlates, withPlatePairs, withStandardPlates, withLoadKind, loadKindFor, baseWeightFor, dropGrid } from './lib/plates.js'
 import { toScale, rirOf, EFFORT_PRESETS, effortColor } from './lib/effort.js'
@@ -57,7 +57,9 @@ import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
 import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
-import { plannedSets } from './lib/coverage.js'
+import { plannedSets, groupSetsOf } from './lib/coverage.js'
+import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
+import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
 import { isProgram, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
@@ -2656,13 +2658,22 @@ function WorkoutDetail({ w, close }) {
   const update = useStore(s => s.update)
   const rec = st.workouts.find(x => sameWorkout(x, w)) || w
   const nameOf = e => (EXIDX[e.id] ? exerciseNameFor(EXIDX[e.id]) : (e.n || e.id))
+  // Read the way a planned day is (components/Program.jsx PlannedOn): what it gave each group
+  // toward the week's goal, then each lift with what was done. The card is solid where a planned
+  // day's is dashed, and the badge says Done.
+  const kind = workoutKind(w)
+  useMuscleRoles()
+  const adds = useMemo(() => groupSetsOf([rec]), [rec, rolesLoaded()])
+  const groups = GEN_NAME[kind] ? { ...genDefaults(kind), ...(st.genSetup?.[kind] || {}) }.groups
+    : ADD_GROUPS.filter(g => (adds[g.id] || 0) >= 0.5).map(g => g.id)
   // Tapping an exercise opens its history (Discord 'Improvement ideas'): from one session to the
   // curve it sits on, which is the question a past workout raises most often.
   const entryRow = (e, i) => {
     const ex = EXIDX[e.id]
     return <div key={i} className="row wd-ex" {...tappable(() => exerciseHistorySheet(e.id))}>
       {ex && <Thumb ex={ex} />}
-      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div></div>
+      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`} style={{ fontWeight: 600 }}>{nameOf(e)} {w.prs && w.prs.includes(e.id) && <span className="pr"><Icon name="trophy" />PR</span>}</div>
+        <div className="ss">{[ex && !isCardio(ex) && t(MUSCLE_NAME[e.gen?.m || primaryMuscleOf(ex)?.slug] || ex.tg || ex.bp), doneLine(e, st.unit, speedUnitOf(st))].filter(Boolean).join(' · ')}</div></div>
       <Icon name="chevronRight" className="chev" />
     </div>
   }
@@ -2693,8 +2704,8 @@ function WorkoutDetail({ w, close }) {
   // order, with each section's supersets paired inside it (sessionSections, which "Copy as text"
   // reads the workout through too). A legacy single-routine workout (one routineIds, or no rid
   // anywhere) renders flat.
-  const groups = sessionSections(w.entries)
-  const grouped = groups.length > 1 || (groups[0] && groups[0].rid && (w.routineIds || []).length > 1)
+  const sections = sessionSections(w.entries)
+  const grouped = sections.length > 1 || (sections[0] && sections[0].rid && (w.routineIds || []).length > 1)
   const busy = st.active ? t('Finish the current workout first.') : undefined
   // Everything you do to a saved workout once, behind one button: the sheet is for reading it.
   const actions = () => menuSheet({
@@ -2735,11 +2746,12 @@ function WorkoutDetail({ w, close }) {
   })
   // The sheet fits the screen: the title and the options button stay put, the exercises scroll
   // between them.
-  return <div className="wd-fit">
-    <h3>{w.name}</h3>
+  return <div className="wd-fit" style={{ '--kind': KIND_COLOR[kind] }}>
+    <h3>{w.name}<span className="ahead-next">{t('Done')}</span></h3>
     <div className="muted small" style={{ marginBottom: 12 }}>{[fmtDate(w.d, true), ...durPart(w.end - w.start), fmtVol(w.vol, st.unit), ...(w.bw ? [fmtNum(w.bw) + ' ' + st.unit] : [])].join(' · ')}</div>
-    <div className="wd-scroll sheet-scroll">
-      {grouped ? groups.map(g => {
+    <div className="wd-scroll sheet-scroll"><div className="ahead-day logged-one"><div className="ahead-b">
+      {groups.length > 0 && <CoverageStrip groups={groups} adds={adds} goals={weeklyTargets(st)} label={t('Sets per group this workout, toward your weekly goal')} />}
+      <div>{grouped ? sections.map(g => {
         const r = g.rid ? st.routines.find(x => x.id === g.rid) : null
         return <div key={g.rid || '__none'}>
           <div className="row" style={{ gap: 7, fontWeight: 600, margin: '2px 0 8px', paddingBottom: 6, borderBottom: '1px solid var(--sep)' }}>
@@ -2747,8 +2759,8 @@ function WorkoutDetail({ w, close }) {
           </div>
           {entryRows(g.units)}
         </div>
-      }) : entryRows(groups[0]?.units || [])}
-    </div>
+      }) : entryRows(sections[0]?.units || [])}</div>
+    </div></div></div>
     <Button variant="tinted" icon="pencil" trailingIcon="chevronUp" onClick={actions}>{t('Edit, share & more')}</Button>
   </div>
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { nextTrainingDay, modeOf, isTimed, fmtSec, setLabel, defaultConfig, buildSets, freestyleConfig, exLine, workoutVolume, bestWeightFor, bestWeightForEntry, completedRepsOf, metricRowsForEntry, effortOf, stepEffort, capEffort, isBw, isPerSide, sideReps, repStep, cascadeWeight, insertWarmupRow, makeWarmupAt, canBeWarmup, makeWorkAt, removeRowAt, removeLastSet, setSpanAt, workSetsDone, setsDone, setsDoneActive, setUnits, doneUnits, setUnitsTotal, pairAdjacent, unpairSuperset, supersetUnits, sessionSections, applyIntensifierPlan, pinnedNoteFor, exNoteFor, effectiveRoutineIds, effectiveRoutines, effectiveRoutineId, effectiveRoutine, lastEntryFor, entryExcluded, entryRoutineId, setsRepsOf } from './history.js'
+import { nextTrainingDay, modeOf, isTimed, fmtSec, setLabel, defaultConfig, buildSets, freestyleConfig, exLine, workoutVolume, bestWeightFor, bestWeightForEntry, completedRepsOf, metricRowsForEntry, effortOf, stepEffort, capEffort, isBw, isPerSide, sideReps, repStep, cascadeWeight, insertWarmupRow, makeWarmupAt, canBeWarmup, makeWorkAt, removeRowAt, removeLastSet, setSpanAt, workSetsDone, setsDone, setsDoneActive, setUnits, doneUnits, setUnitsTotal, pairAdjacent, unpairSuperset, supersetUnits, sessionSections, applyIntensifierPlan, pinnedNoteFor, exNoteFor, effectiveRoutineIds, effectiveRoutines, effectiveRoutineId, effectiveRoutine, lastEntryFor, entryExcluded, entryRoutineId, setsRepsOf, doneLine } from './history.js'
 import { makeSideSet, setSideField, toggleSide, WEIGHT_ORIGIN_MANUAL } from './workout-model.js'
 import { EXDB } from './exercises.js'
 import { todayISO, isoOf } from './format.js'
@@ -1667,5 +1667,29 @@ describe('timed per-side pairs come off as a pair', () => {
     expect(removeRowAt(pairs(3), 2).map(r => r.side + r.k)).toEqual(['L0', 'R0', 'L2', 'R2'])
     expect(removeRowAt(pairs(3), 3).map(r => r.side + r.k)).toEqual(['L0', 'R0', 'L2', 'R2'])
     expect(setSpanAt([{ sec: 30, side: 'L' }, { sec: 30 }], 0)).toEqual([0, 1])
+  })
+})
+
+describe('doneLine', () => {
+  const done = rows => ({ id: LIFT, sets: rows.map(r => ({ ...r, done: true })) })
+  it('reads straight sets the way a planned day does', () => {
+    expect(doneLine(done([{ w: 60, r: 8 }, { w: 60, r: 8 }, { w: 60, r: 8 }]), 'kg')).toBe('3 × 8 · 60 kg')
+  })
+  it('keeps one weight with the reps that fell off, and leaves the effort out', () => {
+    expect(doneLine(done([{ w: 60, r: 10, rir: 3 }, { w: 60, r: 10 }, { w: 60, r: 9, rir: 1.5 }]), 'kg')).toBe('3 × 10/10/9 · 60 kg')
+  })
+  it('lists the sets when the weight changes', () => {
+    expect(doneLine(done([{ w: 60, r: 8 }, { w: 65, r: 6 }]), 'kg')).toBe('60×8, 65×6')
+  })
+  it('leaves out warm-ups and sets not done', () => {
+    const e = done([{ w: 20, r: 10, phase: 'warmup' }, { w: 60, r: 8 }])
+    e.sets.push({ w: 60, r: 8, done: false })
+    expect(doneLine(e, 'kg')).toBe('1 × 8 · 60 kg')
+  })
+  it('counts bodyweight sets without a weight', () => {
+    expect(doneLine({ id: BW, sets: [{ w: 0, r: 12, done: true }, { w: 0, r: 12, done: true }] }, 'kg')).toBe('2 × 12')
+  })
+  it('is null with no work done', () => {
+    expect(doneLine(done([]), 'kg')).toBe(null)
   })
 })

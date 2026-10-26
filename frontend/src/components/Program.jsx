@@ -354,7 +354,7 @@ export function PlannedOn({ iso, close }) {
   const next = all[0].iso === iso
   const n = ahead.reduce((a, d) => ({ ex: a.ex + d.entries.length, sets: a.sets + d.sets, min: a.min + d.minutes }), { ex: 0, sets: 0, min: 0 })
   return <>
-    <h3>{t('Planned · {0}', ahead.map(d => t(GEN_NAME[d.type])).join(' + '))}</h3>
+    <h3 style={{ '--kind': KIND_COLOR[ahead[0].type] }}>{ahead.map(d => t(GEN_NAME[d.type])).join(' + ')}<span className="ahead-next">{t('Planned')}</span></h3>
     <div className="muted small">{fmtDate(iso, true)} · {tn('{0} exercise', '{0} exercises', n.ex)} · {tn('{0} set', '{0} sets', n.sets)} · {t('≈ {0} min', n.min)}</div>
     <p className="sect-f" style={{ marginTop: 4 }}>{t('If you do the days before it as planned.')}</p>
     {ahead.map(d => <div key={d.type} className="ahead-day planned-one" style={{ '--kind': KIND_COLOR[d.type] }}><AheadBody S={S} day={d} /></div>)}

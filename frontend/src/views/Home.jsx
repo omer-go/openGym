@@ -52,7 +52,13 @@ function DayWorkouts({ iso, close }) {
     {!day.length && iso < todayISO() && !S.active && <Button icon="plus" onClick={() => { close(); logPastWorkoutSheet({ iso }) }}>{t('Log a past workout')}</Button>}
   </>
 }
-const daySheet = iso => useUI.getState().openSheet(close => <DayWorkouts iso={iso} close={close} />)
+// A day with one workout and no note opens that workout, as a day ahead opens its plan: the list
+// is only a step when there is something to choose between.
+const daySheet = iso => {
+  const S = useStore.getState().S, day = workoutsOn(S.workouts, iso)
+  if (day.length === 1 && !dayNoteOf(S, iso)) return workoutDetailSheet(day[0].w)
+  useUI.getState().openSheet(close => <DayWorkouts iso={iso} close={close} />)
+}
 
 // Your saved routines, one tap each. With none saved yet, the sheet points at Plan.
 function routinesSheet(S, nav) {

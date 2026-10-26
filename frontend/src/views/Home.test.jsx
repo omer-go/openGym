@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { isoOf } from '../lib/format.js'
-import { menuSheet, startFlow, startGenerated } from '../sheets.jsx'
+import { menuSheet, startFlow, startGenerated, workoutDetailSheet } from '../sheets.jsx'
 import Home from './Home.jsx'
 
 const nav = vi.fn()
@@ -105,15 +105,23 @@ describe('Home — the week strip', () => {
     expect(host.textContent).toContain('This week · 2 workouts')
   })
 
+  it('a day with one workout opens it', () => {
+    const w = { id: 'a', d: today, start: 1, name: 'Leg day', genType: 'legs', entries: [] }
+    setS({ workouts: [w] })
+    mount()
+    act(() => { todayCell().click() })
+    expect(workoutDetailSheet).toHaveBeenLastCalledWith(w)
+  })
+
   it('a day opens the sessions logged on it', () => {
-    setS({ workouts: [{ id: 'a', d: today, start: 1, name: 'Leg day', genType: 'legs', entries: [] }] })
+    setS({ workouts: [{ id: 'a', d: today, start: 1, name: 'Leg day', genType: 'legs', entries: [] }, { id: 'b', d: today, start: 2, name: 'Free', entries: [] }] })
     mount()
     act(() => { todayCell().click() })
     const sheet = useUI.getState().sheets.at(-1)
     const box = document.createElement('div')
     const r = createRoot(box)
     act(() => r.render(sheet.render(() => {})))
-    expect(box.querySelector('.wrow').textContent).toBe('Leg day')
+    expect([...box.querySelectorAll('.wrow')].map(x => x.textContent)).toEqual(['Leg day', 'Free'])
     act(() => r.unmount())
   })
 

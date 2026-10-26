@@ -64,7 +64,7 @@ describe('workout detail', () => {
     workoutDetailSheet(w)
     const host = mountTopSheet()
     expect(host.querySelectorAll('.wd-ex')).toHaveLength(2)
-    expect(host.querySelector('.wd-ex .ss')).toBeNull()
+    expect(host.querySelectorAll('.wd-ex .ss')[0].textContent).toContain('100×8 ↘ 80×6 ↘ 60×5')
     act(() => { host.querySelectorAll('.wd-ex')[0].click() })
     expect(mountTopSheet().textContent).toContain('100×8 ↘ 80×6 ↘ 60×5')
     act(() => { host.querySelectorAll('.wd-ex')[1].click() })
