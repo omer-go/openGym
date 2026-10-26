@@ -81,12 +81,20 @@ describe('planner', () => {
       const cfg = p.cfg, direct = {}
       for (const d of p.days) for (const i of d.items) for (const g of i.ex.p) direct[g] = (direct[g] || 0) + i.sets
       for (const d of p.days) for (const i of d.items) {
-        if (i.slot === 'lead' || i.sets <= (i.slot === 'accessory' ? cfg.accMin : cfg.slotMin)) continue
+        const least = i.slot === 'accessory' ? cfg.accMin : i.slot === 'lead' ? Math.min(cfg.leadSets, 3) : cfg.slotMin
+        if (i.sets <= least) continue
         const c = Object.entries(creditOf(i.ex))
         const free = c.every(([g, v]) => p.total[g] - v >= p.goals[g]) && i.ex.p.every(g => direct[g] - 1 >= Math.ceil(DIRECT_MIN[g] * p.goals[g]))
         expect(free, `${template} ${days}d ${i.ex.id}`).toBe(false)
       }
     }
+  })
+
+  it('leads an upper day with a pull every other time, so three upper days aren\'t three heavy presses', () => {
+    const p = plan({ template: 'ul', goal: 'strength', days: 5, minutes: 60 })
+    const leads = p.days.filter(d => d.type === 'upper').map(d => d.items[0].ex.pat)
+    expect(leads).toEqual(['hpress', 'hpull', 'vpress'])
+    for (const g of ['chest', 'shoulders']) expect(p.total[g]).toBeLessThanOrEqual(p.goals[g] * 1.5)
   })
 
   it('paces the compound slots, so six full-body days don\'t pile up the presses and rows', () => {

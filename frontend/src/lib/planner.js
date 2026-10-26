@@ -52,10 +52,11 @@ export const LEVELS = {
 }
 export const EQUIPMENT = { gym: { n: 'Full gym', has: ['gym', 'db', 'bw'] }, db: { n: 'Dumbbells', has: ['db', 'bw'] }, bw: { n: 'Bodyweight', has: ['bw'] } }
 
-// Day types: the groups a day may train, and the patterns its lead alternates between.
+// Day types: the groups a day may train, and the patterns its lead goes through in turn. An upper
+// day leads with a pull every other time, so three upper days a week aren't three heavy presses.
 export const DAY_TYPES = {
   full: { groups: PLAN_GROUPS },
-  upper: { groups: ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs'], leads: ['hpress', 'vpress'] },
+  upper: { groups: ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs'], leads: ['hpress', 'hpull', 'vpress', 'vpull'] },
   lower: { groups: ['quads', 'hamstrings', 'glutes', 'calves', 'abs'], leads: ['squat', 'hinge'] },
   push: { groups: ['chest', 'shoulders', 'triceps', 'abs'], leads: ['hpress', 'vpress'] },
   pull: { groups: ['back', 'biceps', 'forearms', 'abs'], leads: ['vpull', 'hpull'] },
@@ -66,6 +67,7 @@ export const PLAN_TEMPLATES = {
   ul: { n: 'Upper / lower', sub: 'Upper and lower body on alternate days', cycle: ['upper', 'lower'] },
   ppl: { n: 'Push / pull / legs', sub: 'Pushing, pulling and legs, in turn', cycle: ['push', 'pull', 'legs'] },
 }
+const LEAD_MIN = 3 // the fewest sets a lead comes down to, for time or for the goal
 const FULL_LEADS = n => (n === 2 ? ['squat', 'hinge'] : ['squat', 'hpress', 'hinge', 'vpull', 'vpress', 'hpull'].slice(0, n))
 
 export const PLAN_DAYS = [2, 3, 4, 5, 6]
@@ -261,19 +263,22 @@ function skeleton({ cfg, k, type, goals, has, week, rand, avail, sched, leads })
     take(lead, 'lead', true)
     const slotOf = { squat: 'lower', hinge: 'lower', hpress: 'push', vpress: 'push', vpull: 'pull', hpull: 'pull' }
     take(other[lead], slotOf[other[lead]])
+    // An upper day trains the other half too: both pulls after a press, both presses after a pull.
     if (type === 'upper') {
-      const pull = usedPat('vpull') <= usedPat('hpull') ? 'vpull' : 'hpull'
-      take(pull, 'pull')
-      take(other[pull], 'pull')
+      const press = lead === 'hpress' || lead === 'vpress'
+      const [a, b] = press ? ['vpull', 'hpull'] : ['hpress', 'vpress']
+      const first = usedPat(a) <= usedPat(b) ? a : b
+      take(first, slotOf[first])
+      take(other[first], slotOf[first])
     }
   }
-  // Too long for the session: trim slots to the goal's fewest sets, then the lead to 3, then
+  // Too long for the session: trim slots to the goal's fewest sets, then the lead to LEAD_MIN, then
   // drop the slot nearest its goal.
   let trimmed = false
   for (;;) {
     if (minutesOf(cfg, items) <= cfg.minutes) break
     const slot = items.filter(i => i.slot !== 'lead' && i.sets > cfg.slotMin).sort((a, b) => b.rx.secs - a.rx.secs)[0]
-    const lead = items.find(i => i.slot === 'lead' && i.sets > 3)
+    const lead = items.find(i => i.slot === 'lead' && i.sets > LEAD_MIN)
     trimmed = true
     if (slot || lead) { (slot || lead).sets--; continue }
     const rest = items.filter(i => i.slot !== 'lead')
@@ -373,22 +378,24 @@ function topUp({ cfg, out, goals, week, rand, avail }) {
 
 // Pass 4: take off what goes past the goal. A set comes off a lift (an accessory goes, at its
 // fewest) while every group it counts for stays at its goal, the lift that spills most first:
-// pulldowns and presses feed the chest and shoulders a little, the slots don't see it coming.
+// pulldowns and presses feed the chest and shoulders a little, the slots don't see it coming. The
+// lead comes last, and never below 3 sets: it stays the day's heavy lift, just shorter when the
+// week already has enough of it.
 function trim(cfg, out, goals) {
-  const least = it => (it.slot === 'accessory' ? cfg.accMin : cfg.slotMin)
+  const least = it => (it.slot === 'accessory' ? cfg.accMin : it.slot === 'lead' ? Math.min(cfg.leadSets, LEAD_MIN) : cfg.slotMin)
+  const late = it => (it.slot === 'lead' ? 1 : 0)
   for (let guard = 0; guard < 200; guard++) {
     const t = {}, dr = {}
     for (const d of out) for (const i of d.items) { add(cfg, t, i.ex, i.sets); for (const g of i.ex.p) dr[g] = (dr[g] || 0) + i.sets }
     let best = null
     for (const d of out) for (const it of d.items) {
-      if (it.slot === 'lead') continue
       const n = it.sets > least(it) ? 1 : it.slot === 'accessory' ? it.sets : 0
       if (!n) continue
       const c = Object.entries(creditOf(it.ex))
       const keeps = c.every(([g, v]) => (t[g] || 0) - v * n >= goals[g] - 1e-9)
         && it.ex.p.every(g => dr[g] - n >= Math.ceil(DIRECT_MIN[g] * goals[g]))
       const gain = c.reduce((a, [, v]) => a + v, 0)
-      if (keeps && (!best || gain > best.gain)) best = { d, it, n, gain }
+      if (keeps && (!best || late(it) < late(best.it) || (late(it) === late(best.it) && gain > best.gain))) best = { d, it, n, gain }
     }
     if (!best) break
     if (best.n === best.it.sets) best.d.items.splice(best.d.items.indexOf(best.it), 1)
@@ -464,11 +471,11 @@ export function plan(o = {}) {
   const sched = scheduleOf(cfg)
   const week = { used: new Set(), patterns: {}, acc: {}, accDirect: {} }
   const out = [], skel = {}, skelDirect = {}, occ = {}
-  // Each day's lead pattern: the full-body rotation, or the day type's two leads in turn.
+  // Each day's lead pattern: the full-body rotation, or the day type's leads in turn.
   const leads = sched.map((t, k) => {
     if (t === 'full') return FULL_LEADS(cfg.days)[k]
     occ[t] = (occ[t] || 0) + 1
-    return DAY_TYPES[t].leads[(occ[t] - 1) % 2]
+    return DAY_TYPES[t].leads[(occ[t] - 1) % DAY_TYPES[t].leads.length]
   })
   sched.forEach((t, k) => {
     const d = skeleton({ cfg, k, type: t, goals, has: g => skel[g] || 0, week, rand, avail, sched, leads })
