@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, progressOf, deckOf, nextGroup, decide, onList, listOf, toggleListed } from '../lib/curate.js'
+import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, progressOf, deckOf, rareKits, nextGroup, decide, onList, listOf, toggleListed } from '../lib/curate.js'
 import { activeProfile } from '../lib/equipment.js'
 import { isCustomEx } from '../lib/exercises.js'
 import { roleChips } from '../lib/muscle-roles.js'
@@ -35,9 +35,10 @@ export default function Curate() {
   const update = useStore(s => s.update)
   const body = S.body === 'female' ? 'female' : 'male'
   // Each step has its own path, so Back (the header's, the phone's or a swipe from the edge) goes
-  // up one step, never out of the deck: /library/pick is the groups (Your gym on a first visit,
-  // with no gym saved), /library/pick/gym Your gym, /library/pick/list Your list and
-  // /library/pick/<group> its deck; ?all deals the rarer ones too. Going on to the next group
+  // up one step, never out of the deck: /library, the Exercises tab, is the groups (Your gym on a
+  // first visit, with no gym saved), /library/all every exercise to search (views/Library.jsx), /library/pick/gym Your gym, /library/pick/list Your list and
+  // /library/pick/<group> its deck; ?kit=<id> deals the rarer ones of one kind of kit (rareKits),
+  // ?all all of them. Going on to the next group
   // replaces the path, so Back leaves the deck wherever you are in it, and hands the deck what it
   // has done so far in the history state (the page is remounted on every path).
   const { group: gp } = useParams()
@@ -48,12 +49,13 @@ export default function Curate() {
   const step = gymStep ? 'gym' : listStep ? 'list' : !group ? 'groups' : 'deck'
   const have = gymOf(S)
 
-  const up = step === 'deck' || gp === 'gym' || listStep ? '/library/pick' : '/library'
+  const up = '/library'
   // Back to where we came from when that is in the history, else (opened from a link) one step up.
   const back = () => ((window.history.state?.idx || 0) > 0 ? nav(-1) : nav(up, { replace: true }))
   const g = ADD_GROUPS.find(x => x.id === group)
-  const head = (title, sub) => <div className="hdr"><button className="iconbtn" onClick={back} aria-label={t('Back')}><Icon name="chevronLeft" /></button>
-    <div style={{ flex: 1, marginInlineStart: 12, minWidth: 0 }}><h1>{title}</h1>{sub && <div className="sub">{sub}</div>}</div></div>
+  // The groups are the tab's own page: nothing to go back to.
+  const head = (title, sub) => <div className="hdr">{step !== 'groups' && <button className="iconbtn" onClick={back} aria-label={t('Back')}><Icon name="chevronLeft" /></button>}
+    <div style={{ flex: 1, marginInlineStart: step !== 'groups' ? 12 : 0, minWidth: 0 }}><h1>{title}</h1>{sub && <div className="sub">{sub}</div>}</div></div>
 
   if (step === 'gym') return <>
     {head(t('Your gym'), t('Exercises for kit you don’t have won’t come up.'))}
@@ -64,13 +66,14 @@ export default function Curate() {
 
   if (step === 'groups') return <>
     {head(t('Choose your exercises'), t('Your list starts with the most popular lifts. One-tap workouts pick from it. Swipe to drop or add lifts.'))}
-    <Groups S={S} have={have} body={body} onGym={() => nav('/library/pick/gym')} onList={() => nav('/library/pick/list')} onGroup={id => nav(`/library/pick/${id}`)} />
+    <Groups S={S} have={have} body={body} onGym={() => nav('/library/pick/gym')} onList={() => nav('/library/pick/list')} onAll={() => nav('/library/all')} onGroup={id => nav(`/library/pick/${id}`)} />
   </>
 
   if (!g) return null
   return <>
     {head(t(g.n), null)}
-    <Deck S={S} update={update} group={group} have={have} all={search.has('all')} onAll={() => setSearch({ all: '' }, { replace: true })}
+    <Deck S={S} update={update} group={group} have={have} all={search.has('all')} kit={search.get('kit')}
+      onAll={() => setSearch({ all: '' }, { replace: true })} onKit={id => setSearch({ kit: id }, { replace: true })}
       onGo={(id, deck) => nav(`/library/pick/${id}`, { replace: true, state: { deck } })} onDone={back} />
   </>
 }
@@ -101,7 +104,7 @@ function GymStep({ S, have, onSave }) {
 }
 
 // The muscle groups, each with how far along its common lifts are.
-function Groups({ S, have, body, onGym, onList, onGroup }) {
+function Groups({ S, have, body, onGym, onList, onAll, onGroup }) {
   const prog = useMemo(() => Object.fromEntries(ADD_GROUPS.map(g => {
     const p = progressOf(S, groupPool(S, g.id, have))
     return [g.id, p]
@@ -123,6 +126,11 @@ function Groups({ S, have, body, onGym, onList, onGroup }) {
     <button className="cu-entry" onClick={onGym}>
       <Icon name="kettlebell" />
       <span className="ax-m"><b>{t('Your gym')}</b><span className="muted small">{profile ? profile.name : t('All equipment')}</span></span>
+      <Icon name="chevronRight" className="dim" />
+    </button>
+    <button className="cu-entry" onClick={onAll}>
+      <Icon name="magnifier" />
+      <span className="ax-m"><b>{t('All exercises')}</b><span className="muted small">{t('Search, browse by muscle, or create your own')}</span></span>
       <Icon name="chevronRight" className="dim" />
     </button>
     <h4 className="sec">{t('Upper body')}</h4>
@@ -168,21 +176,23 @@ function YourList({ S, update, have, head, onGroup }) {
 // A group's cards, and the next group's when it is gone through. What you keep or drop is written
 // at once (lib/curate.js decide); what you pass on is only left out until you leave the deck. Undo
 // takes back the last card either way, going back to its group if the deck has moved on.
-function Deck({ S, update, group, have, all, onAll, onGo, onDone }) {
+function Deck({ S, update, group, have, all, kit, onAll, onKit, onGo, onDone }) {
   const carried = useLocation().state?.deck   // from the group before, when the deck moved on
   const [passed, setPassed] = useState(() => carried?.passed || [])
   const [done, setDone] = useState(() => carried?.done || [])   // [{ id, group, verdict }], newest last
   const [from, setFrom] = useState(() => carried?.from || null) // the group just gone through, named over the next one's first card
   const list = groupPool(S, group, have)
-  const deck = deckOf(S, list, { all, passed })
+  const deck = deckOf(S, list, { all, kit, passed })
   const p = progressOf(S, list)
+  const kits = rareKits(S, list, passed)
   const ex = deck[0]
   const next = ex ? null : nextGroup(S, group, have, passed)
   const last = done[done.length - 1]
-  // The last card of a group swiped: on to the next group with lifts to go. Opening a group that
-  // is already gone through shows its end instead, with the rarer ones on offer.
+  // The last card of a group swiped: its end, with the rarer ones on offer a kind of kit at a
+  // time, and the next group a tap away; straight on to it when there are none (or the rarer ones
+  // were all dealt at once). The last of one kind comes back here, for the next kind.
   useEffect(() => {
-    if (!ex && next && last?.group === group) onGo(next.id, { passed, done, from: group })
+    if (!ex && next && last?.group === group && !kit && (all || !kits.length)) onGo(next.id, { passed, done, from: group })
   }, [ex, next?.id, last, group])
   const act = verdict => {
     if (!ex) return
@@ -204,14 +214,20 @@ function Deck({ S, update, group, have, all, onAll, onGo, onDone }) {
   const nameOf = id => t(ADD_GROUPS.find(x => x.id === id)?.n || id)
 
   if (!ex) {
-    const rare = all ? 0 : p.rare
+    const rare = all ? 0 : kits.reduce((n, k) => n + k.count, 0)
     return <div className="card cu-end">
       <Icon name="checkCircle" className="cu-end-ico" />
       <h3>{next ? t('{0} gone through', nameOf(group)) : t('Every group gone through')}</h3>
       <div className="muted">{t('{0} kept · {1} dropped', fmtNum(kept), fmtNum(dropped))}{passed.length > 0 && ' · ' + t('{0} for later', fmtNum(passed.length))}</div>
       <div className="cu-end-btns">
         {next && <Button variant="primary" onClick={() => onGo(next.id, { passed, done })}>{t('On to {0}', t(next.n))}</Button>}
-        {rare > 0 && <Button variant="tinted" onClick={onAll}>{t('Show {0} rarer ones', fmtNum(rare))}</Button>}
+        {rare > 0 && <>
+          <h4 className="sec cu-kits-h">{t('Rarer ones, by kit')}</h4>
+          <div className="cu-kits">
+            {kits.map(k => <button key={k.id} className="chip nocap" onClick={() => onKit(k.id)}>{t(k.n)} <span className="dim">{fmtNum(k.count)}</span></button>)}
+          </div>
+          {kits.length > 1 && <Button variant="plain" onClick={onAll}>{t('Show all {0}', fmtNum(rare))}</Button>}
+        </>}
         {passed.length > 0 && <Button variant="tinted" onClick={() => setPassed([])}>{t('Go over the passed ones')}</Button>}
         <Button variant={next ? 'plain' : 'primary'} onClick={onDone}>{t('Done')}</Button>
         {done.length > 0 && <Button variant="plain" icon="undo" onClick={undo}>{t('Undo')}</Button>}
@@ -220,7 +236,7 @@ function Deck({ S, update, group, have, all, onAll, onGo, onDone }) {
   }
   return <>
     {from && from !== group && <div className="cu-next small">{t('{0} done. On to {1}.', nameOf(from), nameOf(group))}</div>}
-    <div className="cu-count muted small">{t('{0} to go', fmtNum(deck.length))}{!all && p.rare > 0 && ' · ' + t('popular lifts first')}</div>
+    <div className="cu-count muted small">{t('{0} to go', fmtNum(deck.length))}{kit ? ' · ' + t(kits.find(k => k.id === kit)?.n || '') : !all && p.rare > 0 && ' · ' + t('popular lifts first')}</div>
     <Card key={ex.id} ex={ex} onVerdict={act} />
     <div className="cu-btns">
       <button className="cu-b" onClick={undo} disabled={!done.length} aria-label={t('Undo')}><Icon name="undo" /></button>

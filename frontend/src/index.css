@@ -2253,6 +2253,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-end{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:28px 16px}
 .cu-end-ico{font-size:40px;color:var(--acc)}
 .cu-end-btns{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:14px}
+.cu-kits-h{margin:6px 0 0;align-self:flex-start}
+.cu-kits{display:flex;flex-wrap:wrap;gap:8px}
 /* The exercise name in the workout card opens its settings: looks like the title, acts like a button. */
 .exttl{flex:1;min-width:0;font-weight:600;letter-spacing:-.02em;line-height:1.2;text-align:start;background:none;border:0;padding:0;margin:0;color:inherit;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .exttl:active{opacity:.6}

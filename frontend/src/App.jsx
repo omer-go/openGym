@@ -209,9 +209,10 @@ function Shell() {
               <Route path="/workout" element={<Workout />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="/history" element={<History />} />
-              <Route path="/library" element={<Library />} />
+              <Route path="/library" element={<Curate />} />
+              <Route path="/library/all" element={<Library />} />
               <Route path="/muscles" element={<Muscles />} />
-              <Route path="/library/pick" element={<Curate />} />
+              <Route path="/library/pick" element={<Navigate to="/library" replace />} />
               <Route path="/library/pick/:group" element={<Curate />} />
               <Route path="/library/pick/:group/:kit" element={<Curate />} />
               <Route path="/structural-balance" element={<StructuralBalance />} />

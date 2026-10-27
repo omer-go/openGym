@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed } from './curate.js'
+import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed, rareKits } from './curate.js'
 import { ALL_EQUIPMENT } from './equipment.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { kitOf } from './exercise-facets.js'
@@ -108,6 +108,19 @@ describe('the deck', () => {
     expect(deck[0].id).toBe(BENCH)
     expect(deck.every(onList)).toBe(true)
     expect(deckOf({}, pool, { all: true })).toHaveLength(pool.length)
+  })
+  it('sorts the rarer ones by kit, and deals one kind at a time', () => {
+    const all = groupPool({}, 'chest', GYM)
+    const kits = rareKits({}, all)
+    expect(kits.reduce((n, k) => n + k.count, 0)).toBe(all.filter(e => !onList(e)).length)
+    expect(kits.map(k => k.id)).toEqual(expect.arrayContaining(['barbell', 'dumbbell', 'body']))
+    const bar = kits.find(k => k.id === 'barbell')
+    const deck = deckOf({}, all, { kit: 'barbell' })
+    expect(deck).toHaveLength(bar.count)
+    expect(deck.every(e => kitOf(e) === 'barbell' && !onList(e))).toBe(true)
+    // What you decide or pass on comes off its kind's count
+    const S = { skipEx: [deck[0].id] }
+    expect(rareKits(S, all, [deck[1].id]).find(k => k.id === 'barbell').count).toBe(bar.count - 2)
   })
   it('leaves out what you kept, dropped or passed on', () => {
     const S = { favEx: [BENCH] }

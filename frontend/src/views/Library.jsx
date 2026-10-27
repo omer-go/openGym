@@ -79,17 +79,13 @@ export default function Library() {
   }
 
   return <>
-    <div className="hdr lib-hdr"><div><h1>{t('Exercises')}</h1></div>
+    <div className="hdr lib-hdr"><button className="iconbtn" onClick={() => ((window.history.state?.idx || 0) > 0 ? nav(-1) : nav('/library', { replace: true }))} aria-label={t('Back')}><Icon name="chevronLeft" /></button>
+      <div style={{ flex: 1, marginInlineStart: 12, minWidth: 0 }}><h1>{t('All exercises')}</h1></div>
       <Button size="sm" variant="tinted" icon="figureStrength" onClick={() => nav('/muscles')}>{t('By muscle')}</Button>
       <div className="sub lib-count">{ownCount
         ? tn('{1} animated exercises + 1 of your own', '{1} animated exercises + {0} of your own', ownCount, EXDB.length)
         : t('{0} exercises with animations', EXDB.length)}</div>
     </div>
-    <button className="cu-entry" onClick={() => nav('/library/pick')}>
-      <Icon name="starFill" className="cu-entry-ico" />
-      <span className="ax-m"><b>{t('Choose your exercises')}</b><span className="muted small">{t('Your list starts with the most popular lifts. One-tap workouts pick from it. Swipe to drop or add lifts.')}</span></span>
-      <Icon name="chevronRight" className="dim" />
-    </button>
     <div className="search-row" style={{ marginBottom: 10 }}><div className={'search' + (narrowed ? ' has-count' : '') + (q ? ' has-clear' : '')}><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
       <input className="input" placeholder={t('Search…')} value={q} onChange={e => { setQ(e.target.value); setShown(40) }} />
       {narrowed && <span className="search-count" role="status" aria-label={exCount(f.length)}>{fmtNum(f.length)}</span>}

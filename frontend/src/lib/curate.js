@@ -5,7 +5,8 @@
 // out never shows up here again. A pile is one muscle group (Add exercise's ADD_GROUPS), all its
 // kit together; when one is gone through, the next group with lifts to go follows (nextGroup). A
 // pile deals the lifts on your list first: the popular lifts (lib/popular.js), most popular
-// first, and your own. The rest of the catalogue only when asked for, plainly named ones first.
+// first, and your own. The rest of the catalogue only when asked for, a kind of kit at a time
+// (rareKits), plainly named ones first.
 //
 // Your list is what one-tap and program days pick from: the popular lifts you have not dropped,
 // and whatever you have kept. Keeping a lift stars it (lib/favourites.js), which adds it to the
@@ -16,7 +17,7 @@ import { isStretch } from './activities.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ALL_EQUIPMENT, ACC_V, accessoriesOf, activeProfile, eqAvailable, newProfile, profileEquipment } from './equipment.js'
-import { isTail, isDemo, rareWords } from './exercise-facets.js'
+import { isTail, isDemo, rareWords, KITS, kitOf } from './exercise-facets.js'
 import { popularRank, isPopular } from './popular.js'
 import { favIds } from './favourites.js'
 import { skipIds } from './skipped.js'
@@ -173,11 +174,23 @@ export function progressOf(S, list) {
 
 /**
  * What a pile deals now: what you have not reviewed nor `passed` (skipped this time round), the
- * ones on the list only unless `all`.
+ * ones on the list only unless `all`, or only the rarer ones of one `kit` (rareKits).
  */
-export function deckOf(S, list, { all = false, passed = [] } = {}) {
+export function deckOf(S, list, { all = false, kit = null, passed = [] } = {}) {
   const done = reviewedIds(S), skip = new Set(passed)
-  return list.filter(ex => !done.has(ex.id) && !skip.has(ex.id) && (all || onList(ex)))
+  return list.filter(ex => !done.has(ex.id) && !skip.has(ex.id) && (kit ? !onList(ex) && kitOf(ex) === kit : all || onList(ex)))
+}
+
+/**
+ * The rarer lifts of a pile still to go (deckOf with `all`, less the list), a kind of kit at a
+ * time (exercise-facets.js KITS), so you can deal only the barbell ones, say, and leave the
+ * body-weight ones alone: each kind with `id`, `n` and `count`, in KITS order; only those with
+ * any.
+ */
+export function rareKits(S, list, passed = []) {
+  const count = {}
+  for (const ex of deckOf(S, list, { all: true, passed })) if (!onList(ex)) count[kitOf(ex)] = (count[kitOf(ex)] || 0) + 1
+  return KITS.filter(k => count[k.id]).map(k => ({ id: k.id, n: k.n, count: count[k.id] }))
 }
 
 /**
