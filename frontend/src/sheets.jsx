@@ -149,7 +149,7 @@ export function askAddDeviceData(extras) {
 // A title is shown as written: most are sentences ("Convert to lb?", "Set 2"), which a default
 // title-casing turned into "Convert To Lb?". An exercise name passes exerciseNameClass as
 // titleClass, which title-cases the lower-case packs and leaves a cased one alone.
-function MenuSheet({ title, titleClass = '', subtitle, items, sections, close }) {
+function MenuSheet({ title, titleClass = '', subtitle, items, sections, footnote, close }) {
   const groups = (sections || [{ items }])
     .map(g => ({ title: g.title, items: (g.items || []).filter(Boolean) }))
     .filter(g => g.items.length)
@@ -170,6 +170,7 @@ function MenuSheet({ title, titleClass = '', subtitle, items, sections, close })
         </div>)}
       </div>
     </div>)}
+    {footnote && <p className="sect-f">{footnote}</p>}
   </>
 }
 export function menuSheet(opts) {
@@ -2521,28 +2522,34 @@ export const dayNoteSheet = iso => ui().openSheet(close => <DayNote iso={iso} cl
 function DayAssign({ day, close }) {
   const st = useStore(s => s.S)
   const cur = [].concat(st.week[day] || [])
+  // One tap puts one routine on the day and closes. "Train several together" turns the list into
+  // ticks for a combined day (in the order tapped) with a Done; a day that is one already opens so.
+  const [several, setSeveral] = useState(cur.length > 1)
   const toggle = id => update(s => {
     const ids = [].concat(s.week[day] || [])
     const next = ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]
     if (next.length) s.week[day] = next; else delete s.week[day]
   })
+  const pick = id => { update(s => { s.week[day] = [id] }); close() }
   const rest = () => { update(s => { delete s.week[day] }); close() }
   return <>
     <h3 style={{ marginBottom: 2 }}>{t(DAYN[day])}</h3>
-    <div className="muted small" style={{ marginBottom: 10 }}>{t('Pick one routine, or more to train them together.')}</div>
+    <div className="muted small" style={{ marginBottom: 10 }}>{several ? t('Tick the routines to train together, in order.') : t('Pick a routine for this day.')}</div>
     <div className="list menu-list">
       <div className="item menu-item" {...tappable(rest)}><span className="lrow-i" style={{ background: 'var(--surface-3)' }}><Icon name="moon" /></span><div className="grow"><div className="tt">{t('Rest day')}</div></div><span className={'menu-on' + (!cur.length ? ' is-on' : '')}><Icon name="check" /></span></div>
       {st.routines.map(r => {
         const on = cur.includes(r.id)
-        return <div key={r.id} className="item menu-item" aria-pressed={on} {...tappable(() => toggle(r.id))}>
+        return <div key={r.id} className="item menu-item" aria-pressed={on} {...tappable(() => (several ? toggle(r.id) : pick(r.id)))}>
           <span className="lrow-i"><Icon name={glyphOf(r.emoji)} /></span>
           <div className="grow"><div className="tt">{r.name}</div><div className="ss">{exCount(r.ex.length)}</div></div>
+          {several && cur.length > 1 && on && <span className="small muted">{cur.indexOf(r.id) + 1}</span>}
           <span className={'menu-on' + (on ? ' is-on' : '')}><Icon name="check" /></span>
         </div>
       })}
     </div>
     <div style={{ height: 12 }} />
-    <Button variant="primary" onClick={close}>{t('Done')}</Button>
+    {several ? <Button variant="primary" onClick={close}>{t('Done')}</Button>
+      : st.routines.length > 1 && <Button variant="tinted" icon="plus" onClick={() => setSeveral(true)}>{t('Train several together')}</Button>}
   </>
 }
 export const dayAssignSheet = day => ui().openSheet(close => <DayAssign day={day} close={close} />)

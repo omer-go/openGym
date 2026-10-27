@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
-// Plan → Schedule → a weekday (v1.3.11): one picker for the whole day. Tapping a routine puts it
-// on the day or takes it off again, so two make a combined day (in the order tapped); "Rest day"
-// clears the day and closes; the sheet stays open for a second pick until Done. The weekday key
-// is dropped rather than left as an empty list.
+// Plan → Schedule → a weekday: one picker for the whole day. A tap puts that one routine on the day
+// and closes. "Train several together" turns the rows into ticks for a combined day (in the order
+// tapped) with a Done, and a day that is combined already opens that way. "Rest day" clears the
+// day and closes. The weekday key is dropped rather than left as an empty list.
 import React, { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createRoot } from 'react-dom/client'
@@ -18,6 +18,7 @@ const renderTop = () => {
   act(() => root.render(sheet.render(() => useUI.getState().closeSheet(sheet.id))))
 }
 const row = name => [...host.querySelectorAll('.item')].find(el => el.querySelector('.tt')?.textContent === name)
+const button = label => [...host.querySelectorAll('button')].find(b => b.textContent.trim() === label)
 const tap = el => { act(() => el.click()); if (useUI.getState().sheets.length) renderTop() }
 const week = () => useStore.getState().S.week
 
@@ -36,24 +37,39 @@ beforeEach(() => {
 afterEach(() => { act(() => root.unmount()); host.remove() })
 
 describe('the weekday picker', () => {
-  it('ticks what is on the day and adds a second routine for a combined day, staying open', () => {
+  it('ticks what is on the day, and a tap puts just that routine on it and closes', () => {
     dayAssignSheet(1)
     renderTop()
     expect(host.querySelector('h3').textContent).toBe('Monday')
     expect(row('Push').getAttribute('aria-pressed')).toBe('true')
     expect(row('Core').getAttribute('aria-pressed')).toBe('false')
     tap(row('Core'))
-    expect(week()[1]).toEqual(['push', 'core'])
-    expect(useUI.getState().sheets.length).toBe(1)
-    expect(row('Core').getAttribute('aria-pressed')).toBe('true')
+    expect(week()[1]).toEqual(['core'])
+    expect(useUI.getState().sheets.length).toBe(0)
   })
 
-  it('takes a routine off again, and drops the day once nothing is left', () => {
+  it('Train several together ticks a combined day, takes one off again, and stays open until Done', () => {
     dayAssignSheet(1)
     renderTop()
+    tap(button('Train several together'))
+    tap(row('Core'))
+    expect(week()[1]).toEqual(['push', 'core'])
+    expect(useUI.getState().sheets.length).toBe(1)
     tap(row('Push'))
+    tap(row('Core'))
     expect(week()).not.toHaveProperty('1')
     expect(row('Rest day').querySelector('.menu-on').className).toContain('is-on')
+    tap(button('Done'))
+    expect(useUI.getState().sheets.length).toBe(0)
+  })
+
+  it('a combined day opens with its ticks, not one tap away from losing one', () => {
+    useStore.getState().update(s => { s.week[1] = ['push', 'core'] })
+    dayAssignSheet(1)
+    renderTop()
+    expect(button('Done')).toBeTruthy()
+    tap(row('Core'))
+    expect(week()[1]).toEqual(['push'])
   })
 
   it('Rest day clears a combined day and closes', () => {
@@ -62,16 +78,6 @@ describe('the weekday picker', () => {
     renderTop()
     tap(row('Rest day'))
     expect(week()).not.toHaveProperty('1')
-    expect(useUI.getState().sheets.length).toBe(0)
-  })
-
-  it('plans an empty day and closes on Done', () => {
-    dayAssignSheet(3)
-    renderTop()
-    tap(row('Core'))
-    expect(week()[3]).toEqual(['core'])
-    const done = [...host.querySelectorAll('button')].find(b => b.textContent.trim() === 'Done')
-    act(() => done.click())
     expect(useUI.getState().sheets.length).toBe(0)
   })
 })

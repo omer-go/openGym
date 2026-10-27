@@ -2033,12 +2033,6 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* Schedule | Routines (views/Plan.jsx). A settings-like page, one column at every width. */
 .plan-views{margin-bottom:18px}
 .plan-views button{min-height:34px;font-size:15px}
-.plan .plan-mode .lrow-t{white-space:nowrap}
-/* The control takes the rest of the row when it fits, and a full line of its own when it does
-   not, rather than squeezing "Fixed Week" onto two lines. */
-.plan-mode .seg-inline{flex:1 1 200px;min-width:0}
-.plan-mode .seg-inline button{white-space:nowrap}
-.plan-mode-locked{margin-inline-start:auto;text-align:end}
 .plan-sec-h{margin:22px 0 8px;gap:8px;flex-wrap:wrap}
 /* Long words (German "Hinzufügen") push the loop's buttons off a 320 px screen; they drop
    to their own line instead and stay on the trailing edge. */
@@ -2400,6 +2394,15 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* Plan → Schedule with Program chosen: the days left are a forecast, lighter than days done. */
 .prog-week .forecast .lrow-i, .prog-week .forecast .tt { opacity: .6; }
 .prog-week .prog-done { color: var(--green); flex: none; }
+/* A rest day is a thin line, the days that train stand out; a day ahead folds open in place. */
+.prog-week .plan-day.rest { min-height: 0; padding-top: 6px; padding-bottom: 6px; }
+.prog-week .plan-day.rest .ss { font-size: 13px; color: var(--label-3); }
+.prog-week .prog-start { border: 0; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; flex: none; }
+.prog-week .prog-fold { transition: transform .2s; }
+.prog-week .plan-day-wrap.open .prog-fold { transform: rotate(90deg); }
+.prog-week .plan-day-wrap.open { background: var(--surface); border-radius: var(--r-lg); }
+.prog-week .plan-day-wrap.open > .plan-day { background: none; }
+.prog-week .plan-day-wrap > .ahead-b { padding-top: 0; }
 /* Home's week strip: a program day still to come, as a ring in its kind's colour. */
 .wday .dot.planned { background: transparent !important; border: 1.5px dashed var(--kind); box-sizing: border-box; }
 .home-week .dot.planned { width: 8px; height: 8px; margin: -1px 0; }
@@ -2446,3 +2449,72 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .ahead-sum{margin:8px 4px 0}
 .ahead-sum summary{cursor:pointer;font-size:13px;color:var(--acc);font-weight:500}
 .ahead-sum[open] summary{margin-bottom:8px}
+
+/* ── Plan → Program: month calendar and the panel under it ── */
+.cov-bar i.ahead{opacity:.35}
+.pcal{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.pcal-h{display:flex;align-items:center;gap:8px}
+.pcal-h h3{margin:0;flex:1;font-size:20px;font-weight:700}
+.pcal-today{border:0;border-radius:999px;padding:5px 12px;background:var(--acc-soft);color:var(--acc);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pcal-nav{width:32px;height:32px;border:0;border-radius:50%;background:var(--surface);color:var(--acc);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pcal-nav:disabled{color:var(--label-4);cursor:default}
+.pcal-g{display:grid;grid-template-columns:26px repeat(7,minmax(0,1fr));gap:3px;align-items:center}
+.pcal-wd{font-size:11px;font-weight:600;text-align:center;color:var(--label-3);text-transform:uppercase;letter-spacing:.3px;padding-bottom:2px}
+.pcal-wk{position:relative;width:22px;height:22px;padding:0;border:0;border-radius:50%;justify-self:center;cursor:pointer;
+  background:conic-gradient(var(--acc) var(--fill,0deg),var(--surface-3) 0);color:var(--label-2);font:inherit;font-size:11px;font-weight:600}
+.pcal-wk span{position:absolute;inset:2.5px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.pcal-wk.sel span{background:var(--label);color:var(--bg)}
+.pcal-d{position:relative;height:36px;padding:0;border:1.5px solid transparent;border-radius:8px;background:var(--surface);color:var(--label);
+  font:inherit;font-size:15px;font-variant-numeric:tabular-nums;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pcal-d i{position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--kind,var(--acc))}
+.pcal-d.rest{background:transparent;color:var(--label-2)}
+.pcal-d.out{opacity:.35}
+.pcal-d.done{background:color-mix(in srgb,var(--kind,var(--acc)) 22%,transparent);font-weight:600}
+.pcal-d.inweek{border-color:color-mix(in srgb,var(--label) 35%,transparent)}
+.pcal-d.today{border-color:var(--label)}
+.pcal-d.sel{background:var(--label);color:var(--bg);font-weight:700}
+.pcal-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--label-2)}
+.pcal-key span{display:flex;align-items:center;gap:5px}
+.pcal-key i{width:8px;height:8px;border-radius:50%;flex:none}
+.pcal-key i.done{border-radius:3px;background:color-mix(in srgb,var(--label) 22%,transparent)}
+.pcal-key i.today{box-sizing:border-box;border-radius:3px;border:1.5px solid var(--label)}
+.pcal-end{margin:-4px 0 14px;padding:10px 12px;border-radius:10px;background:var(--surface);font-size:13px;line-height:1.38;color:var(--label-2)}
+
+.pday,.pdone{display:flex;flex-direction:column;gap:14px}
+.pday h3,.pdone h3{margin:0;font-size:18px;font-weight:700}
+.pday-h{display:flex;align-items:center;gap:12px}
+.pday-i{width:44px;height:44px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.pday-i.done{background:var(--acc-soft);color:var(--acc)}
+.pday-i.big{border-radius:50%;background:var(--acc);color:var(--on-acc)}
+.pday-t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cal-tag{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap}
+.cal-tag.done,.cal-tag.today{background:var(--acc-soft);color:var(--acc)}
+.cal-tag.planned{background:color-mix(in srgb,var(--blue) 18%,transparent);color:var(--blue)}
+.pstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pstats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pstats>div{padding:10px 12px;border-radius:10px;background:var(--surface-2);display:flex;flex-direction:column;gap:2px;min-width:0}
+.pstats b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pstats span{font-size:12px;color:var(--label-2)}
+.pday-pr{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--yellow) 12%,transparent);font-size:14px}
+.pday-pr span{padding:2px 7px;border-radius:6px;background:var(--yellow);color:#000;font-size:12px;font-weight:800}
+.pday-lifts,.pweek-days{margin:0;background:var(--surface-2)}
+.pday-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.pday-chips span{padding:3px 7px;border-radius:6px;background:var(--surface-3);font-size:13px;font-variant-numeric:tabular-nums;color:var(--label-2)}
+.pweek-dot{width:10px;height:10px;flex:none;border-radius:50%;box-sizing:border-box;background:var(--kind,var(--acc))}
+.pweek-dot.open{background:transparent;border:2px solid var(--kind,var(--acc))}
+.pdone-gains{display:flex;flex-direction:column;gap:8px}
+.pdone-gains>div{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.pdone-gains span{color:var(--label-2);min-width:0}
+.pdone-gains b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.prog-bars{display:flex;gap:3px;margin-top:6px}
+.prog-bars i{width:18px;height:4px;border-radius:2px}
+.prog-intro{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.prog-intro h3{margin:0;font-size:18px;font-weight:700}
+.prog-intro-i{width:44px;height:44px;border-radius:10px;background:var(--acc-soft);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:20px}
+
+.plan-adjust{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px;padding:10px 12px;border:0;border-radius:10px;background:var(--surface-2);color:var(--label);font:inherit;text-align:left;cursor:pointer}
+.plan-adjust .tt{display:block;font-size:15px}
+.plan-adjust .ss{display:block;font-size:12px;color:var(--label-2)}
+.menu-chev.open{transform:rotate(90deg)}
+.plan-gdot{width:10px;height:10px;flex:none;border-radius:50%}

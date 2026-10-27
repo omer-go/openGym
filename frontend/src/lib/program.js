@@ -167,7 +167,8 @@ export function programWeek(S, now = Date.now()) {
 }
 
 /**
- * The days a program has left, dated, in order: `[{ type, k, iso }]`, `k` the day's place in the week. A forecast, not a booking: it
+ * The days a program has left, dated, in order: `[{ type, k, iso, r }]`, `k` the day's place in the
+ * week and `r` the week's index, 0 for the first. A forecast, not a booking: it
  * starts today, or a rest day after the last session, and leaves a rest day between two days
  * when its week has room for that (four days or fewer), else none. A new week starts as many
  * days after the last one started as keep it on a seven-day beat, and never without a rest day.
@@ -193,7 +194,7 @@ export function programForecast(S, now = Date.now()) {
       if (it.w) continue
       const step = first && !round.some(x => x.w) ? between : gap
       d = d ? addDays(d, step) : lastDone ? (daysBetween(lastDone, today) >= step ? today : addDays(lastDone, step)) : today
-      out.push({ type: it.type, k: it.k, iso: d })
+      out.push({ type: it.type, k: it.k, iso: d, r })
       first = false
     }
   }
@@ -370,4 +371,84 @@ export function programDayEntries(S, f, now = Date.now()) {
   const count = sizeDay(S, f.type, { now, groups: setup.groups, setup })
   const picks = generateWorkout(S, f.type, { ...setup, count, now, share: programShare(S, f.type, now) })
   return generatedEntries(S, picks, setup)
+}
+
+/**
+ * The month calendar of a program: the weeks (rows of seven, from the profile's week start) that
+ * cover `month` ('YYYY-MM'), each `{ start, week, done, planned, days: [{ iso, inMonth, items }] }`.
+ * A day's items are programLayout's, with `r` the program week they belong to; a row's `week` is
+ * the program week of its first item (1 for the first, 0 for a row without one), `done` and
+ * `planned` how many of its items are done and still to do. Null without a program.
+ */
+export function programCalendar(S, month, now = Date.now()) {
+  const p = S?.program
+  if (!isProgram(p)) return null
+  const ws = weekStartOf(S)
+  const first = month + '-01'
+  const last = isoOf(new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0, 12))
+  const items = programItems(S, now)
+  const rows = []
+  for (let start = isoOf(startOfWeek(first, ws)); start <= last; start = addDays(start, 7)) {
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const iso = addDays(start, i)
+      return { iso, inMonth: iso.slice(0, 7) === month, items: items.filter(it => it.iso === iso) }
+    })
+    const all = days.flatMap(d => d.items)
+    rows.push({
+      start, days, week: all.length ? Math.min(...all.map(it => it.r)) + 1 : 0,
+      done: all.filter(it => it.state === 'done').length, planned: all.filter(it => it.state !== 'done').length,
+    })
+  }
+  return rows
+}
+
+// Every program day, done and forecast: `[{ type, k, r, iso, state, w }]`, in date order.
+function programItems(S, now) {
+  const { rounds } = programRounds(S, now)
+  const done = rounds.flatMap((round, r) => round.filter(it => it.w).map(it => ({ type: it.type, k: it.k, r, iso: it.w.d, state: 'done', w: it.w })))
+    .sort((a, b) => byTime(a.w, b.w))
+  const left = programForecast(S, now).map((f, i) => ({ ...f, state: i === 0 ? 'next' : 'planned', w: null }))
+  return [...done, ...left]
+}
+
+/**
+ * The months a program spans, 'YYYY-MM', from the one it started in to the one its last day
+ * (done or forecast) falls in: `{ from, to }`. Null without a program.
+ */
+export function programMonths(S, now = Date.now()) {
+  if (!isProgram(S?.program)) return null
+  const items = programItems(S, now)
+  const end = items.reduce((m, it) => (it.iso > m ? it.iso : m), S.program.startedAt)
+  return { from: S.program.startedAt.slice(0, 7), to: end.slice(0, 7), end }
+}
+
+/**
+ * What a finished (or running) program added up to: the sessions that counted for it, the
+ * program weeks done, the work sets logged, the new bests (`prs`) and the `top` lifts that gained
+ * the most, each `{ id, from, to }` – its heaviest work set the first time and the last time.
+ */
+export function programSummary(S, { now = Date.now(), top = 3 } = {}) {
+  if (!isProgram(S?.program)) return null
+  const p = S.program
+  const { rounds, cur } = programRounds(S, now)
+  const ws = rounds.flat().filter(it => it.w).map(it => it.w).sort(byTime)
+  const heaviest = e => Math.max(0, ...(e.sets || []).filter(s => !isWarmupRow(s) && s.done).map(s => Number(s.w) || 0))
+  const lifts = {}
+  let sets = 0, prs = 0
+  for (const w of ws) {
+    prs += (w.prs || []).length
+    for (const e of w.entries || []) {
+      sets += (e.sets || []).filter(s => !isWarmupRow(s) && s.done).length
+      const kg = heaviest(e)
+      if (!kg) continue
+      const l = lifts[e.id] || (lifts[e.id] = { id: e.id, from: kg, to: kg })
+      l.to = kg
+    }
+  }
+  const gains = Object.values(lifts).filter(l => l.to > l.from).sort((a, b) => (b.to - b.from) / b.from - (a.to - a.from) / a.from).slice(0, top)
+  return {
+    workouts: ws.length, total: p.days.length * (p.weeks > 0 ? p.weeks : rounds.length || 1),
+    weeks: Math.min(cur, p.weeks > 0 ? p.weeks : cur), sets, prs, gains,
+    from: p.startedAt, to: ws[ws.length - 1]?.d || p.startedAt,
+  }
 }

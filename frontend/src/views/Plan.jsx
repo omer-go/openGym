@@ -11,7 +11,7 @@ import {
 import Icon from '../components/Icon.jsx'
 import { Button, Row, Section, Segmented } from '../components/ui.jsx'
 import SwipeRow from '../components/SwipeRow.jsx'
-import { ProgramMode, endProgram } from '../components/Program.jsx'
+import { ProgramMode, endProgram, programHeadline, programSettingsLine, changeProgram } from '../components/Program.jsx'
 import { isProgram } from '../lib/program.js'
 import { copyRoutine, deleteRoutine, restoreRoutine, routineSnapshot } from '../lib/routines.js'
 import { workoutControls } from '../lib/workout-controls.js'
@@ -181,6 +181,16 @@ export default function Plan() {
 
 /* ================================ Schedule ================================ */
 
+// The three ways to train, as the "How you train" line and its sheet name them.
+const MODE_ICON = { program: 'clipboard', week: 'calendar', rotation: 'repeat' }
+const MODE_TINT = { program: 'var(--green)', week: 'var(--blue)', rotation: 'var(--orange)' }
+const MODE_NAME = () => ({ program: t('Program'), week: t('Fixed Week'), rotation: t('Rotation') })
+const MODE_SUB = () => ({
+  program: t('One-tap days built for your weekly goal.'),
+  week: t('The same routines on the same weekdays, every week.'),
+  rotation: t('Routines in a loop. Whatever is next stays next until you train it.'),
+})
+
 function Schedule({ S, update, nav, mode }) {
   const [editLoop, setEditLoop] = useState(false)
   /* The rotation editor. What it shows is the live pass when there is one, otherwise the saved
@@ -229,6 +239,20 @@ function Schedule({ S, update, nav, mode }) {
     })
   }
 
+  const modeSheet = () => menuSheet({
+    title: t('How you train'),
+    sections: [
+      { items: ['program', 'week', 'rotation'].map(v => ({
+        icon: MODE_ICON[v], label: MODE_NAME()[v], sub: MODE_SUB()[v], on: v === shown, onClick: () => setMode(v),
+      })) },
+      inProgram && { title: t('Program'), items: [
+        { icon: 'clipboard', label: t('Change program'), sub: programSettingsLine(S) || undefined, chevron: true, onClick: () => changeProgram(S) },
+        { icon: 'xmark', label: t('End program'), danger: true, onClick: () => endProgram() },
+      ] },
+    ].filter(Boolean),
+    footnote: inProgram ? t('Picking Fixed Week or Rotation ends the program first. Your workouts and goal stay.') : undefined,
+  })
+
   const setSeq = ids => update(s => {
     // Emptying the sequence stops the pass but stays on Rotation with an empty loop ('No rotation
     // yet'), so taking out the last routine to swap it for another never throws you onto the
@@ -243,12 +267,8 @@ function Schedule({ S, update, nav, mode }) {
   const loopReorder = useListReorder(seq.length, (from, to) => setSeq(moved(seq, from, to)))
   const takeOut = id => takeOutOfLoop(id, setSeq, seq, seqLabel)
   const swipe = workoutControls(S).swipeSets && !external
-  const addToSeq = () => menuSheet({
-    title: t('Add to the rotation'),
-    items: S.routines.filter(r => !seq.includes(r.id)).map(r => ({
-      icon: glyphOf(r.emoji), label: r.name, onClick: () => setSeq([...seq, r.id]),
-    })),
-  })
+  const addToSeq = () => useUI.getState().openSheet(close => <LoopAdd close={close}
+    routines={S.routines.filter(r => !seq.includes(r.id))} onAdd={ids => setSeq([...seq, ...ids])} />)
   // The only path from a coach-written queue into a managed one: behind a confirmation that says
   // what happens — the coach gives up control: this app owns the queue and refills it itself, and a
   // later week written by the coach's app simply replaces it (the whole queue object, token and all).
@@ -292,18 +312,15 @@ function Schedule({ S, update, nav, mode }) {
   const editing = editLoop && !external
 
   return <>
-    <Section className="plan-mode" footer={shown === 'program'
-      ? t('One-tap days built for your weekly goal. Whatever is next stays next until you train it, whatever the day.')
-      : shown === 'rotation'
-      ? t('Routines in a loop. Whatever is next stays next until you train it, whatever the day.')
-      : t('The same routines on the same weekdays, every week.')}>
-      <Row icon="repeat" iconTint="var(--orange)" title={t('How you train')}>
-        {/* A planner's own queue is not this app's to switch off: text, not a control. */}
-        {external && !inProgram
-          ? <span className="small dim plan-mode-locked">{t('Rotation')} · {t('Externally managed')}</span>
-          : <Segmented className="seg-inline" value={shown} onChange={setMode}
-              options={[{ value: 'program', label: t('Program') }, { value: 'week', label: t('Fixed Week') }, { value: 'rotation', label: t('Rotation') }]} />}
-      </Row>
+    {/* How you train, as one line: a tap opens the sheet that switches it, and with a program
+        running, changes the program or the goal or ends it. A planner's own queue is not this
+        app's to switch off: the line says so and opens nothing. */}
+    <Section className="plan-mode">
+      {external && !inProgram
+        ? <Row icon="repeat" iconTint="var(--orange)" title={t('Rotation')} subtitle={t('Externally managed')} />
+        : <Row icon={MODE_ICON[shown]} iconTint={MODE_TINT[shown]} accessory="chevron" onClick={modeSheet}
+            title={inProgram ? t('Program') + ' · ' + programHeadline(S).name : MODE_NAME()[shown]}
+            subtitle={inProgram ? programHeadline(S).sub : MODE_SUB()[shown]} />}
     </Section>
 
     {shown === 'program' ? <ProgramMode /> : <>
@@ -343,7 +360,9 @@ function Schedule({ S, update, nav, mode }) {
           // The loop's swipe is remove-only (v1.3.11): a routine is in the loop once, so there is
           // nothing to copy. The row the reorder measures is the swipe's outer element.
           const reorderProps = { 'data-reorder-row': '', style: loopReorder.rowStyle(i) }
-          const row = <div {...(swipe ? {} : { key: id, ...reorderProps })} className={'item rotation-row' + (item?.state === 'done' ? ' is-done' : '')}>
+          // Outside Edit, a row opens its routine; a coach's queue stays read-only.
+          const open = !editing && !external && r ? { 'aria-label': t('Open {0}', r.name), ...tappable(() => nav('/plan/r/' + id)) } : {}
+          const row = <div {...(swipe ? {} : { key: id, ...reorderProps })} {...open} className={'item rotation-row' + (item?.state === 'done' ? ' is-done' : '')}>
             {editing && <button className="plan-minus" aria-label={t('Remove {0}', r?.name ?? id)} title={t('Remove')}
               onClick={() => takeOut(id)}><Icon name="minus" /></button>}
             <span className={'plan-order' + (item?.state === 'next' ? ' next' : '')}>{item?.state === 'done' ? <Icon name="check" /> : i + 1}</span>
@@ -352,6 +371,7 @@ function Schedule({ S, update, nav, mode }) {
               <div className="tt">{r?.name ?? id}</div>
               <div className="ss">{item ? stateWord(item) : r ? exCount(r.ex.length) : ''}</div>
             </div>
+            {!!open.role && <Icon name="chevronRight" className="chev" />}
             {editing && seq.length > 1 && <button className="plan-handle" aria-label={t('Move {0}', r?.name ?? id)} title={t('Drag to reorder')}
               {...loopReorder.handle(i)}><Icon name="chevronsUpDown" /></button>}
           </div>
@@ -392,6 +412,26 @@ function Schedule({ S, update, nav, mode }) {
       <Row icon="chart" iconTint="var(--indigo)" title={t('Weekly muscle volume')} subtitle={t('Now in Stats, next to Muscle balance')}
         accessory="chevron" onClick={() => nav('/stats?focus=weekly-volume')} />
     </Section>}
+  </>
+}
+
+/** The loop's Add: tick one routine or several, numbered in the order they join the loop. */
+function LoopAdd({ routines, onAdd, close }) {
+  const [picked, setPicked] = useState([])
+  const toggle = id => setPicked(p => (p.includes(id) ? p.filter(x => x !== id) : [...p, id]))
+  return <>
+    <h3 style={{ marginBottom: 2 }}>{t('Add to the rotation')}</h3>
+    <div className="muted small" style={{ marginBottom: 10 }}>{t('Tap them in the order you want to train them.')}</div>
+    <div className="list menu-list">{routines.map(r => {
+      const at = picked.indexOf(r.id)
+      return <div key={r.id} className="item menu-item" aria-pressed={at >= 0} {...tappable(() => toggle(r.id))}>
+        <span className="lrow-i"><Icon name={glyphOf(r.emoji)} /></span>
+        <div className="grow"><div className="tt">{r.name}</div><div className="ss">{exCount(r.ex.length)}</div></div>
+        <span className={'plan-order' + (at >= 0 ? ' next' : '')} aria-hidden="true">{at >= 0 ? at + 1 : ''}</span>
+      </div>
+    })}</div>
+    <div style={{ height: 12 }} />
+    <Button variant="primary" disabled={!picked.length} onClick={() => { close(); onAdd(picked) }}>{t('Add')}</Button>
   </>
 }
 

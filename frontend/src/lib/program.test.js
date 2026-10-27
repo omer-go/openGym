@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, evenCount, isProgram, programShare, newProgram, programForecast, programLayout, programOver, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, evenCount, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genScheme, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { USEFUL, entryWeights, groupCredit } from './coverage.js'
@@ -204,7 +204,7 @@ describe('the days ahead', () => {
 
   it('is next today after a rest day, or after a long break', () => {
     const st = state({ program: PPLF, workouts: [session('2026-09-03', 'push')] })
-    expect(programForecast(st, THU)[0]).toEqual({ type: 'pull', k: 1, iso: '2026-09-17' })
+    expect(programForecast(st, THU)[0]).toEqual({ type: 'pull', k: 1, iso: '2026-09-17', r: 0 })
   })
 
   it('keeps a three-day week on a seven-day beat, and a six-day one rests a day after it', () => {
@@ -315,5 +315,39 @@ describe('a program built from settings', () => {
     expect(ahead.map(d => d.k)).toEqual([0, 1, 2, 3])
     for (const d of ahead) expect(d.entries.map(e => e.id)).toEqual(UL.week[d.k].items.map(i => i.id))
     expect(programDayEntries(st, { type: 'lower', k: 1 }).map(e => e.id)).toEqual(UL.week[1].items.map(i => i.id))
+  })
+})
+
+describe('the calendar of a program', () => {
+  const p = newProgram('full-3', { today: '2026-09-14', weeks: 2 })
+  const st = state({ program: p, workouts: [session('2026-09-14', 'full', ['0025'], 3, 1), session('2026-09-16', 'full', ['0025'], 3, 2)] })
+  it('lays the month out in weeks, done days on their date and the rest where the forecast puts them', () => {
+    const rows = programCalendar(st, '2026-09', THU)
+    expect(rows[0].start).toBe('2026-08-31')
+    expect(rows.length).toBe(5)
+    const wk = rows.find(r => r.start === '2026-09-14')
+    expect(wk.week).toBe(1)
+    expect(wk.days.flatMap(d => d.items.map(it => it.state + ' ' + d.iso))).toEqual(['done 2026-09-14', 'done 2026-09-16', 'next 2026-09-18'])
+    expect([wk.done, wk.planned]).toEqual([2, 1])
+    const next = rows.find(r => r.start === '2026-09-21')
+    expect(next.week).toBe(2)
+    expect(next.days.flatMap(d => d.items).every(it => it.r === 1 && it.state === 'planned')).toBe(true)
+    expect(rows[0].week).toBe(0)
+    expect(rows[0].days[0].inMonth).toBe(false)
+  })
+  it('spans the months from its start to its last day', () => {
+    expect(programMonths(st, THU)).toEqual({ from: '2026-09', to: '2026-09', end: programForecast(st, THU).at(-1).iso })
+    expect(programCalendar(state(), '2026-09', THU)).toBe(null)
+  })
+})
+
+describe('what a program added up to', () => {
+  it('counts its sessions, sets and bests, and the lifts that gained most', () => {
+    const p = newProgram('full-3', { today: '2026-09-14', weeks: 1 })
+    const lift = (d, id, w, start) => ({ ...session(d, 'full', [id], 2, start), entries: [{ id, sets: [{ w, r: 8, done: true }, { w: w + 100, r: 8, done: false }] }] })
+    const ws = [lift('2026-09-14', '0025', 60, 1), lift('2026-09-16', '0025', 70, 2), { ...lift('2026-09-18', '0025', 75, 3), prs: ['0025'] }]
+    const sum = programSummary(state({ program: p, workouts: ws }), { now: at(2026, 9, 20) })
+    expect(sum).toMatchObject({ workouts: 3, total: 3, weeks: 1, sets: 3, prs: 1, from: '2026-09-14', to: '2026-09-18' })
+    expect(sum.gains).toEqual([{ id: '0025', from: 60, to: 75 }])
   })
 })

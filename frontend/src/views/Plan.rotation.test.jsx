@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-// Plan → Schedule since v1.3.11: ONE "How you train: Fixed Week | Rotation" control (the same
-// switch and keys as Settings, lib/rotation.js chooseRotation / chooseFixedWeek). Fixed Week shows
+// Plan → Schedule: ONE "How you train" line whose sheet switches Program | Fixed Week | Rotation (the
+// same switch and keys as Settings, lib/rotation.js chooseRotation / chooseFixedWeek). Fixed Week shows
 // the weekdays; Rotation shows the loop (add, Edit to reorder and remove, Start the loop over),
 // with the weekdays that still hold a routine beside it. An externally written queue is read-only
 // until adopted, and a malformed one offers recovery.
@@ -34,8 +34,10 @@ vi.mock('../lib/demo.js', () => ({ DEMO: false }))
 vi.mock('../lib/coach.js', () => ({ coachAvailable: () => false }))
 
 import Plan from './Plan.jsx'
+import { useUI } from '../store/useUI.js'
 import { menuSheet, confirmSheet } from '../sheets.jsx'
 import { todayISO, isoOf, fmtDate } from '../lib/format.js'
+import { newPlanProgram } from '../lib/program.js'
 
 const routines = [
   { id: 'a', name: 'A', emoji: null, ex: [{ id: '0025' }] },
@@ -46,13 +48,15 @@ const live = (over = {}) => ({ ids: ['a', 'b'], since: Date.now() - 86400000, st
 const saved = { id: 'r1', sequence: ['a', 'b'], label: 'My split' }
 const baseS = over => ({ routines, week: { 1: ['c'] }, dayPlan: {}, workouts: [], queue: null, rotation: null, scheduleMode: null, ...over })
 
-let host, root
+let host, root, sheetHost, sheetRoot
 beforeEach(() => {
+  useUI.setState({ sheets: [] })
+  sheetHost = document.createElement('div'); document.body.appendChild(sheetHost); sheetRoot = createRoot(sheetHost)
   localStorage.setItem('gym_plan_view', 'schedule')  // Plan opens on Program otherwise
   host = document.createElement('div'); document.body.appendChild(host); root = createRoot(host)
   menuSheet.mockClear(); confirmSheet.mockClear(); mocks.nav = vi.fn()
 })
-afterEach(() => { act(() => root.unmount()); host.remove() })
+afterEach(() => { act(() => { root.unmount(); sheetRoot.unmount() }); host.remove(); sheetHost.remove() })
 
 // the mocked store is not reactive: re-mount to see a write render
 const mount = over => { mocks.S = baseS(over); act(() => root.render(<Plan />)) }
@@ -61,9 +65,19 @@ const rows = () => [...host.querySelectorAll('.rotation-row')]
 const names = () => rows().map(r => r.querySelector('.tt').textContent)
 const click = el => act(() => el.dispatchEvent(new MouseEvent('click', { bubbles: true })))
 const byLabel = label => [...host.querySelectorAll('button')].find(b => b.getAttribute('aria-label') === label || b.textContent.trim() === label)
-const modeButtons = () => [...host.querySelectorAll('.plan-mode .seg button')]
-const pickMode = label => click(modeButtons().find(b => b.textContent === label))
-const selectedMode = () => modeButtons().find(b => b.className.includes('on'))?.textContent
+// The "How you train" line opens the mode sheet (a menuSheet, mocked): pick by label.
+const modeItems = () => { click(host.querySelector('.plan-mode button.lrow')); return menuSheet.mock.calls.at(-1)[0].sections[0].items }
+const pickMode = label => act(() => modeItems().find(i => i.label === label).onClick())
+const selectedMode = () => modeItems().find(i => i.on)?.label
+// The loop's Add is a sheet of its own: tick routines in order, then Add.
+const addToLoop = (...names) => {
+  click(byLabel('Add routine to the rotation'))
+  const sheet = useUI.getState().sheets.at(-1)
+  const render = () => act(() => sheetRoot.render(sheet.render(() => useUI.getState().closeSheet(sheet.id))))
+  render()
+  for (const n of names) { click([...sheetHost.querySelectorAll('.item')].find(el => el.querySelector('.tt').textContent === n)); render() }
+  return { options: () => [...sheetHost.querySelectorAll('.item .tt')].map(e => e.textContent), add: () => click([...sheetHost.querySelectorAll('button')].find(b => b.textContent.trim() === 'Add')) }
+}
 const headings = () => [...host.querySelectorAll('h4.sec')].map(h => h.firstChild.textContent)
 const subtitle = () => host.querySelector('.hdr .sub').textContent
 
@@ -133,6 +147,45 @@ describe('Plan — How you train', () => {
   })
 })
 
+describe('Plan — a program on the How you train line', () => {
+  it('names the program and its week, and its sheet changes the program or ends it', () => {
+    mount({ program: newPlanProgram({ template: 'full', days: 3, minutes: 60 }) })
+    const line = host.querySelector('.plan-mode button.lrow')
+    expect(line.querySelector('.lrow-t').textContent).toMatch(/^Program · /)
+    expect(line.querySelector('.lrow-s').textContent).toMatch(/^Week 1 of \d+ · /)
+    click(line)
+    const { sections } = menuSheet.mock.calls.at(-1)[0]
+    expect(sections[0].items.find(i => i.on).label).toBe('Program')
+    expect(sections[1].items.map(i => i.label)).toEqual(['Change program', 'End program'])
+    expect(sections[1].items[0].sub).toBe('Full body · Muscle · 3 days · 60 min · 10 sets a week per group')
+    expect(menuSheet.mock.calls.at(-1)[0].footnote).toMatch(/^Picking Fixed Week or Rotation ends the program first/)
+    // the page below is the days, with no second copy of the program's card or the program list
+    expect(host.querySelector('[data-program]')).toBe(null)
+    expect(headings()).not.toContain('Switch program')
+    expect(host.querySelector('[data-program-calendar]')).not.toBe(null)
+  })
+})
+
+describe('Plan — a program on the calendar', () => {
+  it('opens on the next workout, a week ring shows that week, and the same ring goes back to the day', () => {
+    mount({ program: newPlanProgram({ template: 'full', days: 3, minutes: 60 }) })
+    const cal = host.querySelector('[data-program-calendar]')
+    expect(cal.querySelector('.pcal-d.sel')).not.toBe(null)
+    expect(host.querySelector('[data-day-panel="next"]')).not.toBe(null)
+    expect(byLabel('Start workout')).toBeTruthy()
+    const ring = cal.querySelector('.pcal-wk')
+    expect(ring.getAttribute('aria-label')).toBe('Week 1')
+    click(ring)
+    const week = host.querySelector('[data-day-panel="week"]')
+    expect(week.querySelector('h3').textContent).toMatch(/^Week 1 · /)
+    expect(week.querySelectorAll('.pweek-days .item').length).toBeGreaterThan(0)
+    expect(cal.querySelectorAll('.pcal-d.inweek').length).toBeGreaterThan(0)
+    click(ring)
+    expect(host.querySelector('[data-day-panel="week"]')).toBe(null)
+    expect(host.querySelector('[data-day-panel="next"]')).not.toBe(null)
+  })
+})
+
 describe('Plan — the loop', () => {
   it('lists the live pass in order with its state, and keeps the weekdays that hold a routine', () => {
     mount({ queue: live({ rotationId: 'r1' }), rotation: saved })
@@ -169,12 +222,30 @@ describe('Plan — the loop', () => {
 
   it('adding a routine offers only the ones not in the loop, and saves the pass', () => {
     mount({ queue: live({ rotationId: 'r1' }), rotation: saved })
-    click(byLabel('Add routine to the rotation'))
-    const items = menuSheet.mock.calls[0][0].items
-    expect(items.map(i => i.label)).toEqual(['C'])
-    act(() => items[0].onClick())
+    const sheet = addToLoop('C')
+    expect(sheet.options()).toEqual(['C'])
+    sheet.add()
     expect(mocks.S.queue.ids).toEqual(['a', 'b', 'c'])
     expect(mocks.S.rotation.sequence).toEqual(['a', 'b', 'c'])
+    expect(useUI.getState().sheets.length).toBe(0)
+  })
+
+  it('Add takes several at once, in the order tapped', () => {
+    mount({ scheduleMode: 'rotation' })
+    const sheet = addToLoop('C', 'A')
+    expect([...sheetHost.querySelectorAll('.plan-order')].map(e => e.textContent)).toEqual(['2', '', '1'])
+    sheet.add()
+    expect(mocks.S.rotation.sequence).toEqual(['c', 'a'])
+  })
+
+  it('a loop row opens its routine, but not while editing', () => {
+    mount({ queue: live({ rotationId: 'r1' }), rotation: saved })
+    click(rows()[1])
+    expect(mocks.nav).toHaveBeenCalledWith('/plan/r/b')
+    mocks.nav.mockClear()
+    click(byLabel('Edit'))
+    click(rows()[1])
+    expect(mocks.nav).not.toHaveBeenCalled()
   })
 
   it('Edit reveals the handles; moving one reorders without restarting the pass', () => {
@@ -215,16 +286,14 @@ describe('Plan — the loop', () => {
     expect(selectedMode()).toBe('Rotation')
     expect(host.textContent).toContain('No rotation yet.')
     // swapping the only routine: add another one back in, same rotation id
-    click(byLabel('Add routine to the rotation'))
-    act(() => menuSheet.mock.calls.at(-1)[0].items.find(i => i.label === 'B').onClick())
+    addToLoop('B').add()
     expect(mocks.S.rotation).toMatchObject({ id: 'r1', sequence: ['b'] })
     expect(mocks.S.queue.ids).toEqual(['b'])
   })
 
   it('a loop built here saves no name of its own, so it follows the language on screen', () => {
     mount({ scheduleMode: 'rotation' })
-    click(byLabel('Add routine to the rotation'))
-    act(() => menuSheet.mock.calls.at(-1)[0].items.find(i => i.label === 'A').onClick())
+    addToLoop('A').add()
     expect(mocks.S.rotation.sequence).toEqual(['a'])
     expect(mocks.S.rotation.label).toBe('')
     expect(mocks.S.queue.label).toBe('')
@@ -261,7 +330,7 @@ describe('Plan — the loop', () => {
 describe('Plan — someone else’s queue, and a broken one', () => {
   it('an externally written pass is locked: no mode control, no edits, adoption behind a confirm', () => {
     mount({ queue: live(), scheduleMode: 'rotation' })   // no rotationId, no rotation
-    expect(modeButtons()).toEqual([])
+    expect(host.querySelector('.plan-mode button')).toBe(null)   // a line of text, nothing to flip
     expect(host.querySelector('.plan-mode').textContent).toContain('Externally managed')
     expect(byLabel('Build a rotation instead')).toBeUndefined()
     expect(byLabel('Edit')).toBeUndefined()
