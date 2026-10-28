@@ -47,7 +47,7 @@ import { musclesOf, weeklyPlanRoutines } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { fatigueOf } from './recovery.js'
-import { weeklyTargetOf, windowWorkouts } from './goals.js'
+import { partTargetOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
 import { muscleRolesOf, roleWeights, rolesLoaded, ROLE_WEIGHT } from './muscle-roles.js'
@@ -241,10 +241,8 @@ export const GROUP_PARTS = {
   back: [['Lats', ['lats']], ['Mid back', ['rhomboids', 'middle-trap']], ['Upper traps', ['upper-trap']]],
   glutes: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']], ['Inner thighs', ['adductors', 'adductor-magnus']]],
 }
-// Each part's minimum, as a share of its group's weekly goal: 4.5 sets of a goal of 15.
-export const PART_SHARE = 0.3
-/** The weekly minimum of each part of `group` (GROUP_PARTS). */
-export const partGoalOf = (S, group) => weeklyTargetOf(S, group) * PART_SHARE
+/** The weekly minimum of a part of `group` (GROUP_PARTS): goals.js partTargetOf. */
+export const partGoalOf = (S, group, part) => partTargetOf(S, group, part)
 // Toward a part's minimum, a set that only helped it counts half what it counts for the group
 // (0.2, not 0.4): a week of presses and rows is no shoulder week, and the side and rear delts
 // get a lift of their own, the front delts an overhead press now and then.
@@ -292,11 +290,11 @@ export function partsShort(S, groups, now = Date.now()) {
   const pastOf = (g, name) => partSets(past[g]?.[name])
   const out = {}
   for (const g of groups) {
-    const goal = partGoalOf(S, g)
     const rows = (GROUP_PARTS[g] || []).map(([name, muscles]) => {
       const { targeted = 0, helped = 0 } = split[g]?.[name] || {}
+      const goal = partGoalOf(S, g, name)
       return { name, muscles, sets: partSets({ targeted, helped }), goal, targeted, helped, past: pastOf(g, name) }
-    }).filter(p => goal > 0 && p.sets < goal).sort((a, b) => a.sets - b.sets || a.past - b.past)
+    }).filter(p => p.goal > 0 && p.sets < p.goal).sort((a, b) => a.sets - b.sets || a.past - b.past)
     if (rows.length) out[g] = rows
   }
   return out

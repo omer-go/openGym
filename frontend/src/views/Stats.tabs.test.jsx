@@ -51,7 +51,7 @@ describe('Stats tabs', () => {
     // four bench sets this week: 4 for chest, 0.4 × 4 for shoulders and triceps
     const bars = host.querySelector('[data-group-sets]')
     const chest = [...bars.querySelectorAll('.cov-g')].find(g => g.textContent.startsWith('Chest'))
-    expect(chest.querySelector('.cov-l b').textContent).toBe('4/10')
+    expect(chest.querySelector('.cov-l b').textContent).toBe('4/14')
   })
 
   it('moves the charts to Progress and the heatmap and recent workouts to Activity', () => {

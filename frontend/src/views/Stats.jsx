@@ -190,16 +190,18 @@ function MuscleBalance({ S }) {
   // trained.
   const own = group && GROUP_PARTS[group.id] && (() => {
     const got = partSplitOf(inWin, undefined, on ? isHardSet : null)[group.id] || {}
-    const goal = partGoalOf(S, group.id)
-    // To the tenth: the minimum is 4.5 sets, and rounded it would read as 5.
+    const goals = Object.fromEntries(GROUP_PARTS[group.id].map(([name]) => [name, partGoalOf(S, group.id, name)]))
+    // To the tenth: a minimum moved with its group's goal can be 4.5 sets, which rounded reads as 5.
     const tenth = v => String(Math.round(v * 10) / 10)
-    if (!goal) return null
+    if (!Object.values(goals).some(g => g > 0)) return null
     return <div className="mparts" data-group-parts={group.id}>
       {GROUP_PARTS[group.id].map(([name]) => {
         const { targeted = 0 } = got[name] || {}
         const sets = partSets(got[name])
         const helped = (got[name]?.helped || 0) * HELPED_PART
-        const pct = Math.min(100, Math.round(sets / goal * 100))
+        // A part with no minimum (the front delts while maintaining) reads full once trained at all
+        const goal = goals[name]
+        const pct = goal ? Math.min(100, Math.round(sets / goal * 100)) : sets > 0 ? 100 : 0
         return <div key={name} data-part={name}>
           <div className="mrow">
             <span className="nm">{t(name)}</span>
@@ -212,7 +214,7 @@ function MuscleBalance({ S }) {
             : targeted > 0 ? t('{0} aimed at it', tenth(targeted)) : t('{0} from helping in other lifts, none aimed at it', tenth(helped))}</div>}
         </div>
       })}
-      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part needs {0} sets a week. A lift aimed at it counts in full, one that only helps it 0.2.', tenth(goal))}</div>
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part has a weekly minimum of its own. A lift aimed at it counts in full, one that only helps it 0.2.')}</div>
     </div>
   })()
   // Bars only: the parts are counted per exercise (a target 1, a helper 0.4) and overlap, so

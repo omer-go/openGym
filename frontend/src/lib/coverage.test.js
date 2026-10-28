@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack, runOrderOf } from './coverage.js'
+import { entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack, runOrderOf } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
 import { groupOfExercise } from './muscle-colors.js'
 import { loadMuscleRoles, muscleRolesOf, roleWeights } from './muscle-roles.js'
+import { weeklyTargetOf } from './goals.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const sets = n => Array.from({ length: n }, () => row())
@@ -13,6 +14,7 @@ const session = (d, ids, s = sets(3)) => ({ id: 'w' + d + ids.join(), d, name: '
 const state = (over = {}) => ({ unit: 'kg', workouts: [], exWeights: {}, routines: [], ...over })
 const at = (y, m, d) => new Date(y, m - 1, d, 12).getTime()
 const NOW = at(2026, 9, 15)
+const CHEST_GOAL = weeklyTargetOf({}, 'chest')   // the muscle goal's 14
 const ALL = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'abs', 'quads', 'hamstrings', 'glutes', 'calves']
 const credit = id => groupCredit(musclesOf(EXIDX[id]))
 const groupsOf = picks => picks.map(p => groupOfExercise(EXIDX[p.id]))
@@ -46,15 +48,15 @@ describe('weeklyNeed', () => {
     expect(done.chest).toBeCloseTo(2 + 1.2) // the press works the upper chest in support
     expect(done.shoulders).toBeCloseTo(0.8 + 3)
   })
-  it('a week of 10 effective sets leaves nothing, rested or not', () => {
-    const tenSets = state({ workouts: [session('2026-09-09', [BENCH]), session('2026-09-10', [BENCH], sets(WEEKLY_TARGET))] })
-    expect(weeklyNeed(tenSets, ['chest'], at(2026, 9, 16)).chest).toBe(0)
+  it('a week of the goal in effective sets leaves nothing, rested or not', () => {
+    const full = state({ workouts: [session('2026-09-09', [BENCH]), session('2026-09-10', [BENCH], sets(CHEST_GOAL))] })
+    expect(weeklyNeed(full, ['chest'], at(2026, 9, 16)).chest).toBe(0)
   })
   it('a group still fatigued needs less than its sets alone say', () => {
     const st = state({ workouts: [session('2026-09-14', [BENCH], sets(4))] })
     const need = weeklyNeed(st, ['chest', 'quads'], NOW)
     expect(need.quads).toBe(1)
-    expect(need.chest).toBeLessThan(1 - 4 / WEEKLY_TARGET)
+    expect(need.chest).toBeLessThan(1 - 4 / CHEST_GOAL)
   })
 })
 
@@ -163,7 +165,7 @@ describe('pickForCoverage, after the week so far', () => {
     expect(groupsOf(picks)).not.toContain('triceps')
   })
   it('the day after a bench session, chest waits for the rested groups', () => {
-    const st = state({ workouts: [session('2026-09-14', [BENCH, DB_BENCH], sets(4))] })
+    const st = state({ workouts: [session('2026-09-14', [BENCH, DB_BENCH], sets(6))] })
     expect(groupsOf(generateWorkout(st, 'full', { now: NOW, count: 6 }))).not.toContain('chest')
   })
   it('the evening after a full body, every group gets one before any gets a second', () => {
@@ -455,10 +457,11 @@ describe('gaps: the part of a group the last two weeks left out', () => {
       expect(muscleRolesOf(shoulders[0].id).target).toContain('rear-delt')
     })
     it('the side delts a press only helped are not trained: after presses and rear flies, a side-delt lift', () => {
-      // 3 sets of presses and a bench press helped the side delts; 2 of rear flies targeted the rear
+      // 3 sets of presses and a bench press helped the side delts; 2 of rear flies targeted the rear.
+      // The front delts are short too (3.6 of 4), but least.
       const st = state({ workouts: [session('2026-10-19', [OHP, BENCH]), session('2026-10-20', ['0378'], sets(2))] })
       const now = at(2026, 10, 22)
-      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt', 'rear-delt'] })
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt', 'rear-delt', 'front-delt'] })
       const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
       expect(muscleRolesOf(shoulders[0].id).target).toContain('side-delt')
     })
@@ -601,7 +604,7 @@ describe('weeklyLack', () => {
   // Counted in, the delts the presses and rows had already given their week still lacked a lift
   // each: 21 shoulder sets of 15.
   it('what is left of the goal; a part short of its minimum adds nothing', () => {
-    const st = state({ workouts: [session('2026-10-19', [OHP], sets(12))] })
+    const st = state({ workouts: [session('2026-10-19', [OHP], sets(12))], goals: { byGroup: { shoulders: 12 } } })
     const now = at(2026, 10, 22)
     expect(partsShort(st, ['shoulders'], now).shoulders.map(p => p.name)).toContain('Side delts')
     expect(weeklyLack(st, ['shoulders'], now)).toEqual({ shoulders: 0 })

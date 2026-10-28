@@ -4,7 +4,7 @@ import { MAX_GEN_COUNT, genDefaults, genScheme, genSets, generateWorkout } from 
 import { EXIDX } from './exercises.js'
 import { USEFUL, entryWeights, groupCredit } from './coverage.js'
 import { loadMuscleRoles } from './muscle-roles.js'
-import { OVERLAP } from './goals.js'
+import { OVERLAP, weeklyTargetOf } from './goals.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -78,18 +78,18 @@ describe('the week of a program', () => {
 describe('sizing a day to the goal', () => {
   it('shares what a group lacks over the days forecast this week that train it', () => {
     const st = state({ program: PPLF, workouts: [session('2026-09-14', 'pull', ['0025'], 4)] })  // 4 chest sets
-    // Push Thu, legs Sat; full falls next Monday. Chest lacks 6, and push is its only day left.
+    // Push Thu, legs Sat; full falls next Monday. Chest lacks 10 of 14, and push is its only day left.
     const share = dayShare(st, 'push', THU)
-    expect(share.chest).toBeCloseTo(6)
+    expect(share.chest).toBeCloseTo(10)
     expect(share.quads).toBeUndefined()
-    // Quads lack all 10, but legs and full share them: 5 each, so legs takes at most 7.5.
-    expect(dayShare(st, 'legs', THU).quads).toBeCloseTo(7.5)
+    // Quads lack all 12, but legs and full share them: 6 each, so legs takes at most 9.
+    expect(dayShare(st, 'legs', THU).quads).toBeCloseTo(9)
   })
   it('never piles the week onto one day: a program started on a Saturday', () => {
     const sat = newProgram('full-3', { weeks: 8, today: '2026-09-19' })
     const st = state({ program: sat, goals: { weeklySets: 15 } })
     const share = dayShare(st, 'full', at(2026, 9, 19))
-    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(15 / 3 + 1e-9)
+    for (const [g, v] of Object.entries(share)) expect(v).toBeLessThanOrEqual(weeklyTargetOf(st, g) / 3 + 1e-9)
     expect(sizeDay(st, 'full', { now: at(2026, 9, 19) })).toBeLessThan(MAX_GEN_COUNT)
   })
   describe('with muscle roles', () => {
@@ -124,7 +124,8 @@ describe('sizing a day to the goal', () => {
     // which its even part caps one exercise later. Each lift counts the sets it takes, extra
     // sets for its group's share too.
     it('fills every group to its share, and ends with the last exercise that adds a set', () => {
-      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 10 },
+      // At 8 the muscle goal's groups add up to about the 100 sets a week this was measured at
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 8 },
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4), session('2026-09-16', 'full', ['0652', '0085'], 3)] })
       const now = at(2026, 9, 18)
       const share = dayShare(st, 'full', now)
@@ -172,8 +173,8 @@ describe('sizing a day to the goal', () => {
   it('a program started this week does not catch up on the days before it', () => {
     const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-17' }), goals: { weeklySets: 15 } })
     const share = dayShare(st, 'full', THU)
-    for (const v of Object.values(share)) expect(v).toBeLessThanOrEqual(5 + 1e-9)
-    expect(share.chest).toBeCloseTo(5)
+    for (const [g, v] of Object.entries(share)) expect(v).toBeLessThanOrEqual(weeklyTargetOf(st, g) / 3 + 1e-9)
+    expect(share.chest).toBeCloseTo(weeklyTargetOf(st, 'chest') / 3)
   })
   it('a higher goal makes a longer day, within bounds', () => {
     const low = sizeDay(state({ program: PPLF, goals: { weeklySets: 6 } }), 'push', { now: THU })

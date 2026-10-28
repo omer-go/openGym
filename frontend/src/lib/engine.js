@@ -8,15 +8,16 @@
 // range climbed by double progression, so a lift takes more weight once every set reaches the top.
 
 // Rep schemes by goal and slot: lo–hi reps, rir = reps left in the tank, rest in seconds.
-// English names, used as i18n keys where they are shown. `base` is the weekly sets a group aims for.
+// English names, used as i18n keys where they are shown. The weekly sets each group aims for are
+// goals.js GOAL_SETS, by the same keys.
 export const SCHEMES = {
-  strength: { n: 'Strength', base: 8, leadSets: 5, slotSets: 3, slotMin: 3, accMin: 2, accMax: 3,
+  strength: { n: 'Strength', leadSets: 5, slotSets: 3, slotMin: 3, accMin: 2, accMax: 3,
     lead: { lo: 3, hi: 5, rir: 2, rest: 240 }, main: { lo: 3, hi: 5, rir: 2, rest: 180 }, acc: { lo: 8, hi: 12, rir: 1, rest: 90 }, small: { lo: 10, hi: 15, rir: 1, rest: 60 } },
-  growth: { n: 'Muscle', base: 10, leadSets: 4, slotSets: 3, slotMin: 3, accMin: 2, accMax: 4,
+  growth: { n: 'Muscle', leadSets: 4, slotSets: 3, slotMin: 3, accMin: 2, accMax: 4,
     lead: { lo: 6, hi: 8, rir: 2, rest: 180 }, main: { lo: 8, hi: 12, rir: 2, rest: 120 }, acc: { lo: 10, hi: 15, rir: 1, rest: 90 }, small: { lo: 12, hi: 20, rir: 1, rest: 60 } },
-  maintain: { n: 'Maintain', base: 6, leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
+  maintain: { n: 'Maintain', leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
     lead: { lo: 6, hi: 8, rir: 3, rest: 180 }, main: { lo: 8, hi: 12, rir: 3, rest: 120 }, acc: { lo: 10, hi: 15, rir: 2, rest: 75 }, small: { lo: 12, hi: 20, rir: 2, rest: 60 } },
-  endurance: { n: 'Endurance', base: 8, leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
+  endurance: { n: 'Endurance', leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
     lead: { lo: 12, hi: 15, rir: 2, rest: 90 }, main: { lo: 15, hi: 20, rir: 1, rest: 60 }, acc: { lo: 15, hi: 25, rir: 1, rest: 45 }, small: { lo: 20, hi: 30, rir: 0, rest: 45 } },
 }
 export const ENGINE_GOAL = 'growth'

@@ -23,7 +23,7 @@
 // full for quads and glutes and 0.4 a set for the hamstrings, calves and abs that help.
 
 import { entryWeights, groupCredit } from './coverage.js'
-import { weeklyTargetOf } from './goals.js'
+import { goalRef, weeklyTargetOf } from './goals.js'
 import { rolesLoaded } from './muscle-roles.js'
 import { SCHEMES } from './engine.js'
 
@@ -153,9 +153,10 @@ function rng(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 }
-// The app's weekly goal for each group (goals.js): the base, two thirds of it for the small
-// groups, or a group's own number.
-const goalsFor = (base, byGroup) => Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { weeklySets: base, byGroup } }, g)]))
+// The app's weekly goal for each group (goals.js): the kind of goal's default scaled by the base,
+// or a group's own number.
+const goalsFor = (type, base, byGroup) =>
+  Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { type, weeklySets: base, byGroup } }, g)]))
 const SHORT = 0.85 // under 85% of the goal counts as short
 
 /** The settings with every default filled in. `base` 'auto' is the goal's own. */
@@ -167,7 +168,7 @@ export function configOf(o = {}) {
     template: PLAN_TEMPLATES[o.template] ? o.template : PLAN_DEFAULTS.template, goal, level,
     equipment: EQUIPMENT[o.equipment] ? o.equipment : PLAN_DEFAULTS.equipment,
     days: o.days || PLAN_DEFAULTS.days, minutes: o.minutes || PLAN_DEFAULTS.minutes,
-    base: o.base > 0 ? o.base : sc.base, seed: o.seed ?? 1,
+    base: o.base > 0 ? o.base : goalRef(goal), seed: o.seed ?? 1,
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
   }
@@ -453,7 +454,7 @@ function balance(cfg, out, goals) {
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
-  const goals = goalsFor(cfg.base, o.byGroup), rand = rng(cfg.seed)
+  const goals = goalsFor(cfg.goal, cfg.base, o.byGroup), rand = rng(cfg.seed)
   const exclude = new Set(o.exclude || [])
   const has = EQUIPMENT[cfg.equipment].has
   const fits = PLAN_LIB.filter(e => has.includes(e.need))

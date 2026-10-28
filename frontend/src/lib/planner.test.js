@@ -56,8 +56,8 @@ describe('planner', () => {
   })
 
   it('reaches the weekly goal of every group when the settings allow it, not just close to it', () => {
-    // 3 × 75 min: fill leaves the quads a set short and no quad lift on the third day; top-up adds one.
-    for (const o of [{ days: 4, minutes: 60 }, { days: 3, minutes: 75 }]) {
+    // The muscle goal's groups add up to 128 sets a week, about 85 lifted: four hours. Strength's fit in three.
+    for (const o of [{ days: 4, minutes: 60 }, { days: 5, minutes: 60 }, { goal: 'strength', days: 3, minutes: 75 }]) {
       const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', ...o })
       expect(p.feasible).toBe(true)
       for (const g of PLAN_GROUPS) expect(p.total[g], `${o.days}d ${g}`).toBeGreaterThanOrEqual(p.goals[g] - 1e-9)

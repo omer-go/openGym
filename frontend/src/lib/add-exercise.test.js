@@ -63,8 +63,9 @@ describe('muscleStatus', () => {
 describe('suggestedGroups', () => {
   it('suggests what the week needs most, secondaries and sets counted', () => {
     const S = state({ workouts: [
-      // ten sets of bench help shoulders and triceps too; a single set of pulldowns is not a week
-      session('2026-10-12', [BENCH, SQUAT], Array.from({ length: 10 }, () => row())),
+      // fourteen sets of bench (the chest's week) help shoulders and triceps too; a single set of
+      // pulldowns is not a week
+      session('2026-10-12', [BENCH, SQUAT], Array.from({ length: 14 }, () => row())),
       session('2026-10-14', [PULLDOWN]),
     ] })
     const top = suggestedGroups(weeklyNeed(S, ALL, NOW), [], 20)
