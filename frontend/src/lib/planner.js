@@ -15,8 +15,8 @@
 //
 // When the days or the minutes can't hold every goal, the groups further down PRIORITY give way
 // (`giveWay`): their goals come down and the week is built again, until the chest, back and legs
-// reach theirs. Their presses and rows give the triceps and biceps some of what they need, while
-// a curl gives the back nothing.
+// reach theirs. Their presses and rows give the shoulders, triceps and biceps some of what they
+// need, while a curl gives the back nothing.
 //
 // Sets and reps come from the goal (SCHEMES), how close to failure from the goal and the level.
 // A setting that leaves a group short of its goal for a reason the settings can fix (the time,
@@ -44,7 +44,7 @@ export const DIRECT_MIN = { chest: 0, back: 0, shoulders: .4, biceps: .5, tricep
 const PART_GROUPS = ['shoulders', 'back']
 // Which groups give way when the week can't hold every goal, the highest number first. A part
 // (the side delts) goes with its group.
-export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, glutes: 1, shoulders: 1, biceps: 2, triceps: 2, abs: 2, calves: 2, forearms: 3 }
+export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, glutes: 1, shoulders: 2, biceps: 2, triceps: 2, abs: 2, calves: 2, forearms: 3 }
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
 
 // Rep schemes by goal and slot live in engine.js (SCHEMES), shared with the one-tap workouts.
@@ -159,7 +159,11 @@ const BY_ID = Object.fromEntries(PLAN_LIB.map(e => [e.id, e]))
 export const planLift = id => BY_ID[id] || null
 const moveOf = e => e.move || e.pat
 // A lift that would make a second of a movement the day already has: a chin-up beside a pulldown.
-const repeats = (items, e) => !!e.move && items.some(i => moveOf(i.ex) === e.move)
+// Or a second lift aimed at the shoulders, a press or a raise, whichever delt: the presses and
+// rows already work them, and the published full-body programs give them one a session or none.
+const ONE_A_DAY = ['shoulders']
+const repeats = (items, e) => (!!e.move && items.some(i => moveOf(i.ex) === e.move))
+  || ONE_A_DAY.some(g => e.p.includes(g) && items.some(i => i.ex.p.includes(g)))
 // A hinge the lower back holds up (coverage.js loadsBack): a deadlift, a romanian.
 const heavyHinge = e => e.pat === 'hinge' && loadsBack(e.id)
 
@@ -368,7 +372,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, we
       const direct = items.filter(i => i.ex.p.includes(g)).length
       const cands = avail.filter(e => e.kind === 'iso' && e.p.includes(g) && fresh(e))
       const blocked = noTime[g] ? 'time' : items.some(i => i.slot === 'accessory' && i.ex.p.includes(g)) ? 'has'
-        : direct >= cfg.maxDirect || (t[g] || 0) >= cfg.sessionCap ? 'caps'
+        : direct >= (ONE_A_DAY.includes(g) ? 1 : cfg.maxDirect) || (t[g] || 0) >= cfg.sessionCap ? 'caps'
         : !cands.length ? 'equipment' : ''
       return { g, gap, need: left ? gap / left : 0, left, blocked, cands, slack: (forDirect ? dTarget : goals[g]) * (1 - SHORT) }
     })
@@ -378,7 +382,8 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, we
       const left = daysLeftFor(p.g), gap = p.goal - hasPart(p.name)
       const cands = avail.filter(e => e.kind === 'iso' && aimsAt(e, p.name) && fresh(e))
       const blocked = noTime[p.name] ? 'time' : items.some(i => i.slot === 'accessory' && aimsAt(i.ex, p.name)) ? 'has'
-        : (t[p.g] || 0) >= cfg.sessionCap ? 'caps' : !cands.length ? 'equipment' : ''
+        : (t[p.g] || 0) >= cfg.sessionCap || (ONE_A_DAY.includes(p.g) && items.some(i => i.ex.p.includes(p.g))) ? 'caps'
+        : !cands.length ? 'equipment' : ''
       scored.push({ g: p.g, part: p.name, gap, need: left ? gap / left : 0, left, blocked, cands, slack: p.goal * (1 - SHORT) })
     }
     scored.sort((a, b) => b.need - a.need)
@@ -397,8 +402,11 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, we
     // A group with parts takes the lift aimed at the part furthest behind: a rear-delt fly when
     // the rear delts lag, a lateral raise when the side delts do.
     const behind = e => Math.max(0, ...parts.filter(p => p.g === pick.g && aimsAt(e, p.name)).map(p => 1 - hasPart(p.name) / p.goal))
-    const top = Math.max(...pick.cands.map(behind))
-    const aimed = pick.cands.filter(e => behind(e) === top)
+    // A day takes one lift for the shoulders, so it goes to the delt furthest behind its minimum,
+    // whichever asked: the side delts would take every day and leave the rear ones none.
+    const cands = ONE_A_DAY.includes(pick.g) ? [...new Set(scored.filter(s => s.g === pick.g && !s.blocked).flatMap(s => s.cands))] : pick.cands
+    const top = Math.max(...cands.map(behind))
+    const aimed = cands.filter(e => behind(e) === top)
     const best = Math.max(...aimed.map(helps))
     const ex = variant(aimed.filter(e => helps(e) === best), week.used, rand)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
@@ -597,12 +605,14 @@ function totalsOf(out) {
 // is far too short for the chest and back anyway, the arms aren't cut for one more row. `yields`
 // is the share of its goal each group that gave way was built for.
 function giveWay(cfg, goals, parts, o, first) {
-  // Sets short of the goal at each PRIORITY, whole sets, a part counted with its group.
+  // Sets short of the goal at each PRIORITY, whole sets, a part counted with its group. A part
+  // within SHORT of its minimum counts as there: a day holds one lift for the shoulders, so the
+  // delts can't always take their last set, and nothing else gives way for it.
   const tiers = Math.max(...Object.values(PRIORITY)) + 1
   const shortBy = out => {
     const { total, partTotal } = totalsOf(out), v = Array(tiers).fill(0)
     for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, goals[g] - (total[g] || 0))
-    for (const p of parts) v[PRIORITY[p.g]] += Math.max(0, p.goal - (partTotal[p.name] || 0))
+    for (const p of parts) if ((partTotal[p.name] || 0) < p.goal * SHORT) v[PRIORITY[p.g]] += p.goal - (partTotal[p.name] || 0)
     return v.map(Math.round)
   }
   const sum = v => v.reduce((n, x) => n + x, 0)

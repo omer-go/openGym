@@ -61,9 +61,9 @@ describe('planner', () => {
     for (const o of [{ days: 4, minutes: 75 }, { days: 5, minutes: 60 }, { goal: 'strength', days: 3, minutes: 75 }]) {
       const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', ...o })
       expect(p.feasible).toBe(true)
-      expect(p.yields).toEqual({})
       for (const g of PLAN_GROUPS) expect(p.total[g], `${o.days}d ${g}`).toBeGreaterThanOrEqual(p.goals[g] - 1e-9)
-      for (const pt of p.parts) expect(pt.total, `${o.days}d ${pt.name}`).toBeGreaterThanOrEqual(pt.goal - 1e-9)
+      // A day holds one lift for the shoulders, so the delts can end a set or so short.
+      for (const pt of p.parts) expect(pt.total, `${o.days}d ${pt.name}`).toBeGreaterThanOrEqual(pt.goal - 1.5)
     }
   })
 
@@ -150,10 +150,10 @@ describe('planner', () => {
     expect(p.short.map(x => x.cause)).toContain('time')
   })
 
-  it('doesn\'t cut the arms for a set or two when the time is far too short for the rest anyway', () => {
+  it('doesn\'t cut the glutes for a set or two when the time is far too short for the rest anyway', () => {
     const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 45 })
-    for (const g of ['shoulders', 'glutes']) expect(p.yields[g] ?? 1, g).toBeGreaterThan(0)
-    expect(p.parts.find(x => x.name === 'Side delts').total).toBeGreaterThan(0)
+    expect(p.yields.glutes ?? 1).toBeGreaterThan(0)
+    expect(p.total.glutes).toBeGreaterThan(0)
   })
 
   it('finds nothing to add when the settings already work', () => {
@@ -174,6 +174,20 @@ describe('planner', () => {
       // The front delts and upper traps aren't planned for: the presses and carries see to them.
       expect(p.parts.map(pt => pt.name).sort()).toEqual(['Lats', 'Mid back', 'Rear delts', 'Side delts'])
     }
+  })
+
+  it('takes one lift for the shoulders a day, a press or a raise, whichever delt it is for', () => {
+    for (const { template, days, p } of weeks()) for (const d of p.days) {
+      const delts = d.items.filter(i => i.ex.p.includes('shoulders'))
+      expect(delts.length, `${template} ${days}d`).toBeLessThanOrEqual(1)
+    }
+    // Over the week both delts get their turn: four days, side and rear raises both.
+    const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 4, minutes: 75 })
+    for (const name of ['Side delts', 'Rear delts']) expect(p.days.some(d => d.items.some(i => partCreditOf(i.ex)[name] >= 1)), name).toBe(true)
+  })
+
+  it('gives the shoulders way with the arms, since the presses and rows already work them', () => {
+    expect(PRIORITY.shoulders).toBe(PRIORITY.biceps)
   })
 
   it('pulls from above once a day: a chin-up for the biceps is a pulldown too', () => {
