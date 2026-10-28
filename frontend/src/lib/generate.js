@@ -114,6 +114,11 @@ const staler = (a, b) => (staleKey(a) < staleKey(b) ? -1 : staleKey(a) > staleKe
 // offered ahead of an ordinary lift for the muscle, only once you have logged or starred it.
 const SKILL = /\bhandstand\b|\bmuscle[- ]up\b|\bplanche\b|\bfront lever\b|\bback lever\b|\bhuman flag\b|\bpistol\b|\barcher\b|\bdragon flag\b|\bone arm (push|pull|chin)/
 export const isSkill = ex => !!ex && SKILL.test(ex.n || '')
+// An olympic lift (a power clean, a snatch pull, a jerk): power for the trained lifter, not the
+// muscle a session is built for, and a technique of its own. It trains so many groups at once that
+// it would lead every day over your squat; a session only takes one you have logged.
+const OLYMPIC = /\b(clean|snatch|jerk)\b(?![- ]grip)/
+export const isOlympic = ex => !!ex && OLYMPIC.test(ex.n || '')
 
 /** The exercises a slot on `slug` may use, in the order they are offered. */
 export function candidatesFor(S, slug, index = trainingIndex(S)) {
@@ -126,10 +131,10 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
     .filter(([id]) => usable(EXIDX[id]) && on(id))
     .sort(([a, x], [b, y]) => staler(x.d, y.d) || y.n - x.n || (a < b ? -1 : 1))
     .map(([id]) => id)
-  const starred = favIds(S).filter(id => usable(EXIDX[id]) && on(id) && !logged.includes(id))
+  const starred = favIds(S).filter(id => usable(EXIDX[id]) && on(id) && !logged.includes(id) && !isOlympic(EXIDX[id]))
   // The staples are listed by hand under the slot they fill: a leg press is a quad staple,
   // whichever muscle the catalogue files it under.
-  const fresh = id => usable(EXIDX[id]) && !logged.includes(id) && !starred.includes(id)
+  const fresh = id => usable(EXIDX[id]) && !logged.includes(id) && !starred.includes(id) && !isOlympic(EXIDX[id])
   const staples = (STAPLES[slug] || []).filter(fresh)
   // The rest of the list only once the staples run short: the session is built from the best
   // few, and a long tail of candidates would let an odd lift outscore them on coverage.
@@ -217,15 +222,20 @@ export function partGaps(S, groups, now = Date.now()) {
   return gaps
 }
 
-/** The lifts of the last strength session before `now`, by id: what a new one goes easy on repeating. */
-export function lastSessionIds(S, now = Date.now()) {
+/**
+ * The lifts of the last `n` strength sessions before `now`, latest first, each by id: what a new
+ * one goes easy on repeating.
+ */
+export function recentSessionIds(S, now = Date.now(), n = 3) {
   const today = isoOf(new Date(now))
   const at = w => w.start || 0
-  const last = strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d <= today && at(w) < now
+  return strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d <= today && at(w) < now
     && Array.isArray(w.entries) && w.entries.length)
-    .reduce((a, w) => (!a || w.d > a.d || (w.d === a.d && at(w) > at(a)) ? w : a), null)
-  return last ? last.entries.map(e => e?.id).filter(id => id != null) : []
+    .sort((a, b) => (a.d < b.d ? 1 : a.d > b.d ? -1 : at(b) - at(a)))
+    .slice(0, n).map(w => w.entries.map(e => e?.id).filter(id => id != null))
 }
+/** The lifts of the last strength session before `now`, by id. */
+export const lastSessionIds = (S, now = Date.now()) => recentSessionIds(S, now, 1)[0] || []
 
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
@@ -246,9 +256,11 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const candidates = slugs.flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
   const spareOnly = slugs.flatMap(slug => spareCandidates(S, slug, spare).map((id, rank) => ({ id, rank: 100 + rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
+  const [recent = [], ...earlier] = recentSessionIds(S, now)
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
-    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly, recent: lastSessionIds(S, now) })
+    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly,
+    recent, earlier: earlier.flat(), known: Object.keys(index.exercises) })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

@@ -494,16 +494,24 @@ const runOrder = (a, b) => b.compound - a.compound
  * leaves out, from `candidates` or `spareOnly` (which nothing else picks from), and the next to
  * the group furthest short of its share.
  */
-// A lift the last session did, picked again: its gain counts a quarter less, a hinge's half. A
-// leg extension every session leaves the other quad lifts unturned, and the same stiff-legged
-// deadlift twice running is the lower back's again before it has come back.
-export const REPEAT = 0.75
-export const REPEAT_HINGE = 0.5
-const repeatOf = (c, recent) => (!recent.has(c.id) ? 1 : c.pattern === 'hinge' ? REPEAT_HINGE : REPEAT)
+// A lift the last session did, picked again: its gain counts 40% less, a hinge's 60%. A leg
+// extension every session leaves the other quad lifts unturned, and the same stiff-legged
+// deadlift twice running is the lower back's again before it has come back. One of the two
+// sessions before that (`earlier`) counts a fifth less: three full-body days a week otherwise
+// swing between the same two lifts for a group, a power clean, a snatch pull, a power clean.
+export const REPEAT = 0.6
+export const REPEAT_HINGE = 0.4
+export const EARLIER = 0.8
+const repeatOf = (c, recent, earlier) => (recent.has(c.id) ? (c.pattern === 'hinge' ? REPEAT_HINGE : REPEAT) : earlier.has(c.id) ? EARLIER : 1)
+// The lower-body compounds a glute lift waits for: a squat or a deadlift gives the glutes their sets.
+const BASE = new Set(['quads', 'hamstrings'])
 
 export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {},
-  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [] }) {
-  const again = new Set(recent)
+  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [], earlier = [], known = null }) {
+  const again = new Set(recent), before = new Set(earlier)
+  const tried = known && new Set(known)
+  // How lately a lift was done: 2 the last session, 1 one of the two before it, else 0.
+  const ageOf = c => (again.has(c.id) ? 2 : before.has(c.id) ? 1 : 0)
   const on = new Set(groups)
   const pool = []
   for (const { id, rank } of candidates) {
@@ -518,7 +526,13 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const anchored = () => !pool.some(anchors) || picks.some(anchors)
   // A leg isolation waits for the day's lower-body compound: the squat gives the glutes their
   // sets, and a hip abduction picked before it is one exercise more than the glutes needed.
-  const waits = c => !c.compound && anchor.includes(c.group) && !anchored()
+  const waits = c => (!c.compound && anchor.includes(c.group) && !anchored()) || glutesWait(c)
+  // A glute lift, even a hip thrust that counts as a compound, waits for the day's squat or
+  // deadlift, and then comes only if the glutes are still short of their share: the squat gave
+  // them theirs, and a hip thrust every day on top only piles more on them.
+  const bases = c => c.compound && BASE.has(c.group)
+  const glutesWait = c => c.group === 'glutes' && anchor.includes('glutes') && pool.some(bases)
+    && (!picks.some(bases) || (!!share && short('glutes') < USEFUL))
   // A small group past its one exercise waits until every other group, rested ones too, is served.
   const full = c => !spill && SMALL.has(c.group) && picks.some(p => p.group === c.group)
   // Sets each group is still short of its share, while the picks go to the shares (`filling`).
@@ -547,7 +561,7 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       const own = fits.filter(c => s.muscles.includes(c.parts[0]))
       if (fits.length) {
         const ranked = fresher((own.length ? own : fits).sort((a, b) => a.rank - b.rank))
-          .sort((a, b) => again.has(a.id) - again.has(b.id))
+          .sort((a, b) => ageOf(a) - ageOf(b))
         credit(ranked[shift % ranked.length])
         continue
       }
@@ -570,11 +584,14 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     }
     const gain = c => {
       const g = filling ? fillOf(c, setsOf(c.id), short) : gainOf(c, covered, cap, weight)
-      return g > 0 ? g * repeatOf(c, again) : g
+      return g > 0 ? g * repeatOf(c, again, before) : g
     }
     const scored = ok.map(c => ({ c, g: gain(c) })).sort((a, b) => b.g - a.g || a.c.rank - b.c.rank)
     // Near the best, the exercise that trains more wins: a squat over a plank.
-    const top = scored.filter(x => within(x.g, scored[0].g, CLOSE)).sort((a, b) => b.c.total - a.c.total)[0]
+    // One done lately loses to the rest first, and one never logged to one you have.
+    const untried = c => (tried && tried.size && !tried.has(c.id) ? 1 : 0)
+    const top = scored.filter(x => within(x.g, scored[0].g, CLOSE))
+      .sort((a, b) => ageOf(a.c) - ageOf(b.c) || untried(a.c) - untried(b.c) || b.c.total - a.c.total)[0]
     // A part the last two weeks left out, and nothing in the session for it yet: its exercise.
     const gap = gaps[top.c.group]
     const fills = c => c.group === top.c.group && c.parts?.some(m => gap.includes(m))
@@ -586,9 +603,13 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     const fillers = fit.filter(x => at(x.c) === Math.min(...fit.map(y => at(y.c))))
     // Among those, the movement the session is short of comes first (a row after a bench press),
     // the staler variation within it.
-    const near = fresher((fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
-      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c))
-      .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks) || again.has(a.id) - again.has(b.id))
+    const alike = (fillers.length ? fillers : scored.filter(({ c, g }) => c.group === top.c.group && c.compound === top.c.compound
+      && (within(g, top.g, NEAR) || distance(c.credit, top.c.credit) <= SAME_SHAPE))).map(x => x.c)
+    // A compound rotates among the ones you have logged: never done is the stalest of all, and a
+    // hack squat would take the smith squat's place every time.
+    const yours = top.c.compound && tried?.has(top.c.id) ? alike.filter(c => tried.has(c.id)) : alike
+    const near = fresher(yours.length ? yours : alike)
+      .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks) || ageOf(a) - ageOf(b))
     credit(near[shift % near.length])
   }
   return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at })).sort((a, b) => runOrder(picks[a.at], picks[b.at]))

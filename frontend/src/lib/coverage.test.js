@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, slotMuscleOf, weeklyLack } from './coverage.js'
+import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -520,7 +520,53 @@ describe('rotation: the last session’s lifts give way', () => {
   })
   it('a hinge gives way more: two deadlift days in a row are hard on the back', () => {
     expect(REPEAT_HINGE).toBeLessThan(REPEAT)
-    expect(REPEAT).toBeLessThan(1)
+    expect(REPEAT).toBeLessThan(EARLIER)
+    expect(EARLIER).toBeLessThan(1)
+  })
+  // Three full-body days a week swung between two lifts for a group: the one the session before
+  // last did came straight back (a power clean, a snatch pull, a power clean).
+  it('the sessions before the last count too: a squat two days back gives way to a front squat', () => {
+    const FRONT = '0042', q = { count: 1, groups: ['quads'], need: { quads: 1 } }
+    const cands = [SQUAT, FRONT].map((id, rank) => ({ id, rank }))
+    expect(pickForCoverage(cands, q)[0].id).toBe(SQUAT)
+    expect(pickForCoverage(cands, { ...q, earlier: [SQUAT] })[0].id).toBe(FRONT)
+  })
+  it('a lift done lately loses a near tie: the dumbbell bench after the barbell one', () => {
+    const ch = { count: 1, groups: ['chest'], need: { chest: 1 } }
+    const cands = [BENCH, DB_BENCH].map((id, rank) => ({ id, rank }))
+    expect(pickForCoverage(cands, ch)[0].id).toBe(BENCH)
+    expect(pickForCoverage(cands, { ...ch, earlier: [BENCH] })[0].id).toBe(DB_BENCH)
+  })
+})
+
+describe('a compound rotates among the ones you have logged', () => {
+  beforeAll(loadMuscleRoles)
+  // Never done is the stalest variation of all: a squat you only starred took the place of the
+  // one you train every time it came round.
+  it('the front squat you train, not the back squat you have never done', () => {
+    const FRONT = '0042', q = { count: 1, groups: ['quads'], need: { quads: 1 } }
+    const cands = [SQUAT, FRONT].map((id, rank) => ({ id, rank }))
+    expect(pickForCoverage(cands, q)[0].id).toBe(SQUAT)
+    expect(pickForCoverage(cands, { ...q, known: [FRONT] })[0].id).toBe(FRONT)
+    expect(pickForCoverage(cands, { ...q, known: [SQUAT] })[0].id).toBe(SQUAT)
+  })
+})
+
+describe('a glute lift waits for the day’s squat', () => {
+  beforeAll(loadMuscleRoles)
+  const HIP_THRUST = '1060', anchor = ['quads', 'hamstrings', 'glutes']
+  const cands = [HIP_THRUST, SQUAT, BENCH].map((id, rank) => ({ id, rank }))
+  const opts = { count: 3, groups: ['glutes', 'quads', 'chest'], need: { quads: 1, glutes: 1, chest: 1 }, anchor }
+  // A hip thrust every day of a full-body week, on top of the squat that had already given the
+  // glutes their sets.
+  it('none once the squat has given the glutes their share', () => {
+    const ids = pickForCoverage(cands, { ...opts, share: { quads: 3, glutes: 2, chest: 3 } }).map(p => p.id)
+    expect(ids).toContain(SQUAT)
+    expect(ids).not.toContain(HIP_THRUST)
+  })
+  it('one when the glutes are still short of it', () => {
+    const ids = pickForCoverage(cands, { ...opts, share: { quads: 3, glutes: 9, chest: 3 } }).map(p => p.id)
+    expect(ids.indexOf(SQUAT)).toBeLessThan(ids.indexOf(HIP_THRUST))
   })
 })
 

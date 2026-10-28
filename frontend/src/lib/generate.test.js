@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, lastSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
 import { liftKind } from './coverage.js'
 import { EXIDX } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -90,6 +90,36 @@ describe('candidatesFor', () => {
   it('tells a skill from a lift', () => {
     expect(isSkill(EXIDX['0471'])).toBe(true)   // handstand push-up
     expect(isSkill(EXIDX['0426'])).toBe(false)  // dumbbell standing overhead press
+  })
+})
+
+describe('olympic lifts', () => {
+  const POWER_CLEAN = '0648', SNATCH_PULL = '0776'
+  // Starred, they led nearly every full-body day: they train so many groups at once that they
+  // outscored the squat and deadlift you actually do.
+  it('a starred one is not offered until you have logged it', () => {
+    const fav = state({ favEx: [POWER_CLEAN, SNATCH_PULL] })
+    const all = st => ['quadriceps', 'hamstring', 'gluteal', 'upper-back', 'trapezius'].flatMap(m => candidatesFor(st, m))
+    expect(all(fav)).not.toContain(POWER_CLEAN)
+    expect(all(fav)).not.toContain(SNATCH_PULL)
+    const done = state({ favEx: [POWER_CLEAN], workouts: [session('2026-09-10', [POWER_CLEAN])] })
+    expect(all(done)).toContain(POWER_CLEAN)
+  })
+  it('tells a clean from a clean-grip front squat', () => {
+    expect(isOlympic(EXIDX[POWER_CLEAN])).toBe(true)
+    expect(isOlympic(EXIDX[SNATCH_PULL])).toBe(true)
+    expect(isOlympic(EXIDX['0029'])).toBe(false)  // barbell clean-grip front squat
+    expect(isOlympic(EXIDX['4862'])).toBe(false)  // barbell standing snatch grip shrug
+  })
+})
+
+describe('recentSessionIds', () => {
+  const NOW = new Date(2026, 8, 16, 12).getTime()
+  it('the last few strength sessions before now, latest first', () => {
+    const st = state({ workouts: [session('2026-09-10', ['0025']), session('2026-09-14', ['0043']), session('2026-09-12', ['0652']),
+      session('2026-09-08', ['0085']), session('2026-09-20', ['0032'])] })
+    expect(recentSessionIds(st, NOW)).toEqual([['0043'], ['0652'], ['0025']])
+    expect(recentSessionIds(st, NOW, 1)).toEqual([['0043']])
   })
 })
 
