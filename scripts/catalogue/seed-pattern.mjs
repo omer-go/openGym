@@ -17,16 +17,19 @@ const DIR = path.join(ROOT, 'catalogue/exercises')
 const dry = process.argv.includes('--dry')
 
 // Each template's movement. A template not named here is an isolation lift: one joint, one group.
+// A dip is filed with the presses in front of the body: like a decline press, it works the chest
+// and triceps, and it does not stand in for an overhead press. An upright row raises the arms to
+// the side, a delt lift, not a pull down from overhead; a high pull from the floor is a clean's pull.
 const MOVEMENT = {
   squat: 'squat, leg-press, hack-squat, sissy-squat, wall-sit, jump, thruster',
   lunge: 'lunge',
   hinge: 'deadlift, hinge, good-morning, hip-thrust, swing, back-extension, reverse-hyper, glute-hyper, ' +
-    'clean, snatch, bell-clean, bell-snatch, muscle-clean, muscle-snatch, power-shrug',
+    'clean, snatch, bell-clean, bell-snatch, muscle-clean, muscle-snatch, power-shrug, high-pull',
   'push-horizontal': 'bench-press, incline-press, decline-press, close-press, squeeze-press, push-up, ' +
-    'feet-up-push-up, close-push-up, knee-push-up, planche-press, planche-hold, chest-pass',
-  'push-vertical': 'overhead-press, angled-press, push-press, pike-press, handstand-hold, dip, bench-dip, triceps-dip',
+    'feet-up-push-up, close-push-up, knee-push-up, planche-press, planche-hold, chest-pass, dip, bench-dip, triceps-dip',
+  'push-vertical': 'overhead-press, angled-press, push-press, pike-press, handstand-hold',
   'pull-horizontal': 'row, wide-row, lat-row, rear-delt-row, face-pull, front-lever',
-  'pull-vertical': 'pulldown, pull-up, muscle-up, climb, upright-row, high-pull',
+  'pull-vertical': 'pulldown, pull-up, muscle-up, climb',
   carry: 'carry, overhead-carry, suitcase-carry, yoke, sled-push',
   core: 'crunch, twist-crunch, side-crunch, sit-up, reverse-crunch, leg-raise, flutter, v-up, hanging-raise, ' +
     'jackknife, mountain-climber, plank, side-plank, reverse-plank, hollow, dead-bug, bird-dog, rollout, ' +
