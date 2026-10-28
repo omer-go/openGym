@@ -13,6 +13,11 @@
 // and last the days are evened out (pass 5, `balance`): an accessory or a set
 // moves from a long day to a short one while no group falls below its goal.
 //
+// When the days or the minutes can't hold every goal, the groups further down PRIORITY give way
+// (`giveWay`): their goals come down and the week is built again, until the chest, back and legs
+// reach theirs. Their presses and rows give the triceps and biceps some of what they need, while
+// a curl gives the back nothing.
+//
 // Sets and reps come from the goal (SCHEMES), how close to failure from the goal and the level.
 // A setting that leaves a group short of its goal for a reason the settings can fix (the time,
 // the accessories a day, the equipment) is not allowed: `blocker` says why, and `fixFor` finds
@@ -37,6 +42,9 @@ const SMALL = ['calves', 'forearms', 'abs']
 export const DIRECT_MIN = { chest: 0, back: 0, shoulders: .4, biceps: .5, triceps: .5, forearms: 0, abs: 0, quads: 0, hamstrings: 0, glutes: 0, calves: 1 }
 // The groups whose parts (coverage.js GROUP_PARTS) have weekly minimums the planner fills.
 const PART_GROUPS = ['shoulders', 'back']
+// Which groups give way when the week can't hold every goal, the highest number first. A part
+// (the side delts) goes with its group.
+export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, glutes: 1, shoulders: 1, biceps: 2, triceps: 2, abs: 2, calves: 2, forearms: 3 }
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
 
 // Rep schemes by goal and slot live in engine.js (SCHEMES), shared with the one-tap workouts.
@@ -408,8 +416,9 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, we
 // too little for an accessory of its own; here one set at a time goes on the lift that counts most
 // for that group, on a day with the minutes for it and below the day's cap for the group. With no
 // such lift, the day with the most time to spare gets an accessory at its fewest sets. A part
-// short of its minimum the same way, on a lift aimed at it.
-function topUp({ cfg, out, goals, parts, week, rand, avail }) {
+// short of its minimum the same way, on a lift aimed at it. `aimed`: only on lifts aimed at the
+// group, so the time a group that gave way (giveWay) gets back doesn't go on a leg curl for the calves.
+function topUp({ cfg, out, goals, parts, week, rand, avail, aimed }) {
   const most = it => (it.slot === 'accessory' ? cfg.accMax : it.slot === 'lead' ? cfg.leadSets : cfg.slotSets)
   const needs = [
     ...PLAN_GROUPS.map(g => ({ key: g, g, goal: goals[g], credit: e => creditOf(e)[g] || 0, least: 0.4, aimed: e => e.p.includes(g) })),
@@ -428,7 +437,7 @@ function topUp({ cfg, out, goals, parts, week, rand, avail }) {
       for (const i of d.items) add(cfg, day, i.ex, i.sets)
       for (const it of d.items) {
         const c = n.credit(it.ex)
-        if (c < n.least || it.sets >= most(it) || (day[g] || 0) + (creditOf(it.ex)[g] || 0) > cfg.sessionCap) continue
+        if (c < n.least || (aimed && !n.aimed(it.ex)) || it.sets >= most(it) || (day[g] || 0) + (creditOf(it.ex)[g] || 0) > cfg.sessionCap) continue
         if (minutesOf(cfg, d.items.map(i => (i === it ? { ...i, sets: i.sets + 1 } : i))) > cfg.minutes) continue
         if (!best || c > best.c) best = { it, c }
       }
@@ -539,12 +548,89 @@ function balance(cfg, out, goals, parts) {
  * `{ type, items: [{ ex, sets, slot, rx }], groups, minutes, sets }`. `exclude`: exercise ids
  * never to pick (the ones skipped in the app), as long as the pattern has another. A group
  * `short` of its goal names its cause: a setting (time, accessories, equipment, caps, template)
- * or the planner's own rounding ('planner'); `feasible` when no setting is to blame.
+ * or the planner's own rounding ('planner'); `feasible` when no setting is to blame. When the
+ * settings can't hold every goal, the groups further down PRIORITY give way (`yields`).
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
-  const goals = goalsFor(cfg.goal, cfg.base, o.byGroup), rand = rng(cfg.seed)
+  const goals = goalsFor(cfg.goal, cfg.base, o.byGroup)
   const parts = partsFor(cfg.goal, cfg.base, o.byGroup)
+  const first = weekOf(cfg, goals, parts, o)
+  const { out, yields } = o.priority === false ? { out: first, yields: {} } : giveWay(cfg, goals, parts, o, first)
+  const { total, direct, partTotal } = totalsOf(out)
+  const why0 = causesOf(first)
+  const short = PLAN_GROUPS.filter(g => (total[g] || 0) < goals[g] * SHORT || (direct[g] || 0) < Math.ceil(DIRECT_MIN[g] * goals[g]) * SHORT).map(g => {
+    // A group that gave way is short for what kept the first week from fitting.
+    const cause = yields[g] != null && why0(g) === 'planner' ? 'time' : yields[g] != null ? why0(g) : causesOf(out)(g)
+    return { g, total: Math.round((total[g] || 0) * 10) / 10, goal: goals[g], cause }
+  })
+  const partsOut = parts.map(p => ({ ...p, total: Math.round((partTotal[p.name] || 0) * 10) / 10 }))
+  return { cfg, goals, parts: partsOut, days: out, total, short, yields, feasible: short.every(x => x.cause === 'planner') }
+}
+
+// What each group is short for in a week: a setting is to blame only if every day that trains the
+// group was stopped by one.
+const causesOf = out => g => {
+  const on = out.filter(d => DAY_TYPES[d.type].groups.includes(g))
+  const why = d => (d.trimmed || d.limit === 'time' ? 'time' : d.limit === 'accessories' ? 'accessories'
+    : d.capped[g] === 'equipment' ? 'equipment' : d.capped[g] ? 'caps' : null)
+  const reasons = on.map(why)
+  return !on.length ? 'template' : reasons.includes(null) ? 'planner'
+    : ['time', 'accessories', 'equipment', 'caps'].find(c => reasons.includes(c))
+}
+
+function totalsOf(out) {
+  const total = {}, direct = {}, partTotal = {}
+  for (const d of out) {
+    for (const [g, v] of Object.entries(d.groups)) total[g] = (total[g] || 0) + v
+    for (const i of d.items) { addParts(partTotal, i.ex, i.sets); for (const g of i.ex.p) direct[g] = (direct[g] || 0) + i.sets }
+  }
+  return { total, direct, partTotal }
+}
+
+// When the week can't reach every goal, the least important groups give way: their goals come
+// down a quarter at a time, the lowest PRIORITY's first and to nothing before the next one's, and
+// the week is built again until every group above them reaches its own, and what time is left
+// goes back to them. A curl's minutes go to a row, which gives the biceps some of what the curl
+// would have. The week whose more important groups come out least short wins, the one that took
+// the least away on a tie, but only for a set above for every two it costs below: when the time
+// is far too short for the chest and back anyway, the arms aren't cut for one more row. `yields`
+// is the share of its goal each group that gave way was built for.
+function giveWay(cfg, goals, parts, o, first) {
+  // Sets short of the goal at each PRIORITY, whole sets, a part counted with its group.
+  const tiers = Math.max(...Object.values(PRIORITY)) + 1
+  const shortBy = out => {
+    const { total, partTotal } = totalsOf(out), v = Array(tiers).fill(0)
+    for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, goals[g] - (total[g] || 0))
+    for (const p of parts) v[PRIORITY[p.g]] += Math.max(0, p.goal - (partTotal[p.name] || 0))
+    return v.map(Math.round)
+  }
+  const sum = v => v.reduce((n, x) => n + x, 0)
+  const better = (a, b, t) => {
+    const k = a.slice(0, t).findIndex((x, i) => x !== b[i])
+    return k >= 0 && a[k] < b[k] && 2 * (sum(b.slice(0, t)) - sum(a.slice(0, t))) >= sum(a.slice(t)) - sum(b.slice(t))
+  }
+  let best = { out: first, yields: {}, by: shortBy(first) }
+  const top = best.by.findIndex(x => x > 0)
+  if (top < 0) return best
+  const scale = {}
+  for (let t = tiers - 1; t > top; t--) {
+    for (const f of [0.75, 0.5, 0.25, 0]) {
+      for (const g of PLAN_GROUPS) if (PRIORITY[g] === t) scale[g] = f
+      const out = weekOf(cfg, { ...goals, ...Object.fromEntries(Object.entries(scale).map(([g, f]) => [g, goals[g] * f])) },
+        parts.map(p => (scale[p.g] != null ? { ...p, goal: p.goal * scale[p.g] } : p)), o, { goals, parts })
+      const by = shortBy(out)
+      if (better(by, best.by, t)) best = { out, yields: { ...scale }, by }
+      if (by.slice(0, t).every(x => !x)) return best
+    }
+  }
+  return best
+}
+
+// Passes 1 to 5 for one set of goals: the days, each with its groups, minutes and sets. `after`:
+// the goals the week was cut down from, which take what time is left (passes 3 to 5 again).
+function weekOf(cfg, goals, parts, o, after) {
+  const rand = rng(cfg.seed)
   const exclude = new Set(o.exclude || [])
   const has = EQUIPMENT[cfg.equipment].has
   const fits = PLAN_LIB.filter(e => has.includes(e.need))
@@ -576,6 +662,14 @@ export function plan(o = {}) {
   topUp({ cfg, out, goals, parts, week, rand, avail })
   trim(cfg, out, goals, parts)
   if (o.balance !== false) balance(cfg, out, goals, parts)
+  if (after) {
+    // Twice: what the first trim takes off makes room for another accessory.
+    for (let n = 0; n < 2; n++) {
+      topUp({ cfg, out, goals: after.goals, parts: after.parts, week, rand, avail, aimed: true })
+      trim(cfg, out, after.goals, after.parts)
+    }
+    if (o.balance !== false) balance(cfg, out, after.goals, after.parts)
+  }
   const order = { lead: 0, lower: 1, push: 2, pull: 3, accessory: 4 }
   for (const d of out) {
     d.groups = {}
@@ -584,28 +678,12 @@ export function plan(o = {}) {
     d.sets = d.items.reduce((s, i) => s + i.sets, 0)
     d.items.sort((a, b) => order[a.slot] - order[b.slot])
   }
-  const total = {}, direct = {}, partTotal = {}
-  for (const d of out) {
-    for (const [g, v] of Object.entries(d.groups)) total[g] = (total[g] || 0) + v
-    for (const i of d.items) { addParts(partTotal, i.ex, i.sets); for (const g of i.ex.p) direct[g] = (direct[g] || 0) + i.sets }
-  }
-  const short = PLAN_GROUPS.filter(g => (total[g] || 0) < goals[g] * SHORT || (direct[g] || 0) < Math.ceil(DIRECT_MIN[g] * goals[g]) * SHORT).map(g => {
-    const on = out.filter(d => DAY_TYPES[d.type].groups.includes(g))
-    // A setting is to blame only if every day that trains the group was stopped by one.
-    const why = d => (d.trimmed || d.limit === 'time' ? 'time' : d.limit === 'accessories' ? 'accessories'
-      : d.capped[g] === 'equipment' ? 'equipment' : d.capped[g] ? 'caps' : null)
-    const reasons = on.map(why)
-    const cause = !on.length ? 'template' : reasons.includes(null) ? 'planner'
-      : ['time', 'accessories', 'equipment', 'caps'].find(c => reasons.includes(c))
-    return { g, total: Math.round((total[g] || 0) * 10) / 10, goal: goals[g], cause }
-  })
-  const partsOut = parts.map(p => ({ ...p, total: Math.round((partTotal[p.name] || 0) * 10) / 10 }))
-  return { cfg, goals, parts: partsOut, days: out, total, short, feasible: short.every(x => x.cause === 'planner') }
+  return out
 }
 
 /** Why the settings `o` can't reach the goal: `[{ g, cause }]` of the groups to blame, empty when they can. */
 export function blocker(o) {
-  return plan({ ...o, balance: false }).short.filter(x => x.cause !== 'planner')
+  return plan({ ...o, balance: false, priority: false }).short.filter(x => x.cause !== 'planner')
 }
 
 /**

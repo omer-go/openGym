@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN } from './planner.js'
+import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
 import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets } from './goals.js'
@@ -61,6 +61,7 @@ describe('planner', () => {
     for (const o of [{ days: 4, minutes: 75 }, { days: 5, minutes: 60 }, { goal: 'strength', days: 3, minutes: 75 }]) {
       const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', ...o })
       expect(p.feasible).toBe(true)
+      expect(p.yields).toEqual({})
       for (const g of PLAN_GROUPS) expect(p.total[g], `${o.days}d ${g}`).toBeGreaterThanOrEqual(p.goals[g] - 1e-9)
       for (const pt of p.parts) expect(pt.total, `${o.days}d ${pt.name}`).toBeGreaterThanOrEqual(pt.goal - 1e-9)
     }
@@ -130,6 +131,29 @@ describe('planner', () => {
     expect(fix.days * fix.minutes).toBeGreaterThan(3 * 45)
     expect(blocker({ ...o, ...fix })).toEqual([])
     expect(fixFor(o, 'days').days).toBe(3)
+  })
+
+  it('cuts the arms, abs and calves, not the chest, back and legs, when the time can\'t hold every goal', () => {
+    const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 75 }
+    const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 1e-9)
+      && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 1e-9)
+    // Built without priorities the week leaves a bigger group short, here the back.
+    expect(atGoal(plan({ ...o, priority: false }), 1)).toBe(false)
+    const p = plan(o)
+    expect(atGoal(p, 1)).toBe(true)
+    for (const s of p.short) expect(PRIORITY[s.g], s.g).toBeGreaterThanOrEqual(2)
+    // They give way, not away: a curl and a pushdown still, half their goal at least.
+    for (const g of Object.keys(p.yields)) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] / 2)
+    for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(75)
+    // Still too little time for the whole goal, and it says so.
+    expect(p.feasible).toBe(false)
+    expect(p.short.map(x => x.cause)).toContain('time')
+  })
+
+  it('doesn\'t cut the arms for a set or two when the time is far too short for the rest anyway', () => {
+    const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 45 })
+    for (const g of ['shoulders', 'glutes']) expect(p.yields[g] ?? 1, g).toBeGreaterThan(0)
+    expect(p.parts.find(x => x.name === 'Side delts').total).toBeGreaterThan(0)
   })
 
   it('finds nothing to add when the settings already work', () => {
