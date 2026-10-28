@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN } from './planner.js'
+import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN } from './planner.js'
 import { EXDB } from './exercises-data.js'
-import { plannedSets } from './coverage.js'
+import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets } from './goals.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 
@@ -56,11 +56,13 @@ describe('planner', () => {
   })
 
   it('reaches the weekly goal of every group when the settings allow it, not just close to it', () => {
-    // The muscle goal's groups add up to 128 sets a week, about 85 lifted: four hours. Strength's fit in three.
-    for (const o of [{ days: 4, minutes: 60 }, { days: 5, minutes: 60 }, { goal: 'strength', days: 3, minutes: 75 }]) {
+    // The muscle goal's groups add up to 128 sets a week, and the side and rear delts want lifts of
+    // their own on top: about five hours. Strength's fit in three.
+    for (const o of [{ days: 4, minutes: 75 }, { days: 5, minutes: 60 }, { goal: 'strength', days: 3, minutes: 75 }]) {
       const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', ...o })
       expect(p.feasible).toBe(true)
       for (const g of PLAN_GROUPS) expect(p.total[g], `${o.days}d ${g}`).toBeGreaterThanOrEqual(p.goals[g] - 1e-9)
+      for (const pt of p.parts) expect(pt.total, `${o.days}d ${pt.name}`).toBeGreaterThanOrEqual(pt.goal - 1e-9)
     }
   })
 
@@ -85,6 +87,7 @@ describe('planner', () => {
         if (i.sets <= least) continue
         const c = Object.entries(creditOf(i.ex))
         const free = c.every(([g, v]) => p.total[g] - v >= p.goals[g]) && i.ex.p.every(g => direct[g] - 1 >= Math.ceil(DIRECT_MIN[g] * p.goals[g]))
+          && p.parts.every(pt => pt.total - (partCreditOf(i.ex)[pt.name] || 0) >= pt.goal)
         expect(free, `${template} ${days}d ${i.ex.id}`).toBe(false)
       }
     }
@@ -94,7 +97,10 @@ describe('planner', () => {
     const p = plan({ template: 'ul', goal: 'strength', days: 5, minutes: 60 })
     const leads = p.days.filter(d => d.type === 'upper').map(d => d.items[0].ex.pat)
     expect(leads).toEqual(['hpress', 'hpull', 'vpress'])
-    for (const g of ['chest', 'shoulders']) expect(p.total[g]).toBeLessThanOrEqual(p.goals[g] * 1.5)
+    expect(p.total.chest).toBeLessThanOrEqual(p.goals.chest * 1.5)
+    // The shoulders' presses, that is: the side and rear delts' own lifts come on top.
+    const own = p.days.flatMap(d => d.items).filter(i => ['Side delts', 'Rear delts'].some(n => partCreditOf(i.ex)[n] >= 1))
+    expect(p.total.shoulders - own.reduce((n, i) => n + i.sets * creditOf(i.ex).shoulders, 0)).toBeLessThanOrEqual(p.goals.shoulders * 1.5)
   })
 
   it('paces the compound slots, so six full-body days don\'t pile up the presses and rows', () => {
@@ -127,8 +133,51 @@ describe('planner', () => {
   })
 
   it('finds nothing to add when the settings already work', () => {
-    const o = { template: 'full', goal: 'growth', days: 4, minutes: 60 }
+    const o = { template: 'full', goal: 'growth', days: 4, minutes: 75 }
     expect(blocker(o)).toEqual([])
-    expect(fixFor(o)).toEqual({ days: 4, minutes: 60 })
+    expect(fixFor(o)).toEqual({ days: 4, minutes: 75 })
+  })
+
+  const weeks = () => ['full', 'ul', 'ppl'].flatMap(template => [3, 4, 5].map(days => ({ template, days, p: plan({ template, goal: 'growth', days, minutes: 75 }) })))
+
+  it('gives the side and rear delts lifts aimed at them, not just the presses\' share', () => {
+    for (const days of [4, 5]) {
+      const p = plan({ template: 'full', goal: 'growth', days, minutes: 75 })
+      for (const name of ['Side delts', 'Rear delts']) {
+        const aimed = p.days.flatMap(d => d.items).filter(i => partCreditOf(i.ex)[name] >= 1)
+        expect(aimed.length, `${days}d ${name}`).toBeGreaterThan(0)
+      }
+      // The front delts and upper traps aren't planned for: the presses and carries see to them.
+      expect(p.parts.map(pt => pt.name).sort()).toEqual(['Lats', 'Mid back', 'Rear delts', 'Side delts'])
+    }
+  })
+
+  it('pulls from above once a day: a chin-up for the biceps is a pulldown too', () => {
+    for (const { template, days, p } of weeks()) for (const d of p.days) {
+      const vpulls = d.items.filter(i => (i.ex.move || i.ex.pat) === 'vpull')
+      expect(vpulls.length, `${template} ${days}d`).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it('loads the lower back once a day at most, and never two days running', () => {
+    for (const { template, days, p } of weeks()) {
+      const heavy = p.days.map(d => d.items.filter(i => i.ex.pat === 'hinge' && loadsBack(i.ex.id)).length)
+      for (const [k, n] of heavy.entries()) {
+        expect(n, `${template} ${days}d day ${k}`).toBeLessThanOrEqual(1)
+        if (k) expect(n && heavy[k - 1], `${template} ${days}d days ${k - 1}-${k}`).toBeFalsy()
+      }
+    }
+  })
+
+  it('meets the calves\' goal with calf raises, not with what a squat lends them', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 4, minutes: 75 })
+    const raised = p.days.flatMap(d => d.items).filter(i => i.ex.p.includes('calves')).reduce((n, i) => n + i.sets, 0)
+    expect(raised).toBeGreaterThanOrEqual(p.goals.calves)
+  })
+
+  it('presses for the chest, not the front delts, once the presses have fed them', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 4, minutes: 75 })
+    const pushes = p.days.map(d => d.items.find(i => i.slot !== 'lead' && ['hpress', 'vpress'].includes(i.ex.pat))?.ex.pat).filter(Boolean)
+    expect(pushes.filter(x => x === 'hpress').length).toBeGreaterThanOrEqual(pushes.filter(x => x === 'vpress').length)
   })
 })
