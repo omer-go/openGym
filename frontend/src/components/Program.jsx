@@ -60,7 +60,7 @@ function dayEstimate(S, type, k) {
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
   if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
   const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
-  const sets = picks.reduce((n, p) => n + (genScheme(p.id, setup)?.sets || 0), 0)
+  const sets = picks.reduce((n, p) => n + (genScheme(p.id, setup, p.slot)?.sets || 0), 0)
   return { count: picks.length, sets, minutes: sessionMinutes(sets) }
 }
 

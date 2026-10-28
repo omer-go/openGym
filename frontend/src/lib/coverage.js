@@ -487,7 +487,8 @@ const runOrder = (a, b) => b.compound - a.compound
  * variantHistory; `shift` walks each choice one further (Shuffle). `rolesOf` gives the muscle
  * roles the parts of a group rotate by. `anchor` is the group ids one compound must come from;
  * `gaps` maps a group id to the target muscles of the parts it is short of, the one furthest short
- * first (generate.js partGaps).
+ * first (generate.js partGaps). `first` is the id of the lift that leads the day: picked before
+ * the rest and run first, when it is among `candidates`.
  * `share` maps a group id to
  * the sets the day should give it (program.js dayShare), `setsOf` an id to the sets it takes:
  * once every group has its exercise, one goes to the first `spare` part (spareParts) the day
@@ -507,7 +508,7 @@ const repeatOf = (c, recent, earlier) => (recent.has(c.id) ? (c.pattern === 'hin
 const BASE = new Set(['quads', 'hamstrings'])
 
 export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {},
-  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [], earlier = [], known = null }) {
+  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [], earlier = [], known = null, first = null }) {
   const again = new Set(recent), before = new Set(earlier)
   const tried = known && new Set(known)
   // How lately a lift was done: 2 the last session, 1 one of the two before it, else 0.
@@ -543,6 +544,9 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
     picks.push(pick)
     for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }
   }
+  // The day's lead (generate.js leadFor) is in before anything else, and runs first.
+  const lead = first != null && pool.find(c => c.id === first)
+  if (lead && count > 0) credit(lead)
   while (picks.length < count) {
     // Once every group has its exercise, one slot goes to the part furthest short of its minimum
     // that no exercise of the day targets (`spare`) and whose group is still short of its share:
@@ -612,7 +616,8 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks) || ageOf(a) - ageOf(b))
     credit(near[shift % near.length])
   }
-  return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at })).sort((a, b) => runOrder(picks[a.at], picks[b.at]))
+  return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at }))
+    .sort((a, b) => (picks[b.at] === lead) - (picks[a.at] === lead) || runOrder(picks[a.at], picks[b.at]))
 }
 
 /**

@@ -22,9 +22,9 @@
 //
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
 // which muscle groups it covers, add a run and stretches, and set the rest and warm-ups of every
-// exercise. Sets and reps go by the kind of lift (GEN_SCHEME) unless the setup sets its own for
+// exercise. Sets and reps go by the lift's slot (GEN_SCHEME, engine.js) unless the setup sets its own for
 // every exercise; generatedEntries builds the session from it.
-import { EXIDX, isCardio } from './exercises.js'
+import { EXIDX, isCardio, patternOf } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
@@ -37,6 +37,7 @@ import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerS
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf } from './format.js'
+import { slotOf, slotScheme, sessionSlots, leadPattern, BLOCK_DAYS } from './engine.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 
@@ -170,14 +171,17 @@ export const genDefaults = type => ({
   byKind: true, sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
 })
 
-// Sets and reps for muscle growth, by the kind of lift (coverage.js liftKind), used unless the
-// setup turns `byKind` off and sets its own for every lift. Growth comes from sets taken close
-// to failure across a wide range of reps; the heavy multi-joint lifts sit at the low end, where
-// the weight builds strength too, and lifts for one muscle higher, where it is kinder to the
-// joints. Calves, forearms and abs take the most.
-export const GEN_SCHEME = { compound: { sets: 3, reps: 8 }, isolation: { sets: 3, reps: 12 }, small: { sets: 3, reps: 15 } }
-/** The sets and reps `setup` gives lift `id`: its kind's (GEN_SCHEME), or the setup's own. */
-export const genScheme = (id, setup) => (setup?.byKind === false ? { sets: setup.sets, reps: setup.reps } : GEN_SCHEME[liftKind(id)])
+// Sets and reps for muscle growth, by the lift's slot in the session (engine.js): the day's first
+// big lift leads at 4 × 6–8, the other big lifts take 3 × 8–12, the lifts for one muscle 3 × 10–15
+// and calves, forearms and abs 2 × 12–20. Used unless the setup turns `byKind` off and sets its
+// own for every lift.
+export const GEN_SCHEME = Object.fromEntries(['lead', 'main', 'acc', 'small'].map(k => [k, slotScheme(k)]))
+/**
+ * What `setup` gives lift `id` in `slot` (engine.js slotOf, by its kind when not given):
+ * `{ sets, lo, hi, rest }`, its slot's (GEN_SCHEME), or the setup's own sets and reps.
+ */
+export const genScheme = (id, setup, slot = slotOf(liftKind(id))) => (setup?.byKind === false
+  ? { sets: setup.sets, lo: setup.reps, hi: setup.reps, rest: 0 } : GEN_SCHEME[slot] || GEN_SCHEME.main)
 export const MAX_GEN_COUNT = 15
 
 // Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
@@ -237,6 +241,55 @@ export function recentSessionIds(S, now = Date.now(), n = 3) {
 /** The lifts of the last strength session before `now`, by id. */
 export const lastSessionIds = (S, now = Date.now()) => recentSessionIds(S, now, 1)[0] || []
 
+const DAY_MS = 864e5
+const dayNo = iso => Math.round(new Date(iso + 'T12:00:00').getTime() / DAY_MS)
+// The lifts of a pattern you know best: two blocks of history before the block began.
+const LEAD_HISTORY = 2 * BLOCK_DAYS
+
+/**
+ * The lift a `type` session leads with on `now`, from the candidates for the ticked `groups`:
+ * the movement it is the day's turn for (engine.js leadPattern), done with the lift of that
+ * movement you logged most in the two blocks before this one began, so it stays the same lift
+ * for the whole block and has time to climb. A running program counts its days and blocks from
+ * its start; without one, the week is the goal's days. Then the lift you logged most before
+ * the block, then the one you have logged most in it so far, then the first candidate. A
+ * movement for a muscle trained yesterday or today, or one you have no lift for, passes the
+ * lead to the next day's. `{ id, pattern }`, or null when no candidate fits.
+ */
+export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex(S)) {
+  const today = isoOf(new Date(now))
+  const p = S?.program
+  const inProgram = !!p?.startedAt && Array.isArray(p.days) && p.days.includes(type) && p.startedAt <= today
+  const n = inProgram ? p.days.filter(t => t === type).length : Math.max(1, S?.goals?.days || 3)
+  const done = strengthWorkouts(S?.workouts || []).filter(w => w?.genType === type && typeof w.d === 'string' && w.d < today
+    && (!inProgram || w.d >= p.startedAt) && Array.isArray(w.entries) && w.entries.length).length
+  const since = dayNo(today) - (inProgram ? dayNo(p.startedAt) : 0)
+  const block = Math.floor(since / BLOCK_DAYS)
+  const start = dayNo(today) - (since % BLOCK_DAYS)
+  const counts = {}, before = {}, inBlock = {}
+  for (const w of strengthWorkouts(S?.workouts || [])) {
+    if (typeof w?.d !== 'string' || w.d >= today) continue
+    for (const e of w.entries || []) {
+      if (!workSets(e)) continue
+      if (dayNo(w.d) >= start) { inBlock[e.id] = (inBlock[e.id] || 0) + 1; continue }
+      before[e.id] = (before[e.id] || 0) + 1
+      if (dayNo(w.d) >= start - LEAD_HISTORY) counts[e.id] = (counts[e.id] || 0) + 1
+    }
+  }
+  const slugs = ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m)
+  const ids = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound')
+  for (let k = 0; k < n; k++) {
+    const pattern = leadPattern(type, done + k, n, block)
+    // Not on a muscle trained yesterday or today: a bench press the day after one waits its turn.
+    const fit = ids.filter(id => patternOf(id) === pattern && !(dayNo(today) - dayNo(index.muscles[slotMuscleOf(EXIDX[id])] || '1970-01-01') <= 1))
+    if (!fit.length) continue
+    const best = fit.map((id, rank) => ({ id, rank })).sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)
+      || (before[b.id] || 0) - (before[a.id] || 0) || (inBlock[b.id] || 0) - (inBlock[a.id] || 0) || a.rank - b.rank)[0]
+    return { id: best.id, pattern }
+  }
+  return null
+}
+
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
  * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
@@ -253,15 +306,22 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
   const spare = share ? spareParts(S, ticked, now) : []
   const slugs = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
+  // A day that leads with a squat or a deadlift has no other hinge: a romanian deadlift after
+  // either is the lower back's third heavy lift of the day.
+  const lead = leadFor(S, type, ticked, now, index)
+  const heavy = lead && (lead.pattern === 'squat' || lead.pattern === 'hinge')
   const candidates = slugs.flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
+    .filter(c => !heavy || c.id === lead.id || patternOf(c.id) !== 'hinge' || liftKind(c.id) !== 'compound')
   const spareOnly = slugs.flatMap(slug => spareCandidates(S, slug, spare).map((id, rank) => ({ id, rank: 100 + rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const [recent = [], ...earlier] = recentSessionIds(S, now)
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
     share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly,
-    recent, earlier: earlier.flat(), known: Object.keys(index.exercises) })
+    recent, earlier: earlier.flat(), known: Object.keys(index.exercises), first: lead?.id })
     .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
+  // The first big lift the session runs leads it (engine.js): the day's lead when it has one.
+  sessionSlots(picks.map(p => liftKind(p.id))).forEach((slot, i) => { picks[i].slot = slot })
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }
@@ -275,16 +335,22 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
  * rest and warm-ups on the exercise's own kind of set (a plank keeps its seconds). The weight is
  * last time's; an exercise's own numbers are set from its name in the workout once it starts.
  */
-export function genConfig(S, id, setup) {
+export function genConfig(S, id, setup, slot) {
   const base = freestyleConfig(S, { id, ...defaultConfig(id) })
   const def = defaultConfig(id, modeOf({ ...base, id }))
   const keep = {}
   for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) keep[k] = base[k]
-  const want = genScheme(id, setup)
+  const want = genScheme(id, setup, slot)
   const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(want.sets) || def.sets) }
-  // The scheme's reps are each arm's or leg's; a per-side count is the total across both.
-  if (cfg.mode === 'reps') cfg.reps = Math.max(1, Math.round(want.reps) * (isPerSide(cfg) ? 2 : 1) || def.reps)
+  // The scheme's reps are each arm's or leg's; a per-side count is the total across both. A range
+  // is climbed by double progression: the top is the target, the bottom where it opens.
+  if (cfg.mode === 'reps') {
+    const per = isPerSide(cfg) ? 2 : 1
+    cfg.reps = Math.max(1, Math.round(want.hi) * per || def.reps)
+    if (want.lo < want.hi) Object.assign(cfg, { repsMin: Math.round(want.lo) * per, prog: 'double' })
+  }
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
+  else if (want.rest > 0) cfg.restSec = want.rest
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true
   return cfg
@@ -324,9 +390,9 @@ export function sessionConfig(S, id, active) {
  * reaches the saved workout.
  */
 export function generatedEntries(S, picks, setup = null) {
-  return picks.map(({ id, muscle, last, kind }) => {
+  return picks.map(({ id, muscle, last, kind, slot }) => {
     const planned = setup && !kind
-    const cfg = planned ? genConfig(S, id, setup) : freestyleConfig(S, { id, ...defaultConfig(id) })
+    const cfg = planned ? genConfig(S, id, setup, slot) : freestyleConfig(S, { id, ...defaultConfig(id) })
     const full = { ...cfg, id }
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
     const opts = planned ? { step, useTarget: true } : { step, preferLast: true }

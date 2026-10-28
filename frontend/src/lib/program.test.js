@@ -248,8 +248,15 @@ describe('planning the days ahead', () => {
     const setup = genDefaults('full')
     const count = sizeDay(st, 'full', { now: MON, groups: setup.groups, setup })
     expect(ids(plan[0])).toEqual(generateWorkout(st, 'full', { ...setup, count, now: MON, share: programShare(st, 'full', MON) }).map(p => p.id))
-    expect(plan[0].sets).toBe(plan[0].entries.length * 3)
+    expect(plan[0].sets).toBe(plan[0].entries.reduce((n, e) => n + e.target.sets, 0))
+    expect(plan[0].entries[0].target).toMatchObject({ sets: 4, repsMin: 6, reps: 8, prog: 'double' })
     expect(plan[0].groups.chest).toBeGreaterThan(0)
+  })
+  it('builds a day still to come on its own date, not today', () => {
+    const sun = at(2026, 9, 20)
+    const ahead = planAhead(st, { days: 1, now: sun })[0]
+    expect(ahead.iso).toBe(plan[0].iso)
+    expect(ids(ahead)).toEqual(ids(plan[0]))
   })
   it('builds each day as if the ones before it were done in full', () => {
     const d = plan[0], t = new Date(d.iso + 'T12:00:00').getTime()

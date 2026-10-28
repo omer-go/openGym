@@ -25,25 +25,16 @@
 import { entryWeights, groupCredit } from './coverage.js'
 import { weeklyTargetOf } from './goals.js'
 import { rolesLoaded } from './muscle-roles.js'
+import { SCHEMES } from './engine.js'
 
+export { SCHEMES }
 export const PLAN_GROUPS = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs', 'quads', 'hamstrings', 'glutes', 'calves']
 const SMALL = ['calves', 'forearms', 'abs']
 // Share of a group's goal that must come from lifts aimed at it.
 export const DIRECT_MIN = { chest: 0, back: 0, shoulders: .4, biceps: .5, triceps: .5, forearms: 0, abs: 0, quads: 0, hamstrings: 0, glutes: 0, calves: 0 }
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
 
-// Rep schemes by goal and slot: lo–hi reps, rir = reps left in the tank, rest in seconds.
-// English names, used as i18n keys where they are shown.
-export const SCHEMES = {
-  strength: { n: 'Strength', base: 8, leadSets: 5, slotSets: 3, slotMin: 3, accMin: 2, accMax: 3,
-    lead: { lo: 3, hi: 5, rir: 2, rest: 240 }, main: { lo: 3, hi: 5, rir: 2, rest: 180 }, acc: { lo: 8, hi: 12, rir: 1, rest: 90 }, small: { lo: 10, hi: 15, rir: 1, rest: 60 } },
-  growth: { n: 'Muscle', base: 10, leadSets: 4, slotSets: 3, slotMin: 3, accMin: 2, accMax: 4,
-    lead: { lo: 6, hi: 8, rir: 2, rest: 180 }, main: { lo: 8, hi: 12, rir: 2, rest: 120 }, acc: { lo: 10, hi: 15, rir: 1, rest: 90 }, small: { lo: 12, hi: 20, rir: 1, rest: 60 } },
-  maintain: { n: 'Maintain', base: 6, leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
-    lead: { lo: 6, hi: 8, rir: 3, rest: 180 }, main: { lo: 8, hi: 12, rir: 3, rest: 120 }, acc: { lo: 10, hi: 15, rir: 2, rest: 75 }, small: { lo: 12, hi: 20, rir: 2, rest: 60 } },
-  endurance: { n: 'Endurance', base: 8, leadSets: 3, slotSets: 3, slotMin: 2, accMin: 2, accMax: 3,
-    lead: { lo: 12, hi: 15, rir: 2, rest: 90 }, main: { lo: 15, hi: 20, rir: 1, rest: 60 }, acc: { lo: 15, hi: 25, rir: 1, rest: 45 }, small: { lo: 20, hi: 30, rir: 0, rest: 45 } },
-}
+// Rep schemes by goal and slot live in engine.js (SCHEMES), shared with the one-tap workouts.
 // Training age: how close to failure, and how many accessories a day.
 export const LEVELS = {
   beginner: { n: 'Beginner', rir: +1, maxAcc: 3 },

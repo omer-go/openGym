@@ -272,7 +272,7 @@ export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const got = {}
   let n = 0
   for (let i = 0; i < picks.length; i++) {
-    const sets = genScheme(picks[i].id, setup).sets || 0
+    const sets = genScheme(picks[i].id, setup, picks[i].slot).sets || 0
     let adds = 0
     for (const [g, c] of Object.entries(groupCredit(entryWeights(picks[i])))) {
       adds += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
@@ -297,7 +297,7 @@ export function evenCount(S, type, picks, share, setup, now) {
   const budget = Object.values(share).reduce((a, b) => a + b, 0) / OVERLAP + EVEN_ROOM
   let sets = 0
   for (let i = 0; i < picks.length; i++) {
-    sets += genScheme(picks[i].id, setup).sets || 0
+    sets += genScheme(picks[i].id, setup, picks[i].slot).sets || 0
     if (sets >= budget) return Math.min(picks.length, i + 1 + extra)
   }
   return picks.length
@@ -341,7 +341,8 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
   for (let k = 0; k < days; k++) {
     const f = programForecast(s, at)[0]
     if (!f) break
-    const t = k ? new Date(f.iso + 'T12:00:00').getTime() : at
+    // Each day is built as it would be on its own day: a squat the day after one waits its turn.
+    const t = Math.max(at, new Date(f.iso + 'T12:00:00').getTime())
     const entries = programDayEntries(s, f, t)
     const work = e => e.sets.filter(x => !isWarmupRow(x))
     const sets = entries.reduce((n, e) => n + work(e).length, 0)

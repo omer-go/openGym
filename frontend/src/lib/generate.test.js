@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig, leadFor, genGroupsOf } from './generate.js'
 import { liftKind } from './coverage.js'
-import { EXIDX } from './exercises.js'
+import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 import { groupOfExercise } from './muscle-colors.js'
 import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
@@ -161,13 +161,42 @@ describe('generateWorkout', () => {
     expect(b).not.toEqual(a)
     expect(new Set(b).size).toBe(b.length)
   })
-  it('a program day rotates its compounds as any one-tap day does', () => {
+  it('a program day leads with the squat you know and rotates the rest as any one-tap day does', () => {
     // a smith squat, a barbell row and an incline dumbbell press last week; a fresh week now
     const st = state({ workouts: [session('2026-09-03', ['0770', '0027', '0314'], sets(3))] })
-    const off = generateWorkout(st, 'full', { now: NOW }).map(p => p.id)
-    const on = generateWorkout({ ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }, 'full', { now: NOW }).map(p => p.id)
-    expect(on).toEqual(off)
-    expect(on).not.toContain('0770')
+    const off = generateWorkout(st, 'full', { now: NOW })
+    const on = generateWorkout({ ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }, 'full', { now: NOW })
+    expect(on.map(p => p.id)).toEqual(off.map(p => p.id))
+    expect(on[0]).toMatchObject({ id: '0770', slot: 'lead' })
+    expect(on.map(p => p.id)).not.toContain('0027')
+  })
+  it('the day leads with its turn’s movement, the lift of it you logged most', () => {
+    const smith = '0770', back = '0032'
+    const st = state({ workouts: [session('2026-08-20', [smith, BENCH], sets(3)), session('2026-08-24', [smith, back], sets(3)), session('2026-08-27', [SQUAT], sets(3))],
+      program: { days: ['full', 'full', 'full'], startedAt: '2026-09-14', weeks: 8 } })
+    expect(leadFor(st, 'full', genGroupsOf('full'), NOW)).toEqual({ id: smith, pattern: 'squat' })
+    // the second full-body session of the week leads with a bench press, the third with a deadlift
+    const one = { ...session('2026-09-14', [OHP], sets(1)), genType: 'full' }
+    expect(leadFor({ ...st, workouts: [...st.workouts, one] }, 'full', genGroupsOf('full'), NOW + 2 * 864e5)).toEqual({ id: BENCH, pattern: 'push-horizontal' })
+    const two = { ...session('2026-09-16', [OHP], sets(1)), genType: 'full' }
+    expect(leadFor({ ...st, workouts: [...st.workouts, one, two] }, 'full', genGroupsOf('full'), NOW + 4 * 864e5)).toEqual({ id: back, pattern: 'hinge' })
+  })
+  it('a lift logged during the block does not take the lead from the one before it', () => {
+    const smith = '0770'
+    const st = state({ workouts: [session('2026-08-20', [smith], sets(3)), ...['2026-09-02', '2026-09-03', '2026-09-04'].map(d => session(d, [SQUAT], sets(3)))] })
+    const p = { days: ['full', 'full', 'full'], startedAt: '2026-08-30', weeks: 8 }
+    expect(leadFor({ ...st, program: p }, 'full', genGroupsOf('full'), NOW).id).toBe(smith)
+  })
+  it('with nothing logged before the block, the lift you log in it leads', () => {
+    const smith = '0770'
+    // the barbell squat is the staler, so it comes first among the candidates
+    const st = state({ workouts: [session('2026-09-02', [SQUAT], sets(3)), session('2026-09-03', [smith], sets(3)), session('2026-09-05', [smith], sets(3))], program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } })
+    expect(leadFor(st, 'full', genGroupsOf('full'), NOW)).toEqual({ id: smith, pattern: 'squat' })
+  })
+  it('a squat or deadlift day takes no other hinge', () => {
+    const picks = generateWorkout(state(), 'full', { count: 10, now: NOW })
+    expect(picks[0].slot).toBe('lead')
+    expect(picks.filter(p => patternOf(p.id) === 'hinge' && liftKind(p.id) === 'compound').length).toBeLessThanOrEqual(patternOf(picks[0].id) === 'hinge' ? 1 : 0)
   })
   it('an unknown type builds nothing', () => {
     expect(generateWorkout(state(), 'arms')).toEqual([])
@@ -235,29 +264,48 @@ describe('workout setup', () => {
   })
 })
 
-describe('sets and reps by the kind of lift', () => {
+describe('sets and reps by the lift’s slot', () => {
   it('knows a compound from an isolation lift and a small group', () => {
     expect([BENCH, SQUAT, OHP].map(liftKind)).toEqual(['compound', 'compound', 'compound'])
     expect([CURL, PUSHDOWN, LEGCURL].map(liftKind)).toEqual(['isolation', 'isolation', 'isolation'])
     expect(liftKind('0605')).toBe('small')  // a calf raise
     expect(liftKind('no-such-id')).toBe('isolation')
   })
-  it('heavy lifts take fewer reps than isolation, the small groups the most', () => {
-    const { compound, isolation, small } = GEN_SCHEME
-    expect(compound.reps).toBeLessThan(isolation.reps)
-    expect(isolation.reps).toBeLessThan(small.reps)
+  it('the lead takes the fewest reps, the small groups the most', () => {
+    const { lead, main, acc, small } = GEN_SCHEME
+    expect(lead.hi).toBeLessThanOrEqual(main.lo)
+    expect(main.hi).toBeLessThan(acc.hi)
+    expect(acc.hi).toBeLessThan(small.hi)
+    expect(lead.sets).toBeGreaterThan(main.sets)
+    expect(small.sets).toBeLessThan(acc.sets)
     // a range that builds muscle when the sets are hard
-    for (const k of [compound, isolation, small]) expect(k.reps >= 6 && k.reps <= 20 && k.sets >= 2 && k.sets <= 4).toBe(true)
+    for (const k of [lead, main, acc, small]) expect(k.lo >= 6 && k.hi <= 20 && k.lo < k.hi && k.sets >= 2 && k.sets <= 4).toBe(true)
   })
-  it('the default setup builds each lift on its kind', () => {
-    const picks = [{ id: SQUAT, muscle: 'quadriceps', last: null }, { id: CURL, muscle: 'biceps', last: null }, { id: '0605', muscle: 'calves', last: null }]
+  it('the default setup builds each lift on its slot, the first big lift leading', () => {
+    const picks = [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }, { id: BENCH, muscle: 'chest', last: null, slot: 'main' },
+      { id: CURL, muscle: 'biceps', last: null, slot: 'acc' }, { id: '0605', muscle: 'calves', last: null, slot: 'small' }]
     const entries = generatedEntries(state(), picks, genDefaults('full'))
-    expect(entries.map(e => [e.target.sets, e.target.reps])).toEqual([[3, 8], [3, 12], [3, 15]])
-    expect(entries[0].sets.filter(s => !isWarmupRow(s)).every(s => s.r === 8)).toBe(true)
+    expect(entries.map(e => [e.target.sets, e.target.repsMin, e.target.reps, e.target.restSec])).toEqual([[4, 6, 8, 180], [3, 8, 12, 120], [3, 10, 15, 90], [2, 12, 20, 60]])
+    expect(entries.every(e => e.target.prog === 'double')).toBe(true)
   })
-  it('a setup saved before the kinds still gets them; turned off, every lift takes its own', () => {
-    expect(genScheme(SQUAT, { sets: 3, reps: 10 })).toEqual(GEN_SCHEME.compound)
-    expect(genScheme(SQUAT, { byKind: false, sets: 5, reps: 5 })).toEqual({ sets: 5, reps: 5 })
+  it('a pick without a slot goes by its kind, never leading', () => {
+    expect(genScheme(SQUAT, { sets: 3, reps: 10 })).toEqual(GEN_SCHEME.main)
+    expect(genScheme(CURL, {})).toEqual(GEN_SCHEME.acc)
+    expect(genScheme('0605', {})).toEqual(GEN_SCHEME.small)
+    expect(genScheme(SQUAT, {}, 'lead')).toEqual(GEN_SCHEME.lead)
+  })
+  it('turned off, every lift takes the setup’s own sets and reps', () => {
+    expect(genScheme(SQUAT, { byKind: false, sets: 5, reps: 5 }, 'lead')).toEqual({ sets: 5, lo: 5, hi: 5, rest: 0 })
+  })
+  it('a setup’s own rest wins over the slot’s', () => {
+    const [e] = generatedEntries(state(), [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], { ...genDefaults('full'), restSec: 20 })
+    expect(e.target.restSec).toBe(20)
+  })
+  it('a session leads with its first big lift, once', () => {
+    const picks = generateWorkout(state(), 'full', { count: 7 })
+    const slots = picks.map(p => p.slot)
+    expect(slots.filter(s => s === 'lead')).toHaveLength(1)
+    expect(slots.indexOf('lead')).toBe(slots.findIndex((s, i) => liftKind(picks[i].id) === 'compound'))
   })
 })
 

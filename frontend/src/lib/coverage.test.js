@@ -293,10 +293,11 @@ describe('the parts of a muscle', () => {
     beforeAll(loadMuscleRoles)
     const targets = p => muscleRolesOf(p.id)?.target || []
     // Picked first; a pull-up may still run first, its helpers counting for more groups.
-    it('after pulldowns, a pull day picks the mid back first', () => {
+    it('after pulldowns, a pull day leads with them and picks the mid back next', () => {
       const st = state({ workouts: [session('2026-09-10', ['2330'])] })
-      const [first] = generateWorkout(st, 'pull', { now: NOW }).sort((a, b) => a.at - b.at)
-      expect(targets(first)).toContain('middle-trap')
+      const [lead, ...rest] = generateWorkout(st, 'pull', { now: NOW }).sort((a, b) => a.at - b.at)
+      expect(lead.id).toBe('2330')
+      expect(targets(rest.find(p => p.muscle === 'upper-back'))).toContain('middle-trap')
     })
     it('a pull day pairs lat work with a row', () => {
       const back = generateWorkout(state(), 'pull', { now: NOW }).filter(p => groupOfExercise(EXIDX[p.id]) === 'back' && p.muscle === 'upper-back')

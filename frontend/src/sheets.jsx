@@ -3088,11 +3088,11 @@ function GenSetup({ type, close }) {
         <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
         <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
       </div>
-      {/* Sets and reps by the kind of lift (GEN_SCHEME), or the same for every one. */}
+      {/* Sets and reps by the lift's slot (GEN_SCHEME), or the same for every one. */}
       <div className="sect-b" style={{ marginBottom: 12 }}>
         <Row icon="dumbbell" iconTint="var(--blue)" title={t('Sets and reps for muscle growth')}
           subtitle={setup.byKind !== false
-            ? t('Big lifts {0}, single-muscle lifts {1}, calves, forearms and abs {2}.', ...['compound', 'isolation', 'small'].map(k => `${GEN_SCHEME[k].sets} × ${GEN_SCHEME[k].reps}`))
+            ? t('Main lift {0}, other big lifts {1}, single-muscle lifts {2}, calves, forearms and abs {3}.', ...['lead', 'main', 'acc', 'small'].map(k => `${GEN_SCHEME[k].sets} × ${GEN_SCHEME[k].lo}–${GEN_SCHEME[k].hi}`))
             : t('Every exercise takes the sets and reps below.')}>
           <Switch checked={setup.byKind !== false} onChange={v => set({ byKind: v })} />
         </Row>
