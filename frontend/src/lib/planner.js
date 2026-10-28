@@ -302,10 +302,12 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
     const lead = leads[k]
     take(lead, 'lead', true)
     take(lead === 'squat' || lead === 'hinge' ? other[lead] : ratio('quads') <= ratio('hamstrings') ? 'squat' : 'hinge', 'lower')
-    // An overhead press feeds the front delts and little else of the shoulders, so it comes in
-    // when they need it; the side and rear delts get lifts of their own (fill). A row feeds the
-    // mid back and the lats, a pulldown the lats.
-    take(lead === 'hpress' || lead === 'vpress' ? other[lead] : ratio('chest') <= partRatio('Front delts', 'shoulders') ? 'hpress' : 'vpress', 'push')
+    // The push slot presses for the chest. An overhead press feeds the front delts and little else
+    // of the shoulders, and the chest presses already feed them, so it isn't added to a day: it
+    // comes only as a lead. A day that leads with a bench press has its press already. The side
+    // and rear delts get lifts of their own (fill). A row feeds the mid back and the lats, a
+    // pulldown the lats.
+    if (lead !== 'hpress') take('hpress', 'push')
     take(lead === 'vpull' || lead === 'hpull' ? other[lead] : partRatio('Mid back', 'back') <= partRatio('Lats', 'back') ? 'hpull' : 'vpull', 'pull')
   } else {
     const lead = leads[k]

@@ -175,9 +175,14 @@ describe('planner', () => {
     expect(raised).toBeGreaterThanOrEqual(p.goals.calves)
   })
 
-  it('presses for the chest, not the front delts, once the presses have fed them', () => {
-    const p = plan({ template: 'full', goal: 'growth', days: 4, minutes: 75 })
-    const pushes = p.days.map(d => d.items.find(i => i.slot !== 'lead' && ['hpress', 'vpress'].includes(i.ex.pat))?.ex.pat).filter(Boolean)
-    expect(pushes.filter(x => x === 'hpress').length).toBeGreaterThanOrEqual(pushes.filter(x => x === 'vpress').length)
+  it('presses for the chest, and overhead only as a lead: the chest presses feed the front delts', () => {
+    for (const days of [3, 4, 5, 6]) {
+      const p = plan({ template: 'full', goal: 'growth', days, minutes: 75 })
+      for (const d of p.days) {
+        const presses = d.items.filter(i => ['hpress', 'vpress'].includes(i.ex.pat) && i.slot !== 'accessory')
+        expect(presses.length, `${days}d`).toBeLessThanOrEqual(1)
+        if (presses[0] && presses[0].slot !== 'lead') expect(presses[0].ex.pat).toBe('hpress')
+      }
+    }
   })
 })
