@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack } from './coverage.js'
+import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack, runOrderOf } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { musclesOf } from './muscles.js'
@@ -148,8 +148,8 @@ describe('pickForCoverage, a fresh week', () => {
     const cands = [{ id: '1412', rank: 0 }, { id: '1372', rank: 1 }, { id: '0757', rank: 2 }, { id: '0241', rank: 3 }]
     const groups = [...ALL, 'forearms']
     const picks = pickForCoverage(cands, { count: 4, groups, need: { ...Object.fromEntries(groups.map(g => [g, 0.5])), forearms: 1 } })
-    // smith incline bench, pushdown, barbell calf raise, wrist curl
-    expect(picks.map(p => p.id)).toEqual(['0757', '0241', '1372', '1412'])
+    // smith incline bench, pushdown, then the small groups by need: wrist curl, barbell calf raise
+    expect(picks.map(p => p.id)).toEqual(['0757', '0241', '1412', '1372'])
   })
 })
 
@@ -244,10 +244,22 @@ describe('variety', () => {
     expect(pick.id).toBe('0314')
   })
   it('a chest dip and a triceps dip are one dip: a session takes one of them', () => {
-    // a push day: both dips first in line, a bench press and a pushdown behind them
-    const cands = [{ id: '0251', rank: 0 }, { id: '0814', rank: 0 }, { id: '0025', rank: 1 }, { id: PUSHDOWN, rank: 1 }]
+    // a push day: both dips first in line, a fly and a pushdown behind them
+    const cands = [{ id: '0251', rank: 0 }, { id: '0814', rank: 0 }, { id: '0308', rank: 1 }, { id: PUSHDOWN, rank: 1 }]
     const ids = pickForCoverage(cands, { count: 3, groups: ['chest', 'shoulders', 'triceps'], need: { chest: 1, shoulders: 1, triceps: 1 } }).map(p => p.id)
     expect(ids.filter(id => id === '0251' || id === '0814')).toHaveLength(1)
+  })
+
+  it('a dip is a press in front of the body: a bench day takes the overhead press, not a dip', () => {
+    expect(patternOf('0251')).toBe('push-horizontal')
+    const cands = [{ id: BENCH, rank: 0 }, { id: '0251', rank: 0 }, { id: OHP, rank: 1 }]
+    const ids = pickForCoverage(cands, { count: 2, first: BENCH, groups: ['chest', 'shoulders', 'triceps'], need: { chest: 1, shoulders: 1, triceps: 1 } }).map(p => p.id)
+    expect(ids).toEqual([BENCH, OHP])
+  })
+
+  it('an upright row or a cuban press is a delt lift, not a pull from overhead; a clean high pull a hinge', () => {
+    expect(['0120', '0299', '0437'].map(patternOf)).toEqual(['isolation', 'isolation', 'isolation'])
+    expect(patternOf('5705')).toBe('hinge')
   })
 })
 
@@ -716,5 +728,40 @@ describe('counting from the muscle roles', () => {
   })
   it('falls back to the catalogue muscles without roles', () => {
     expect(entryWeights({ id: SQUAT }, () => null)).toEqual(musclesOf(EXIDX[SQUAT]))
+  })
+})
+
+describe('runOrderOf', () => {
+  // Made-up lifts: what loads the lower back is what the roles say works the erectors.
+  const lift = (id, group, pattern, compound = true, total = 1) => ({ id, group, pattern, compound, total })
+  const BACK = new Set(['dl', 'rdl', 'gm'])
+  const rolesOf = id => ({ target: BACK.has(id) ? ['erector-spinae'] : ['other'] })
+  const order = (picks, opts = {}) => runOrderOf(picks, { rolesOf, ...opts }).map(c => c.id)
+  const dl = lift('dl', 'hamstrings', 'hinge'), squat = lift('squat', 'quads', 'squat'), rdl = lift('rdl', 'hamstrings', 'hinge')
+  const bench = lift('bench', 'chest', 'push-horizontal'), row = lift('row', 'back', 'pull-horizontal')
+  const ohp = lift('ohp', 'shoulders', 'push-vertical'), pulldown = lift('pulldown', 'back', 'pull-vertical')
+  it('a deadlift lead is followed by an upper lift, not a squat', () => {
+    expect(order([dl, squat, bench], { lead: dl })).toEqual(['dl', 'bench', 'squat'])
+  })
+  it('never runs two lifts the lower back holds up in a row', () => {
+    const ids = order([dl, rdl, squat, bench, row], { lead: dl })
+    const backs = ids.map(id => BACK.has(id))
+    expect(backs.some((b, i) => b && backs[i + 1])).toBe(false)
+  })
+  it('alternates the halves and, among the upper lifts, a pull after a push', () => {
+    expect(order([squat, bench, ohp, row, rdl], { lead: squat })).toEqual(['squat', 'row', 'rdl', 'bench', 'ohp'])
+  })
+  it('which of chest, back and shoulders comes first goes by the week\'s need', () => {
+    expect(order([bench, row, ohp], { need: { chest: 0.9, back: 0.2, shoulders: 0.5 } })).toEqual(['bench', 'row', 'ohp'])
+    expect(order([bench, row, ohp], { need: { chest: 0.2, back: 0.2, shoulders: 0.9 } })).toEqual(['ohp', 'row', 'bench'])
+    expect(order([squat, bench, pulldown], { lead: squat, need: { chest: 0.2, back: 0.9 } })).toEqual(['squat', 'pulldown', 'bench'])
+    expect(order([squat, bench, pulldown], { lead: squat, need: { chest: 0.9, back: 0.2 } })).toEqual(['squat', 'bench', 'pulldown'])
+  })
+  it('isolations after the compounds, a carry after them, calves and forearms, then abs', () => {
+    const carry = lift('carry', 'forearms', 'carry', false), curl = lift('curl', 'biceps', 'isolation', false)
+    const calf = lift('calf', 'calves', 'isolation', false), crunch = lift('crunch', 'abs', 'core', false)
+    const farmer = lift('farmer', 'back', 'carry', false)
+    expect(order([crunch, farmer, calf, curl, row, squat], { lead: squat })).toEqual(['squat', 'row', 'curl', 'farmer', 'calf', 'crunch'])
+    expect(order([carry, curl, squat]).at(-1)).toBe('carry')
   })
 })

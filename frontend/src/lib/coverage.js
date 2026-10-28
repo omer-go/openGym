@@ -489,12 +489,51 @@ const distance = (a, b) => {
   return d
 }
 
-// The order a session runs in: compounds for the big groups first, then the big groups before the
-// small ones, abs last; within a group, the exercise that trains more. Array#sort is stable: what
-// still ties keeps the order it was picked in.
+// A hinge the lower back holds up: a deadlift, a romanian, a good morning, a swing, by the roles
+// (the erectors among what it works), else by the catalogue's "lower back". Not a hip thrust.
+const backOf = (id, rolesOf) => {
+  const roles = rolesOf(id)
+  return roles ? [...(roles.target || []), ...(roles.synergists || [])].includes('erector-spinae')
+    : !!EXIDX[id]?.sm?.includes('lower back')
+}
+export const loadsBack = id => backOf(id, muscleRolesOf)
+
+// The order a session runs in: the lead, then the compounds, then the isolations, a carry once
+// those are done (it leaves the grip and the trunk spent), then calves and forearms, abs last.
+// The compounds take turns: a lower-body lift after an upper one and back, never two the lower
+// back holds up in a row (a squat straight after a deadlift starts on erectors already spent), and
+// among the upper ones a pull after a push. With no lead a leg lift opens (a squat before a
+// deadlift), else the upper group the week needs most. What still ties goes to the group the week
+// needs most, then the bigger group, then the lift that trains more; Array#sort is stable, so the
+// rest keeps the order it was picked in.
 const BIG_FIRST = ['quads', 'glutes', 'hamstrings', 'back', 'chest', 'shoulders', 'triceps', 'biceps', 'calves', 'forearms', 'abs']
-const runOrder = (a, b) => b.compound - a.compound
-  || BIG_FIRST.indexOf(a.group) - BIG_FIRST.indexOf(b.group) || b.total - a.total
+const LOWER = new Set(['quads', 'glutes', 'hamstrings'])
+const stageOf = c => (c.group === 'abs' ? 5 : SMALL.has(c.group) ? 4 : c.pattern === 'carry' ? 3 : c.compound ? 1 : 2)
+const sideOf = c => (c.pattern?.startsWith('push') ? 'push' : c.pattern?.startsWith('pull') ? 'pull' : null)
+export function runOrderOf(picks, { lead = null, need = {}, rolesOf = muscleRolesOf } = {}) {
+  const byNeed = (a, b) => (need[b.group] ?? 0) - (need[a.group] ?? 0)
+    || BIG_FIRST.indexOf(a.group) - BIG_FIRST.indexOf(b.group) || b.total - a.total
+  const rest = picks.filter(c => c !== lead)
+  const order = lead && picks.includes(lead) ? [lead] : []
+  const compounds = rest.filter(c => stageOf(c) === 1).sort(byNeed)
+  while (compounds.length) {
+    const last = order[order.length - 1]
+    const lastUpper = last && [...order].reverse().find(c => c.compound && !LOWER.has(c.group))
+    // Lower is better on each count: the turn of the halves, the lower back, the push or the pull.
+    const cost = c => [+(LOWER.has(c.group) === LOWER.has(last.group)),
+      +(backOf(c.id, rolesOf) && backOf(last.id, rolesOf)),
+      +(!LOWER.has(c.group) && !!lastUpper && !!sideOf(c) && sideOf(c) === sideOf(lastUpper))]
+    // The lower back outweighs the turn of the halves: two upper lifts in a row are no harm.
+    const score = c => { const [half, back, side] = cost(c); return back * 4 + half * 2 + side }
+    const next = last ? compounds.reduce((best, c) => (score(c) < score(best) ? c : best))
+      : compounds.filter(c => LOWER.has(c.group)).sort((a, b) => BIG_FIRST.indexOf(a.group) - BIG_FIRST.indexOf(b.group) || b.total - a.total)[0]
+        || compounds[0]
+    order.push(next)
+    compounds.splice(compounds.indexOf(next), 1)
+  }
+  for (const stage of [2, 3, 4, 5]) order.push(...rest.filter(c => stageOf(c) === stage).sort(byNeed))
+  return order
+}
 
 /**
  * `count` exercises from `candidates` ([{ id, rank }], rank lower = better known) that cover
@@ -657,8 +696,8 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   }
   // A day sized to end on a group's first lift (program.js sizeDay) still gives it the sets.
   if (share) for (let p = roomy(); p; p = roomy()) addSet(p)
-  return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at, extra: setsIn.get(c) - setsOf(c.id, c === lead) }))
-    .sort((a, b) => (picks[b.at] === lead) - (picks[a.at] === lead) || runOrder(picks[a.at], picks[b.at]))
+  return runOrderOf(picks, { lead, need, rolesOf })
+    .map(c => ({ id: c.id, slug: c.slug, group: c.group, at: picks.indexOf(c), extra: setsIn.get(c) - setsOf(c.id, c === lead) }))
 }
 
 /**

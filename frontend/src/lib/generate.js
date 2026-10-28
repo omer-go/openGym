@@ -29,7 +29,8 @@ import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
 import { musclesOf, doneSetItems } from './muscles.js'
 import { partFocus, muscleRolesOf } from './muscle-roles.js'
-import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts, slotMuscleOf } from './coverage.js'
+import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts, slotMuscleOf, loadsBack } from './coverage.js'
+export { loadsBack } from './coverage.js'
 import { suggestable } from './skipped.js'
 import { favIds } from './favourites.js'
 import { POPULAR_IDS, popularBySlug } from './popular.js'
@@ -296,14 +297,6 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
     return { id: best.id, pattern }
   }
   return null
-}
-
-// A hinge the lower back holds up: a deadlift, a romanian, a good morning, a swing, by the roles
-// (the erectors among what it works), else by the catalogue's "lower back". Not a hip thrust.
-export const loadsBack = id => {
-  const roles = muscleRolesOf(id)
-  return roles ? [...(roles.target || []), ...(roles.synergists || [])].includes('erector-spinae')
-    : !!EXIDX[id]?.sm?.includes('lower back')
 }
 
 /**
