@@ -361,7 +361,14 @@ describe('a lift added to or swapped into a one-tap workout', () => {
   })
   it('goes by the kind of lift when the setup does', () => {
     const cfg = sessionConfig(state(), CURL, { gen: { type: 'push', setup: { ...setup, byKind: true } } })
-    expect(cfg).toMatchObject({ ...GEN_SCHEME.isolation, warmupSets: 2 })
+    expect(cfg).toMatchObject({ sets: GEN_SCHEME.acc.sets, reps: GEN_SCHEME.acc.hi, repsMin: GEN_SCHEME.acc.lo, prog: 'double', warmupSets: 2 })
+  })
+  it('a big lift in place of the day\'s lead leads it', () => {
+    const by = { gen: { type: 'push', setup: { ...setup, byKind: true, restSec: 0 } } }
+    expect(sessionConfig(state(), BENCH, by, true)).toMatchObject({ sets: GEN_SCHEME.lead.sets, reps: GEN_SCHEME.lead.hi, repsMin: GEN_SCHEME.lead.lo, restSec: GEN_SCHEME.lead.rest })
+    expect(sessionConfig(state(), BENCH, by)).toMatchObject({ sets: GEN_SCHEME.main.sets, reps: GEN_SCHEME.main.hi })
+    // a curl there is still a curl
+    expect(sessionConfig(state(), CURL, by, true)).toMatchObject({ sets: GEN_SCHEME.acc.sets })
   })
   it('counts a one-legged lift\'s reps on each leg', () => {
     // dumbbell single leg split squat: 6 a leg is 12 in all

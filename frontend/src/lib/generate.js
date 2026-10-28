@@ -370,14 +370,15 @@ export function withSessionRest(cfg, active) {
  * The config of a lift added to a one-tap workout, or swapped into one: built from the workout's
  * setup the way the lifts it picked were (genConfig), so it takes the same sets and reps, rest,
  * warm-ups and last set to failure. Null in any other session, and for cardio and stretches,
- * which a one-tap workout builds the freestyle way too (generatedEntries).
+ * which a one-tap workout builds the freestyle way too (generatedEntries). `lead`: it takes the
+ * place of the day's lead, so a big lift there is set up as one (engine.js slotOf).
  */
-export function sessionConfig(S, id, active) {
+export function sessionConfig(S, id, active, lead = false) {
   const setup = active?.gen?.setup
   if (!setup || id == null) return null
   const ex = EXIDX[id]
   if (ex ? (isCardio(ex) || isStretch(ex)) : modeOf({ id, ...defaultConfig(id) }) === 'cardio') return null
-  return genConfig(S, id, setup)
+  return genConfig(S, id, setup, slotOf(liftKind(id), lead))
 }
 
 /**
@@ -397,6 +398,6 @@ export function generatedEntries(S, picks, setup = null) {
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
     const opts = planned ? { step, useTarget: true } : { step, preferLast: true }
     const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, opts), full, dropGrid(S, full))
-    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last } }
+    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}) } }
   })
 }
