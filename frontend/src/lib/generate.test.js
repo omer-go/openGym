@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig, leadFor, genGroupsOf } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack } from './generate.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -198,6 +198,22 @@ describe('generateWorkout', () => {
     expect(picks[0].slot).toBe('lead')
     expect(picks.filter(p => patternOf(p.id) === 'hinge' && liftKind(p.id) === 'compound').length).toBeLessThanOrEqual(patternOf(picks[0].id) === 'hinge' ? 1 : 0)
   })
+  // Two days of nine led with the bench press and took a trap bar or barbell deadlift too.
+  it('a bench press day takes no deadlift, the hip thrust still can', async () => {
+    await loadMuscleRoles()
+    const smith = '0770', back = '0032'
+    const st = state({ workouts: [session('2026-08-20', [smith, BENCH], sets(3)), session('2026-08-24', [smith, back], sets(3)), session('2026-08-27', [SQUAT], sets(3)),
+      { ...session('2026-09-14', [OHP], sets(1)), genType: 'full' }], program: { days: ['full', 'full', 'full'], startedAt: '2026-09-14', weeks: 8 } })
+    const picks = generateWorkout(st, 'full', { count: 15, now: NOW + 2 * 864e5 })
+    expect(picks[0]).toMatchObject({ id: BENCH, slot: 'lead' })
+    expect(picks.filter(p => patternOf(p.id) === 'hinge' && liftKind(p.id) === 'compound' && loadsBack(p.id))).toEqual([])
+  })
+  it('knows a hinge the lower back holds up from a hip thrust', async () => {
+    await loadMuscleRoles()
+    // barbell deadlift, trap bar deadlift, romanian deadlift, kettlebell swing; hip thrust, glute bridge
+    expect(['0032', '0811', '0085', '0549'].every(loadsBack)).toBe(true)
+    expect(['1060', '1409'].some(loadsBack)).toBe(false)
+  })
   it('an unknown type builds nothing', () => {
     expect(generateWorkout(state(), 'arms')).toEqual([])
   })
@@ -271,6 +287,16 @@ describe('sets and reps by the lift’s slot', () => {
     expect(liftKind('0605')).toBe('small')  // a calf raise
     expect(liftKind('no-such-id')).toBe('isolation')
   })
+  // The catalogue credits each of these to three groups, so they led days and took a lead's sets.
+  it('goes by the movement: a leg curl, a pulldown with straight arms, a low fly and a carry are no compounds', () => {
+    // lever standing leg curl, cable straight arm pulldown, dumbbell low fly, farmers walk
+    expect(['4347', '0238', '3911', '2133'].map(liftKind)).toEqual(['isolation', 'isolation', 'isolation', 'isolation'])
+  })
+  it('a pull for the shoulders is their accessory, a row for the back still a compound', () => {
+    // dumbbell cuban press, barbell rear delt row, barbell upright row
+    expect(['0299', '0076', '0120'].map(liftKind)).toEqual(['isolation', 'isolation', 'isolation'])
+    expect(['0027', '0652'].map(liftKind)).toEqual(['compound', 'compound'])  // a barbell row, a pull-up
+  })
   it('the lead takes the fewest reps, the small groups the most', () => {
     const { lead, main, acc, small } = GEN_SCHEME
     expect(lead.hi).toBeLessThanOrEqual(main.lo)
@@ -324,6 +350,14 @@ describe('generatedEntries with a setup', () => {
     const pick = [{ id: BENCH, muscle: 'chest', last: '2026-09-01' }]
     expect(generatedEntries(st, pick, setup)[0].sets.filter(s => !isWarmupRow(s)).map(s => [s.w, s.r])).toEqual([[70, 8], [70, 8], [70, 8], [70, 8]])
   })
+  it('a lift given extra sets for its group\'s share takes them, and keeps them in its record', () => {
+    const by = { ...setup, byKind: true }
+    const [e] = generatedEntries(state(), [{ id: BENCH, muscle: 'chest', last: null, slot: 'main', extra: 2 }], by)
+    expect(e.target.sets).toBe(GEN_SCHEME.main.sets + 2)
+    expect(e.gen.more).toBe(2)
+    // never past five
+    expect(generatedEntries(state(), [{ id: BENCH, muscle: 'chest', last: null, slot: 'lead', extra: 2 }], by)[0].target.sets).toBe(5)
+  })
   it('a hold keeps its seconds and takes the sets', () => {
     // a front plank: the catalogue files it as a hold, so it is timed (history.js defaultConfig)
     const [e] = generatedEntries(state(), [{ id: '0463', muscle: 'abs', last: null }], setup)
@@ -369,6 +403,10 @@ describe('a lift added to or swapped into a one-tap workout', () => {
     expect(sessionConfig(state(), BENCH, by)).toMatchObject({ sets: GEN_SCHEME.main.sets, reps: GEN_SCHEME.main.hi })
     // a curl there is still a curl
     expect(sessionConfig(state(), CURL, by, true)).toMatchObject({ sets: GEN_SCHEME.acc.sets })
+  })
+  it('a swap takes the extra sets the lift it replaces had', () => {
+    const by = { gen: { type: 'push', setup: { ...setup, byKind: true } } }
+    expect(sessionConfig(state(), CURL, by, false, 2)).toMatchObject({ sets: GEN_SCHEME.acc.sets + 2 })
   })
   it('counts a one-legged lift\'s reps on each leg', () => {
     // dumbbell single leg split squat: 6 a leg is 12 in all

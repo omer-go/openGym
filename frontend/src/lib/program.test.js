@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, evenCount, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, genDefaults, genScheme, generateWorkout } from './generate.js'
+import { MAX_GEN_COUNT, genDefaults, genScheme, genSets, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { USEFUL, entryWeights, groupCredit } from './coverage.js'
 import { loadMuscleRoles } from './muscle-roles.js'
@@ -121,7 +121,8 @@ describe('sizing a day to the goal', () => {
     })
     // Each group to its own share, not 85% of the sum: that stopped a day at six with back,
     // biceps and hamstrings each a set or more short, chest over. On the week's last program day,
-    // which its even part caps one exercise later.
+    // which its even part caps one exercise later. Each lift counts the sets it takes, extra
+    // sets for its group's share too.
     it('fills every group to its share, and ends with the last exercise that adds a set', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 10 },
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4), session('2026-09-16', 'full', ['0652', '0085'], 3)] })
@@ -133,8 +134,9 @@ describe('sizing a day to the goal', () => {
       for (const p of picks) {
         let add = 0
         for (const [g, c] of Object.entries(groupCredit(entryWeights(p)))) {
-          add += Math.min(c * 3, Math.max(0, (share[g] || 0) - (got[g] || 0)))
-          got[g] = (got[g] || 0) + c * 3
+          const sets = genSets(p.id, undefined, p.slot, p.extra)
+          add += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
+          got[g] = (got[g] || 0) + c * sets
         }
         adds.push(add)
         if (adds.length === n) for (const [g, v] of Object.entries(share)) expect(got[g] || 0, g).toBeGreaterThan(v - USEFUL)

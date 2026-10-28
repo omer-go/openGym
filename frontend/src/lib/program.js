@@ -18,7 +18,7 @@
 // takes as many exercises as reach its share. The picks are greedy (coverage.js pickForCoverage), so the first
 // n of a long run are about what a run of n would pick.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genScheme, generateWorkout, generatedEntries } from './generate.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genSets, generateWorkout, generatedEntries } from './generate.js'
 import { USEFUL, entryWeights, groupCredit, plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { OVERLAP, sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
@@ -272,7 +272,7 @@ export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const got = {}
   let n = 0
   for (let i = 0; i < picks.length; i++) {
-    const sets = genScheme(picks[i].id, setup, picks[i].slot).sets || 0
+    const sets = genSets(picks[i].id, setup, picks[i].slot, picks[i].extra)
     let adds = 0
     for (const [g, c] of Object.entries(groupCredit(entryWeights(picks[i])))) {
       adds += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
@@ -297,7 +297,7 @@ export function evenCount(S, type, picks, share, setup, now) {
   const budget = Object.values(share).reduce((a, b) => a + b, 0) / OVERLAP + EVEN_ROOM
   let sets = 0
   for (let i = 0; i < picks.length; i++) {
-    sets += genScheme(picks[i].id, setup, picks[i].slot).sets || 0
+    sets += genSets(picks[i].id, setup, picks[i].slot, picks[i].extra)
     if (sets >= budget) return Math.min(picks.length, i + 1 + extra)
   }
   return picks.length

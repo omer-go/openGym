@@ -4,7 +4,7 @@ import { useUI } from '../store/useUI.js'
 import { t, tn, dateLocale, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { DAYS, fmtDate, fmtDateRange, fmtDur, fmtNum, isoOf, todayISO, weekOrder, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { genDefaults, genScheme, generateWorkout } from '../lib/generate.js'
+import { genDefaults, genSets, generateWorkout } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
   GOAL_PRESETS, MAX_GOAL, MIN_GOAL, baseGoalOf, defaultTargetFor, goalEstimate, goalGroups,
@@ -60,7 +60,7 @@ function dayEstimate(S, type, k) {
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
   if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
   const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
-  const sets = picks.reduce((n, p) => n + (genScheme(p.id, setup, p.slot)?.sets || 0), 0)
+  const sets = picks.reduce((n, p) => n + genSets(p.id, setup, p.slot, p.extra), 0)
   return { count: picks.length, sets, minutes: sessionMinutes(sets) }
 }
 

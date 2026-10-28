@@ -25,6 +25,13 @@ export const ENGINE_GOAL = 'growth'
 // exercise for muscles the big lifts already worked.
 const SLOT_SETS = { lead: sc => sc.leadSets, main: sc => sc.slotSets, acc: sc => Math.min(sc.accMax, sc.accMin + 1), small: sc => sc.accMin }
 
+// A lift may take sets past its slot's to give its group the day's share: two more at most, and
+// never past five. A group's second exercise comes only once its first has them all: a fourth
+// and fifth set of the bench, not a push-up after it.
+export const MAX_SETS = 5
+export const EXTRA_SETS = 2
+export const roomOf = sets => Math.max(sets, Math.min(MAX_SETS, sets + EXTRA_SETS))
+
 // Imports nothing: coverage.js, generate.js and planner.js all read it at load.
 
 /**

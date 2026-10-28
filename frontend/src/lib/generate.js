@@ -37,7 +37,7 @@ import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerS
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf } from './format.js'
-import { slotOf, slotScheme, sessionSlots, leadPattern, BLOCK_DAYS } from './engine.js'
+import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, BLOCK_DAYS } from './engine.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 
@@ -182,6 +182,14 @@ export const GEN_SCHEME = Object.fromEntries(['lead', 'main', 'acc', 'small'].ma
  */
 export const genScheme = (id, setup, slot = slotOf(liftKind(id))) => (setup?.byKind === false
   ? { sets: setup.sets, lo: setup.reps, hi: setup.reps, rest: 0 } : GEN_SCHEME[slot] || GEN_SCHEME.main)
+/**
+ * The sets lift `id` in `slot` takes from `setup` (genScheme), with the `extra` a program day gave
+ * it for its group's share (coverage.js pickForCoverage), never past engine.js roomOf.
+ */
+export const genSets = (id, setup, slot, extra = 0) => {
+  const n = genScheme(id, setup, slot).sets || 0
+  return Math.min(roomOf(n), n + (extra || 0))
+}
 export const MAX_GEN_COUNT = 15
 
 // Cardio you have logged comes back first, most recent first (a run is a habit, not a rotation);
@@ -290,6 +298,14 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
   return null
 }
 
+// A hinge the lower back holds up: a deadlift, a romanian, a good morning, a swing, by the roles
+// (the erectors among what it works), else by the catalogue's "lower back". Not a hip thrust.
+export const loadsBack = id => {
+  const roles = muscleRolesOf(id)
+  return roles ? [...(roles.target || []), ...(roles.synergists || [])].includes('erector-spinae')
+    : !!EXIDX[id]?.sm?.includes('lower back')
+}
+
 /**
  * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
  * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
@@ -307,19 +323,25 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const spare = share ? spareParts(S, ticked, now) : []
   const slugs = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
   // A day that leads with a squat or a deadlift has no other hinge: a romanian deadlift after
-  // either is the lower back's third heavy lift of the day.
+  // either is the lower back's third heavy lift of the day. One that leads with an upper-body lift
+  // has no deadlift either: the week's hinge day has it, and a trap bar deadlift after the bench
+  // press is the lower back's second heavy day of three. A hip thrust gives the glutes theirs.
   const lead = leadFor(S, type, ticked, now, index)
   const heavy = lead && (lead.pattern === 'squat' || lead.pattern === 'hinge')
+  const hinge = id => patternOf(id) === 'hinge' && liftKind(id) === 'compound'
   const candidates = slugs.flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
-    .filter(c => !heavy || c.id === lead.id || patternOf(c.id) !== 'hinge' || liftKind(c.id) !== 'compound')
+    .filter(c => !lead || c.id === lead.id || !(heavy ? hinge(c.id) : hinge(c.id) && loadsBack(c.id)))
   const spareOnly = slugs.flatMap(slug => spareCandidates(S, slug, spare).map((id, rank) => ({ id, rank: 100 + rank })))
   const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
   const [recent = [], ...earlier] = recentSessionIds(S, now)
+  // A setup with its own sets for every lift keeps to them; the engine's scheme may go past its
+  // slot's to give a group its share (engine.js roomOf).
+  const setsOf = (id, first) => genScheme(id, { byKind, sets }, slotOf(liftKind(id), first)).sets || 0
   const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
     anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
-    share, setsOf: id => genScheme(id, { byKind, sets }).sets || 0, spare, spareOnly,
+    share, setsOf, roomOf: byKind === false ? setsOf : (id, first) => roomOf(setsOf(id, first)), spare, spareOnly,
     recent, earlier: earlier.flat(), known: Object.keys(index.exercises), first: lead?.id })
-    .map(({ id, slug, at }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at }))
+    .map(({ id, slug, at, extra }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at, ...(extra > 0 ? { extra } : {}) }))
   // The first big lift the session runs leads it (engine.js): the day's lead when it has one.
   sessionSlots(picks.map(p => liftKind(p.id))).forEach((slot, i) => { picks[i].slot = slot })
   const pickFrom = (list, k, kind) => {
@@ -335,13 +357,13 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
  * rest and warm-ups on the exercise's own kind of set (a plank keeps its seconds). The weight is
  * last time's; an exercise's own numbers are set from its name in the workout once it starts.
  */
-export function genConfig(S, id, setup, slot) {
+export function genConfig(S, id, setup, slot, extra = 0) {
   const base = freestyleConfig(S, { id, ...defaultConfig(id) })
   const def = defaultConfig(id, modeOf({ ...base, id }))
   const keep = {}
   for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) keep[k] = base[k]
   const want = genScheme(id, setup, slot)
-  const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(want.sets) || def.sets) }
+  const cfg = { ...def, ...keep, sets: Math.max(1, Math.round(genSets(id, setup, slot, extra)) || def.sets) }
   // The scheme's reps are each arm's or leg's; a per-side count is the total across both. A range
   // is climbed by double progression: the top is the target, the bottom where it opens.
   if (cfg.mode === 'reps') {
@@ -371,14 +393,15 @@ export function withSessionRest(cfg, active) {
  * setup the way the lifts it picked were (genConfig), so it takes the same sets and reps, rest,
  * warm-ups and last set to failure. Null in any other session, and for cardio and stretches,
  * which a one-tap workout builds the freestyle way too (generatedEntries). `lead`: it takes the
- * place of the day's lead, so a big lift there is set up as one (engine.js slotOf).
+ * place of the day's lead, so a big lift there is set up as one (engine.js slotOf); `extra`: the
+ * sets past its slot's the lift it replaces had for its group's share, which it takes too.
  */
-export function sessionConfig(S, id, active, lead = false) {
+export function sessionConfig(S, id, active, lead = false, extra = 0) {
   const setup = active?.gen?.setup
   if (!setup || id == null) return null
   const ex = EXIDX[id]
   if (ex ? (isCardio(ex) || isStretch(ex)) : modeOf({ id, ...defaultConfig(id) }) === 'cardio') return null
-  return genConfig(S, id, setup, slotOf(liftKind(id), lead))
+  return genConfig(S, id, setup, slotOf(liftKind(id), lead), extra)
 }
 
 /**
@@ -391,13 +414,13 @@ export function sessionConfig(S, id, active, lead = false) {
  * reaches the saved workout.
  */
 export function generatedEntries(S, picks, setup = null) {
-  return picks.map(({ id, muscle, last, kind, slot }) => {
+  return picks.map(({ id, muscle, last, kind, slot, extra }) => {
     const planned = setup && !kind
-    const cfg = planned ? genConfig(S, id, setup, slot) : freestyleConfig(S, { id, ...defaultConfig(id) })
+    const cfg = planned ? genConfig(S, id, setup, slot, extra) : freestyleConfig(S, { id, ...defaultConfig(id) })
     const full = { ...cfg, id }
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
     const opts = planned ? { step, useTarget: true } : { step, preferLast: true }
     const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, opts), full, dropGrid(S, full))
-    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}) } }
+    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) } }
   })
 }

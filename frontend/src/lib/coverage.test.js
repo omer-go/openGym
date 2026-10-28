@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { WEEKLY_TARGET, entryWeights, groupCredit, groupSetsOf, groupSetsPerWeek, groupSplitOf, groupSplitPerWeek, roundSplit, groupSetsOfWeeklyPlan, plannedSets, weeklyDone, weeklyNeed, variantHistory, pickForCoverage, rankForGaps, partsShort, spareParts, partSets, HELPED_PART, REPEAT, REPEAT_HINGE, EARLIER, slotMuscleOf, weeklyLack } from './coverage.js'
 import { generateWorkout, partGaps } from './generate.js'
-import { EXIDX } from './exercises.js'
+import { EXIDX, patternOf } from './exercises.js'
 import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
 import { groupOfExercise } from './muscle-colors.js'
@@ -600,11 +600,38 @@ describe('filling a share', () => {
   beforeAll(loadMuscleRoles)
   // Shrugs credit the back a quarter a set: three of them are no back exercise, and a back short
   // of its share after a row gets nothing from them but a slot the biceps needed.
-  it('takes a lift that gives its own group a set or more: a second curl, not shrugs for the back', () => {
+  // Two curls were one movement twice; the first now takes the sets the second would have.
+  it('gives a lift its room before a second of the same movement: two more sets of the curl, no second curl', () => {
     const cands = ['0027', SHRUG, '0031', '0294'].map((id, rank) => ({ id, rank }))
     const picks = pickForCoverage(cands, { count: 3, groups: ['back', 'biceps'], need: { back: 1, biceps: 1 },
-      share: { back: 6, biceps: 6 }, gaps: { back: ['upper-trap'] } })
-    expect(picks.map(p => p.id)).not.toContain(SHRUG)
+      share: { back: 8, biceps: 8 }, gaps: { back: ['upper-trap'] }, roomOf: () => 5 })
+    expect(picks.map(p => p.id)).not.toContain('0294')
+    expect(picks.find(p => p.id === '0031').extra).toBe(2)
+    expect(picks.find(p => p.id === '0027').extra).toBe(2)
+  })
+  // A day of the program took a smith squat and a hack squat, a barbell row and a cable row: the
+  // same movement on another tool, when the first could take more sets.
+  it('never takes a second compound of the same movement: one squat, one row', () => {
+    const squats = [SQUAT, '0770', '0743', '0586'].map((id, rank) => ({ id, rank }))
+    const legs = pickForCoverage(squats, { count: 3, groups: ['quads', 'hamstrings'], need: { quads: 1, hamstrings: 1 },
+      share: { quads: 10, hamstrings: 3 }, first: SQUAT })
+    expect(legs.filter(p => patternOf(EXIDX[p.id]) === 'squat')).toHaveLength(1)
+    const rows = ['0027', '0861', '0031'].map((id, rank) => ({ id, rank }))
+    const back = pickForCoverage(rows, { count: 3, groups: ['back', 'biceps'], need: { back: 1, biceps: 1 }, share: { back: 10, biceps: 3 } })
+    expect(back.filter(p => patternOf(EXIDX[p.id]) === 'pull-horizontal')).toHaveLength(1)
+  })
+  // Four days of nine took two ab lifts: filling the abs' share skipped their one-lift rule.
+  it('a small group keeps to one lift on a day with a share: more sets of the crunch, no sit-up after it', () => {
+    const cands = [BENCH, '0175', '0736', '0274', '3449'].map((id, rank) => ({ id, rank }))
+    const picks = pickForCoverage(cands, { count: 5, groups: ['chest', 'abs'], need: { chest: 1, abs: 1 },
+      share: { chest: 3, abs: 8 }, roomOf: () => 5 })
+    expect(picks.filter(p => p.id !== BENCH)).toHaveLength(1)
+    expect(picks.find(p => p.id !== BENCH).extra).toBe(2)
+  })
+  it('takes no room past what a lift has: the default keeps every lift to its sets', () => {
+    const cands = ['0027', '0031'].map((id, rank) => ({ id, rank }))
+    const picks = pickForCoverage(cands, { count: 2, groups: ['back', 'biceps'], need: { back: 1, biceps: 1 }, share: { back: 8, biceps: 8 } })
+    expect(picks.every(p => p.extra === 0)).toBe(true)
   })
 })
 

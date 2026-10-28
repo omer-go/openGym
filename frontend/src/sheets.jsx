@@ -1527,7 +1527,7 @@ function slotConfig(st, index, id, cfg) {
   const current = st.active?.entries?.[index]
   if (!current) return { cfg, typed: false }
   // A big lift in place of the day's lead leads it too.
-  const planned = current.rid ? null : sessionConfig(sessionHistory(st), id, st.active, current.gen?.slot === 'lead')
+  const planned = current.rid ? null : sessionConfig(sessionHistory(st), id, st.active, current.gen?.slot === 'lead', current.gen?.more)
   if (planned) return { cfg: planned, typed: true }
   return { cfg: withSlotSettings({ ...cfg, id }, { id: current.id, ...(current.target || {}) }), typed: false }
 }

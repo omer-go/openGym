@@ -397,14 +397,25 @@ function itemOf(id, rank, on, rolesOf) {
     pattern: patternOf(ex),
   }
 }
+// Movements that are never a compound, whatever the catalogue credits them with: a leg curl
+// lists the calves and glutes, a straight-arm pulldown the triceps and chest, a farmers walk
+// everything that holds the bar.
+const NOT_COMPOUND = new Set(['isolation', 'core', 'carry'])
+// A pull for the shoulders is their accessory, not the back's row or pull-up: a face pull, a rear
+// delt row, an upright row, a cuban press.
+const DELT_PULLS = new Set(['pull-horizontal', 'pull-vertical'])
 /**
  * What kind of lift `id` is, by the same measure the pickers use: 'small' for calves, forearms
- * and abs, 'compound' for one that trains three groups or more in earnest, else 'isolation'.
+ * and abs, 'compound' for one that trains three groups or more in earnest in a movement of its
+ * own, else 'isolation'.
  */
 export function liftKind(id) {
   const ex = EXIDX[id]
-  const g = ex && groupOf(slotMuscleOf(ex))
+  const slug = ex && slotMuscleOf(ex)
+  const g = slug && groupOf(slug)
   if (g && SMALL.has(g.id)) return 'small'
+  const pt = patternOf(ex)
+  if (NOT_COMPOUND.has(pt) || (slug === 'deltoids' && DELT_PULLS.has(pt))) return 'isolation'
   return g && Object.values(groupCredit(musclesOf(ex))).filter(c => c >= 0.4).length >= 3 ? 'compound' : 'isolation'
 }
 // Sorts `list` staler first, for the group: the part of the muscle, then the helpers, the tool
@@ -453,9 +464,13 @@ const fillOf = (c, sets, short) => Object.entries(c.credit).reduce((s, [g, a]) =
 // and a split squat both work glutes and quads. Two isolation lifts for the same part of one group
 // are too: a barbell, a dumbbell and a cable shrug are one shrug three times. So are two
 // compounds on the same tool in the same position that work the same groups, only weighted
-// another way: a chest dip and a triceps dip are one dip.
+// another way: a chest dip and a triceps dip are one dip. And two compounds of the same movement
+// are one movement on two tools: a smith squat and a hack squat, a cable row and a barbell row, a
+// bench press and a close-grip one filed under triceps.
+const MOVES = new Set(Object.keys(OPPOSITE_PATTERN))
 const sameKeys = (a, b) => Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(k => k in b)
-const sameMove = (a, b) => (a.compound && b.compound && a.variant.tool === b.variant.tool
+const sameMove = (a, b) => (a.compound && b.compound && MOVES.has(a.pattern) && a.pattern === b.pattern)
+  || (a.compound && b.compound && a.variant.tool === b.variant.tool
   && a.variant.position === b.variant.position && sameKeys(a.credit, b.credit))
   || ((a.compound ? b.compound : !b.compound && a.group === b.group) && !!a.parts && !!b.parts
   && a.parts.length === b.parts.length && a.parts.every(m => b.parts.includes(m)))
@@ -490,10 +505,12 @@ const runOrder = (a, b) => b.compound - a.compound
  * first (generate.js partGaps). `first` is the id of the lift that leads the day: picked before
  * the rest and run first, when it is among `candidates`.
  * `share` maps a group id to
- * the sets the day should give it (program.js dayShare), `setsOf` an id to the sets it takes:
- * once every group has its exercise, one goes to the first `spare` part (spareParts) the day
- * leaves out, from `candidates` or `spareOnly` (which nothing else picks from), and the next to
- * the group furthest short of its share.
+ * the sets the day should give it (program.js dayShare), `setsOf` an id (and whether it leads)
+ * to the sets it takes and `roomOf` to the most it may take: once every group has its exercise,
+ * one goes to the first `spare` part (spareParts) the day leaves out, from `candidates` or
+ * `spareOnly` (which nothing else picks from); then a group short of its share takes a set more
+ * on its own lift, up to `roomOf`, and only past that an exercise more. Each pick's `extra` is
+ * the sets it takes past `setsOf`.
  */
 // A lift the last session did, picked again: its gain counts 40% less, a hinge's 60%. A leg
 // extension every session leaves the other quad lifts unturned, and the same stiff-legged
@@ -508,7 +525,7 @@ const repeatOf = (c, recent, earlier) => (recent.has(c.id) ? (c.pattern === 'hin
 const BASE = new Set(['quads', 'hamstrings'])
 
 export function pickForCoverage(candidates, { count, groups, need, history = {}, shift = 0, rolesOf = muscleRolesOf, anchor = [], gaps = {},
-  share = null, setsOf = () => 3, spare = [], spareOnly = [], recent = [], earlier = [], known = null, first = null }) {
+  share = null, setsOf = () => 3, roomOf = setsOf, spare = [], spareOnly = [], recent = [], earlier = [], known = null, first = null }) {
   const again = new Set(recent), before = new Set(earlier)
   const tried = known && new Set(known)
   // How lately a lift was done: 2 the last session, 1 one of the two before it, else 0.
@@ -535,17 +552,35 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
   const glutesWait = c => c.group === 'glutes' && anchor.includes('glutes') && pool.some(bases)
     && (!picks.some(bases) || (!!share && short('glutes') < USEFUL))
   // A small group past its one exercise waits until every other group, rested ones too, is served.
-  const full = c => !spill && SMALL.has(c.group) && picks.some(p => p.group === c.group)
+  // A day with a share keeps to that even when filling it or spilling over: its small group's one
+  // lift takes the sets it has room for (roomOf), and a second plank never comes after the crunch.
+  const full = c => (share || !spill) && SMALL.has(c.group) && picks.some(p => p.group === c.group)
   // Sets each group is still short of its share, while the picks go to the shares (`filling`).
   const got = {}
   const short = g => Math.max(0, (share?.[g] || 0) - (got[g] || 0))
   let cap = 1, relaxed = false, spill = false, filling = false, filled = !share, spared = false
-  const credit = pick => {
-    picks.push(pick)
-    for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsOf(pick.id) }
-  }
   // The day's lead (generate.js leadFor) is in before anything else, and runs first.
   const lead = first != null && pool.find(c => c.id === first)
+  const setsIn = new Map()
+  const credit = pick => {
+    picks.push(pick)
+    setsIn.set(pick, setsOf(pick.id, pick === lead))
+    for (const [g, a] of Object.entries(pick.credit)) { covered[g] += a; got[g] = (got[g] || 0) + a * setsIn.get(pick) }
+  }
+  // A group short of its share takes a set more on its own lift before a second exercise: the
+  // group furthest short first, on the first lift picked for it that has room.
+  const roomy = () => {
+    let best = null
+    for (const p of picks) {
+      if (setsIn.get(p) >= roomOf(p.id, p === lead) || (p.credit[p.group] || 0) < 0.5 || short(p.group) < USEFUL) continue
+      if (!best || short(p.group) > short(best.group)) best = p
+    }
+    return best
+  }
+  const addSet = p => {
+    setsIn.set(p, setsIn.get(p) + 1)
+    for (const [g, a] of Object.entries(p.credit)) got[g] = (got[g] || 0) + a
+  }
   if (lead && count > 0) credit(lead)
   while (picks.length < count) {
     // Once every group has its exercise, one slot goes to the part furthest short of its minimum
@@ -570,16 +605,20 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
         continue
       }
     }
+    const more = filling && roomy()
+    if (more) { addSet(more); continue }
     const last = picks.length === count - 1 && !anchored()
     // Filling, a lift gives its own group a set or more: three sets of shrugs are not one of back.
-    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL && c.credit[c.group] * setsOf(c.id) >= USEFUL
+    const open = pool.filter(c => !picks.includes(c) && (last ? anchors(c) : filling ? short(c.group) >= USEFUL && c.credit[c.group] * setsOf(c.id) >= USEFUL && !full(c)
       : covered[c.group] < cap && (spill || need[c.group] >= RESTED || (relaxed && need[c.group] > 0)) && (cap > 1 || c.main) && !full(c) && !waits(c)))
     // A movement already in the session is out before a near twin is: a leg curl after a
     // stiff-legged deadlift covers alike, a romanian deadlift is the same lift again.
     const fresh = open.filter(c => !picks.some(p => sameMove(p, c)))
     const distinct = fresh.filter(c => !picks.some(p => distance(p.credit, c.credit) < ALIKE))
-    // Filling a share, what fills it most wins: a second curl for biceps still short, not a shrug.
-    const ok = distinct.length && !filling ? distinct : fresh.length ? fresh : open
+    // Filling a share, what fills it most wins. A day with a share never takes the same movement
+    // again, not even to make up the count: a share its lifts cannot fill, with all the sets they
+    // have room for, stays short. Without one, it comes only when nothing else is left.
+    const ok = distinct.length && !filling ? distinct : fresh.length || share ? fresh : open
     if (!ok.length) {
       if (filling) { filling = false; filled = true } else if (!relaxed && !filled) filling = true
       else if (relaxed && cap < count) cap++
@@ -616,7 +655,9 @@ export function pickForCoverage(candidates, { count, groups, need, history = {},
       .sort((a, b) => balanceOf(b, picks) - balanceOf(a, picks) || ageOf(a) - ageOf(b))
     credit(near[shift % near.length])
   }
-  return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at }))
+  // A day sized to end on a group's first lift (program.js sizeDay) still gives it the sets.
+  if (share) for (let p = roomy(); p; p = roomy()) addSet(p)
+  return picks.map((c, at) => ({ id: c.id, slug: c.slug, group: c.group, at, extra: setsIn.get(c) - setsOf(c.id, c === lead) }))
     .sort((a, b) => (picks[b.at] === lead) - (picks[a.at] === lead) || runOrder(picks[a.at], picks[b.at]))
 }
 
