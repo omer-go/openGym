@@ -8,8 +8,8 @@
 // for the groups and parts still short, from the lifts on your list (planPool). The biceps,
 // triceps and shoulders take lifts for that muscle alone as accessories, the other groups a
 // compound too. A lift the last session had stays off it unless nothing else will do, and the
-// ones of the two before go last. `shift` builds it again another way: Shuffle in the workout is
-// a shift + 1.
+// ones of the two before go last. Each slot takes its most popular lift; `shift`, the one that
+// many places down: Shuffle in the workout is a shift + 1.
 //
 // Within a muscle, exercises you have already logged come first for a swap or an added lift
 // (candidatesFor), longest-ago first; then the ones you starred (Choose your exercises keeps a
@@ -326,7 +326,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     type, goals, parts, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     count: count === null ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
-    goal: goalTypeOf(S), level: S?.program?.plan?.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift,
+    goal: goalTypeOf(S), level: S?.program?.plan?.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
   const items = count === null ? day.items.slice(0, MAX_GEN_COUNT) : day.items
   // The day's lead leads the session; without one, its first big lift (engine.js sessionSlots).

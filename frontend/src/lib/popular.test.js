@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { POPULAR, POPULAR_IDS, popularBySlug, popularFirst, popularRank } from './popular.js'
+import { POPULAR, POPULAR_IDS, popularBySlug, popularFirst, popularPlace, popularRank } from './popular.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { STAPLES, candidatesFor } from './generate.js'
@@ -19,6 +19,16 @@ describe('the popular list', () => {
     expect(Object.values(by).flat().sort()).toEqual([...POPULAR_IDS].sort())
     for (const [slug, ids] of Object.entries(by)) for (const id of ids) expect(primaryMuscleOf(EXIDX[id]).slug).toBe(slug)
     expect(by.chest[0]).toBe(POPULAR.Chest[0][1][0])
+  })
+})
+
+describe('a lift\'s place', () => {
+  it('counts within its own muscle\'s list, the lift first, then its kit', () => {
+    expect(popularPlace(POPULAR.Chest[0][1][0])).toBe(0)
+    expect(popularPlace(POPULAR.Shoulders[0][1][0])).toBe(0)
+    expect(popularPlace(POPULAR.Chest[0][1][1])).toBeGreaterThan(0)
+    expect(popularPlace(POPULAR.Chest[0][1][3])).toBeLessThan(popularPlace(POPULAR.Chest[1][1][0]))
+    expect(popularPlace('no-such-id')).toBe(Infinity)
   })
 })
 

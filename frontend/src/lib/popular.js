@@ -223,6 +223,11 @@ const RANK = new Map(POPULAR_IDS.map((id, i) => [id, i]))
 export const popularRank = id => (RANK.has(id) ? RANK.get(id) : Infinity)
 export const isPopular = id => RANK.has(id)
 
+// Each listed id's place within its own muscle's list: the lift's place, then its kit's. Lifts
+// for different muscles compare fairly, the shoulders' first lift level with the chest's.
+const PLACE = new Map(Object.values(POPULAR).flatMap(lifts => lifts.flatMap(([, ids], i) => ids.map((id, k) => [id, i + k / 10]))))
+export const popularPlace = id => (PLACE.has(id) ? PLACE.get(id) : Infinity)
+
 /** `list` (exercises) with the popular ones first, in list order; the rest keep their order. */
 export const popularFirst = list => [...list].sort((a, b) => Math.min(popularRank(a.id), 1e9) - Math.min(popularRank(b.id), 1e9))
 

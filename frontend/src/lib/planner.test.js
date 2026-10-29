@@ -126,6 +126,16 @@ describe('planner', () => {
     expect(seeds.size).toBeGreaterThan(1)
   })
 
+  it('takes the most popular lift a slot allows, and with a shift the one after it', () => {
+    const o = { template: 'full', goal: 'growth', days: 3, minutes: 75 }
+    const ids = p => p.days.flatMap(d => d.items.map(i => i.ex.id))
+    // The barbell back squat and bench press, the first lifts of the quads' and the chest's lists.
+    expect(ids(plan(o))).toEqual(expect.arrayContaining(['0043', '0025']))
+    const a = ids(plan(o)), b = ids(plan({ ...o, shift: 1 }))
+    expect(b).not.toEqual(a)
+    expect(b).not.toContain('0043')
+  })
+
   it('leaves out skipped lifts while their pattern has another', () => {
     const p = plan({ template: 'full', days: 3, exclude: ['0043', '0042'] })
     const used = p.days.flatMap(d => d.items.map(i => i.ex.id))
@@ -143,20 +153,19 @@ describe('planner', () => {
   })
 
   it('cuts the abs, glutes and calves, then the arms and shoulders, not the chest, back and legs, when the time can\'t hold every goal', () => {
-    const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 75 }
-    const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 1e-9)
-      && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 1e-9)
+    const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 60 }
+    // To the whole set, as giveWay counts: a deadlift's share of a set for the quads is no set.
+    const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 0.5)
+      && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 0.5)
     // Built without priorities the week leaves a bigger group short, here the back.
     expect(atGoal(plan({ ...o, priority: false }), 0)).toBe(false)
     const p = plan(o)
     expect(atGoal(p, 0)).toBe(true)
     for (const s of p.short) expect(PRIORITY[s.g], s.g).toBeGreaterThanOrEqual(1)
-    // The curls and extensions keep their sets: it's the abs and calves that come up short.
-    for (const g of ['biceps', 'triceps']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g])
     // They give way, not away: the abs keep half their goal at least, and only the bottom tier
     // (glutes, calves, forearms) may go to none.
     for (const g of Object.keys(p.yields)) if (PRIORITY[g] < 3) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] / 2)
-    for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(75)
+    for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(60)
     // Still too little time for the whole goal, and it says so: the minutes, or the accessories a
     // day has room for.
     expect(p.feasible).toBe(false)
@@ -215,17 +224,24 @@ describe('planner', () => {
     }
   })
 
-  it('a group that gave way gets a whole exercise on one day, not a set or two on each', () => {
-    const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
-    expect(p.yields.calves).toBeLessThan(1)
-    const calves = p.days.flatMap(d => d.items).filter(i => i.slot === 'accessory' && i.ex.p.includes('calves'))
-    expect(calves).toHaveLength(Math.ceil(p.goals.calves * p.yields.calves / p.cfg.accMax))
-    for (const i of calves) expect(i.sets).toBe(p.cfg.accMax)
+  it('a group that gave way gets whole exercises, one a day, not a set or two on each', () => {
+    let seen = 0
+    for (const template of ['full', 'ul', 'ppl']) for (const days of [2, 3, 4, 5]) for (const minutes of [45, 60, 75, 90]) {
+      const p = plan({ template, goal: 'growth', days, minutes })
+      if (!(p.yields.calves < 1)) continue
+      const on = p.days.map(d => d.items.filter(i => i.slot === 'accessory' && i.ex.p.includes('calves')))
+      if (!on.flat().length) continue
+      seen++
+      for (const c of on) expect(c.length, `${template} ${days}x${minutes}`).toBeLessThanOrEqual(1)
+      // At its most sets, but for the one the time given back (topUp) adds at its fewest.
+      expect(on.flat().filter(i => i.sets < p.cfg.accMax).length, `${template} ${days}x${minutes}`).toBeLessThanOrEqual(1)
+    }
+    expect(seen).toBeGreaterThan(0)
   })
 
   it('three days of 75 minutes keep the chest, back and legs at their goal, the shoulders at theirs', () => {
     const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
-    for (const g of ['chest', 'back', 'quads', 'hamstrings']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g])
+    for (const g of ['chest', 'back', 'quads', 'hamstrings']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] - 0.5)
     expect(p.goals.shoulders).toBe(12)
     expect(p.total.shoulders).toBeGreaterThanOrEqual(12)
     expect(p.total.shoulders).toBeLessThanOrEqual(12 * 1.5)

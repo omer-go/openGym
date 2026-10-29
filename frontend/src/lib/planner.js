@@ -37,6 +37,7 @@ import { weeklyTargetOf, partTargetOf } from './goals.js'
 import { rolesLoaded, muscleRolesOf, ROLE_WEIGHT } from './muscle-roles.js'
 import { SCHEMES } from './engine.js'
 import { variantOf } from './variant.js'
+import { popularPlace } from './popular.js'
 
 export { SCHEMES }
 export const PLAN_GROUPS = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs', 'quads', 'hamstrings', 'glutes', 'calves']
@@ -284,7 +285,7 @@ export function configOf(o = {}) {
     template: PLAN_TEMPLATES[o.template] ? o.template : PLAN_DEFAULTS.template, goal, level,
     equipment: EQUIPMENT[o.equipment] ? o.equipment : PLAN_DEFAULTS.equipment,
     days: o.days || PLAN_DEFAULTS.days, minutes: o.minutes || PLAN_DEFAULTS.minutes,
-    seed: o.seed ?? 1,
+    seed: o.seed ?? 1, shift: o.shift || 0,
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
   }
@@ -334,12 +335,15 @@ const add = (cfg, into, ex, sets) => {
 }
 const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * it.rx.secs, 0) / 60
 
-// A lift not used yet this week, else any.
-function variant(cands, used, rand) {
+// The most popular lift not used yet this week, else the most popular of any; ties (lifts off
+// the popular list among them) by the seed. `cfg.shift` takes the one that many places further
+// down: Shuffle gives each slot its next lift.
+function variant(cfg, cands, used, rand) {
   if (!cands.length) return null
   const fresh = cands.filter(e => !used.has(e.id))
   const pool = fresh.length ? fresh : cands
-  return pool[Math.floor(rand() * pool.length)]
+  const ranked = pool.map(e => ({ e, at: popularPlace(e.id), tie: rand() })).sort((a, b) => a.at - b.at || a.tie - b.tie)
+  return ranked[cfg.shift % ranked.length].e
 }
 
 /** The day types of the week, in order. */
@@ -388,7 +392,7 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
         if (aimed.length) { pool = aimed; break }
       }
     }
-    return variant(pool, week.used, rand)
+    return variant(cfg, pool, week.used, rand)
   }
   const take = (pat, slot, lead = false) => {
     let sets = cfg.leadSets
@@ -524,7 +528,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     const top = Math.max(...cands.map(behind))
     const aimed = cands.filter(e => behind(e) === top)
     const best = Math.max(...aimed.map(helps))
-    const ex = variant(aimed.filter(e => helps(e) === best), week.used, rand)
+    const ex = variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
     // Too long for what is left of the session: skip this group today and try another.
     if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; noTime[pick.part || pick.g] = true; continue }
@@ -542,7 +546,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
 // such lift, the day with the most time to spare gets an accessory at its fewest sets. A part
 // short of its minimum the same way, on a lift aimed at it. `aimed`: only on lifts aimed at the
 // group, so the time a group that gave way (giveWay) gets back doesn't go on a leg curl for the calves.
-function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains }) {
+function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains, whole = new Set() }) {
   const most = it => (it.slot === 'accessory' ? cfg.accMax : it.slot === 'lead' ? cfg.leadSets : cfg.slotSets)
   const needs = [
     ...PLAN_GROUPS.map(g => ({ key: g, g, goal: goals[g], credit: e => creditOf(e)[g] || 0, least: 0.4, aimed: e => e.p.includes(g), on: t => trains(t, g) })),
@@ -570,12 +574,15 @@ function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains 
     // A full-body day whose skeleton left a slot empty (a squat the week no longer needed) has room
     // for that many accessories more.
     const room = d => cfg.maxAcc + (d.type === 'full' ? 3 - d.items.filter(i => i.slot !== 'lead' && i.slot !== 'accessory').length : 0)
-    const days = out.filter(d => n.on(d.type) && d.items.filter(i => i.slot === 'accessory').length < room(d))
-      .sort((a, b) => minutesOf(cfg, a.items) - minutesOf(cfg, b.items))
+    // A day without an accessory for the group first, and for a group that gave way only one: a
+    // calf raise short a set or two, not a second one the same day.
+    const had = d => +d.items.some(i => i.slot === 'accessory' && i.ex.p.includes(g))
+    const days = out.filter(d => n.on(d.type) && d.items.filter(i => i.slot === 'accessory').length < room(d) && !(whole.has(g) && had(d)))
+      .sort((a, b) => had(a) - had(b) || minutesOf(cfg, a.items) - minutesOf(cfg, b.items))
     const added = days.some(d => {
       const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && n.aimed(e) && !d.items.some(i => i.ex.id === e.id) && !repeats(d.items, e))
       if (!cands.length) return false
-      const ex = variant(far(novel(cands, d.items), near(d.k)), week.used, rand)
+      const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand)
       const it = { ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
       if (minutesOf(cfg, [...d.items, it]) > cfg.minutes) return false
       d.items.push(it)
@@ -802,16 +809,19 @@ function weekOf(cfg, goals, parts, o, after) {
       hasDirect: g => (skelDirect[g] || 0) + (week.accDirect[g] || 0),
       hasPart: n => (skelParts[n] || 0) + (week.accParts[n] || 0),
       daysLeftFor: g => out.filter(x => x.k >= d.k && trains(x.type, g)).length,
-      daysLeftForPart: p => out.filter(x => x.k >= d.k && trains(x.type, p.g, p.name)).length,
+      // Not a later day already holding its one lift for the group: a push day with its press
+      // takes no rear-delt fly, so the pull day before it is the rear delts' last.
+      daysLeftForPart: p => out.filter(x => x.k >= d.k && trains(x.type, p.g, p.name)
+        && (x === d || !ONE_A_DAY.includes(p.g) || !x.items.some(i => i.ex.p.includes(p.g)))).length,
     })
   }
-  topUp({ cfg, out, goals, parts, week, rand, avail, near, trains })
+  topUp({ cfg, out, goals, parts, week, rand, avail, near, trains, whole })
   trim(cfg, out, goals, parts, whole)
   if (o.balance !== false) balance(cfg, out, goals, parts, whole, near)
   if (after) {
     // Twice: what the first trim takes off makes room for another accessory.
     for (let n = 0; n < 2; n++) {
-      topUp({ cfg, out, goals: after.goals, parts: after.parts, week, rand, avail, aimed: true, near, trains })
+      topUp({ cfg, out, goals: after.goals, parts: after.parts, week, rand, avail, aimed: true, near, trains, whole })
       trim(cfg, out, after.goals, after.parts, whole)
     }
     if (o.balance !== false) balance(cfg, out, after.goals, after.parts, whole, near)
@@ -855,7 +865,7 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
     if (!g) break
     const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && e.p.includes(g) && !items.some(i => i.ex.id === e.id) && !repeats(items, e))
     if (!cands.length) { full.add(g); continue }
-    const ex = variant(far(novel(cands, items), nearby), week.used, rand)
+    const ex = variant(cfg, far(novel(cands, items), nearby), week.used, rand)
     items.push({ ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) })
     week.used.add(ex.id)
   }
