@@ -1638,7 +1638,9 @@ function ActiveWorkout() {
         // An exercise built with no plan (a freestyle add, a one-tap workout) has no prescription
         // to apply: what you typed is what you lift.
         const freestyle = !activeRoutine && !activeEntry.plan
-        const built = buildPlannedEntry(sessionHistory(s), full, activeRoutine, { noProg: freestyle || builtOutOfProgression(activeEntry, activeRoutine) })
+        // A weight changed in the sheet is the one you lift today, whatever the rule would pick.
+        const typed = (cfg.weight || 0) !== (opened.weight || 0) ? (cfg.weight || 0) : null
+        const built = buildPlannedEntry(sessionHistory(s), full, activeRoutine, { noProg: freestyle || builtOutOfProgression(activeEntry, activeRoutine), typed })
         const fresh = built.sets
         const doneWarm = activeEntry.sets.filter(x => x.done && isWarmupRow(x))
         const doneWork = activeEntry.sets.filter(x => x.done && !isWarmupRow(x))

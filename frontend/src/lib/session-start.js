@@ -26,15 +26,21 @@ export const startsFromLast = st => st?.startFrom === 'last'
  * so an entry cannot come out differently depending on where it was made. `routine` is the one
  * the exercise is planned in: its own history comes first (#216) and its policy applies.
  * `noProg` builds the routine's own numbers with no prescription, as an excluded routine does.
+ * `typed` is a weight set by hand in a running session (the exercise's settings sheet): the
+ * prescription keeps its say on reps and sets, but the open rows go to the weight you chose.
  */
-export function buildPlannedEntry(stored, cfg, routine, { noProg = false } = {}) {
+export function buildPlannedEntry(stored, cfg, routine, { noProg = false, typed = null } = {}) {
   // What a dumbbell weight means for this exercise today (lib/dumbbells.js): the history it
   // progresses from is read in that meaning, so a switch from "40 total" to per bell opens at
   // 20, not at 40 a hand. Only a switch between the two explicit meanings converts anything.
   const meaning = dbLoadFor(stored, cfg)
   const st = historyAs(stored, cfg.id, meaning)
   // `plan` is kept on the entry purely so the workout can explain the number it chose.
-  const plan = noProg ? { policy: 'off', kind: 'off' } : nextPrescription(st, cfg, routine)
+  const prescribed = noProg ? { policy: 'off', kind: 'off' } : nextPrescription(st, cfg, routine)
+  // Without it the prescription read the weight off history again and dropped the one just set.
+  const plan = typed != null && prescribed.kind !== 'off' && modeOf(cfg) === 'reps'
+    ? { ...prescribed, kind: 'hold', weight: typed, why: ['Your weight for today, set by you.'] }
+    : prescribed
   // The warm-up ramp and the prescription snap to the exercise's own increment (1.25 kg
   // plates exist), not the unit default; a timed exercise's `inc` is seconds, so it keeps the
   // default for its optional load.

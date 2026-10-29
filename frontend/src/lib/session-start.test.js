@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildSessionEntries, plannedConfigOf, builtOutOfProgression } from './session-start.js'
+import { buildSessionEntries, buildPlannedEntry, plannedConfigOf, builtOutOfProgression } from './session-start.js'
 import { readSession } from './progression.js'
 import { isWarmupRow } from './workout-model.js'
 
@@ -156,6 +156,33 @@ describe('buildSessionEntries', () => {
 
 // The mid-session settings sheet edits the plan, so it opens at the plan's sets and reps and at
 // today's weight — never at a prescription's aim, climb or added set (#275).
+// A weight set by hand in a running session (the exercise's settings sheet) must reach the rows:
+// the prescription read the weight off history again and the 175 just chosen came back as 165.
+describe('buildPlannedEntry with a typed weight', () => {
+  const cfg = { id: '0025', sets: 3, reps: 8, repsMin: 6, weight: 75, prog: 'double', warmupSets: 1 }
+  const st = {
+    unit: 'kg', exWeights: {}, routines: [],
+    workouts: [{ d: '2026-01-01', routineIds: ['r'], entries: [{ id: '0025', target: { sets: 3, reps: 8, repsMin: 6 }, planned: { sets: 3, reps: 8, repsMin: 6, weight: 75 }, sets: [6, 6, 6].map(r => ({ w: 75, r, done: true })) }] }],
+  }
+  const r = { id: 'r', prog: 'double', ex: [cfg] }
+
+  it('opens the work rows and the target at the weight you chose', () => {
+    expect(buildPlannedEntry(st, cfg, r).target.weight).toBe(75)
+    const built = buildPlannedEntry(st, { ...cfg, weight: 80 }, r, { typed: 80 })
+    expect(built.target.weight).toBe(80)
+    expect(built.sets.filter(s => !isWarmupRow(s)).every(s => s.w === 80)).toBe(true)
+    expect(built.sets.filter(isWarmupRow).every(s => s.w < 80)).toBe(true)
+    // The rule still has its say on the reps.
+    expect(built.sets.filter(s => !isWarmupRow(s)).every(s => s.r === built.target.reps)).toBe(true)
+  })
+
+  it('leaves an exercise kept out of progression at its own numbers', () => {
+    const built = buildPlannedEntry(st, { ...cfg, weight: 80 }, r, { noProg: true, typed: 80 })
+    expect(built.plan.kind).toBe('off')
+    expect(built.sets.filter(s => !isWarmupRow(s)).every(s => s.w === 80)).toBe(true)
+  })
+})
+
 describe('plannedConfigOf', () => {
   it('puts the plan\'s sets, reps and range back in place of today\'s', () => {
     const entry = {
