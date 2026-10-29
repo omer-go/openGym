@@ -43,8 +43,9 @@ export const DIRECT_MIN = { chest: 0, back: 0, shoulders: .4, biceps: .5, tricep
 // The groups whose parts (coverage.js GROUP_PARTS) have weekly minimums the planner fills.
 const PART_GROUPS = ['shoulders', 'back']
 // Which groups give way when the week can't hold every goal, the highest number first. A part
-// (the side delts) goes with its group.
-export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, glutes: 1, shoulders: 2, biceps: 2, triceps: 2, abs: 2, calves: 2, forearms: 3 }
+// (the side delts) goes with its group. The glutes go with the calves and forearms: the squats,
+// lunges and hinges work them hard, what gives way is a hip thrust.
+export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, shoulders: 1, biceps: 1, triceps: 1, abs: 2, glutes: 3, calves: 3, forearms: 3 }
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
 
 // Rep schemes by goal and slot live in engine.js (SCHEMES), shared with the one-tap workouts.
@@ -594,7 +595,8 @@ function totalsOf(out) {
 }
 
 // When the week can't reach every goal, the least important groups give way: their goals come
-// down a quarter at a time, the lowest PRIORITY's first and to nothing before the next one's, and
+// down a quarter at a time, the lowest PRIORITY's first and to half before the next one's (a group
+// gives way, not away: the calves keep a calf raise), and
 // the week is built again until every group above them reaches its own, and what time is left
 // goes back to them. A curl's minutes go to a row, which gives the biceps some of what the curl
 // would have. The week whose more important groups come out least short wins, the one that took
@@ -622,7 +624,7 @@ function giveWay(cfg, goals, parts, o, first) {
   if (top < 0) return best
   const scale = {}
   for (let t = tiers - 1; t > top; t--) {
-    for (const f of [0.75, 0.5, 0.25, 0]) {
+    for (const f of [0.75, 0.5]) {
       for (const g of PLAN_GROUPS) if (PRIORITY[g] === t) scale[g] = f
       const out = weekOf(cfg, { ...goals, ...Object.fromEntries(Object.entries(scale).map(([g, f]) => [g, goals[g] * f])) },
         parts.map(p => (scale[p.g] != null ? { ...p, goal: p.goal * scale[p.g] } : p)), o, { goals, parts })

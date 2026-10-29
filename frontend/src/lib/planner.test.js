@@ -144,16 +144,18 @@ describe('planner', () => {
     expect(fixFor(o, 'days').days).toBe(3)
   })
 
-  it('cuts the arms, abs and calves, not the chest, back and legs, when the time can\'t hold every goal', () => {
+  it('cuts the abs, glutes and calves, then the arms and shoulders, not the chest, back and legs, when the time can\'t hold every goal', () => {
     const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 75 }
     const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 1e-9)
       && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 1e-9)
     // Built without priorities the week leaves a bigger group short, here the back.
-    expect(atGoal(plan({ ...o, priority: false }), 1)).toBe(false)
+    expect(atGoal(plan({ ...o, priority: false }), 0)).toBe(false)
     const p = plan(o)
-    expect(atGoal(p, 1)).toBe(true)
-    for (const s of p.short) expect(PRIORITY[s.g], s.g).toBeGreaterThanOrEqual(2)
-    // They give way, not away: a curl and a pushdown still, half their goal at least.
+    expect(atGoal(p, 0)).toBe(true)
+    for (const s of p.short) expect(PRIORITY[s.g], s.g).toBeGreaterThanOrEqual(1)
+    // The curls and extensions keep their sets: it's the abs and calves that come up short.
+    for (const g of ['biceps', 'triceps']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g])
+    // They give way, not away: a crunch and a calf raise still, half their goal at least.
     for (const g of Object.keys(p.yields)) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] / 2)
     for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(75)
     // Still too little time for the whole goal, and it says so.
@@ -197,8 +199,14 @@ describe('planner', () => {
     for (const name of ['Side delts', 'Rear delts']) expect(p.days.some(d => d.items.some(i => partCreditOf(i.ex)[name] >= 1)), name).toBe(true)
   })
 
-  it('gives the shoulders way with the arms, since the presses and rows already work them', () => {
-    expect(PRIORITY.shoulders).toBe(PRIORITY.biceps)
+  it('gives way in order: the arms and shoulders after the chest, back and legs, the abs next, the glutes, calves and forearms first', () => {
+    const tier = g => PRIORITY[g]
+    for (const g of ['back', 'quads', 'hamstrings']) expect(tier(g), g).toBe(tier('chest'))
+    // The shoulders with the arms, since the presses and rows already work them.
+    for (const g of ['shoulders', 'biceps', 'triceps']) expect(tier(g), g).toBe(tier('chest') + 1)
+    expect(tier('abs')).toBe(tier('biceps') + 1)
+    // The squats, lunges and hinges work the glutes hard: what gives way is a hip thrust.
+    for (const g of ['glutes', 'calves', 'forearms']) expect(tier(g), g).toBe(tier('abs') + 1)
   })
 
   it('pulls from above once a day: a chin-up for the biceps is a pulldown too', () => {
