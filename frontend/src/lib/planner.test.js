@@ -173,7 +173,7 @@ describe('planner', () => {
     expect(fixFor(o)).toEqual({ days: 4, minutes: 75 })
   })
 
-  const weeks = () => ['full', 'ul', 'ppl'].flatMap(template => [3, 4, 5].map(days => ({ template, days, p: plan({ template, goal: 'growth', days, minutes: 75 }) })))
+  const weeks = (o = {}) => ['full', 'ul', 'ppl'].flatMap(template => [3, 4, 5].map(days => ({ template, days, p: plan({ template, goal: 'growth', days, minutes: 75, ...o }) })))
 
   it('gives the side and rear delts lifts aimed at them, not just the presses\' share', () => {
     for (const days of [4, 5]) {
@@ -205,6 +205,15 @@ describe('planner', () => {
     for (const { template, days, p } of weeks()) for (const d of p.days) {
       const vpulls = d.items.filter(i => (i.ex.move || i.ex.pat) === 'vpull')
       expect(vpulls.length, `${template} ${days}d`).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it('works the arms with curls and extensions: chin-ups and diamond push-ups are pulls and presses', () => {
+    expect(planLift('1326')).toMatchObject({ kind: 'compound', pat: 'vpull' })
+    expect(planLift('0283')).toMatchObject({ kind: 'compound', pat: 'hpress' })
+    expect(planLift('0279')).toMatchObject({ kind: 'compound', pat: 'hpress' })
+    for (const { template, days, p } of weeks()) for (const d of p.days) for (const i of d.items) {
+      if (i.ex.p.includes('biceps') || i.ex.p.includes('triceps')) expect(i.ex.kind, `${template} ${days}d ${i.ex.id}`).toBe('iso')
     }
   })
 

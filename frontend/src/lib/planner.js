@@ -84,8 +84,6 @@ const ADV = { maxDirect: 2, sessionCap: 10, needMin: 1, secPerRep: 3, warmupMin:
 // The lifts: app exercise id, pattern, kind, the groups it is aimed at, the least equipment it
 // needs (bw ⊂ db ⊂ gym), and whether it can lead a day, only lead one, is a hold, or goes a side
 // at a time. What else a lift trains comes from the catalogue, as the app counts it (creditOf).
-// `move`: the compound movement an isolation lift is anyway (a chin-up is a vertical pull), so a
-// day doesn't take it beside one.
 const X = (id, pat, kind, p, need, f = {}) => ({ id, pat, kind, p, need, lead: false, ...f })
 export const PLAN_LIB = [
   X('0043', 'squat', 'compound', ['quads'], 'gym', { lead: true }), // back squat
@@ -106,6 +104,10 @@ export const PLAN_LIB = [
   X('0289', 'hpress', 'compound', ['chest'], 'db', { lead: true }), // dumbbell bench press
   X('0251', 'hpress', 'compound', ['chest'], 'bw'), // dip
   X('0662', 'hpress', 'compound', ['chest'], 'bw', { lead: true }), // push-up
+  // The arms work hard in the diamond push-up and the chin-up, but the chest and lats more: presses
+  // and pulls, not arm work, and a decline push-up is a press like any other.
+  X('0283', 'hpress', 'compound', ['chest'], 'bw'), // diamond push-up
+  X('0279', 'hpress', 'compound', ['chest'], 'bw'), // decline push-up
   X('1162', 'vpress', 'compound', ['shoulders'], 'gym', { lead: true }), // overhead press
   X('0405', 'vpress', 'compound', ['shoulders'], 'db', { lead: true }), // seated dumbbell press
   X('2137', 'vpress', 'compound', ['shoulders'], 'db'), // arnold press
@@ -113,6 +115,7 @@ export const PLAN_LIB = [
   X('0652', 'vpull', 'compound', ['back'], 'bw', { lead: true }), // pull-up
   X('2330', 'vpull', 'compound', ['back'], 'gym'), // lat pulldown
   X('1047', 'vpull', 'compound', ['back'], 'gym'), // close-grip pulldown
+  X('1326', 'vpull', 'compound', ['back'], 'bw'), // chin-up
   X('0027', 'hpull', 'compound', ['back'], 'gym', { lead: true }), // barbell row
   X('9698', 'hpull', 'compound', ['back'], 'db', { lead: true }), // chest-supported row
   X('2393', 'hpull', 'compound', ['back'], 'db', { perSide: true }), // one-arm dumbbell row
@@ -121,7 +124,6 @@ export const PLAN_LIB = [
   X('0188', 'iso', 'iso', ['chest'], 'gym'), // cable fly
   X('1030', 'iso', 'iso', ['chest'], 'gym'), // pec deck
   X('0308', 'iso', 'iso', ['chest'], 'db'), // dumbbell fly
-  X('0279', 'iso', 'iso', ['chest'], 'bw'), // decline push-up
   X('0238', 'iso', 'iso', ['back'], 'gym'), // straight-arm pulldown
   X('0375', 'iso', 'iso', ['back'], 'db'), // dumbbell pullover
   X('0334', 'iso', 'iso', ['shoulders'], 'db'), // lateral raise
@@ -132,11 +134,9 @@ export const PLAN_LIB = [
   X('0294', 'iso', 'iso', ['biceps'], 'db'), // dumbbell curl
   X('0313', 'iso', 'iso', ['biceps'], 'db'), // hammer curl
   X('0318', 'iso', 'iso', ['biceps'], 'db'), // incline curl
-  X('1326', 'iso', 'iso', ['biceps'], 'bw', { move: 'vpull' }), // chin-up
   X('0200', 'iso', 'iso', ['triceps'], 'gym'), // rope pushdown
   X('2188', 'iso', 'iso', ['triceps'], 'db'), // overhead triceps extension
   X('0061', 'iso', 'iso', ['triceps'], 'gym'), // skull crusher
-  X('0283', 'iso', 'iso', ['triceps'], 'bw'), // diamond push-up
   X('0585', 'iso', 'iso', ['quads'], 'gym'), // leg extension
   X('1489', 'iso', 'iso', ['quads'], 'bw'), // sissy squat
   X('0586', 'iso', 'iso', ['hamstrings'], 'gym'), // lying leg curl
@@ -157,13 +157,10 @@ export const PLAN_LIB = [
 ]
 const BY_ID = Object.fromEntries(PLAN_LIB.map(e => [e.id, e]))
 export const planLift = id => BY_ID[id] || null
-const moveOf = e => e.move || e.pat
-// A lift that would make a second of a movement the day already has: a chin-up beside a pulldown.
-// Or a second lift aimed at the shoulders, a press or a raise, whichever delt: the presses and
-// rows already work them, and the published full-body programs give them one a session or none.
+// A second lift aimed at the shoulders, a press or a raise, whichever delt: the presses and rows
+// already work them, and the published full-body programs give them one a session or none.
 const ONE_A_DAY = ['shoulders']
-const repeats = (items, e) => (!!e.move && items.some(i => moveOf(i.ex) === e.move))
-  || ONE_A_DAY.some(g => e.p.includes(g) && items.some(i => i.ex.p.includes(g)))
+const repeats = (items, e) => ONE_A_DAY.some(g => e.p.includes(g) && items.some(i => i.ex.p.includes(g)))
 // A hinge the lower back holds up (coverage.js loadsBack): a deadlift, a romanian.
 const heavyHinge = e => e.pat === 'hinge' && loadsBack(e.id)
 
@@ -396,7 +393,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, we
     }
     const sets = Math.max(cfg.accMin, Math.min(cfg.accMax, Math.round(pick.need), Math.ceil(pick.gap)))
     // Among the lifts for this group, prefer one that also feeds another group still short (hammer
-    // curls feed forearms) and not one already at its goal (diamond push-ups feed the chest).
+    // curls feed forearms) and not one already at its goal.
     const helps = e => Object.entries(creditOf(e)).filter(([g, c]) => !e.p.includes(g) && c >= 0.25)
       .reduce((n, [g]) => n + (goals[g] - has(g) > 0 ? 1 : -1), 0)
     // A group with parts takes the lift aimed at the part furthest behind: a rear-delt fly when
