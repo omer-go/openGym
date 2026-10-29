@@ -22,15 +22,15 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "pec-major-sternal"
+      "pec-major-sternal",
+      "triceps"
     ],
     "synergists": [
       "front-delt",
       "rhomboids",
       "pec-minor",
       "pec-major-clavicular",
-      "lats",
-      "triceps"
+      "lats"
     ],
     "stabilizers": [
       "lower-trap",

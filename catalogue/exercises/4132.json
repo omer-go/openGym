@@ -21,5 +21,36 @@
     "Lower it under control.",
     "Keep your back flat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "upper-trap",
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "erector-spinae",
+      "adductors",
+      "adductor-magnus",
+      "quads",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

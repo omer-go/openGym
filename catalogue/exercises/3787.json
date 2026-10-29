@@ -37,14 +37,12 @@
       "teres-minor",
       "teres-major",
       "lower-trap",
+      "biceps",
       "brachialis",
       "brachioradialis",
       "erector-spinae",
       "adductor-magnus",
       "quads"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
     ],
     "stabilizers": [
       "upper-trap",

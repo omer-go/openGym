@@ -27,12 +27,12 @@
     "synergists": [
       "front-delt",
       "supraspinatus",
-      "middle-trap",
-      "lower-trap",
+      "upper-trap",
       "serratus-anterior"
     ],
     "stabilizers": [
-      "upper-trap",
+      "middle-trap",
+      "lower-trap",
       "levator-scapulae",
       "wrist-extensors",
       "erector-spinae"

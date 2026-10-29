@@ -1,11 +1,11 @@
 {
   "id": "3917",
   "name": "barbell reverse grip floor press",
-  "bodyPart": "upper arms",
+  "bodyPart": "chest",
   "equipment": "barbell",
-  "target": "triceps",
+  "target": "pectorals",
   "secondaryMuscles": [
-    "chest",
+    "triceps",
     "upper chest",
     "shoulders",
     "forearms"
@@ -24,12 +24,13 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "triceps"
+      "pec-major-clavicular"
     ],
     "synergists": [
       "front-delt",
-      "pec-major-clavicular",
-      "pec-major-sternal"
+      "pec-major-sternal",
+      "coracobrachialis",
+      "triceps"
     ],
     "dynamicStabilizers": [
       "biceps"

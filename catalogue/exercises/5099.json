@@ -21,5 +21,18 @@
     "Switch hands and repeat."
   ],
   "femaleVariant": "4529",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "quadratus-lumborum"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -20,5 +20,27 @@
     "Once the tire is fully flipped, quickly step back and reset your stance.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "erector-spinae",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

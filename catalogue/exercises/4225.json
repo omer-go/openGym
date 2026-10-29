@@ -23,7 +23,8 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "side-delt"
+      "side-delt",
+      "upper-trap"
     ],
     "synergists": [
       "front-delt",
@@ -38,7 +39,6 @@
       "brachioradialis"
     ],
     "stabilizers": [
-      "upper-trap",
       "levator-scapulae",
       "wrist-flexors"
     ]

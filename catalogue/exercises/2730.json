@@ -19,5 +19,27 @@
     "Explode up with your legs and hips, lifting the tire as you rise.",
     "Shove the tire over with your hands and shoulders, then step in and reset for the next flip."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "erector-spinae",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

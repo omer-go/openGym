@@ -22,5 +22,37 @@
     "Return to standing and extend your arms.",
     "Alternate legs on each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "glute-med",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors",
+      "calves"
+    ]
+  }
 }

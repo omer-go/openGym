@@ -22,5 +22,19 @@
     "Hold for 20-45 seconds.",
     "Lower your hips with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "triceps",
+      "rectus-abdominis"
+    ]
+  }
 }

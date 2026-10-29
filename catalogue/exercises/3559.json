@@ -33,14 +33,12 @@
       "teres-minor",
       "teres-major",
       "lower-trap",
+      "biceps",
       "brachialis",
       "brachioradialis",
       "quadratus-lumborum",
       "glute-max",
       "hamstrings"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
     ],
     "stabilizers": [
       "wrist-flexors"

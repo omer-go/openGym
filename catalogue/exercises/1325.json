@@ -40,5 +40,29 @@
       "triceps": 0
     }
   },
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "middle-trap",
+      "lower-trap",
+      "rhomboids",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "dynamicStabilizers": [
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "pec-minor",
+      "wrist-flexors",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

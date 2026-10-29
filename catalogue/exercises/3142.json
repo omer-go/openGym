@@ -41,8 +41,7 @@
     ],
     "synergists": [
       "adductors",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
       "hamstrings"
@@ -51,7 +50,8 @@
       "rectus-abdominis",
       "obliques",
       "erector-spinae",
-      "glute-med"
+      "glute-med",
+      "calves"
     ]
   }
 }

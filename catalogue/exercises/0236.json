@@ -49,12 +49,10 @@
       "teres-minor",
       "teres-major",
       "lower-trap",
+      "biceps",
       "brachialis",
       "brachioradialis",
       "obliques"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
     ],
     "stabilizers": [
       "wrist-flexors",

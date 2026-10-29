@@ -19,5 +19,25 @@
     "Keep your posture upright.",
     "Set it down under control when you finish."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

@@ -36,18 +36,17 @@
       "serratus-anterior",
       "pec-major-clavicular",
       "triceps",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
-      "triceps-long-head",
       "hamstrings"
     ],
     "stabilizers": [
       "upper-trap",
       "rectus-abdominis",
       "obliques",
-      "erector-spinae"
+      "erector-spinae",
+      "calves"
     ]
   }
 }

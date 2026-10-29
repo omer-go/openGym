@@ -21,5 +21,36 @@
     "Catch the dumbbells at your shoulders, then dip and drive them overhead.",
     "Lower to your shoulders, then the floor with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "adductor-magnus",
+      "quads",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

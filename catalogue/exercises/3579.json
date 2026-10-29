@@ -20,5 +20,24 @@
     "Stand up out of the squat.",
     "Keep a tight grip and repeat smoothly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med",
+      "calves"
+    ]
+  }
 }

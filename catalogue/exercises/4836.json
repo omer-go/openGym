@@ -1,11 +1,11 @@
 {
   "id": "4836",
   "name": "dumbbell reverse grip squeeze bench press",
-  "bodyPart": "upper arms",
+  "bodyPart": "chest",
   "equipment": "dumbbell",
-  "target": "triceps",
+  "target": "pectorals",
   "secondaryMuscles": [
-    "chest",
+    "triceps",
     "shoulders"
   ],
   "category": "strength",
@@ -21,19 +21,14 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "triceps"
+      "pec-major-sternal"
     ],
     "synergists": [
       "front-delt",
       "pec-major-clavicular",
-      "pec-major-sternal"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
+      "triceps"
     ],
     "stabilizers": [
-      "middle-trap",
-      "rhomboids",
       "wrist-flexors"
     ]
   }

@@ -73,8 +73,19 @@ describe('planner', () => {
     for (const d of p.days) for (const [g, v] of Object.entries(plannedSets(d.items.map(i => ({ id: i.ex.id, sets: i.sets }))))) app[g] = (app[g] || 0) + v
     for (const g of PLAN_GROUPS) expect(p.total[g] || 0).toBeCloseTo(app[g] || 0, 6)
     expect(p.goals).toEqual(weeklyTargets({ goals: { weeklySets: 15 } }, PLAN_GROUPS))
-    // A squat counts for the calves that help it, a pulldown for the biceps.
-    expect(creditOf(planLift('1760')).calves).toBeGreaterThan(0)
+    // A squat counts for the glutes beside the quads but not the calves, which only hold the
+    // ankle; a good morning for the hamstrings in full, a close-grip bench press for the chest;
+    // a pulldown for the biceps. A leg curl bends the knee with the calves' help, but they don't
+    // count for it; a dip counts for the triceps as much as the chest, a chin-up or a straight-arm
+    // pulldown not for the chest at all.
+    expect(creditOf(planLift('1760')).glutes).toBeGreaterThan(0)
+    expect(creditOf(planLift('1760')).calves).toBeUndefined()
+    expect(creditOf({ id: '0044' }).hamstrings).toBe(1)
+    expect(creditOf({ id: '0030' })).toMatchObject({ chest: 1, triceps: 1 })
+    expect(creditOf({ id: '0599' }).calves).toBeUndefined()
+    expect(creditOf({ id: '0251' })).toMatchObject({ chest: 1, triceps: 1 })
+    expect(creditOf({ id: '0238' }).chest).toBeUndefined()
+    expect(creditOf({ id: '1326' }).chest).toBeUndefined()
     expect(plan({ template: 'full', byGroup: { biceps: 4 } }).goals.biceps).toBe(4)
   })
 

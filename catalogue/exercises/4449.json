@@ -22,5 +22,30 @@
     "Catch them on your shoulders in a slight quarter squat.",
     "Stand tall, then lower them back to your thighs and reset."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "brachialis",
+      "brachioradialis",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

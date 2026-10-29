@@ -22,5 +22,31 @@
     "Drop under the bar and catch it on your shoulders.",
     "Stand tall, then lower the bar under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "brachialis",
+      "brachioradialis",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

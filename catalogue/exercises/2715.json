@@ -19,5 +19,25 @@
     "Keep the load balanced and avoid leaning to one side.",
     "Set it down under control, then switch shoulders."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

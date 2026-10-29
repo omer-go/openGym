@@ -24,6 +24,7 @@
   "muscleRoles": {
     "target": [
       "side-delt",
+      "upper-trap",
       "glute-max",
       "quads"
     ],
@@ -38,20 +39,19 @@
       "biceps",
       "brachialis",
       "brachioradialis",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
       "hamstrings"
     ],
     "stabilizers": [
-      "upper-trap",
       "levator-scapulae",
       "wrist-flexors",
       "rectus-abdominis",
       "obliques",
       "erector-spinae",
-      "glute-med"
+      "glute-med",
+      "calves"
     ]
   }
 }

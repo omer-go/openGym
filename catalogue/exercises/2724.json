@@ -19,5 +19,26 @@
     "Extend your hips to load it on the platform.",
     "Lower it back to the floor under control and reset."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "upper-trap",
+      "biceps",
+      "brachialis",
+      "erector-spinae",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

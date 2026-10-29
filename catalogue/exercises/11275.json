@@ -35,13 +35,11 @@
       "teres-minor",
       "teres-major",
       "lower-trap",
+      "biceps",
       "brachialis",
       "brachioradialis",
       "transverse-abdominis",
       "quadratus-lumborum"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
     ],
     "stabilizers": [
       "side-delt",

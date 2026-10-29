@@ -20,5 +20,24 @@
     "Stand up and lower the bell back between your legs.",
     "Hinge and swing again."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings",
+      "quads"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "glute-med",
+      "calves"
+    ]
+  }
 }

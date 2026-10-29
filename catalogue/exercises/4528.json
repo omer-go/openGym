@@ -19,5 +19,22 @@
     "Keep the kettlebells from swinging.",
     "Walk for a set distance or time, then set them down carefully."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "upper-trap"
+    ],
+    "synergists": [
+      "middle-trap",
+      "levator-scapulae",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

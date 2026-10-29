@@ -22,5 +22,32 @@
     "Lock out the arm.",
     "Lower the weight back to the floor with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "front-delt",
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

@@ -28,7 +28,9 @@
     ],
     "synergists": [
       "quadratus-lumborum",
-      "adductor-magnus",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
       "calves"
     ],
     "stabilizers": [

@@ -19,5 +19,37 @@
     "Dip and drive with your legs, pressing the axle overhead until your arms lock.",
     "Bring it back down to your chest and then the floor with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

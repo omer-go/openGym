@@ -22,5 +22,32 @@
     "Stand tall, then lower back to the hang.",
     "Switch arms and keep the weight light enough to move fast."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "front-delt",
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "triceps",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

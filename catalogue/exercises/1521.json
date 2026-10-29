@@ -21,5 +21,31 @@
     "Pull yourself under the bar and catch it on your front shoulders in a squat.",
     "Stand tall to finish, then lower the bar with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "brachialis",
+      "brachioradialis",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

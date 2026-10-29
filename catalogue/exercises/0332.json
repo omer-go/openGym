@@ -26,6 +26,7 @@
     ],
     "synergists": [
       "supraspinatus",
+      "upper-trap",
       "middle-trap",
       "lower-trap",
       "serratus-anterior",
@@ -33,7 +34,6 @@
       "coracobrachialis"
     ],
     "stabilizers": [
-      "upper-trap",
       "levator-scapulae",
       "wrist-extensors",
       "erector-spinae"

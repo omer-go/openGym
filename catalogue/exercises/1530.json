@@ -22,5 +22,35 @@
     "Stand tall to finish, then lower the bar with control."
   ],
   "femaleVariant": "10984",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "adductor-magnus",
+      "quads"
+    ],
+    "synergists": [
+      "front-delt",
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "brachialis",
+      "brachioradialis",
+      "triceps",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "levator-scapulae",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae"
+    ]
+  }
 }

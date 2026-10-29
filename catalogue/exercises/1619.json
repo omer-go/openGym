@@ -1,12 +1,12 @@
 {
   "id": "1619",
   "name": "dumbbell incline one arm hammer press",
-  "bodyPart": "upper arms",
+  "bodyPart": "chest",
   "equipment": "dumbbell",
-  "target": "triceps",
+  "target": "pectorals",
   "secondaryMuscles": [
     "shoulders",
-    "chest"
+    "triceps"
   ],
   "category": "strength",
   "unilateral": true,
@@ -23,12 +23,13 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
-      "triceps"
+      "pec-major-clavicular"
     ],
     "synergists": [
       "front-delt",
-      "pec-major-clavicular",
-      "pec-major-sternal"
+      "pec-major-sternal",
+      "coracobrachialis",
+      "triceps"
     ],
     "dynamicStabilizers": [
       "biceps"

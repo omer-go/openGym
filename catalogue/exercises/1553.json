@@ -21,5 +21,29 @@
     "Push off your bent leg to return to the middle while lowering the weights.",
     "Alternate sides or finish all reps on one side before switching."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "glute-med",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors",
+      "calves"
+    ]
+  }
 }

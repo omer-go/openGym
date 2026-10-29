@@ -22,13 +22,13 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
+      "pec-major-sternal",
       "triceps"
     ],
     "synergists": [
       "front-delt",
       "serratus-anterior",
-      "pec-major-clavicular",
-      "pec-major-sternal"
+      "pec-major-clavicular"
     ],
     "stabilizers": [
       "wrist-flexors",

@@ -22,5 +22,35 @@
     "Step back into the lunge and stand up.",
     "Alternate the lunging leg each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps",
+      "glute-med",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "biceps",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "adductors",
+      "calves"
+    ]
+  }
 }

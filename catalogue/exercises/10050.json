@@ -22,5 +22,34 @@
     "Lower your chest back to the floor.",
     "Repeat, keeping your body straight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "erector-spinae"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps",
+      "quadratus-lumborum",
+      "glute-max",
+      "hamstrings"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "rear-delt",
+      "middle-trap",
+      "lower-trap",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

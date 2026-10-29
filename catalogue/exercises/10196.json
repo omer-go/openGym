@@ -28,6 +28,7 @@
     ],
     "synergists": [
       "supraspinatus",
+      "upper-trap",
       "middle-trap",
       "lower-trap",
       "serratus-anterior",
@@ -35,12 +36,7 @@
       "coracobrachialis",
       "triceps"
     ],
-    "dynamicStabilizers": [
-      "biceps",
-      "triceps-long-head"
-    ],
     "stabilizers": [
-      "upper-trap",
       "levator-scapulae",
       "wrist-extensors",
       "rectus-abdominis",

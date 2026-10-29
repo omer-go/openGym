@@ -19,5 +19,21 @@
     "Lower it and lift the other knee in a controlled march.",
     "Keep the plate steady and avoid leaning back."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hip-flexors"
+    ],
+    "synergists": [
+      "quads"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "side-delt",
+      "upper-trap",
+      "triceps",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

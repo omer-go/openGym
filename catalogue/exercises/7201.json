@@ -23,11 +23,11 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "rectus-abdominis",
-      "hip-flexors"
+      "rectus-abdominis"
     ],
     "synergists": [
-      "obliques"
+      "obliques",
+      "hip-flexors"
     ],
     "stabilizers": [
       "transverse-abdominis",

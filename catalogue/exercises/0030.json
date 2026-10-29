@@ -39,12 +39,12 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
+      "pec-major-sternal",
       "triceps"
     ],
     "synergists": [
       "front-delt",
-      "pec-major-clavicular",
-      "pec-major-sternal"
+      "pec-major-clavicular"
     ],
     "dynamicStabilizers": [
       "biceps"

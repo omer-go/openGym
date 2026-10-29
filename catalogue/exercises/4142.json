@@ -24,16 +24,9 @@
       "triceps"
     ],
     "synergists": [
-      "front-delt",
-      "pec-major-clavicular",
-      "pec-major-sternal"
-    ],
-    "dynamicStabilizers": [
-      "biceps"
+      "triceps-long-head"
     ],
     "stabilizers": [
-      "middle-trap",
-      "rhomboids",
       "wrist-flexors"
     ]
   }

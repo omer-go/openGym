@@ -29,10 +29,10 @@
       "teres-major",
       "lower-trap",
       "rhomboids",
-      "pec-major-sternal",
       "triceps-long-head"
     ],
     "stabilizers": [
+      "pec-major-sternal",
       "wrist-flexors",
       "rectus-abdominis",
       "obliques",

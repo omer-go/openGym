@@ -19,5 +19,25 @@
     "Keep your posture upright and do not lean back.",
     "Set the bag down under control at the end."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

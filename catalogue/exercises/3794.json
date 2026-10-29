@@ -38,14 +38,13 @@
       "teres-minor",
       "teres-major",
       "lower-trap",
+      "biceps",
       "brachialis",
       "brachioradialis",
       "glute-med",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
-      "biceps",
       "hamstrings"
     ],
     "stabilizers": [
@@ -53,7 +52,8 @@
       "obliques",
       "erector-spinae",
       "quadratus-lumborum",
-      "adductors"
+      "adductors",
+      "calves"
     ]
   }
 }

@@ -33,7 +33,7 @@
     "target": [
       "hamstrings"
     ],
-    "synergists": [
+    "dynamicStabilizers": [
       "calves"
     ],
     "stabilizers": [

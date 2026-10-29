@@ -31,8 +31,7 @@
       "front-delt",
       "rectus-abdominis",
       "transverse-abdominis",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
       "hamstrings"
@@ -40,7 +39,8 @@
     "stabilizers": [
       "wrist-flexors",
       "erector-spinae",
-      "glute-med"
+      "glute-med",
+      "calves"
     ]
   }
 }

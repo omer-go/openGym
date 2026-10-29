@@ -21,5 +21,25 @@
     "Keep your arms squeezing the bag tight.",
     "Carry for a set distance or time, then lower the bag with care."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "adductor-magnus",
+      "hamstrings",
+      "calves"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "quadratus-lumborum",
+      "glute-med"
+    ]
+  }
 }

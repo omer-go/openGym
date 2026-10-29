@@ -1,11 +1,11 @@
 {
   "id": "0065",
   "name": "barbell one arm floor press",
-  "bodyPart": "upper arms",
+  "bodyPart": "chest",
   "equipment": "barbell",
-  "target": "triceps",
+  "target": "pectorals",
   "secondaryMuscles": [
-    "chest",
+    "triceps",
     "shoulders"
   ],
   "category": "strength",
@@ -22,12 +22,13 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
-      "triceps"
+      "pec-major-sternal"
     ],
     "synergists": [
       "front-delt",
       "pec-major-clavicular",
-      "pec-major-sternal"
+      "coracobrachialis",
+      "triceps"
     ],
     "dynamicStabilizers": [
       "biceps"

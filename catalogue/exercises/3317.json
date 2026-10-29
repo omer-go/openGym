@@ -20,5 +20,27 @@
     "Shift your hands and push up and over with your legs and arms.",
     "Let it roll over fully, then step back and reset for the next flip."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "erector-spinae",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

@@ -20,5 +20,26 @@
     "Keep your back flat.",
     "Repeat for the planned distance."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

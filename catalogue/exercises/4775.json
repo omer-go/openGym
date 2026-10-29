@@ -22,7 +22,8 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "pec-major-sternal"
+      "pec-major-sternal",
+      "triceps"
     ],
     "synergists": [
       "front-delt",
@@ -31,8 +32,7 @@
       "pec-minor",
       "pec-major-clavicular",
       "lats",
-      "coracobrachialis",
-      "triceps"
+      "coracobrachialis"
     ],
     "dynamicStabilizers": [
       "biceps"

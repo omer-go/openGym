@@ -21,5 +21,32 @@
     "Use that momentum to press the kettlebell overhead.",
     "Lower it back to your shoulder, repeat, then switch arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "calves"
+    ]
+  }
 }

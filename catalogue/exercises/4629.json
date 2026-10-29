@@ -21,5 +21,37 @@
     "Stand up with the dumbbells and squat down.",
     "Return to plank and alternate the rowing arm."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "middle-trap",
+      "rhomboids",
+      "lats",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "rear-delt",
+      "infraspinatus",
+      "teres-minor",
+      "teres-major",
+      "lower-trap",
+      "biceps",
+      "brachialis",
+      "brachioradialis",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "glute-med",
+      "calves"
+    ]
+  }
 }

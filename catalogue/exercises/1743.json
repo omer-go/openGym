@@ -1,11 +1,11 @@
 {
   "id": "1743",
   "name": "dumbbell twisting bench press",
-  "bodyPart": "upper arms",
+  "bodyPart": "chest",
   "equipment": "dumbbell",
-  "target": "triceps",
+  "target": "pectorals",
   "secondaryMuscles": [
-    "chest",
+    "triceps",
     "shoulders"
   ],
   "category": "strength",
@@ -24,12 +24,13 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
-      "triceps"
+      "pec-major-sternal"
     ],
     "synergists": [
       "front-delt",
       "pec-major-clavicular",
-      "pec-major-sternal",
+      "coracobrachialis",
+      "triceps",
       "obliques"
     ],
     "dynamicStabilizers": [

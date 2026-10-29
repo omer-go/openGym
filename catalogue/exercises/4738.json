@@ -20,5 +20,28 @@
     "Drive through your heels to stand.",
     "Repeat the full sequence for each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "biceps",
+      "glute-max",
+      "quads"
+    ],
+    "synergists": [
+      "brachialis",
+      "brachioradialis",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med",
+      "calves"
+    ]
+  }
 }

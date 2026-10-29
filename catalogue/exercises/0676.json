@@ -24,16 +24,23 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "glute-max"
+      "glute-max",
+      "quads"
     ],
     "synergists": [
+      "glute-med",
+      "hip-flexors",
+      "adductor-magnus"
+    ],
+    "dynamicStabilizers": [
       "hamstrings"
     ],
     "stabilizers": [
-      "rectus-abdominis",
       "obliques",
       "erector-spinae",
-      "glute-med"
+      "quadratus-lumborum",
+      "adductors",
+      "calves"
     ]
   }
 }

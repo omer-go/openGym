@@ -20,5 +20,32 @@
     "Keep your hips level.",
     "Repeat the sequence for the set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps",
+      "obliques",
+      "hip-flexors"
+    ],
+    "dynamicStabilizers": [
+      "biceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "transverse-abdominis",
+      "glute-max",
+      "quads"
+    ],
+    "antagonistStabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

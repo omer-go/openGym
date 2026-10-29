@@ -23,17 +23,17 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "erector-spinae"
+      "glute-max",
+      "hamstrings"
     ],
     "synergists": [
-      "quadratus-lumborum",
-      "glute-max",
-      "adductor-magnus",
-      "hamstrings"
+      "erector-spinae",
+      "adductor-magnus"
     ],
     "stabilizers": [
       "rectus-abdominis",
-      "obliques"
+      "obliques",
+      "quadratus-lumborum"
     ]
   }
 }

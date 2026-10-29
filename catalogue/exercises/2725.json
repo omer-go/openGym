@@ -19,5 +19,26 @@
     "Push through your whole foot and keep your chest up.",
     "Set the load down under control at the top."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings"
+    ],
+    "synergists": [
+      "upper-trap",
+      "biceps",
+      "brachialis",
+      "erector-spinae",
+      "adductor-magnus",
+      "quads"
+    ],
+    "stabilizers": [
+      "middle-trap",
+      "lats",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

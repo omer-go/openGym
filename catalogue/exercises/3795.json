@@ -21,5 +21,23 @@
     "Return the arms up and stand tall in one smooth motion.",
     "Keep your back flat and move with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "rear-delt",
+      "teres-major",
+      "lower-trap",
+      "rhomboids",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "pec-major-sternal",
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

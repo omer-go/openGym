@@ -19,5 +19,28 @@
     "Lower slowly back behind your head to shoulder level.",
     "Only use this variation if your shoulders move comfortably in that position."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "supraspinatus",
+      "middle-trap",
+      "lower-trap",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "levator-scapulae",
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

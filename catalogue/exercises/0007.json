@@ -49,7 +49,6 @@
       "middle-trap",
       "lower-trap",
       "rhomboids",
-      "pec-minor",
       "biceps",
       "brachialis",
       "brachioradialis"
@@ -58,6 +57,7 @@
       "triceps-long-head"
     ],
     "stabilizers": [
+      "pec-minor",
       "wrist-flexors",
       "erector-spinae",
       "glute-max"

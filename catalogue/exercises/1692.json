@@ -39,12 +39,9 @@
       "coracobrachialis",
       "triceps",
       "glute-med",
-      "adductor-magnus",
-      "calves"
+      "adductor-magnus"
     ],
     "dynamicStabilizers": [
-      "biceps",
-      "triceps-long-head",
       "hamstrings"
     ],
     "stabilizers": [
@@ -54,7 +51,8 @@
       "obliques",
       "erector-spinae",
       "quadratus-lumborum",
-      "adductors"
+      "adductors",
+      "calves"
     ]
   }
 }

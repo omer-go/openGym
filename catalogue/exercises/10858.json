@@ -28,11 +28,11 @@
       "front-delt",
       "supraspinatus",
       "upper-trap",
-      "middle-trap",
-      "lower-trap",
       "serratus-anterior"
     ],
     "stabilizers": [
+      "middle-trap",
+      "lower-trap",
       "levator-scapulae",
       "wrist-extensors",
       "erector-spinae"
