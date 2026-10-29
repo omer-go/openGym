@@ -1,10 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, evenCount, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, genDefaults, genScheme, genSets, generateWorkout } from './generate.js'
+import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
-import { USEFUL, entryWeights, groupCredit } from './coverage.js'
+import { entryWeights, groupCredit } from './coverage.js'
+import { LEVELS } from './planner.js'
 import { loadMuscleRoles } from './muscle-roles.js'
-import { OVERLAP, weeklyTargetOf } from './goals.js'
+import { weeklyTargetOf } from './goals.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -106,68 +107,43 @@ describe('sizing a day to the goal', () => {
       const shrugs = generateWorkout(st, 'pull', { count: n, now }).filter(p => /shrug/i.test(EXIDX[p.id].n))
       expect(shrugs.length).toBeLessThanOrEqual(1)
     })
-    // What sizeDay counts on: an n-exercise day is the first n the generator picks for a longer
-    // one, and `at` says which those are; the order the day runs in does not.
-    it('a shorter day is the first picks of a longer one', () => {
+    // A day is as long as the planner builds it from its share: sizeDay counts it, and a day built
+    // to that count is that day.
+    it('a day is as long as the planner builds it', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }),
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0652'], 3)] })
       const now = at(2026, 9, 16)
       const share = programShare(st, 'full', now)
-      const long = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now, share }).sort((a, b) => a.at - b.at).map(p => p.id)
-      for (const n of [4, 7, 10]) {
-        const short = generateWorkout(st, 'full', { count: n, now, share }).map(p => p.id)
-        expect(short.slice().sort()).toEqual(long.slice(0, n).sort())
-      }
+      const n = sizeDay(st, 'full', { now })
+      const own = generateWorkout(st, 'full', { count: null, now, share }).map(p => p.id)
+      expect(n).toBe(Math.max(MIN_DAY, own.length))
+      expect(generateWorkout(st, 'full', { count: n, now, share }).map(p => p.id)).toEqual(own)
+      for (const k of [4, 7]) expect(generateWorkout(st, 'full', { count: k, now, share })).toHaveLength(k)
     })
     // Each group to its own share, not 85% of the sum: that stopped a day at six with back,
-    // biceps and hamstrings each a set or more short, chest over. On the week's last program day,
-    // which its even part caps one exercise later. Each lift counts the sets it takes, extra
-    // sets for its group's share too.
-    it('fills every group to its share, and ends with the last exercise that adds a set', () => {
+    // biceps and hamstrings each a set or more short, chest over. Each lift counts the sets it
+    // takes, extra sets for its group's share too.
+    it('fills every group to its share', () => {
       // The strength goal's groups add up to about the 100 sets a week this was measured at
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { type: 'strength' },
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4), session('2026-09-16', 'full', ['0652', '0085'], 3)] })
       const now = at(2026, 9, 18)
       const share = dayShare(st, 'full', now)
-      const n = sizeDay(st, 'full', { now })
-      const picks = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now, share }).sort((a, b) => a.at - b.at)
-      const got = {}, adds = []
-      for (const p of picks) {
-        let add = 0
-        for (const [g, c] of Object.entries(groupCredit(entryWeights(p)))) {
-          const sets = genSets(p.id, undefined, p.slot, p.extra)
-          add += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
-          got[g] = (got[g] || 0) + c * sets
-        }
-        adds.push(add)
-        if (adds.length === n) for (const [g, v] of Object.entries(share)) expect(got[g] || 0, g).toBeGreaterThan(v - USEFUL)
-      }
-      expect(adds[n - 1]).toBeGreaterThanOrEqual(USEFUL)
-      expect(adds.slice(n).every(a => a < USEFUL)).toBe(true)
+      const got = {}
+      for (const p of generateWorkout(st, 'full', { count: sizeDay(st, 'full', { now }), now, share }))
+        for (const [g, c] of Object.entries(groupCredit(entryWeights(p)))) got[g] = (got[g] || 0) + c * genSets(p.id, undefined, p.slot, p.extra)
+      for (const [g, v] of Object.entries(share)) expect(got[g] || 0, g).toBeGreaterThan(v - 1)
     })
-    // The first day of a week took 13 exercises and the last 9: what the first overshot, the last
-    // no longer lacked. A day with days after it stops near its even part of the sets. The last,
-    // uncapped, took 14: a second curl, press and ab lift for a set or two each.
-    it('a day with more to come this week stops near its even part; the last one exercise later', () => {
+    // The level caps a day's lifts (planner.js LEVELS maxAcc): the week's last day, with the most
+    // left to give, gives it in sets, not in a fourteenth lift.
+    it('a day with more to give takes more sets, its lifts capped by the level', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }) })
-      const mon = at(2026, 9, 14)
-      const share = dayShare(st, 'full', mon)
-      const n = sizeDay(st, 'full', { now: mon })
-      const picks = generateWorkout(st, 'full', { count: MAX_GEN_COUNT, now: mon, share }).sort((a, b) => a.at - b.at)
-      const setsOf = p => genScheme(p.id).sets
-      const sets = picks.slice(0, n).reduce((a, p) => a + setsOf(p), 0)
-      const sum = Object.values(share).reduce((a, b) => a + b, 0)
-      expect(sets - setsOf(picks[n - 1])).toBeLessThan(sum / OVERLAP + 1.5)
-      expect(n).toBeGreaterThanOrEqual(MIN_DAY)
-      const fri = at(2026, 9, 18)
-      expect(sizeDay(st, 'full', { now: fri })).toBeGreaterThan(sizeDay(st, 'full', { now: fri - 2 * 864e5 }))
-      // Fourteen lifts of three sets, a share of 42: the even part is 42 / OVERLAP + 1.5 = 31.5 sets,
-      // reached at the eleventh. Friday, Monday and Wednesday done, is the week's last day: one more.
-      const lifts = Array.from({ length: 14 }, () => ({ id: '0025' }))
-      const even = { chest: 42 }
-      expect(evenCount(st, 'full', lifts, even, undefined, mon)).toBe(11)
-      const done = { ...st, workouts: [session('2026-09-14', 'full'), session('2026-09-16', 'full')] }
-      expect(evenCount(done, 'full', lifts, even, undefined, fri)).toBe(12)
+      const sets = now => generateWorkout(st, 'full', { count: sizeDay(st, 'full', { now }), now, share: dayShare(st, 'full', now) })
+        .reduce((a, p) => a + genSets(p.id, undefined, p.slot, p.extra), 0)
+      const mon = at(2026, 9, 14), fri = at(2026, 9, 18)
+      expect(sizeDay(st, 'full', { now: mon })).toBeGreaterThanOrEqual(MIN_DAY)
+      expect(sizeDay(st, 'full', { now: fri })).toBeLessThanOrEqual(1 + 3 + LEVELS.intermediate.maxAcc)
+      expect(sets(fri)).toBeGreaterThan(sets(mon))
     })
   })
   it('a program started this week does not catch up on the days before it', () => {
@@ -248,9 +224,10 @@ describe('planning the days ahead', () => {
   })
   it('goes day by day where the forecast puts them, the first as Start builds it now', () => {
     expect(plan.map(d => d.iso)).toEqual(programForecast(st, MON).slice(0, 5).map(f => f.iso))
-    const setup = genDefaults('full')
-    const count = sizeDay(st, 'full', { now: MON, groups: setup.groups, setup })
-    expect(ids(plan[0])).toEqual(generateWorkout(st, 'full', { ...setup, count, now: MON, share: programShare(st, 'full', MON) }).map(p => p.id))
+    // On its own date: the planner varies a day by the date it is built on.
+    const setup = genDefaults('full'), on = new Date(plan[0].iso + 'T12:00:00').getTime()
+    const count = sizeDay(st, 'full', { now: on, groups: setup.groups, setup })
+    expect(ids(plan[0])).toEqual(generateWorkout(st, 'full', { ...setup, count, now: on, share: programShare(st, 'full', on) }).map(p => p.id))
     expect(plan[0].sets).toBe(plan[0].entries.reduce((n, e) => n + e.target.sets, 0))
     expect(plan[0].entries[0].target).toMatchObject({ sets: 4, repsMin: 6, reps: 8, prog: 'double' })
     expect(plan[0].groups.chest).toBeGreaterThan(0)
@@ -263,9 +240,11 @@ describe('planning the days ahead', () => {
   })
   it('builds each day as if the ones before it were done in full', () => {
     const d = plan[0], t = new Date(d.iso + 'T12:00:00').getTime()
+    // Both sides of a one-sided lift's set done too.
+    const doneSet = x => (x.sides ? { ...x, sides: { L: { ...x.sides.L, done: true }, R: { ...x.sides.R, done: true } } } : { ...x, done: true })
     const done = { ...st, workouts: [...st.workouts, {
       id: 'x', d: d.iso, start: t, end: t + 36e5, name: 'full', genType: 'full', routineIds: [],
-      entries: d.entries.map(e => ({ id: e.id, target: e.target, sets: e.sets.filter(x => !x.warm).map(x => ({ ...x, done: true })) })),
+      entries: d.entries.map(e => ({ id: e.id, target: e.target, sets: e.sets.filter(x => !x.warm).map(doneSet) })),
     }] }
     const next = new Date(plan[1].iso + 'T12:00:00').getTime()   // built on its own day
     expect(ids(planAhead(done, { days: 1, now: next })[0])).toEqual(ids(plan[1]))

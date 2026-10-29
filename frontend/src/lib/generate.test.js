@@ -5,6 +5,7 @@ import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 import { groupOfExercise } from './muscle-colors.js'
 import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
+import { planLift } from './planner.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const session = (d, ids, sets = [row()]) => ({ id: 'w' + d + ids.join(), d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets })) })
@@ -144,11 +145,12 @@ describe('generateWorkout', () => {
       expect(new Set(picks.map(p => p.id)).size, type).toBe(picks.length)
     }
   })
-  it('a muscle trained this week waits for the ones that were not', () => {
+  it('the day still leads with its press, but not the one from the last session', () => {
     const st = state({ workouts: [session('2026-09-14', [BENCH], sets(5))] })
     const picks = generateWorkout(st, 'push', { count: 2, now: NOW })
-    expect(picks.map(p => p.muscle)).not.toContain('chest')
-    expect(picks.every(p => p.last === null)).toBe(true)
+    expect(picks[0]).toMatchObject({ slot: 'lead', muscle: 'chest' })
+    expect(picks.map(p => p.id)).not.toContain(BENCH)
+    expect(picks[1].muscle).not.toBe('chest')
   })
   it('a pick carries its muscle and when that muscle was last trained', () => {
     const st = state({ workouts: [session('2026-09-01', [BENCH])] })
@@ -164,11 +166,12 @@ describe('generateWorkout', () => {
   it('a program day leads with the squat you know and rotates the rest as any one-tap day does', () => {
     // a smith squat, a barbell row and an incline dumbbell press last week; a fresh week now
     const st = state({ workouts: [session('2026-09-03', ['0770', '0027', '0314'], sets(3))] })
-    const off = generateWorkout(st, 'full', { now: NOW })
-    const on = generateWorkout({ ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }, 'full', { now: NOW })
-    expect(on.map(p => p.id)).toEqual(off.map(p => p.id))
-    expect(on[0]).toMatchObject({ id: '0770', slot: 'lead' })
-    expect(on.map(p => p.id)).not.toContain('0027')
+    for (const s of [st, { ...st, program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } }]) {
+      const picks = generateWorkout(s, 'full', { now: NOW })
+      expect(picks[0]).toMatchObject({ id: '0770', slot: 'lead' })
+      expect(picks.map(p => p.id)).not.toContain('0027')
+      expect(picks.map(p => p.id)).not.toContain('0314')
+    }
   })
   it('the day leads with its turn’s movement, the lift of it you logged most', () => {
     const smith = '0770', back = '0032'
@@ -193,10 +196,13 @@ describe('generateWorkout', () => {
     const st = state({ workouts: [session('2026-09-02', [SQUAT], sets(3)), session('2026-09-03', [smith], sets(3)), session('2026-09-05', [smith], sets(3))], program: { days: ['full', 'full', 'full'], startedAt: '2026-09-01', weeks: 8 } })
     expect(leadFor(st, 'full', genGroupsOf('full'), NOW)).toEqual({ id: smith, pattern: 'squat' })
   })
-  it('a squat or deadlift day takes no other hinge', () => {
-    const picks = generateWorkout(state(), 'full', { count: 10, now: NOW })
-    expect(picks[0].slot).toBe('lead')
-    expect(picks.filter(p => patternOf(p.id) === 'hinge' && liftKind(p.id) === 'compound').length).toBeLessThanOrEqual(patternOf(picks[0].id) === 'hinge' ? 1 : 0)
+  it('a day loads the lower back once: one deadlift or good morning, none on a squat day besides', async () => {
+    await loadMuscleRoles()
+    for (const shift of [0, 1, 2]) {
+      const picks = generateWorkout(state(), 'legs', { count: 10, now: NOW, shift })
+      expect(picks[0].slot).toBe('lead')
+      expect(picks.filter(p => patternOf(p.id) === 'hinge' && loadsBack(p.id)).length).toBeLessThanOrEqual(1)
+    }
   })
   // Two days of nine led with the bench press and took a trap bar or barbell deadlift too.
   it('a bench press day takes no deadlift, the hip thrust still can', async () => {
@@ -251,15 +257,16 @@ describe('workout setup', () => {
     const picks = generateWorkout(state(), 'push', { count: 3 })
     expect(picks.map(p => p.muscle).sort()).toEqual(['chest', 'deltoids', 'triceps'])
   })
-  it('a longer session goes round the muscles again', () => {
+  it('a longer session goes round the muscles again, the shoulders once', () => {
     const picks = generateWorkout(state(), 'push', { count: 9 })
     expect(picks).toHaveLength(9)
     expect(new Set(picks.map(p => p.id)).size).toBe(9)
-    expect(picks.filter(p => p.muscle === 'chest')).toHaveLength(3)
+    for (const m of ['chest', 'triceps']) expect(picks.filter(p => p.muscle === m).length, m).toBeGreaterThan(1)
+    expect(picks.filter(p => p.muscle === 'deltoids')).toHaveLength(1)
   })
   it('unticked groups are left out and ticked ones the type lacks are added', () => {
     const picks = generateWorkout(state(), 'full', { count: 7, groups: ['chest', 'back', 'forearms'] })
-    const groups = new Set(picks.map(p => groupOfExercise(EXIDX[p.id])))
+    const groups = new Set(picks.map(p => planLift(p.id).p[0]))
     expect([...groups].sort()).toEqual(['back', 'chest', 'forearms'])
     expect(picks).toHaveLength(7)
   })

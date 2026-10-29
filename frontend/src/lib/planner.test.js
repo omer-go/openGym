@@ -219,8 +219,8 @@ describe('planner', () => {
     const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
     expect(p.yields.calves).toBeLessThan(1)
     const calves = p.days.flatMap(d => d.items).filter(i => i.slot === 'accessory' && i.ex.p.includes('calves'))
-    expect(calves).toHaveLength(1)
-    expect(calves[0].sets).toBe(p.cfg.accMax)
+    expect(calves).toHaveLength(Math.ceil(p.goals.calves * p.yields.calves / p.cfg.accMax))
+    for (const i of calves) expect(i.sets).toBe(p.cfg.accMax)
   })
 
   it('three days of 75 minutes keep the chest, back and legs at their goal, the shoulders at theirs', () => {
@@ -265,6 +265,28 @@ describe('planner', () => {
     expect(planLift('0279')).toMatchObject({ kind: 'compound', pat: 'hpress' })
     for (const { template, days, p } of weeks()) for (const d of p.days) for (const i of d.items) {
       if (i.ex.p.includes('biceps') || i.ex.p.includes('triceps')) expect(i.ex.kind, `${template} ${days}d ${i.ex.id}`).toBe('iso')
+    }
+  })
+
+  it('fills the chest, back and legs with any lift that works them; only the arms and shoulders take isolations', () => {
+    const acc = weeks().flatMap(({ p }) => p.days.flatMap(d => d.items.filter(i => i.slot === 'accessory')))
+    for (const i of acc) if (['biceps', 'triceps', 'shoulders'].includes(i.ex.p[0])) expect(i.ex.kind, i.ex.id).toBe('iso')
+    expect(acc.some(i => i.ex.kind === 'compound' && ['chest', 'back', 'quads', 'hamstrings'].includes(i.ex.p[0]))).toBe(true)
+  })
+
+  it('does one movement once a day: a pullover on one tool, a shrug standing or not', () => {
+    const move = e => EXDB.find(x => x.id === e.id).n.replace(/\b(ez barbell|ez bar|trap bar|barbell|dumbbell|kettlebell|cable|lever|smith|band|weighted|sled|standing)\b/g, '').replace(/\s+/g, ' ').trim()
+    for (const { template, days, p } of weeks()) for (const d of p.days) {
+      const moves = d.items.filter(i => i.slot === 'accessory').map(i => move(i.ex))
+      expect(new Set(moves).size, `${template} ${days}d ${moves}`).toBe(moves.length)
+    }
+  })
+
+  it('takes no third lift of one movement: after two presses a fly, after two rows a pullover', () => {
+    for (const { template, days, p } of weeks()) for (const d of p.days) {
+      const pats = {}
+      for (const i of d.items) if (i.ex.kind === 'compound') pats[i.ex.pat] = (pats[i.ex.pat] || 0) + 1
+      for (const [pat, n] of Object.entries(pats)) expect(n, `${template} ${days}d ${pat}`).toBeLessThanOrEqual(2)
     }
   })
 

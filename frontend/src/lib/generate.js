@@ -1,24 +1,23 @@
-// One-tap workouts: a full-body, push, pull or leg session built from what your last 7 days
-// left short. Pure: reads state, returns picks and session entries, never writes.
+// One-tap workouts: a full-body, push, pull or leg session built from what this week still
+// lacks. Pure: reads state, returns picks and session entries, never writes.
 //
 // A day type is the muscle groups it covers and how many exercises it has (GEN_TYPES, read as
-// groups by genGroupsOf). lib/coverage.js picks the exercises: each one is the one that adds the
-// most to the groups that still need it this week, secondary muscles counting too, so a squat
-// covers quads, glutes and some hamstrings at once. Among picks that cover about the same, the
-// part of the muscle, then the helpers, the tool and the position done longest ago win, so the
-// bench press rotates through incline and decline, dumbbells and the smith machine. A part of a muscle the last two weeks left out
-// (side delts that only helped presses) gets its own exercise, and a full body always keeps
-// one lower-body compound. The session runs compounds first.
+// groups by genGroupsOf). The day is built the way a program's is (planner.js planDay), one
+// algorithm for both: its share of what each group still lacks this week (dayGoals), a backbone
+// of compounds led by the lift of the day's movement you know best (leadFor), then accessories
+// for the groups and parts still short, from the lifts on your list (planPool). The biceps,
+// triceps and shoulders take lifts for that muscle alone as accessories, the other groups a
+// compound too. A lift the last session had stays off it unless nothing else will do, and the
+// ones of the two before go last. `shift` builds it again another way: Shuffle in the workout is
+// a shift + 1.
 //
-// Within a muscle, exercises you have already logged come first, longest-ago first; then the ones
-// you starred (Choose your exercises keeps a lift by starring it, lib/curate.js); after them a
-// short list of staple lifts, so a muscle you have never trained opens on a bench press, not
-// on whichever of 300 catalogue rows sorts first. `shift` walks each choice one further:
-// Shuffle in the workout is a shift + 1.
+// Within a muscle, exercises you have already logged come first for a swap or an added lift
+// (candidatesFor), longest-ago first; then the ones you starred (Choose your exercises keeps a
+// lift by starring it, lib/curate.js); after them a short list of staple lifts, so a muscle you
+// have never trained opens on a bench press, not on whichever of 300 catalogue rows sorts first.
 //
-// A day of the running program (lib/program.js) rotates the same way: its own is how many
-// exercises it takes and which groups the ones past the first fill (`share`), not which lifts.
-// A variation you would rather not do is one swap away.
+// A day of the running program (lib/program.js) passes its share of the week (`share`) and is
+// sized to it.
 //
 // The setup sheet before a one-tap workout (genSetup) can change how many exercises it has,
 // which muscle groups it covers, add a run and stretches, and set the rest and warm-ups of every
@@ -27,11 +26,10 @@
 import { EXIDX, isCardio, patternOf } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS, isStretch } from './activities.js'
-import { musclesOf, doneSetItems } from './muscles.js'
-import { partFocus, muscleRolesOf } from './muscle-roles.js'
-import { entryWeights, workSets, weeklyNeed, variantHistory, pickForCoverage, liftKind, partsShort, spareParts, slotMuscleOf, loadsBack } from './coverage.js'
+import { musclesOf } from './muscles.js'
+import { entryWeights, workSets, liftKind, slotMuscleOf, weeklyDone, partSplitOf, partSets } from './coverage.js'
 export { loadsBack } from './coverage.js'
-import { suggestable } from './skipped.js'
+import { suggestable, skipIds } from './skipped.js'
 import { favIds } from './favourites.js'
 import { POPULAR_IDS, popularBySlug } from './popular.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
@@ -39,6 +37,9 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, BLOCK_DAYS } from './engine.js'
+import { DAY_TYPES, planDay, partsFor } from './planner.js'
+import { listOf } from './curate.js'
+import { daysOf, goalTypeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 
@@ -48,10 +49,6 @@ export const GEN_TYPES = {
   pull: [['upper-back', 3], ['trapezius', 1], ['biceps', 2]],
   legs: [['quadriceps', 2], ['hamstring', 2], ['gluteal', 1], ['calves', 1]],
 }
-
-// The groups a day type's one lower-body compound comes from (coverage.js anchor): a full body
-// without a squat, hinge or leg press is not one, even when the legs have had their week.
-export const GEN_ANCHOR = { full: ['quads', 'hamstrings', 'glutes'] }
 
 // English names, used as i18n keys where they are shown (t(GEN_NAME[type])).
 export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day', legs: 'Leg day' }
@@ -145,16 +142,6 @@ export function candidatesFor(S, slug, index = trainingIndex(S)) {
   return [...logged, ...starred, ...plain.filter(id => !isSkill(EXIDX[id])), ...plain.filter(id => isSkill(EXIDX[id]))]
 }
 
-// The listed lifts on `slug` that target a part a program day's spare slot may go to
-// (coverage.js spareParts), past the staples: a hip abduction for the side glutes when the
-// deadlifts and hip thrusts never get to them. Only the spare slot takes them.
-function spareCandidates(S, slug, spare) {
-  const muscles = new Set(spare.flatMap(p => p.muscles))
-  if (!muscles.size) return []
-  return (LISTED[slug] || []).filter(id => EXIDX[id] && !isCardio(EXIDX[id]) && suggestable(S, EXIDX[id])
-    && (muscleRolesOf(id)?.target || []).some(m => muscles.has(m)))
-}
-
 /** How many exercises a `type` session has unless the setup says otherwise. */
 export const genCount = type => (GEN_TYPES[type] || []).reduce((n, [, count]) => n + count, 0)
 
@@ -185,7 +172,7 @@ export const genScheme = (id, setup, slot = slotOf(liftKind(id))) => (setup?.byK
   ? { sets: setup.sets, lo: setup.reps, hi: setup.reps, rest: 0 } : GEN_SCHEME[slot] || GEN_SCHEME.main)
 /**
  * The sets lift `id` in `slot` takes from `setup` (genScheme), with the `extra` a program day gave
- * it for its group's share (coverage.js pickForCoverage), never past engine.js roomOf.
+ * it past its slot's (generateWorkout), never past engine.js roomOf.
  */
 export const genSets = (id, setup, slot, extra = 0) => {
   const n = genScheme(id, setup, slot).sets || 0
@@ -213,27 +200,6 @@ function stretchCandidates(S, index, slugs) {
   return [...all.filter(hits), ...all.filter(id => !hits(id))]
 }
 export const GEN_STRETCHES = 2
-
-/**
- * Group id -> the target muscles of the parts of it short of their weekly minimum (coverage.js
- * partsShort), else of the part the 14 days up to `now` trained least (muscle-roles.js
- * partFocus, as Add exercise marks it), for the `groups` given.
- */
-export function partGaps(S, groups, now = Date.now()) {
-  const today = isoOf(new Date(now)), from = isoOf(new Date(now - 13 * 864e5))
-  const items = doneSetItems(strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= today))
-  const short = partsShort(S, groups, now)
-  const gaps = {}
-  for (const g of ADD_GROUPS) {
-    if (!groups.includes(g.id)) continue
-    if (short[g.id]) { gaps[g.id] = short[g.id].flatMap(p => p.muscles); continue }
-    for (const slug of g.m) {
-      const gap = partFocus(items, slug)
-      if (gap) gaps[g.id] = [...(gaps[g.id] || []), ...gap.muscles]
-    }
-  }
-  return gaps
-}
 
 /**
  * The lifts of the last `n` strength sessions before `now`, latest first, each by id: what a new
@@ -299,44 +265,79 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
   return null
 }
 
+// Catalogue movement -> the planner's (planner.js PATTERN_GROUPS), for the day's lead.
+const PATS = { squat: 'squat', lunge: 'squat', hinge: 'hinge', 'push-horizontal': 'hpress', 'push-vertical': 'vpress', 'pull-horizontal': 'hpull', 'pull-vertical': 'vpull' }
+
 /**
- * The exercises of a `type` session: [{ id, muscle, last }], compounds first. `muscle` is the
- * exercise's primary muscle and `last` the ISO day it was last trained, null when never; `at` is
- * the order it was picked in (the first n picked are what an n-exercise session would be).
- * `count` and `groups` are the setup's (genDefaults); `cardio` adds a run and `stretch` two
- * stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }. `now` dates the week. A
- * program day passes its `share` (program.js dayShare) and the setup's `byKind` and `sets`, so
- * the exercises past the first of each group go to a part short of its minimum (spareParts),
- * then where the day is furthest short.
+ * The lifts a one-tap day is built from: your list (curate.js listOf), its strength lifts you
+ * could be offered; an olympic lift or a skill only once you have starred it.
+ */
+export function planPool(S) {
+  const starred = new Set(favIds(S))
+  return listOf(S).flatMap(g => g.list).filter(ex => !isCardio(ex) && ex.cat !== 'stretching' && suggestable(S, ex)
+    && (starred.has(ex.id) || !(isOlympic(ex) || isSkill(ex)))).map(ex => ex.id)
+}
+
+/**
+ * Group id -> the sets a `type` day is to give, and its parts' (planner.js partsFor) the same way:
+ * what each ticked group still lacks this week (goals.js), shared by the days left to train it.
+ * A program day's `share` (program.js dayShare) is its groups' already; without a program the days
+ * left are the week's days (goals.js daysOf) less the sessions done, as many of them as a cycle of
+ * these days would give the group: every one for a full body, a third for push, pull or legs.
+ */
+function dayGoals(S, type, ticked, share, now) {
+  const done = weeklyDone(S, now), week = windowWorkouts(S, now)
+  const lack = g => Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0))
+  const cycle = S?.program?.days?.includes(type) ? S.program.days : type === 'full' ? ['full'] : ['push', 'pull', 'legs']
+  const left = Math.max(1, daysOf(S) - strengthWorkouts(week).length)
+  const daysFor = g => Math.max(1, Math.round(left * cycle.filter(t => DAY_TYPES[t].groups.includes(g)).length / cycle.length))
+  const goals = Object.fromEntries(ticked.map(g => [g, share ? share[g] || 0 : lack(g) / daysFor(g)]))
+  // A part gets the share of what it lacks its group's day gets of the group's.
+  const split = partSplitOf(week)
+  const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup)
+    .filter(p => ticked.includes(p.g) || DAY_TYPES[type].parts?.includes(p.name))
+    .map(p => {
+      const of = lack(p.g) ? (goals[p.g] ?? lack(p.g) / daysFor(p.g)) / lack(p.g) : 0
+      return { ...p, goal: Math.max(0, p.goal - partSets(split[p.g]?.[p.name])) * of }
+    })
+  return { goals, parts }
+}
+
+/**
+ * The exercises of a `type` session: [{ id, muscle, last, at, slot }], built the way a program's
+ * day is (planner.js planDay) from your list (planPool): the day's share of what the week still
+ * lacks (dayGoals), led by the lift leadFor picks, the lifts of the last session kept off it unless
+ * nothing else will do and those of the two before used last. `muscle` is the exercise's primary
+ * muscle and `last` the ISO day it was last trained, null when never; `at` the order it runs in.
+ * `count` and `groups` are the setup's (genDefaults), `count: null` the day's own size; `cardio`
+ * adds a run and `stretch` two stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }.
+ * `now` dates the week. A program day passes its `share` (program.js dayShare). With the setup's
+ * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`.
  */
 export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets } = {}) {
   if (!GEN_TYPES[type]) return []
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
-  const spare = share ? spareParts(S, ticked, now) : []
-  const slugs = ADD_GROUPS.filter(g => ticked.includes(g.id)).flatMap(g => g.m)
-  // A day that leads with a squat or a deadlift has no other hinge: a romanian deadlift after
-  // either is the lower back's third heavy lift of the day. One that leads with an upper-body lift
-  // has no deadlift either: the week's hinge day has it, and a trap bar deadlift after the bench
-  // press is the lower back's second heavy day of three. A hip thrust gives the glutes theirs.
+  const pool = planPool(S)
   const lead = leadFor(S, type, ticked, now, index)
-  const heavy = lead && (lead.pattern === 'squat' || lead.pattern === 'hinge')
-  const hinge = id => patternOf(id) === 'hinge' && liftKind(id) === 'compound'
-  const candidates = slugs.flatMap(slug => candidatesFor(S, slug, index).map((id, rank) => ({ id, rank })))
-    .filter(c => !lead || c.id === lead.id || !(heavy ? hinge(c.id) : hinge(c.id) && loadsBack(c.id)))
-  const spareOnly = slugs.flatMap(slug => spareCandidates(S, slug, spare).map((id, rank) => ({ id, rank: 100 + rank })))
-  const n = Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type)))
-  const [recent = [], ...earlier] = recentSessionIds(S, now)
-  // A setup with its own sets for every lift keeps to them; the engine's scheme may go past its
-  // slot's to give a group its share (engine.js roomOf).
-  const setsOf = (id, first) => genScheme(id, { byKind, sets }, slotOf(liftKind(id), first)).sets || 0
-  const picks = pickForCoverage(candidates, { count: n, groups: ticked, need: weeklyNeed(S, ticked, now), history: variantHistory(S), shift,
-    anchor: GEN_ANCHOR[type] || [], gaps: partGaps(S, ticked, now),
-    share, setsOf, roomOf: byKind === false ? setsOf : (id, first) => roomOf(setsOf(id, first)), spare, spareOnly,
-    recent, earlier: earlier.flat(), known: Object.keys(index.exercises), first: lead?.id })
-    .map(({ id, slug, at, extra }) => ({ id, muscle: slug, last: index.muscles[slug] || null, at, ...(extra > 0 ? { extra } : {}) }))
-  // The first big lift the session runs leads it (engine.js): the day's lead when it has one.
-  sessionSlots(picks.map(p => liftKind(p.id))).forEach((slot, i) => { picks[i].slot = slot })
+  const [near = [], ...earlier] = recentSessionIds(S, now)
+  const { goals, parts } = dayGoals(S, type, ticked, share, now)
+  const day = planDay({
+    type, goals, parts, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
+    pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
+    count: count === null ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
+    goal: goalTypeOf(S), level: S?.program?.plan?.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift,
+  })
+  const items = count === null ? day.items.slice(0, MAX_GEN_COUNT) : day.items
+  // The day's lead leads the session; without one, its first big lift (engine.js sessionSlots).
+  const kinds = sessionSlots(items.map(i => liftKind(i.ex.id)))
+  const led = items.some(i => i.slot === 'lead')
+  const picks = items.map((it, at) => {
+    const id = it.ex.id, slug = slotMuscleOf(EXIDX[id])
+    const slot = !led ? kinds[at] : it.slot === 'lead' ? 'lead' : it.slot === 'accessory' ? slotOf(liftKind(id)) : 'main'
+    const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets }, slot).sets
+    return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 ? { extra } : {}) }
+  })
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }

@@ -15,12 +15,11 @@
 //
 // Sizing. A program day is as long as the week's goal needs (goals.js): what a group still
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
-// takes as many exercises as reach its share. The picks are greedy (coverage.js pickForCoverage), so the first
-// n of a long run are about what a run of n would pick.
+// takes as many exercises as the planner (planner.js planDay) builds that share with.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, genSets, generateWorkout, generatedEntries } from './generate.js'
-import { USEFUL, entryWeights, groupCredit, plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
-import { OVERLAP, sessionMinutes, weeklyTargetOf } from './goals.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
+import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
+import { sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { isWarmupRow } from './workout-model.js'
@@ -57,8 +56,8 @@ export function newProgram(template, { weeks = DEFAULT_WEEKS, today = isoOf(new 
  * A program built from the program page's settings (lib/planner.js), starting on `today`.
  * `exclude`: exercise ids not to pick. Null when the settings build no days.
  */
-export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new Date()), exclude } = {}) {
-  const p = planWeek({ ...opts, exclude })
+export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new Date()), exclude, pool } = {}) {
+  const p = planWeek({ ...opts, exclude, pool })
   if (!p.days.length) return null
   const c = p.cfg
   return {
@@ -214,7 +213,6 @@ export function suggestDay(S, now = Date.now()) {
 }
 
 const CATCH_UP = 1.5   // a day takes at most this many times its even part of a group's goal
-const EVEN_ROOM = 1.5  // sets a day may go past its even part (evenCount)
 
 /**
  * Group id -> sets this `type` day should add: what each group still lacks this week (coverage.js
@@ -257,50 +255,14 @@ export const programShare = (S, type, now = Date.now()) =>
 
 /**
  * How many exercises a `type` day takes to give its share (dayShare), from MIN_DAY to
- * MAX_GEN_COUNT; the generator's own count when nothing is lacking. `setup` is the one-tap
- * setup, for its sets per exercise. Every group is filled to its own share: the day ends with the
- * last exercise that still gives a group a set it lacks (USEFUL), not when the sum looks close,
- * and no later than its even part of the week's sets (evenCount).
+ * MAX_GEN_COUNT: as many as the planner builds it with (generate.js generateWorkout, planner.js
+ * planDay); the generator's own count when nothing is lacking. `setup` is the one-tap setup.
  */
 export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const share = dayShare(S, type, now)
   if (!Object.values(share).some(v => v > 0)) return Math.min(genCount(type), MAX_GEN_COUNT)
-  // In the order they were picked, not the order they run in: a pull day runs every back lift
-  // before its first curl, so counted that way the shrugs fill the back long before the biceps
-  // get anything, and the day grows to eleven.
-  const picks = generateWorkout(S, type, { count: MAX_GEN_COUNT, groups, now, share, byKind: setup?.byKind, sets: setup?.sets }).sort((a, b) => a.at - b.at)
-  const got = {}
-  let n = 0
-  for (let i = 0; i < picks.length; i++) {
-    const sets = genSets(picks[i].id, setup, picks[i].slot, picks[i].extra)
-    let adds = 0
-    for (const [g, c] of Object.entries(groupCredit(entryWeights(picks[i])))) {
-      adds += Math.min(c * sets, Math.max(0, (share[g] || 0) - (got[g] || 0)))
-      got[g] = (got[g] || 0) + c * sets
-    }
-    if (adds >= USEFUL) n = i + 1
-  }
-  return Math.min(picks.length, Math.max(MIN_DAY, Math.min(n, evenCount(S, type, picks, share, setup, now))))
-}
-
-/**
- * How many of `picks` (in the order picked) make a `type` day's even part of the sets its share
- * adds up to: the shares' sum less what lifts count twice (a squat is quads and glutes both,
- * goals.js OVERLAP), and a set and a half more. The week's last program day takes one exercise
- * more, for what the others left: uncapped, it closed every gap a set at a time with a second
- * curl, a second press and a second ab lift (13 or 14 exercises). Without a cap the first day of
- * a week takes the most and the last the least: what the first overshoots, the last no longer
- * lacks (13, 12 and 9 exercises in place of 11 or 12 each).
- */
-export function evenCount(S, type, picks, share, setup, now) {
-  const extra = daysLeft(S, type, now).length <= 1 ? 1 : 0
-  const budget = Object.values(share).reduce((a, b) => a + b, 0) / OVERLAP + EVEN_ROOM
-  let sets = 0
-  for (let i = 0; i < picks.length; i++) {
-    sets += genSets(picks[i].id, setup, picks[i].slot, picks[i].extra)
-    if (sets >= budget) return Math.min(picks.length, i + 1 + extra)
-  }
-  return picks.length
+  const picks = generateWorkout(S, type, { count: null, groups, now, share, byKind: setup?.byKind, sets: setup?.sets })
+  return Math.max(MIN_DAY, Math.min(MAX_GEN_COUNT, picks.length))
 }
 
 /** Group id -> sets done this week and the goal, for the groups a program's days train. */

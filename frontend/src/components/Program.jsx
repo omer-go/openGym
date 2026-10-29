@@ -4,7 +4,7 @@ import { useUI } from '../store/useUI.js'
 import { t, tn, dateLocale, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { DAYS, fmtDate, fmtDateRange, fmtDur, fmtNum, isoOf, todayISO, weekOrder, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { genDefaults, genSets, generateWorkout } from '../lib/generate.js'
+import { genDefaults, genSets, generateWorkout, planPool } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
   MAX_GOAL, defaultTargetFor, goalEstimate, goalGroups, goalTypeOf,
@@ -179,7 +179,7 @@ function PlanBuilder({ template, close }) {
   // Groups set on their own (goals.js byGroup): edited here, saved with the program.
   const [byGroup, setByGroup] = useState(() => ({ ...(S.goals?.byGroup || {}) }))
   const [groupsOpen, setGroupsOpen] = useState(false)
-  const env = useMemo(() => ({ exclude: planExclude(S), byGroup }), [S, roles, byGroup])
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup }), [S, roles, byGroup])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, ...from, template }
@@ -229,7 +229,7 @@ function PlanBuilder({ template, close }) {
 
   const start = () => {
     const go = () => {
-      const program = newPlanProgram({ ...o, byGroup }, { weeks, today: todayISO(), exclude: env.exclude })
+      const program = newPlanProgram({ ...o, byGroup }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool })
       if (!program) return
       // An update keeps the weeks already done: the program still starts when it started.
       if (updating) program.startedAt = S.program.startedAt
