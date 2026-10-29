@@ -39,7 +39,7 @@ import { isoOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, BLOCK_DAYS } from './engine.js'
 import { DAY_TYPES, planDay, partsFor } from './planner.js'
 import { listOf } from './curate.js'
-import { daysOf, goalTypeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { daysOf, goalTypeOf, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 
@@ -294,7 +294,7 @@ function dayGoals(S, type, ticked, share, now) {
   const goals = Object.fromEntries(ticked.map(g => [g, share ? share[g] || 0 : lack(g) / daysFor(g)]))
   // A part gets the share of what it lacks its group's day gets of the group's.
   const split = partSplitOf(week)
-  const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup)
+  const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup, volumeOf(S))
     .filter(p => ticked.includes(p.g) || DAY_TYPES[type].parts?.includes(p.name))
     .map(p => {
       const of = lack(p.g) ? (goals[p.g] ?? lack(p.g) / daysFor(p.g)) / lack(p.g) : 0

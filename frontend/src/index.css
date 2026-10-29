@@ -2513,3 +2513,13 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .plan-adjust .ss{display:block;font-size:12px;color:var(--label-2)}
 .menu-chev.open{transform:rotate(90deg)}
 .plan-gdot{width:10px;height:10px;flex:none;border-radius:50%}
+/* Editing a running program: what the week gains (green), drops (struck through) and does other sets of. */
+.plan-diff{margin-top:2px;margin-bottom:10px;padding:10px 12px;border-radius:10px;background:var(--surface-2);display:flex;flex-direction:column;gap:3px}
+.plan-diff .tt{font-weight:600}
+.plan-diff .ss{font-size:13px;color:var(--label-2)}
+.plan-diff s,.plan-prev s{color:var(--label-3)}
+.plan-tag{flex:none;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--label-3)}
+.plan-tag.on{background:color-mix(in srgb,var(--green) 18%,transparent);color:var(--green)}
+.plan-added{box-shadow:inset 3px 0 0 var(--green)}
+.plan-removed{opacity:.55}
+.plan-removed .tt{text-decoration:line-through}

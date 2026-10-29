@@ -33,7 +33,7 @@
 import { entryWeights, groupCredit, GROUP_PARTS, HELPED_PART, loadsBack, liftKind, slotMuscleOf } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { groupOfMuscle } from './add-exercise.js'
-import { weeklyTargetOf, partTargetOf } from './goals.js'
+import { VOLUMES, weeklyTargetOf, partTargetOf } from './goals.js'
 import { rolesLoaded, muscleRolesOf, ROLE_WEIGHT } from './muscle-roles.js'
 import { SCHEMES } from './engine.js'
 import { variantOf } from './variant.js'
@@ -266,13 +266,13 @@ function rng(seed) {
   }
 }
 // The app's weekly goal for each group (goals.js): the kind of goal's default, or a group's own.
-const goalsFor = (type, byGroup) =>
-  Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { type, byGroup } }, g)]))
+const goalsFor = (type, byGroup, volume) =>
+  Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { type, byGroup, volume } }, g)]))
 // The shares of their groups' goals of the parts that need lifts of their own (goals.js
 // partTargetOf, PLANNED_PARTS): `[{ g, name, goal }]`.
-export const partsFor = (type, byGroup) => PART_GROUPS.flatMap(g => GROUP_PARTS[g]
+export const partsFor = (type, byGroup, volume) => PART_GROUPS.flatMap(g => GROUP_PARTS[g]
   .filter(([name]) => PLANNED_PARTS.includes(name))
-  .map(([name]) => ({ g, name, goal: partTargetOf({ goals: { type, byGroup } }, g, name) })))
+  .map(([name]) => ({ g, name, goal: partTargetOf({ goals: { type, byGroup, volume } }, g, name) })))
   .filter(p => p.goal > 0)
 const SHORT = 0.85 // under 85% of the goal counts as short
 
@@ -285,7 +285,8 @@ export function configOf(o = {}) {
     template: PLAN_TEMPLATES[o.template] ? o.template : PLAN_DEFAULTS.template, goal, level,
     equipment: EQUIPMENT[o.equipment] ? o.equipment : PLAN_DEFAULTS.equipment,
     days: o.days || PLAN_DEFAULTS.days, minutes: o.minutes || PLAN_DEFAULTS.minutes,
-    seed: o.seed ?? 1, shift: o.shift || 0,
+    seed: o.seed ?? 1, shift: o.shift || 0, volume: VOLUMES.includes(o.volume) ? o.volume : 0,
+    keep: (o.keep || []).map(ids => new Set(ids)),
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
   }
@@ -337,12 +338,16 @@ const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it
 
 // The most popular lift not used yet this week, else the most popular of any; ties (lifts off
 // the popular list among them) by the seed. `cfg.shift` takes the one that many places further
-// down: Shuffle gives each slot its next lift.
-function variant(cfg, cands, used, rand) {
+// down: Shuffle gives each slot its next lift. A program rebuilt from new settings (`cfg.keep`,
+// each day's lift ids as they were) takes a lift day `k` had before any other, so what still
+// fits stays and keeps its progress, and the same settings build the same week.
+function variant(cfg, cands, used, rand, k) {
   if (!cands.length) return null
   const fresh = cands.filter(e => !used.has(e.id))
   const pool = fresh.length ? fresh : cands
-  const ranked = pool.map(e => ({ e, at: popularPlace(e.id), tie: rand() })).sort((a, b) => a.at - b.at || a.tie - b.tie)
+  const kept = id => (cfg.keep[k]?.has(id) ? 0 : 1)
+  const ranked = pool.map(e => ({ e, kept: kept(e.id), at: popularPlace(e.id), tie: rand() }))
+    .sort((a, b) => a.kept - b.kept || a.at - b.at || a.tie - b.tie)
   return ranked[cfg.shift % ranked.length].e
 }
 
@@ -392,7 +397,7 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
         if (aimed.length) { pool = aimed; break }
       }
     }
-    return variant(cfg, pool, week.used, rand)
+    return variant(cfg, pool, week.used, rand, k)
   }
   const take = (pat, slot, lead = false) => {
     let sets = cfg.leadSets
@@ -528,7 +533,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     const top = Math.max(...cands.map(behind))
     const aimed = cands.filter(e => behind(e) === top)
     const best = Math.max(...aimed.map(helps))
-    const ex = variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand)
+    const ex = variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
     // Too long for what is left of the session: skip this group today and try another.
     if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; noTime[pick.part || pick.g] = true; continue }
@@ -582,7 +587,7 @@ function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains,
     const added = days.some(d => {
       const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && n.aimed(e) && !d.items.some(i => i.ex.id === e.id) && !repeats(d.items, e))
       if (!cands.length) return false
-      const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand)
+      const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand, d.k)
       const it = { ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
       if (minutesOf(cfg, [...d.items, it]) > cfg.minutes) return false
       d.items.push(it)
@@ -688,8 +693,8 @@ function balance(cfg, out, goals, parts, whole, near) {
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
-  const goals = goalsFor(cfg.goal, o.byGroup)
-  const parts = partsFor(cfg.goal, o.byGroup)
+  const goals = goalsFor(cfg.goal, o.byGroup, cfg.volume)
+  const parts = partsFor(cfg.goal, o.byGroup, cfg.volume)
   const first = weekOf(cfg, goals, parts, o)
   const { out, yields } = o.priority === false ? { out: first, yields: {} } : giveWay(cfg, goals, parts, o, first)
   const { total, direct, partTotal } = totalsOf(out)
@@ -865,7 +870,7 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
     if (!g) break
     const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && e.p.includes(g) && !items.some(i => i.ex.id === e.id) && !repeats(items, e))
     if (!cands.length) { full.add(g); continue }
-    const ex = variant(cfg, far(novel(cands, items), nearby), week.used, rand)
+    const ex = variant(cfg, far(novel(cands, items), nearby), week.used, rand, day.k)
     items.push({ ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) })
     week.used.add(ex.id)
   }

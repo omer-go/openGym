@@ -246,7 +246,7 @@ function Schedule({ S, update, nav, mode }) {
         icon: MODE_ICON[v], label: MODE_NAME()[v], sub: MODE_SUB()[v], on: v === shown, onClick: () => setMode(v),
       })) },
       inProgram && { title: t('Program'), items: [
-        { icon: 'clipboard', label: t('Change program'), sub: programSettingsLine(S) || undefined, chevron: true, onClick: () => changeProgram(S) },
+        { icon: 'clipboard', label: t('Edit program'), sub: programSettingsLine(S) || undefined, chevron: true, onClick: () => changeProgram(S) },
         { icon: 'xmark', label: t('End program'), danger: true, onClick: () => endProgram() },
       ] },
     ].filter(Boolean),

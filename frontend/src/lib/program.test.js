@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, weekChanges, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
@@ -258,13 +258,47 @@ describe('a program built from settings', () => {
 
   it('keeps its settings and the week they build', () => {
     expect(UL.days).toEqual(['upper', 'lower', 'upper', 'lower'])
-    expect(UL.plan).toEqual({ goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60, seed: 1 })
+    expect(UL.plan).toEqual({ goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60, seed: 1, volume: 0 })
     expect(UL.week).toHaveLength(4)
     for (const d of UL.week) expect(d.items[0]).toMatchObject({ slot: 'lead', lo: 6, hi: 8, rest: 180 })
     expect(isProgram(UL)).toBe(true)
     expect(isPlanProgram(UL)).toBe(true)
     expect(isPlanProgram(PPLF)).toBe(false)
     expect(DAY_NAME.upper).toBe('Upper body')
+  })
+
+  const ULO = { template: UL.template, ...UL.plan }
+  it('updated from new settings, keeps its start and the lifts that still fit', () => {
+    const more = newPlanProgram({ ...ULO, volume: 2 }, { today: '2026-10-01', from: UL })
+    expect(more.startedAt).toBe('2026-09-14')
+    expect(more.plan.volume).toBe(2)
+    const was = newPlanProgram(ULO)
+    expect(newPlanProgram(ULO, { from: was }).week).toEqual(was.week)
+    expect(newPlanProgram(ULO, { today: '2026-10-01' }).startedAt).toBe('2026-10-01')
+  })
+
+  it('tells what an update changes', () => {
+    const none = weekChanges(UL.week, UL.week)
+    expect(none.gone).toEqual([])
+    for (const d of none.days) expect([d.from, d.added, d.removed, d.changed, d.sets[0]]).toEqual([d.k, [], [], [], d.sets[1]])
+    for (const [then, now] of Object.values(none.groups)) expect(then).toBe(now)
+
+    const more = newPlanProgram({ ...ULO, volume: 2 }, { from: UL })
+    const c = weekChanges(UL.week, more.week)
+    const total = w => w.reduce((n, d) => n + d.items.reduce((m, i) => m + i.sets, 0), 0)
+    expect(c.days.reduce((n, d) => n + d.sets[1], 0)).toBe(total(more.week))
+    expect(c.days.reduce((n, d) => n + d.sets[0], 0)).toBe(total(UL.week))
+    expect(total(more.week)).toBeGreaterThan(total(UL.week))
+    for (const d of c.days) {
+      const was = UL.week[d.from].items.map(i => i.id), now = more.week[d.k].items.map(i => i.id)
+      expect([...d.kept, ...d.added].sort()).toEqual([...now].sort())
+      expect([...d.kept, ...d.removed].sort()).toEqual([...was].sort())
+    }
+
+    const fewer = newPlanProgram({ ...ULO, days: 3 }, { from: UL })
+    const f = weekChanges(UL.week, fewer.week)
+    expect(f.days.map(d => d.from)).toEqual([0, 1, 2])
+    expect(f.gone.map(d => [d.j, d.type])).toEqual([[3, 'lower']])
   })
 
   it('leaves out what is excluded', () => {

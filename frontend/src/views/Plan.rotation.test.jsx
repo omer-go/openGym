@@ -156,7 +156,7 @@ describe('Plan — a program on the How you train line', () => {
     click(line)
     const { sections } = menuSheet.mock.calls.at(-1)[0]
     expect(sections[0].items.find(i => i.on).label).toBe('Program')
-    expect(sections[1].items.map(i => i.label)).toEqual(['Change program', 'End program'])
+    expect(sections[1].items.map(i => i.label)).toEqual(['Edit program', 'End program'])
     expect(sections[1].items[0].sub).toBe('Full body · Muscle · 3 days · 60 min')
     expect(menuSheet.mock.calls.at(-1)[0].footnote).toMatch(/^Picking Fixed Week or Rotation ends the program first/)
     // the page below is the days, with no second copy of the program's card or the program list

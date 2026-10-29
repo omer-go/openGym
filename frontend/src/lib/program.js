@@ -54,21 +54,61 @@ export function newProgram(template, { weeks = DEFAULT_WEEKS, today = isoOf(new 
 
 /**
  * A program built from the program page's settings (lib/planner.js), starting on `today`.
- * `exclude`: exercise ids not to pick. Null when the settings build no days.
+ * `exclude`: exercise ids not to pick. `from`: the program it updates, whose lifts it keeps
+ * where they still fit (planner.js variant) and whose start it keeps. Null when the settings
+ * build no days.
  */
-export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new Date()), exclude, pool } = {}) {
-  const p = planWeek({ ...opts, exclude, pool })
+export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new Date()), exclude, pool, from } = {}) {
+  const keep = isPlanProgram(from) ? from.week.map(d => d.items.map(i => i.id)) : undefined
+  const p = planWeek({ ...opts, exclude, pool, keep })
   if (!p.days.length) return null
   const c = p.cfg
   return {
     template: c.template,
-    plan: { goal: c.goal, level: c.level, equipment: c.equipment, days: c.days, minutes: c.minutes, seed: c.seed },
+    plan: { goal: c.goal, level: c.level, equipment: c.equipment, days: c.days, minutes: c.minutes, seed: c.seed, volume: c.volume },
     week: p.days.map(d => ({
       type: d.type, minutes: d.minutes,
       items: d.items.map(i => ({ id: i.ex.id, sets: i.sets, slot: i.slot, lo: i.rx.lo, hi: i.rx.hi, rir: i.rx.rir, rest: i.rx.rest })),
     })),
-    days: p.days.map(d => d.type), startedAt: today, weeks,
+    days: p.days.map(d => d.type), startedAt: isPlanProgram(from) ? from.startedAt : today, weeks,
   }
+}
+
+/**
+ * What a plan program's week becomes from `before` to `after` (each a program's `week`): each day
+ * of `after` with the day of `before` it takes over (the same place and kind, else the first of
+ * its kind none took), its sets then and now, and the lifts it adds, drops and gives other sets:
+ * `{ days: [{ k, type, from, sets: [then, now], minutes: [then, now], kept, added, removed,
+ * changed: [{ id, from, to }] }], gone, groups: { g: [then, now] } }`, `gone` the days of
+ * `before` none took over, `groups` the sets a week of every group either week trains.
+ */
+export function weekChanges(before, after) {
+  const sum = d => (d ? d.items.reduce((n, i) => n + i.sets, 0) : 0)
+  const at = after.map((d, k) => (before[k]?.type === d.type ? k : -1))
+  const taken = new Set(at.filter(j => j >= 0))
+  after.forEach((d, k) => {
+    if (at[k] >= 0) return
+    at[k] = before.findIndex((b, j) => b.type === d.type && !taken.has(j))
+    if (at[k] >= 0) taken.add(at[k])
+  })
+  const days = after.map((d, k) => {
+    const j = at[k]
+    const was = j >= 0 ? before[j] : null
+    const then = new Map((was?.items || []).map(i => [i.id, i.sets]))
+    const now = new Set(d.items.map(i => i.id))
+    return {
+      k, type: d.type, from: j >= 0 ? j : null, sets: [sum(was), sum(d)], minutes: [was?.minutes ?? 0, d.minutes],
+      kept: d.items.filter(i => then.has(i.id)).map(i => i.id),
+      added: d.items.filter(i => !then.has(i.id)).map(i => i.id),
+      removed: [...then.keys()].filter(id => !now.has(id)),
+      changed: d.items.filter(i => then.has(i.id) && then.get(i.id) !== i.sets).map(i => ({ id: i.id, from: then.get(i.id), to: i.sets })),
+    }
+  })
+  const gone = before.map((d, j) => ({ ...d, j })).filter(d => !taken.has(d.j))
+  const was = plannedSets(before.flatMap(d => d.items)), is = plannedSets(after.flatMap(d => d.items))
+  const groups = Object.fromEntries([...new Set([...Object.keys(was), ...Object.keys(is)])]
+    .map(g => [g, [Math.round(was[g] || 0), Math.round(is[g] || 0)]]))
+  return { days, gone, groups }
 }
 
 /** The exercise ids a plan should not pick for `S`: skipped, or the kit isn't there. */

@@ -332,4 +332,25 @@ describe('planner', () => {
       }
     }
   })
+
+  it('a higher volume plans more sets, a lower one fewer', () => {
+    const total = volume => plan({ template: 'ul', days: 4, minutes: 75, volume }).days
+      .reduce((n, d) => n + d.items.reduce((m, i) => m + i.sets, 0), 0)
+    expect(total(1)).toBeGreaterThan(total(0))
+    expect(total(0)).toBeGreaterThan(total(-2))
+    expect(configOf({ volume: 5 }).volume).toBe(0)
+  })
+
+  it('a rebuild keeps the lifts each day had, and the same settings build the same week', () => {
+    const lifts = p => p.days.map(d => d.items.map(i => i.ex.id))
+    for (const template of ['full', 'ul', 'ppl']) for (const days of [3, 4, 5]) {
+      const o = { template, days, minutes: 60 }
+      const was = lifts(plan(o))
+      expect(lifts(plan({ ...o, keep: was })), `${template} ${days}`).toEqual(was)
+      const more = lifts(plan({ ...o, volume: 2, keep: was }))
+      const kept = more.flat().filter(id => was.flat().includes(id)).length
+      const fresh = lifts(plan({ ...o, volume: 2 })).flat().filter(id => was.flat().includes(id)).length
+      expect(kept, `${template} ${days}`).toBeGreaterThanOrEqual(fresh)
+    }
+  })
 })

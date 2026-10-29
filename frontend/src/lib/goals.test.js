@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DEFAULT_GOAL, GOAL_SETS, MAX_GOAL, PART_SHARE, PART_SHARES, daysOf, defaultTargetFor, goalEstimate, goalGroups,
-  goalTypeOf, goalWindow, partTargetOf, sessionMinutes, weeklyTargetOf, weeklyTargets, windowWorkouts,
+  DEFAULT_GOAL, GOAL_SETS, VOLUMES, MAX_GOAL, PART_SHARE, PART_SHARES, daysOf, defaultTargetFor, goalEstimate, goalGroups,
+  goalTypeOf, goalWindow, partTargetOf, sessionMinutes, volumeOf, weeklyTargetOf, weeklyTargets, windowWorkouts,
 } from './goals.js'
 import { GROUP_PARTS } from './coverage.js'
 import { ADD_GROUPS } from './add-exercise.js'
@@ -34,6 +34,24 @@ describe('the weekly goal', () => {
       expect(Object.keys(t).sort(), type).toEqual(ADD_GROUPS.map(g => g.id).sort())
       expect(t.shoulders, type).toEqual(shoulders[type])
     }
+  })
+  it('a volume moves every group along its range, a group set on its own keeping its number', () => {
+    expect([-2, -1, 0, 1, 2].map(v => defaultTargetFor('chest', 'growth', v))).toEqual([10, 12, 14, 17, 20])
+    expect(defaultTargetFor('abs', 'growth', -2)).toBe(0)
+    expect(defaultTargetFor('chest', 'growth', 7)).toBe(14)
+    for (const [type, t] of Object.entries(GOAL_SETS)) for (const [g, [lo, hi]] of Object.entries(t)) {
+      expect(defaultTargetFor(g, type, -2), `${type} ${g}`).toBe(lo)
+      expect(defaultTargetFor(g, type, 2), `${type} ${g}`).toBe(hi)
+    }
+    const st = state({ goals: { volume: 2, byGroup: { biceps: 9 } } })
+    expect(weeklyTargets(st, ['chest', 'biceps'])).toEqual({ chest: 20, biceps: 9 })
+  })
+  it('the volume set, else the running program\'s, else the default', () => {
+    expect(VOLUMES).toEqual([-2, -1, 0, 1, 2])
+    expect(volumeOf(state())).toBe(0)
+    expect(volumeOf(state({ program: { plan: { volume: -1 } } }))).toBe(-1)
+    expect(volumeOf(state({ goals: { volume: 2 }, program: { plan: { volume: -1 } } }))).toBe(2)
+    expect(volumeOf(state({ goals: { volume: 9 } }))).toBe(0)
   })
   it('an old weekly number for every group is ignored', () => {
     const st = state({ goals: { weeklySets: 15 } })

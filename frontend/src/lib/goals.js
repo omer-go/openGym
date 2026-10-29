@@ -3,7 +3,8 @@
 // below: there is no one number for every group, a calf and a back don't need the same. A group
 // can be set on its own (`S.goals.byGroup`). `S.goals.type` is the kind of goal, else the running
 // program's; `S.goals.days` is how many days a week you mean to train, for the estimates the goal
-// screen shows. The `S.goals.weeklySets` an older version scaled every group by is left alone.
+// screen shows. `S.goals.volume` (VOLUMES) moves every group along its goal's range at once. The
+// `S.goals.weeklySets` an older version scaled every group by is left alone.
 //
 // The week a goal is measured over: while a program runs (program.js) the calendar week, from
 // the first day of the week (Settings) to today, so it lines up with the program's days. Without
@@ -20,6 +21,9 @@ export const DEFAULT_DAYS = 4
 /** No one-tap day trains forearms on their own, so the goal leaves them out unless set. */
 export const UNTRACKED = ['forearms']
 export const DEFAULT_TYPE = 'growth'
+/** How far along each group's range (GOAL_SETS) its goal sits: -2 its low end, 0 the default, 2 its high end. */
+export const VOLUMES = [-2, -1, 0, 1, 2]
+export const VOLUME_NAME = { '-2': 'Light', '-1': 'Lower', 0: 'Standard', 1: 'Higher', 2: 'Max' }
 
 // Sets a week for each kind of goal, [low, high, default]: a set counts in full for the muscle
 // it aims at, part of one for those that help (coverage.js). From the volume studies
@@ -75,16 +79,29 @@ export function goalTypeOf(S) {
 }
 const tableOf = type => GOAL_SETS[type] || GOAL_SETS[DEFAULT_TYPE]
 
-/** What a group's goal is without a setting of its own, for a kind of goal. */
-export function defaultTargetFor(group, type = DEFAULT_TYPE) {
-  return tableOf(type)[group]?.[2] ?? DEFAULT_GOAL
+/** The volume set (VOLUMES), else the running program's, else the default's. */
+export function volumeOf(S) {
+  for (const v of [S?.goals?.volume, S?.program?.plan?.volume]) if (VOLUMES.includes(v)) return v
+  return 0
+}
+
+/**
+ * What a group's goal is without a setting of its own, for a kind of goal: its default, or at a
+ * `volume` off 0 the way to its range's end that far, halfway at 1.
+ */
+export function defaultTargetFor(group, type = DEFAULT_TYPE, volume = 0) {
+  const row = tableOf(type)[group]
+  if (!row) return DEFAULT_GOAL
+  const [lo, hi, def] = row
+  const v = VOLUMES.includes(volume) ? volume : 0
+  return Math.round(def + (v > 0 ? hi - def : def - lo) * v / 2)
 }
 
 /** Sets a week `group` aims for. */
 export function weeklyTargetOf(S, group) {
   const own = S?.goals?.byGroup?.[group]
   if (isNum(own) && own >= 0) return Math.min(MAX_GOAL, Math.round(own))
-  return defaultTargetFor(group, goalTypeOf(S))
+  return defaultTargetFor(group, goalTypeOf(S), volumeOf(S))
 }
 
 /**
