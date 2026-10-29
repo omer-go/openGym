@@ -366,7 +366,7 @@ export function genConfig(S, id, setup, slot, extra = 0) {
     if (want.lo < want.hi) Object.assign(cfg, { repsMin: Math.round(want.lo) * per, prog: 'double' })
   }
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
-  else if (want.rest > 0) cfg.restSec = want.rest
+  else if (want.rest > 0 && !S?.restAll) cfg.restSec = want.rest
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true
   return cfg
@@ -378,8 +378,26 @@ export function genConfig(S, id, setup, slot, extra = 0) {
  * it instead of falling back to the app's default. Any other session leaves `cfg` as it is.
  */
 export function withSessionRest(cfg, active) {
-  const rest = Math.round(Number(active?.gen?.setup?.restSec)) || 0
+  const rest = Math.round(Number(active?.restSec ?? active?.gen?.setup?.restSec)) || 0
+  // The rest timer turned off from inside the session: none of its own either.
+  if (cfg && active?.restSec === 0 && cfg.restSec) { const { restSec, ...rest0 } = cfg; return rest0 }
   return cfg && rest > 0 ? { ...cfg, restSec: rest } : cfg
+}
+
+/**
+ * The rest timer changed from inside a running session (Workout settings): every exercise in it
+ * rests `sec` from now on, a program's or routine's own rest included, and one added later too
+ * (withSessionRest). 0 is no rest. Their warm-ups keep their own. Mutates `active`.
+ */
+export function setSessionRest(active, sec) {
+  if (!active) return
+  const rest = Math.max(0, Math.round(Number(sec)) || 0)
+  active.restSec = rest
+  for (const e of active.entries || []) {
+    if (!e?.target) continue
+    if (rest > 0) e.target.restSec = rest
+    else delete e.target.restSec
+  }
 }
 
 /**

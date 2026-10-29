@@ -133,7 +133,8 @@ export function planEntries(S, items) {
     const base = freestyleConfig(S, { id, ...defaultConfig(id) })
     const cfg = { id, ...defaultConfig(id, modeOf({ ...base, id })), sets: it.sets }
     for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) cfg[k] = base[k]
-    if (it.rest > 0) cfg.restSec = it.rest
+    // A rest timer you set yourself (S.restAll) is every exercise's, the program's own rests too.
+    if (it.rest > 0 && !S?.restAll) cfg.restSec = it.rest
     if (modeOf(cfg) === 'reps') {
       const per = isPerSide(cfg) ? 2 : 1
       Object.assign(cfg, { reps: it.hi * per, repsMin: it.lo * per, prog: 'double' })

@@ -9,12 +9,14 @@ import { MOBILE } from '../lib/mobile.js'
 import { closeThenNav } from '../lib/nav.js'
 import { REST_MAX, fmtRest } from '../lib/duration.js'
 import { durationSheet } from './DurationPicker.jsx'
+import { setSessionRest } from '../lib/generate.js'
 import { Section, Row, Switch, Segmented, Button } from './ui.jsx'
 
 // The settings people touch at the gym, without leaving the workout (v1.3.11, opened from the
 // workout's ⋯ → Workout settings). Every row writes the same S.* field as Settings → Workout and
-// Settings → Timer alerts, so a change here sticks for the next session too; nothing in it is
-// for this session only. The one exception to "same as Settings" is Layout: the running session
+// Settings → Timer alerts, so a change here sticks for the next session too. The rest timer
+// also sets the running workout's exercises, whose own rests (a program's) would else win, and
+// the next workouts' (S.restAll). The one exception to "same as Settings" is Layout: the running session
 // may carry its own layout from the ⋯ menu (S.active.workoutView), and choosing one here clears
 // that, or the saved choice would not show until the next workout.
 export function WorkoutSettings({ close }) {
@@ -36,7 +38,16 @@ export function WorkoutSettings({ close }) {
       <Row icon="timer" iconTint="var(--orange)" title={t('Rest timer')} value={fmtRest(S.restSec)} accessory="chevron"
         onClick={() => durationSheet({
           title: t('Rest timer'), value: S.restSec, max: REST_MAX, off: t('Off'),
-          onDone: v => update(s => { s.restSec = v }),
+          // The running workout's exercises too, a program's own rests included, and the rest
+          // counting down now, as if it had been started at the new length.
+          onDone: v => {
+            update(s => { s.restSec = v; s.restAll = true; setSessionRest(s.active, v) })
+            const tm = useUI.getState().timer
+            if (tm && !tm.ready && tm.kind !== 'switch') {
+              if (v > 0) useUI.getState().addRest(v - (tm.total || tm.left))
+              else useUI.getState().stopRest()
+            }
+          },
         })} />
       <Row icon="speaker" iconTint="var(--pink)" title={t('Play a sound')}>
         {/* A tap: unlock the audio now so a rest ending before the next tick can sound (iOS, #152). */}

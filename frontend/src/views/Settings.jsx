@@ -417,7 +417,8 @@ export default function Settings({ page = null, find = null, via = null }) {
   const restRow = <Row icon="timer" iconTint="var(--orange)" title={t('Rest timer')} value={fmtRest(S.restSec)} accessory="chevron"
     onClick={() => durationSheet({
       title: t('Rest timer'), value: S.restSec, max: REST_MAX, off: t('Off'),
-      onDone: v => update(s => { s.restSec = v }),
+      // Set by hand, it is every exercise's rest, a program's own included (S.restAll).
+      onDone: v => update(s => { s.restSec = v; s.restAll = true }),
     })} />
   // Default for a rest-pause burst added live on a plain set. A planned exercise's own "Rest (s)"
   // (in its drop set / burst config) overrides it, the same way the main rest timer is the

@@ -332,6 +332,11 @@ describe('a program built from settings', () => {
     expect(bench.gen.g).toBe('chest')
   })
 
+  it('leaves the rest to the rest timer you set yourself', () => {
+    const [bench] = planEntries({ ...state(), restSec: 20, restAll: true }, [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }])
+    expect(bench.target.restSec).toBeUndefined()
+  })
+
   it('plans the days ahead from the week it built', () => {
     const st = state({ program: UL })
     const ahead = planAhead(st, { days: 4, now: at(2026, 9, 14) })

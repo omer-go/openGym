@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack } from './generate.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -334,6 +334,10 @@ describe('sets and reps by the lift’s slot', () => {
     const [e] = generatedEntries(state(), [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], { ...genDefaults('full'), restSec: 20 })
     expect(e.target.restSec).toBe(20)
   })
+  it('a rest timer you set yourself wins over the slot’s', () => {
+    const [e] = generatedEntries({ ...state(), restSec: 20, restAll: true }, [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], genDefaults('full'))
+    expect(e.target.restSec).toBeUndefined()
+  })
   it('a session leads with its first big lift, once', () => {
     const picks = generateWorkout(state(), 'full', { count: 7 })
     const slots = picks.map(p => p.slot)
@@ -391,6 +395,36 @@ describe('an exercise added to a running session', () => {
     expect(withSessionRest(cfg, { gen: { type: 'push' } })).toBe(cfg)
     expect(withSessionRest(cfg, { entries: [] })).toBe(cfg)
     expect(withSessionRest(null, { gen: { setup: { restSec: 20 } } })).toBeNull()
+  })
+  it('takes the rest set from inside the session over a one-tap setup', () => {
+    expect(withSessionRest(cfg, { restSec: 20, gen: { type: 'push', setup: { restSec: 60 } } }).restSec).toBe(20)
+    expect(withSessionRest(cfg, { restSec: 0, entries: [] }).restSec).toBeUndefined()
+  })
+})
+
+describe('the rest timer changed in a running session', () => {
+  const session = () => ({ entries: [
+    { id: '0025', target: { sets: 4, restSec: 180, warmupRestSec: 60 } },
+    { id: '0032', target: { sets: 3, restSec: 90 } },
+    { id: '0099', target: { sets: 3 } },
+    { id: 'x' },
+  ] })
+  it('gives every exercise that rest, a program\'s own included, and keeps their warm-ups', () => {
+    const a = session()
+    setSessionRest(a, 20)
+    expect(a.restSec).toBe(20)
+    expect(a.entries.map(e => e.target?.restSec)).toEqual([20, 20, 20, undefined])
+    expect(a.entries[0].target.warmupRestSec).toBe(60)
+    expect(withSessionRest({ id: '0050', restSec: 90 }, a).restSec).toBe(20)
+  })
+  it('turned off, no exercise keeps a rest of its own', () => {
+    const a = session()
+    setSessionRest(a, 0)
+    expect(a.restSec).toBe(0)
+    expect(a.entries.some(e => e.target?.restSec)).toBe(false)
+  })
+  it('does nothing outside a session', () => {
+    expect(() => setSessionRest(null, 20)).not.toThrow()
   })
 })
 
