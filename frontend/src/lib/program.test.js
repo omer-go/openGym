@@ -87,7 +87,7 @@ describe('sizing a day to the goal', () => {
   })
   it('never piles the week onto one day: a program started on a Saturday', () => {
     const sat = newProgram('full-3', { weeks: 8, today: '2026-09-19' })
-    const st = state({ program: sat, goals: { weeklySets: 15 } })
+    const st = state({ program: sat })
     const share = dayShare(st, 'full', at(2026, 9, 19))
     for (const [g, v] of Object.entries(share)) expect(v).toBeLessThanOrEqual(weeklyTargetOf(st, g) / 3 + 1e-9)
     expect(sizeDay(st, 'full', { now: at(2026, 9, 19) })).toBeLessThan(MAX_GEN_COUNT)
@@ -98,7 +98,7 @@ describe('sizing a day to the goal', () => {
     // first, the shrugs filled the back before a curl was reached, and the pull day came to eleven,
     // four of them shrugs.
     it('a pull day is sized by what it picks first, not by its back lifts', () => {
-      const st = state({ program: newProgram('ppl-3', { weeks: 8, today: '2026-09-14' }), goals: { weeklySets: 10 },
+      const st = state({ program: newProgram('ppl-3', { weeks: 8, today: '2026-09-14' }),
         workouts: [session('2026-09-14', 'push', ['0025', '0426', '0030', '5609', '0241'], 3)] })
       const now = at(2026, 9, 16)
       const n = sizeDay(st, 'pull', { now })
@@ -109,7 +109,7 @@ describe('sizing a day to the goal', () => {
     // What sizeDay counts on: an n-exercise day is the first n the generator picks for a longer
     // one, and `at` says which those are; the order the day runs in does not.
     it('a shorter day is the first picks of a longer one', () => {
-      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }), goals: { weeklySets: 15 },
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }),
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0652'], 3)] })
       const now = at(2026, 9, 16)
       const share = programShare(st, 'full', now)
@@ -124,8 +124,8 @@ describe('sizing a day to the goal', () => {
     // which its even part caps one exercise later. Each lift counts the sets it takes, extra
     // sets for its group's share too.
     it('fills every group to its share, and ends with the last exercise that adds a set', () => {
-      // At 8 the muscle goal's groups add up to about the 100 sets a week this was measured at
-      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 8 },
+      // The strength goal's groups add up to about the 100 sets a week this was measured at
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { type: 'strength' },
         workouts: [session('2026-09-14', 'full', ['0025', '0043', '0426', '0241'], 4), session('2026-09-16', 'full', ['0652', '0085'], 3)] })
       const now = at(2026, 9, 18)
       const share = dayShare(st, 'full', now)
@@ -149,7 +149,7 @@ describe('sizing a day to the goal', () => {
     // no longer lacked. A day with days after it stops near its even part of the sets. The last,
     // uncapped, took 14: a second curl, press and ab lift for a set or two each.
     it('a day with more to come this week stops near its even part; the last one exercise later', () => {
-      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }), goals: { weeklySets: 15 } })
+      const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }) })
       const mon = at(2026, 9, 14)
       const share = dayShare(st, 'full', mon)
       const n = sizeDay(st, 'full', { now: mon })
@@ -171,14 +171,14 @@ describe('sizing a day to the goal', () => {
     })
   })
   it('a program started this week does not catch up on the days before it', () => {
-    const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-17' }), goals: { weeklySets: 15 } })
+    const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-17' }) })
     const share = dayShare(st, 'full', THU)
     for (const [g, v] of Object.entries(share)) expect(v).toBeLessThanOrEqual(weeklyTargetOf(st, g) / 3 + 1e-9)
     expect(share.chest).toBeCloseTo(weeklyTargetOf(st, 'chest') / 3)
   })
   it('a higher goal makes a longer day, within bounds', () => {
-    const low = sizeDay(state({ program: PPLF, goals: { weeklySets: 6 } }), 'push', { now: THU })
-    const high = sizeDay(state({ program: PPLF, goals: { weeklySets: 20 } }), 'push', { now: THU })
+    const low = sizeDay(state({ program: PPLF, goals: { type: 'maintain' } }), 'push', { now: THU })
+    const high = sizeDay(state({ program: PPLF, goals: { type: 'growth' } }), 'push', { now: THU })
     expect(low).toBeGreaterThanOrEqual(MIN_DAY)
     expect(high).toBeGreaterThan(low)
     expect(high).toBeLessThanOrEqual(MAX_GEN_COUNT)
@@ -279,7 +279,7 @@ describe('a program built from settings', () => {
 
   it('keeps its settings and the week they build', () => {
     expect(UL.days).toEqual(['upper', 'lower', 'upper', 'lower'])
-    expect(UL.plan).toEqual({ goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60, base: 'auto', seed: 1 })
+    expect(UL.plan).toEqual({ goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60, seed: 1 })
     expect(UL.week).toHaveLength(4)
     for (const d of UL.week) expect(d.items[0]).toMatchObject({ slot: 'lead', lo: 6, hi: 8, rest: 180 })
     expect(isProgram(UL)).toBe(true)

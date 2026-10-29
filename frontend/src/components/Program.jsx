@@ -7,7 +7,7 @@ import { ADD_GROUPS } from '../lib/add-exercise.js'
 import { genDefaults, genSets, generateWorkout } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
-  GOAL_PRESETS, MAX_GOAL, MIN_GOAL, baseGoalOf, defaultTargetFor, goalEstimate, goalGroups, goalRef, goalSpan, goalTypeOf,
+  MAX_GOAL, defaultTargetFor, goalEstimate, goalGroups, goalTypeOf,
   sessionMinutes, weeklyTargets,
 } from '../lib/goals.js'
 import {
@@ -15,7 +15,7 @@ import {
   programShare, programWeek, sizeDay, suggestDay, templateOf,
 } from '../lib/program.js'
 import {
-  DAY_TYPES, EQUIPMENT, LEVELS, PLAN_BASES, PLAN_DAYS, PLAN_DEFAULTS, PLAN_MINUTES, PLAN_TEMPLATES, SCHEMES, blocker, configOf, fixFor, plan, scheduleOf,
+  DAY_TYPES, EQUIPMENT, LEVELS, PLAN_DAYS, PLAN_DEFAULTS, PLAN_MINUTES, PLAN_TEMPLATES, SCHEMES, blocker, configOf, fixFor, plan, scheduleOf,
 } from '../lib/planner.js'
 import { KIND_COLOR } from '../lib/workout-kind.js'
 import { glyphOf } from '../lib/glyphs.js'
@@ -66,25 +66,24 @@ function dayEstimate(S, type, k) {
 
 /* ============================ the weekly goal ============================ */
 
-// One number for the big groups, presets around it, the days a week, and any group set on its
-// own. Saved on Done.
+// The kind of goal, which sets every group's own (goals.js GOAL_SETS), the days a week, and any
+// group set on its own. Saved on Done.
 function GoalSheet({ close }) {
   const S = useStore(s => s.S)
-  const [base, setBase] = useState(() => baseGoalOf(S))
+  const [type, setType] = useState(() => goalTypeOf(S))
   const [days, setDays] = useState(() => S.goals?.days || 4)
   const [byGroup, setByGroup] = useState(() => ({ ...(S.goals?.byGroup || {}) }))
-  const type = goalTypeOf(S)
-  const draft = { ...S, goals: { ...S.goals, weeklySets: base, days, byGroup } }
+  const draft = { ...S, goals: { ...S.goals, type, days, byGroup } }
   const est = goalEstimate(draft, goalGroups(draft))
   const programDays = isProgram(S.program) ? S.program.days.length : 0
   const setGroup = (g, v) => setByGroup(x => {
     const out = { ...x }
-    if (v === defaultTargetFor(g, base, type) || v == null) delete out[g]
+    if (v === defaultTargetFor(g, type) || v == null) delete out[g]
     else out[g] = v
     return out
   })
   const save = () => {
-    update(s => { s.goals = { ...(s.goals || {}), weeklySets: base, days, byGroup } })
+    update(s => { s.goals = { ...(s.goals || {}), type, days, byGroup } })
     close()
   }
   return <div className="wd-fit">
@@ -93,15 +92,9 @@ function GoalSheet({ close }) {
       <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{t('Hard sets for each muscle group, every week. The one-tap workouts fill what is left.')}</div>
     </div>
     <div className="wd-scroll sheet-scroll">
-      <div className="goal-big">
-        <Stepper label={t('Sets a week per group')} value={base} step={1} min={MIN_GOAL} max={MAX_GOAL} decimal={false} onChange={setBase} />
-      </div>
-      <div className="goal-presets" role="group" aria-label={t('Presets')}>
-        {GOAL_PRESETS.map(p => <button key={p.sets} type="button" className={'goal-preset' + (p.sets === base ? ' on' : '')} aria-pressed={p.sets === base} onClick={() => setBase(p.sets)}>
-          <b>{p.sets}</b><span>{t(p.n)}</span>
-        </button>)}
-      </div>
-      <div className="muted small" style={{ marginTop: 8 }}>{t('About 10 grows most people; past 20 adds little. Calves, forearms and abs aim for two thirds of it.')}</div>
+      <h4 className="sec">{t('Training goal')}</h4>
+      <Segmented value={type} onChange={setType} options={Object.keys(SCHEMES).map(k => ({ value: k, label: t(SCHEMES[k].n) }))} />
+      <div className="muted small" style={{ marginTop: 8 }}>{t('Each group gets its own number of sets for the goal.')}</div>
 
       <h4 className="sec">{t('Days a week')}</h4>
       {programDays
@@ -115,7 +108,7 @@ function GoalSheet({ close }) {
       <h4 className="sec">{t('By muscle group')}</h4>
       <div className="list goal-groups">{ADD_GROUPS.map(g => {
         const own = byGroup[g.id] != null
-        const v = own ? byGroup[g.id] : defaultTargetFor(g.id, base, type)
+        const v = own ? byGroup[g.id] : defaultTargetFor(g.id, type)
         return <div key={g.id} className="item">
           <div className="grow"><div className="tt">{t(g.n)}</div>
             <div className="ss">{own ? <button type="button" className="linkish" onClick={() => setGroup(g.id, null)}>{t('Set on its own · reset')}</button> : t('Follows the goal')}</div></div>
@@ -132,7 +125,7 @@ export const goalSheet = () => ui().openSheet(close => <GoalSheet close={close} 
 
 /* ============================ program setup ============================ */
 
-const SETTING_NAME = { template: 'Split', goal: 'Training goal', level: 'Level', equipment: 'Equipment', days: 'Days a week', base: 'Sets a week per group', minutes: 'Session length' }
+const SETTING_NAME = { template: 'Split', goal: 'Training goal', level: 'Level', equipment: 'Equipment', days: 'Days a week', minutes: 'Session length' }
 const CAUSE = {
   time: 'the sessions are too short', accessories: 'the level allows too few accessories a day',
   equipment: 'the equipment has too few lifts for it', caps: 'its lifts are capped a day', template: 'no day of the split trains it',
@@ -227,10 +220,9 @@ function PlanBuilder({ template, close }) {
   const short = week.short.filter(x => x.cause !== 'planner')
   const updating = !!running && !programOver(S)
   const own = Object.keys(byGroup).length
-  const span = goalSpan({ goals: { type: cfg.goal, weeklySets: cfg.base, byGroup } })
   const setGroup = (g, v) => setByGroup(x => {
     const out = { ...x }
-    if (v == null || v === defaultTargetFor(g, cfg.base, cfg.goal)) delete out[g]
+    if (v == null || v === defaultTargetFor(g, cfg.goal)) delete out[g]
     else out[g] = v
     return out
   })
@@ -243,7 +235,7 @@ function PlanBuilder({ template, close }) {
       if (updating) program.startedAt = S.program.startedAt
       update(s => {
         s.program = program
-        s.goals = { ...(s.goals || {}), type: cfg.goal, weeklySets: cfg.base, days: cfg.days, byGroup }
+        s.goals = { ...(s.goals || {}), type: cfg.goal, days: cfg.days, byGroup }
       })
       ui().toast(updating ? t('Program updated.') : t('Program started. Home shows your next day.'))
     }
@@ -265,21 +257,20 @@ function PlanBuilder({ template, close }) {
       {seg('level', Object.keys(LEVELS), v => t(LEVELS[v].n))}
       {seg('equipment', Object.keys(EQUIPMENT), v => t(EQUIPMENT[v].n))}
       {seg('days', PLAN_DAYS, v => String(v))}
-      {seg('base', ['auto', ...PLAN_BASES], v => (v === 'auto' ? t('Auto · {0}', goalRef(o.goal)) : String(v)))}
       <button type="button" className="plan-adjust" aria-expanded={groupsOpen} onClick={() => setGroupsOpen(v => !v)} data-adjust-groups>
         <span className="grow"><span className="tt">{t('Adjust by muscle group')}</span>
           <span className="ss">{own ? t('Set on their own: {0}', own) : t('All groups follow the goal')}</span></span>
         <Icon name="chevronRight" className={'menu-chev' + (groupsOpen ? ' open' : '')} />
       </button>
       {groupsOpen && <>
-        <div className="muted small" style={{ marginTop: 8 }}>{t('Hard sets a week for each group. Each starts at what the goal suggests for it, and the base scales them all.')}</div>
+        <div className="muted small" style={{ marginTop: 8 }}>{t('Hard sets a week for each group. Each starts at what the goal suggests for it.')}</div>
         <div className="list goal-groups plan-groups">{ADD_GROUPS.map(g => {
           const mine = byGroup[g.id] != null
           return <div key={g.id} className="item" data-group={g.id}>
             <span className="plan-gdot" style={{ background: groupColor(g.id) }} />
             <div className="grow"><div className="tt">{t(g.n)}</div>
               <div className="ss">{mine ? <button type="button" className="linkish" onClick={() => setGroup(g.id, null)}>{t('Set on its own · reset')}</button> : t('Follows the goal')}</div></div>
-            <Stepper value={mine ? byGroup[g.id] : defaultTargetFor(g.id, cfg.base, cfg.goal)} step={1} min={0} max={MAX_GOAL} decimal={false} ariaLabel={t(g.n)} onChange={n => setGroup(g.id, n)} />
+            <Stepper value={mine ? byGroup[g.id] : defaultTargetFor(g.id, cfg.goal)} step={1} min={0} max={MAX_GOAL} decimal={false} ariaLabel={t(g.n)} onChange={n => setGroup(g.id, n)} />
           </div>
         })}</div>
       </>}
@@ -288,7 +279,7 @@ function PlanBuilder({ template, close }) {
       {note && <div className="plan-note" data-plan-note>{note}</div>}
 
       <div className="goal-est" data-goal-estimate>
-        {t('{0} days · {1}–{2} sets a week per group · up to {3} min', cfg.days, span.lo, span.hi, cfg.minutes)}
+        {t('{0} days · up to {1} min', cfg.days, cfg.minutes)}
       </div>
       {short.length > 0 && <div className="plan-note warn">{t('Short of the weekly goal: {0}.', short.map(x => `${groupName(x.g)} ${x.total}/${x.goal} (${t(CAUSE[x.cause])})`).join(', '))}</div>}
 
@@ -594,8 +585,7 @@ export function programSettingsLine(S) {
   const p = S.program
   if (!isPlanProgram(p)) return ''
   const pl = p.plan
-  return [t(SHORT_TEMPLATE[p.template]), t(SCHEMES[pl.goal]?.n), t('{0} days', pl.days), t('{0} min', pl.minutes),
-    t('{0}–{1} sets a week per group', ...Object.values(goalSpan(S)))].join(' · ')
+  return [t(SHORT_TEMPLATE[p.template]), t(SCHEMES[pl.goal]?.n), t('{0} days', pl.days), t('{0} min', pl.minutes)].join(' · ')
 }
 /** Opens the setup for another program, on the running one's split when it has one. */
 export const changeProgram = S => programSetupSheet(isPlanProgram(S.program) ? S.program.template : Object.keys(PLAN_TEMPLATES)[0])
@@ -690,7 +680,7 @@ export function WeekGoalCard() {
     <div className="row between" style={{ marginBottom: 10 }}>
       <div><h2 style={{ margin: 0 }}>{t('Weekly goal')}</h2>
         <div className="small muted">{t('{0} of {1} groups on goal', met, groups.length)}</div></div>
-      <Button size="sm" variant="tinted" icon="target" onClick={() => (isProgram(S.program) ? changeProgram(S) : goalSheet())}>{t('Goal: {0}', baseGoalOf(S))}</Button>
+      <Button size="sm" variant="tinted" icon="target" onClick={() => (isProgram(S.program) ? changeProgram(S) : goalSheet())}>{t('Goal: {0}', t(SCHEMES[goalTypeOf(S)].n))}</Button>
     </div>
     <CoverageStrip groups={groups} adds={done} goals={goals}
       label={isProgram(S.program) ? t('Sets per group this week, against your goal') : t('Sets per group over the last 7 days, against your goal')} />

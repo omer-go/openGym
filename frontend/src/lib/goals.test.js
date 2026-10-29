@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DEFAULT_GOAL, GOAL_SETS, MAX_GOAL, PART_SHARE, baseGoalOf, daysOf, defaultTargetFor, goalEstimate, goalGroups, goalRef,
-  goalSpan, goalTypeOf, goalWindow, partTargetOf, sessionMinutes, weeklyTargetOf, weeklyTargets, windowWorkouts,
+  DEFAULT_GOAL, GOAL_SETS, MAX_GOAL, PART_SHARE, PART_SHARES, daysOf, defaultTargetFor, goalEstimate, goalGroups,
+  goalTypeOf, goalWindow, partTargetOf, sessionMinutes, weeklyTargetOf, weeklyTargets, windowWorkouts,
 } from './goals.js'
+import { GROUP_PARTS } from './coverage.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { weeklyDone, weeklyNeed } from './coverage.js'
 
@@ -16,65 +17,63 @@ const BENCH = '0025'
 describe('the weekly goal', () => {
   it('is the muscle goal\'s default for each group unless set', () => {
     expect(goalTypeOf(state())).toBe('growth')
-    expect(baseGoalOf(state())).toBe(DEFAULT_GOAL)
-    expect(weeklyTargets(state(), ['chest', 'back', 'shoulders', 'triceps', 'calves', 'abs']))
-      .toEqual({ chest: 14, back: 16, shoulders: 24, triceps: 10, calves: 10, abs: 8 })
+    expect(weeklyTargets(state(), ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'calves', 'abs']))
+      .toEqual({ chest: 14, back: 16, shoulders: 12, biceps: 12, triceps: 10, calves: 10, abs: 8 })
+    expect(defaultTargetFor('nope')).toBe(DEFAULT_GOAL)
   })
   it('takes the defaults of the kind of goal set, else the running program\'s', () => {
     expect(weeklyTargetOf(state({ goals: { type: 'strength' } }), 'chest')).toBe(9)
     expect(weeklyTargetOf(state({ goals: { type: 'maintain' } }), 'chest')).toBe(5)
     expect(weeklyTargetOf(state({ program: { plan: { goal: 'endurance' } } }), 'abs')).toBe(10)
     expect(weeklyTargetOf(state({ goals: { type: 'nope' } }), 'chest')).toBe(14)
-    // each kind's own base keeps its defaults as they are
-    expect(baseGoalOf(state({ goals: { type: 'strength' } }))).toBe(goalRef('strength'))
   })
-  it('every default sits in its range, and the shoulders are their three delts', () => {
+  it('every default sits in its range, and the shoulders sit with the arms', () => {
+    const shoulders = { growth: [8, 20, 12], strength: [4, 10, 6], maintain: [2, 6, 4], endurance: [6, 12, 8] }
     for (const [type, t] of Object.entries(GOAL_SETS)) {
-      for (const [k, [lo, hi, def]] of [...Object.entries(t.groups), ...Object.entries(t.parts)]) {
-        expect(lo <= def && def <= hi, `${type} ${k}`).toBe(true)
-      }
-      const delts = ['Front delts', 'Side delts', 'Rear delts'].map(p => t.parts[p])
-      expect(t.groups.shoulders).toEqual([0, 1, 2].map(i => delts.reduce((a, d) => a + d[i], 0)))
-      expect(t.parts.Lats[2] + t.parts['Mid back'][2], type).toBeLessThanOrEqual(t.groups.back[2] + 1)
-      expect(Object.keys(t.groups).sort(), type).toEqual(ADD_GROUPS.map(g => g.id).sort())
+      for (const [k, [lo, hi, def]] of Object.entries(t)) expect(lo <= def && def <= hi, `${type} ${k}`).toBe(true)
+      expect(Object.keys(t).sort(), type).toEqual(ADD_GROUPS.map(g => g.id).sort())
+      expect(t.shoulders, type).toEqual(shoulders[type])
     }
   })
-  it('a base scales every default by itself over the kind of goal\'s own', () => {
+  it('an old weekly number for every group is ignored', () => {
     const st = state({ goals: { weeklySets: 15 } })
-    expect(weeklyTargetOf(st, 'chest')).toBe(21)
-    expect(weeklyTargetOf(st, 'abs')).toBe(12)
-    expect(weeklyTargetOf(st, 'shoulders')).toBe(MAX_GOAL)
-    expect(defaultTargetFor('chest', 4, 'strength')).toBe(5)
+    expect(weeklyTargets(st, ['chest', 'shoulders', 'abs'])).toEqual({ chest: 14, shoulders: 12, abs: 8 })
+    expect(weeklyTargetOf(state({ goals: { weeklySets: 6, type: 'strength' } }), 'chest')).toBe(9)
   })
-  it('the parts: the delts and the traps have minimums of their own, moved with their group', () => {
+  it('the parts share their group\'s goal, whatever it is', () => {
+    for (const [g, shares] of Object.entries(PART_SHARES)) {
+      expect(Object.keys(shares).sort(), g).toEqual(GROUP_PARTS[g].map(([name]) => name).sort())
+      for (const goal of [10, 12, 20]) {
+        const st = state({ goals: { byGroup: { [g]: goal } } })
+        const sum = Object.keys(shares).reduce((n, name) => n + partTargetOf(st, g, name), 0)
+        expect(sum, `${g} ${goal}`).toBeCloseTo(goal, 5)
+      }
+      for (const type of Object.keys(GOAL_SETS)) {
+        const st = state({ goals: { type } })
+        const sum = Object.keys(shares).reduce((n, name) => n + partTargetOf(st, g, name), 0)
+        expect(sum, `${g} ${type}`).toBeCloseTo(weeklyTargetOf(st, g), 5)
+      }
+    }
     const st = state()
-    expect(partTargetOf(st, 'shoulders', 'Side delts')).toBe(12)
-    expect(partTargetOf(st, 'shoulders', 'Front delts')).toBe(4)
-    expect(partTargetOf(st, 'back', 'Upper traps')).toBe(6)
-    expect(partTargetOf(state({ goals: { type: 'maintain' } }), 'back', 'Upper traps')).toBe(0)
-    // a group set to half its default halves its parts
-    expect(partTargetOf(state({ goals: { byGroup: { shoulders: 12 } } }), 'shoulders', 'Rear delts')).toBe(4)
-    // the glutes' parts have none of their own: a share of the group
+    expect(partTargetOf(st, 'shoulders', 'Side delts')).toBeCloseTo(5.4)
+    expect(partTargetOf(st, 'shoulders', 'Rear delts')).toBeCloseTo(4.2)
+    expect(partTargetOf(st, 'shoulders', 'Front delts')).toBeCloseTo(2.4)
+    expect(partTargetOf(st, 'chest', 'Upper chest')).toBeCloseTo(4.9)
+    expect(partTargetOf(state({ goals: { byGroup: { shoulders: 20 } } }), 'shoulders', 'Side delts')).toBeCloseTo(9)
+    // the glutes' parts have no share of their own: PART_SHARE of the group
     expect(partTargetOf(st, 'glutes', 'Side glutes')).toBeCloseTo(8 * PART_SHARE)
   })
   it('a group set on its own keeps its number, 0 included', () => {
-    const st = state({ goals: { weeklySets: 15, byGroup: { biceps: 8, calves: 0 } } })
-    expect(weeklyTargets(st, ['biceps', 'calves', 'chest'])).toEqual({ biceps: 8, calves: 0, chest: 21 })
-  })
-  it('ignores a goal out of range or not a number', () => {
-    expect(baseGoalOf(state({ goals: { weeklySets: 99 } }))).toBe(30)
-    expect(baseGoalOf(state({ goals: { weeklySets: 'x' } }))).toBe(DEFAULT_GOAL)
+    const st = state({ goals: { byGroup: { biceps: 8, calves: 0, chest: 99 } } })
+    expect(weeklyTargets(st, ['biceps', 'calves', 'chest', 'back'])).toEqual({ biceps: 8, calves: 0, chest: MAX_GOAL, back: 16 })
+    expect(weeklyTargetOf(state({ goals: { byGroup: { chest: 'x' } } }), 'chest')).toBe(14)
   })
   it('leaves forearms out of what it shows unless they have a goal', () => {
     expect(goalGroups(state())).not.toContain('forearms')
     expect(goalGroups(state({ goals: { byGroup: { forearms: 4 } } }))).toContain('forearms')
   })
-  it('spans the smallest to the largest goal shown', () => {
-    expect(goalSpan(state())).toEqual({ lo: 8, hi: 24 })
-    expect(goalSpan(state({ goals: { type: 'maintain' } }))).toEqual({ lo: 2, hi: 7 })
-  })
   it('estimates the week, a session and its minutes', () => {
-    const e = goalEstimate(state({ goals: { weeklySets: 10, days: 4 } }))
+    const e = goalEstimate(state({ goals: { days: 4 } }))
     expect(e.days).toBe(4)
     expect(e.week).toBeGreaterThan(70)
     expect(e.week).toBeLessThan(100)

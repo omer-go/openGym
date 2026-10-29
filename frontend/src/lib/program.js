@@ -8,7 +8,7 @@
 // `S.program = { template, days: ['push', 'pull', …], startedAt: 'YYYY-MM-DD', weeks }`.
 //
 // A program built on the program page (lib/planner.js) also keeps its settings and the week it
-// built: `plan: { goal, level, equipment, days, minutes, base, seed }` and `week`, a list of days
+// built: `plan: { goal, level, equipment, days, minutes, seed }` and `week`, a list of days
 // `{ type, minutes, items: [{ id, sets, slot, lo, hi, rir, rest }] }` in order, `days` their types.
 // Its days are the same lifts every week (planEntries builds one, with progression), and a
 // session done as one of them keeps which (`programDay`, finish-workout.js).
@@ -63,7 +63,7 @@ export function newPlanProgram(opts, { weeks = DEFAULT_WEEKS, today = isoOf(new 
   const c = p.cfg
   return {
     template: c.template,
-    plan: { goal: c.goal, level: c.level, equipment: c.equipment, days: c.days, minutes: c.minutes, base: opts.base > 0 ? opts.base : 'auto', seed: c.seed },
+    plan: { goal: c.goal, level: c.level, equipment: c.equipment, days: c.days, minutes: c.minutes, seed: c.seed },
     week: p.days.map(d => ({
       type: d.type, minutes: d.minutes,
       items: d.items.map(i => ({ id: i.ex.id, sets: i.sets, slot: i.slot, lo: i.rx.lo, hi: i.rx.hi, rir: i.rx.rir, rest: i.rx.rest })),

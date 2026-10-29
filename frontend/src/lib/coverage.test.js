@@ -6,7 +6,7 @@ import { musclesOf } from './muscles.js'
 import { variantOf } from './variant.js'
 import { groupOfExercise } from './muscle-colors.js'
 import { loadMuscleRoles, muscleRolesOf, roleWeights } from './muscle-roles.js'
-import { weeklyTargetOf } from './goals.js'
+import { weeklyTargetOf, GOAL_SETS } from './goals.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const sets = n => Array.from({ length: n }, () => row())
@@ -172,7 +172,9 @@ describe('pickForCoverage, after the week so far', () => {
     // Two full bodies, the second today: every group is tired, so every need is small, and only
     // back, biceps and hamstrings are just over the line. They took every slot (#program QA).
     const day = (d, m) => ({ id: d, d, name: 'x', entries: Object.entries(m).map(([id, n]) => ({ id, target: { reps: 10 }, sets: sets(n) })) })
-    const st = state({ goals: { weeklySets: 15 }, workouts: [
+    // The muscle goal half again, as it was measured.
+    const byGroup = Object.fromEntries(Object.entries(GOAL_SETS.growth).map(([g, [, , d]]) => [g, d * 1.5]))
+    const st = state({ goals: { byGroup }, workouts: [
       day('2026-09-11', { '0770': 3, '0811': 4, '0652': 3, [BENCH]: 4, [OHP]: 3, '0031': 4, '0274': 6, [PUSHDOWN]: 3 }),
       day('2026-09-15', { '0770': 3, '0585': 3, [DEADLIFT]: 3, '0027': 3, '0314': 3, '0091': 3, '0188': 3, '0061': 3, '0313': 3, '1385': 3 }),
     ] })
@@ -458,10 +460,10 @@ describe('gaps: the part of a group the last two weeks left out', () => {
     })
     it('the side delts a press only helped are not trained: after presses and rear flies, a side-delt lift', () => {
       // 3 sets of presses and a bench press helped the side delts; 2 of rear flies targeted the rear.
-      // The front delts are short too (3.6 of 4), but least.
+      // The front delts, a fifth of the shoulders' goal, have theirs from the presses.
       const st = state({ workouts: [session('2026-10-19', [OHP, BENCH]), session('2026-10-20', ['0378'], sets(2))] })
       const now = at(2026, 10, 22)
-      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt', 'rear-delt', 'front-delt'] })
+      expect(partGaps(st, ['shoulders'], now)).toEqual({ shoulders: ['side-delt', 'rear-delt'] })
       const shoulders = generateWorkout(st, 'full', { now, groups: ['shoulders'], count: 1 })
       expect(muscleRolesOf(shoulders[0].id).target).toContain('side-delt')
     })

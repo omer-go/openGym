@@ -114,7 +114,7 @@ export const DEF = {
   savedCombos: [],
   // The weekly goal (lib/goals.js): sets a week for the big groups, one per group where set, and
   // the days a week you mean to train.
-  goals: { weeklySets: 10, byGroup: {}, days: 4 },
+  goals: { byGroup: {}, days: 4 },
   // The program running, if any (lib/program.js): { template, days, startedAt, weeks }.
   program: null,
   // List and Compact fold a finished exercise into one line (Settings → Workout; #241). The

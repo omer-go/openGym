@@ -184,14 +184,14 @@ function MuscleBalance({ S }) {
   // speak to the same sets.
   const main = group?.m[0]
   const parts = main && !GROUP_PARTS[group.id] ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null).filter(x => !isCardio(x.id)), main) : null
-  // A group with parts of its own to train (shoulders, back, glutes) shows each against its
+  // A group with parts of its own to train (chest, shoulders, back, glutes) shows each against its
   // weekly minimum instead (lib/coverage.js partGoalOf): a set aimed at the part counts in full,
   // one that only helped it at 0.2 (partSets), so a week of rows reads as rear delts helped, not
   // trained.
   const own = group && GROUP_PARTS[group.id] && (() => {
     const got = partSplitOf(inWin, undefined, on ? isHardSet : null)[group.id] || {}
     const goals = Object.fromEntries(GROUP_PARTS[group.id].map(([name]) => [name, partGoalOf(S, group.id, name)]))
-    // To the tenth: a minimum moved with its group's goal can be 4.5 sets, which rounded reads as 5.
+    // To the tenth: a share of its group's goal can be 4.5 sets, which rounded reads as 5.
     const tenth = v => String(Math.round(v * 10) / 10)
     if (!Object.values(goals).some(g => g > 0)) return null
     return <div className="mparts" data-group-parts={group.id}>

@@ -14,10 +14,7 @@ describe('planner', () => {
     for (const e of PLAN_LIB) expect(ids.has(e.id), e.id).toBe(true)
   })
 
-  it('fills in defaults and the goal\'s own weekly sets', () => {
-    expect(configOf({ goal: 'strength' }).base).toBe(8)
-    expect(configOf({ goal: 'growth', base: 'auto' }).base).toBe(10)
-    expect(configOf({ goal: 'growth', base: 15 }).base).toBe(15)
+  it('fills in defaults', () => {
     expect(configOf({ template: 'nope' }).template).toBe('full')
   })
 
@@ -40,7 +37,9 @@ describe('planner', () => {
       for (const d of p.days) {
         for (const i of d.items) {
           expect(EQUIPMENT[equipment].has).toContain(i.ex.need)
-          expect(i.ex.p.some(g => DAY_TYPES[d.type].groups.includes(g))).toBe(true)
+          // A pull day also takes the rear delts' fly.
+          const parts = (DAY_TYPES[d.type].parts || []).filter(n => partCreditOf(i.ex)[n] >= 1)
+          expect(i.ex.p.some(g => DAY_TYPES[d.type].groups.includes(g)) || parts.length > 0).toBe(true)
         }
         expect(new Set(d.items.map(i => i.ex.id)).size).toBe(d.items.length)
       }
@@ -68,11 +67,11 @@ describe('planner', () => {
   })
 
   it('counts sets and sets goals the way the app does, so the program page shows what it planned', () => {
-    const p = plan({ template: 'ul', goal: 'growth', days: 4, minutes: 60, base: 15 })
+    const p = plan({ template: 'ul', goal: 'growth', days: 4, minutes: 60 })
     const app = {}
     for (const d of p.days) for (const [g, v] of Object.entries(plannedSets(d.items.map(i => ({ id: i.ex.id, sets: i.sets }))))) app[g] = (app[g] || 0) + v
     for (const g of PLAN_GROUPS) expect(p.total[g] || 0).toBeCloseTo(app[g] || 0, 6)
-    expect(p.goals).toEqual(weeklyTargets({ goals: { weeklySets: 15 } }, PLAN_GROUPS))
+    expect(p.goals).toEqual(weeklyTargets({ goals: { type: 'growth' } }, PLAN_GROUPS))
     // A squat counts for the glutes beside the quads but not the calves, which only hold the
     // ankle; a good morning for the hamstrings in full, a close-grip bench press for the chest;
     // a pulldown for the biceps. A leg curl bends the knee with the calves' help, but they don't
@@ -110,9 +109,8 @@ describe('planner', () => {
     const leads = p.days.filter(d => d.type === 'upper').map(d => d.items[0].ex.pat)
     expect(leads).toEqual(['hpress', 'hpull', 'vpress'])
     expect(p.total.chest).toBeLessThanOrEqual(p.goals.chest * 1.5)
-    // The shoulders' presses, that is: the side and rear delts' own lifts come on top.
-    const own = p.days.flatMap(d => d.items).filter(i => ['Side delts', 'Rear delts'].some(n => partCreditOf(i.ex)[n] >= 1))
-    expect(p.total.shoulders - own.reduce((n, i) => n + i.sets * creditOf(i.ex).shoulders, 0)).toBeLessThanOrEqual(p.goals.shoulders * 1.5)
+    // The overhead press only leads: a day's one shoulder lift is otherwise a raise or a fly.
+    expect(p.days.flatMap(d => d.items).filter(i => i.ex.pat === 'vpress').every(i => i.slot === 'lead')).toBe(true)
   })
 
   it('paces the compound slots, so six full-body days don\'t pile up the presses and rows', () => {
@@ -155,17 +153,19 @@ describe('planner', () => {
     for (const s of p.short) expect(PRIORITY[s.g], s.g).toBeGreaterThanOrEqual(1)
     // The curls and extensions keep their sets: it's the abs and calves that come up short.
     for (const g of ['biceps', 'triceps']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g])
-    // They give way, not away: a crunch and a calf raise still, half their goal at least.
-    for (const g of Object.keys(p.yields)) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] / 2)
+    // They give way, not away: the abs keep half their goal at least, and only the bottom tier
+    // (glutes, calves, forearms) may go to none.
+    for (const g of Object.keys(p.yields)) if (PRIORITY[g] < 3) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g] / 2)
     for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(75)
-    // Still too little time for the whole goal, and it says so.
+    // Still too little time for the whole goal, and it says so: the minutes, or the accessories a
+    // day has room for.
     expect(p.feasible).toBe(false)
-    expect(p.short.map(x => x.cause)).toContain('time')
+    expect(p.short.some(x => ['time', 'accessories'].includes(x.cause))).toBe(true)
   })
 
-  it('doesn\'t cut the glutes for a set or two when the time is far too short for the rest anyway', () => {
+  it('gives the bottom tier away first when the time is far too short, though the squats and hinges still train the glutes', () => {
     const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 45 })
-    expect(p.yields.glutes ?? 1).toBeGreaterThan(0)
+    for (const g of ['glutes', 'calves', 'forearms']) expect(p.yields[g] ?? 1, g).toBeLessThan(1)
     expect(p.total.glutes).toBeGreaterThan(0)
   })
 
@@ -185,8 +185,51 @@ describe('planner', () => {
         expect(aimed.length, `${days}d ${name}`).toBeGreaterThan(0)
       }
       // The front delts and upper traps aren't planned for: the presses and carries see to them.
-      expect(p.parts.map(pt => pt.name).sort()).toEqual(['Lats', 'Mid back', 'Rear delts', 'Side delts'])
+      expect(p.parts.map(pt => pt.name).sort()).toEqual(['Lats', 'Mid and lower chest', 'Mid back', 'Rear delts', 'Side delts', 'Upper chest'])
     }
+  })
+
+  it('gives every part of a group a lift aimed at it, on a day that trains it: the rear delts\' fly on a pull day', () => {
+    for (const { template, days, p } of weeks()) for (const pt of p.parts) {
+      // Its group's own lifts: a pullover, a back lift, counts for the chest wherever it lands.
+      const on = p.days.filter(d => d.items.some(i => i.ex.p.includes(pt.g) && partCreditOf(i.ex)[pt.name] >= 1))
+      expect(on.length, `${template} ${days}d ${pt.name}`).toBeGreaterThan(0)
+      for (const d of on) expect(DAY_TYPES[d.type].groups.includes(pt.g) || !!DAY_TYPES[d.type].parts?.includes(pt.name), `${template} ${d.type} ${pt.name}`).toBe(true)
+    }
+    const ppl = plan({ template: 'ppl', goal: 'growth', days: 3, minutes: 75 })
+    const fly = ppl.days.filter(d => d.items.some(i => partCreditOf(i.ex)['Rear delts'] >= 1))
+    expect(fly.map(d => d.type)).toEqual(['pull'])
+  })
+
+  it('takes the week\'s lifts for a group\'s parts in turn: a side raise, then a rear fly', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
+    const aimed = p.days.map(d => d.items.find(i => ['Side delts', 'Rear delts'].some(n => partCreditOf(i.ex)[n] >= 1)))
+      .filter(Boolean).map(i => (partCreditOf(i.ex)['Side delts'] >= 1 ? 'side' : 'rear'))
+    expect(new Set(aimed)).toEqual(new Set(['side', 'rear']))
+  })
+
+  it('only the bottom tier gives way to none; the rest keep half their goal', () => {
+    for (const template of ['full', 'ul', 'ppl']) for (const days of [2, 3, 4]) for (const minutes of [45, 60, 75]) {
+      const p = plan({ template, goal: 'growth', days, minutes })
+      for (const [g, y] of Object.entries(p.yields)) expect(y, `${template} ${days}x${minutes} ${g}`).toBeGreaterThanOrEqual(PRIORITY[g] === 3 ? 0 : 0.5)
+    }
+  })
+
+  it('a group that gave way gets a whole exercise on one day, not a set or two on each', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
+    expect(p.yields.calves).toBeLessThan(1)
+    const calves = p.days.flatMap(d => d.items).filter(i => i.slot === 'accessory' && i.ex.p.includes('calves'))
+    expect(calves).toHaveLength(1)
+    expect(calves[0].sets).toBe(p.cfg.accMax)
+  })
+
+  it('three days of 75 minutes keep the chest, back and legs at their goal, the shoulders at theirs', () => {
+    const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 75 })
+    for (const g of ['chest', 'back', 'quads', 'hamstrings']) expect(p.total[g], g).toBeGreaterThanOrEqual(p.goals[g])
+    expect(p.goals.shoulders).toBe(12)
+    expect(p.total.shoulders).toBeGreaterThanOrEqual(12)
+    expect(p.total.shoulders).toBeLessThanOrEqual(12 * 1.5)
+    for (const d of p.days) expect(d.minutes).toBeLessThanOrEqual(75)
   })
 
   it('takes one lift for the shoulders a day, a press or a raise, whichever delt it is for', () => {

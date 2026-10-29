@@ -2379,13 +2379,6 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .prog-chip.next{box-shadow:inset 0 0 0 1.5px var(--kind)}
 .next-tile{padding:12px 14px}
 .next-tile .tt{font-size:17px}
-.goal-big{display:flex;justify-content:center;margin:6px 0 12px}
-.goal-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.goal-preset{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:var(--r);border:0;
-  background:var(--surface-2);color:var(--label);cursor:pointer;font:inherit}
-.goal-preset b{font-size:20px;font-variant-numeric:tabular-nums}
-.goal-preset span{font-size:12px;color:var(--label-2)}
-.goal-preset.on{background:color-mix(in srgb,var(--acc) 18%,transparent);box-shadow:inset 0 0 0 1.5px var(--acc)}
 .plan-note{margin-top:10px;padding:8px 12px;border-radius:var(--r);background:color-mix(in srgb,var(--orange) 14%,transparent);font-size:13.5px}
 .plan-note.warn{background:color-mix(in srgb,var(--red) 12%,transparent)}
 .plan-build .seg button{padding-inline:4px;font-size:13.5px}

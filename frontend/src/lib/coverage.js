@@ -233,10 +233,11 @@ export function weeklyDone(S, now = Date.now()) {
   return groupSetsOf(windowWorkouts(S, now))
 }
 
-// The parts of a group lifters train on purpose, each with a weekly minimum of its own: a
+// The parts of a group lifters train on purpose, each with a share of its goal (goals.js): a
 // shoulder week of presses is a front-delt week, the side and rear delts only helped. English
 // names, also the i18n keys; each part is the role muscles (muscle-roles.js) that make it up.
 export const GROUP_PARTS = {
+  chest: [['Upper chest', ['pec-major-clavicular']], ['Mid and lower chest', ['pec-major-sternal']]],
   shoulders: [['Front delts', ['front-delt']], ['Side delts', ['side-delt']], ['Rear delts', ['rear-delt']]],
   back: [['Lats', ['lats']], ['Mid back', ['rhomboids', 'middle-trap']], ['Upper traps', ['upper-trap']]],
   glutes: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']], ['Inner thighs', ['adductors', 'adductor-magnus']]],
