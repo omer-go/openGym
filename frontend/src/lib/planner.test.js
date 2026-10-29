@@ -353,4 +353,36 @@ describe('planner', () => {
       expect(kept, `${template} ${days}`).toBeGreaterThanOrEqual(fresh)
     }
   })
+
+  it('a change of the volume alone keeps every lift and moves only the sets', () => {
+    const asWeek = p => p.days.map(d => ({ type: d.type, items: d.items.map(i => ({ id: i.ex.id, sets: i.sets, slot: i.slot })) }))
+    const sets = p => Object.fromEntries(p.days.flatMap(d => d.items.map(i => [`${d.type}:${i.ex.id}`, i.sets])))
+    for (const template of ['full', 'ul', 'ppl']) for (const days of [3, 4]) for (const minutes of [60, 75]) {
+      const o = { template, days, minutes }
+      const was = plan(o), base = { template, plan: { ...o, volume: 0 }, week: asWeek(was), byGroup: { calves: 8 } }
+      const at = what => `${template} ${days}×${minutes} ${what}`
+      const same = plan({ ...o, byGroup: { calves: 8 }, base })
+      expect(asWeek(same), at('same')).toEqual(base.week)
+      // More: every lift stays and no group (calves set on their own) comes out lower.
+      const up = plan({ ...o, volume: 1, byGroup: { calves: 8 }, base })
+      const now = sets(up)
+      for (const k of Object.keys(sets(same))) expect(now[k], at(`up ${k}`)).toBeGreaterThan(0)
+      for (const g of PLAN_GROUPS) expect(up.total[g] || 0, at(`up ${g}`)).toBeGreaterThanOrEqual((same.total[g] || 0) - 1e-9)
+      // More sets where the days have the minutes for them.
+      if (minutes === 75 && days === 4) expect(up.days.reduce((s, d) => s + d.sets, 0), at('up sets')).toBeGreaterThan(same.days.reduce((s, d) => s + d.sets, 0))
+      // Less: no lift comes in, none goes up.
+      const down = sets(plan({ ...o, volume: -1, byGroup: { calves: 8 }, base }))
+      for (const [k, n] of Object.entries(down)) expect(n, at(`down ${k}`)).toBeLessThanOrEqual(sets(same)[k] ?? -1)
+      // Another setting builds the week again.
+      expect(plan({ ...o, days: days + 1, volume: 1, base }).days.length, at('days')).toBe(days + 1)
+    }
+  })
+
+  it('names a group short of the sets it needs on its own lifts as that, not as under its goal', () => {
+    const p = plan({ template: 'full', days: 2, minutes: 30, level: 'beginner' })
+    for (const x of p.short) {
+      if (x.direct == null) expect(x.total, x.g).toBeLessThan(x.goal * 0.85)
+      else expect(x.direct, x.g).toBeLessThan(x.directGoal * 0.85)
+    }
+  })
 })

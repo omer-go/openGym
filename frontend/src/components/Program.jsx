@@ -205,7 +205,9 @@ function PlanBuilder({ template, close }) {
   // Groups set on their own (goals.js byGroup): edited here, saved with the program.
   const [byGroup, setByGroup] = useState(() => ({ ...(S.goals?.byGroup || {}) }))
   const [groupsOpen, setGroupsOpen] = useState(false)
-  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep }), [S, roles, byGroup, keep])
+  // While the lifts are kept, a change of the goals alone keeps the week and moves its sets (planner.js baseOf).
+  const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup } : undefined), [running])
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, volume: volumeOf(S), ...from, template }
@@ -251,6 +253,11 @@ function PlanBuilder({ template, close }) {
     <Segmented value={o[key]} onChange={v => pick(key, v)} options={options(key, values, label)} />
   </>
   const short = week.short.filter(x => x.cause !== 'planner')
+  // A session length the days don't use: what holds them shorter, so a longer one isn't a mystery.
+  const longest = Math.max(0, ...week.days.map(d => d.minutes))
+  const spare = cfg.minutes - longest >= 10 && (week.days.some(d => d.limit === 'accessories')
+    ? t('Days take up to about {0} min: {1} allows {2} accessories a day, so the rest of the time goes unused.', longest, t(LEVELS[cfg.level].n), cfg.maxAcc)
+    : t('Days take up to about {0} min: that reaches the weekly goal, so the rest of the time goes unused.', longest))
   const own = Object.keys(byGroup).length
   const changes = useMemo(() => updating ? weekChanges(running.week, week.days.map(d => ({ type: d.type, minutes: d.minutes, items: d.items.map(i => ({ id: i.ex.id, sets: i.sets })) }))) : null, [updating, running, week])
   const setGroup = (g, v) => setByGroup(x => {
@@ -264,7 +271,7 @@ function PlanBuilder({ template, close }) {
     const go = () => {
       // An update keeps the weeks already done (the program still starts when it started) and,
       // until Other lifts, the lifts that still fit.
-      const program = newPlanProgram({ ...o, byGroup }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
+      const program = newPlanProgram({ ...o, byGroup, base: env.base }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
       if (!program) return
       if (updating) program.startedAt = running.startedAt
       update(s => {
@@ -306,6 +313,7 @@ function PlanBuilder({ template, close }) {
   const minutes = <>
     {seg('minutes', PLAN_MINUTES, v => String(v))}
     <div className="muted small" style={{ marginTop: 6 }}>{t('Minutes a session, rests and warm-up sets included.')}</div>
+    {spare && <div className="muted small" style={{ marginTop: 6 }} data-spare-time>{spare}</div>}
   </>
   const length = <>
     <h4 className="sec">{t('Length')}</h4>
@@ -343,7 +351,9 @@ function PlanBuilder({ template, close }) {
             {!updating && <div className="goal-est" data-goal-estimate>
         {t('{0} days · up to {1} min', cfg.days, cfg.minutes)}
       </div>}
-      {short.length > 0 && <div className="plan-note warn">{t('Short of the weekly goal: {0}.', short.map(x => `${groupName(x.g)} ${x.total}/${x.goal} (${t(CAUSE[x.cause])})`).join(', '))}</div>}
+      {short.length > 0 && <div className="plan-note warn">{t('Short of the weekly goal: {0}.', short.map(x => (x.direct != null
+        ? t('{0}: {1} of the {2} sets it needs on lifts aimed at it', groupName(x.g), x.direct, x.directGoal)
+        : `${groupName(x.g)} ${x.total}/${x.goal}`) + ` (${t(CAUSE[x.cause])})`).join(', '))}</div>}
 
       <h4 className="sec">{updating ? t('Your week after the change') : t('Each week')}</h4>
       {changes && <div className="plan-diff" data-plan-diff>{same ? t('Nothing changes yet.') : <>

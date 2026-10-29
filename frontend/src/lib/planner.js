@@ -695,17 +695,54 @@ export function plan(o = {}) {
   const cfg = configOf(o)
   const goals = goalsFor(cfg.goal, o.byGroup, cfg.volume)
   const parts = partsFor(cfg.goal, o.byGroup, cfg.volume)
+  const base = baseOf(cfg, o)
+  if (base) {
+    // Only the goals moved: the week the program has, its sets taken up or down to them.
+    const out = weekOf(cfg, goals, parts, { ...o, base })
+    const { total, direct, partTotal } = totalsOf(out)
+    let why
+    const short = shortOf(goals, total, direct).map(x => ({ ...x, cause: (why ||= causesOf(weekOf(cfg, goals, parts, { ...o, base: null })))(x.g) }))
+    const partsOut = parts.map(p => ({ ...p, total: Math.round((partTotal[p.name] || 0) * 10) / 10 }))
+    return { cfg, goals, parts: partsOut, days: out, total, short, yields: {}, feasible: short.every(x => x.cause === 'planner') }
+  }
+  if (o.base) o = { ...o, base: null }
   const first = weekOf(cfg, goals, parts, o)
   const { out, yields } = o.priority === false ? { out: first, yields: {} } : giveWay(cfg, goals, parts, o, first)
   const { total, direct, partTotal } = totalsOf(out)
   const why0 = causesOf(first)
-  const short = PLAN_GROUPS.filter(g => (total[g] || 0) < goals[g] * SHORT || (direct[g] || 0) < Math.ceil(DIRECT_MIN[g] * goals[g]) * SHORT).map(g => {
-    // A group that gave way is short for what kept the first week from fitting.
-    const cause = yields[g] != null && why0(g) === 'planner' ? 'time' : yields[g] != null ? why0(g) : causesOf(out)(g)
-    return { g, total: Math.round((total[g] || 0) * 10) / 10, goal: goals[g], cause }
+  const short = shortOf(goals, total, direct).map(x => {
+    // A group that gave way is short for what kept the first week from fitting: the accessories a
+    // day when that, and not the time, stopped the days.
+    const g = x.g
+    const capped = !first.some(d => d.trimmed || d.limit === 'time') && first.some(d => d.limit === 'accessories')
+    const cause = yields[g] != null && why0(g) === 'planner' ? (capped ? 'accessories' : 'time') : yields[g] != null ? why0(g) : causesOf(out)(g)
+    return { ...x, cause }
   })
   const partsOut = parts.map(p => ({ ...p, total: Math.round((partTotal[p.name] || 0) * 10) / 10 }))
   return { cfg, goals, parts: partsOut, days: out, total, short, yields, feasible: short.every(x => x.cause === 'planner') }
+}
+
+// The groups short of their goal: under SHORT of it, or of the sets it needs from lifts aimed at it
+// (DIRECT_MIN), `direct` and `directGoal` then saying how many it has of those.
+function shortOf(goals, total, direct) {
+  return PLAN_GROUPS.flatMap(g => {
+    const dGoal = Math.ceil(DIRECT_MIN[g] * goals[g]), t = Math.round((total[g] || 0) * 10) / 10
+    if ((total[g] || 0) < goals[g] * SHORT) return [{ g, total: t, goal: goals[g] }]
+    if ((direct[g] || 0) < dGoal * SHORT) return [{ g, total: t, goal: goals[g], direct: direct[g] || 0, directGoal: dGoal }]
+    return []
+  })
+}
+
+// A running program to take the week from (`o.base`: its `template`, `plan` and `week`, and the
+// `byGroup` it was built for) when only the goals differ from it: the volume, a group's own.
+// Then `{ week, goals, parts }`, the goals it was built for; else null.
+function baseOf(cfg, o) {
+  const b = o.base
+  if (!b?.week?.length || !b.plan) return null
+  const was = configOf({ ...b.plan, template: b.template })
+  const same = ['template', 'goal', 'level', 'equipment', 'days', 'minutes', 'seed', 'shift'].every(k => was[k] === cfg[k])
+  if (!same || b.week.length !== cfg.days) return null
+  return { week: b.week, goals: goalsFor(was.goal, b.byGroup, was.volume), parts: partsFor(was.goal, b.byGroup, was.volume) }
 }
 
 // What each group is short for in a week: a setting is to blame only if every day that trains the
@@ -802,6 +839,31 @@ function weekOf(cfg, goals, parts, o, after) {
     occ[t] = (occ[t] || 0) + 1
     return DAY_TYPES[t].leads[(occ[t] - 1) % DAY_TYPES[t].leads.length]
   })
+  if (o.base) {
+    // Every lift the program has stays: a group whose goal went up gets sets on its lifts, and an
+    // accessory when they are full (topUp); one whose goal came down gives sets back (trim), and
+    // no other group loses any, even one past its goal.
+    o.base.week.forEach((d, k) => out.push({
+      k, type: d.type, limit: null, capped: {}, trimmed: false,
+      items: d.items.map(i => ({ i, ex: liftOf(i.id) })).filter(x => x.ex).map(({ i, ex }) => {
+        const slot = i.slot || 'accessory'
+        week.used.add(ex.id)
+        return { ex, sets: i.sets, slot, rx: prescribe(cfg, ex, slot, ex.p[0]) }
+      }),
+    }))
+    const { total, partTotal } = totalsOf(finish(cfg, out))
+    const keepAt = (goal, was, now) => (goal < was - 1e-9 ? goal : Math.max(goal, now || 0))
+    // Only a goal that went up takes sets.
+    const up = (goal, was) => (goal > was + 1e-9 ? goal : 0)
+    topUp({
+      cfg, out, week, rand, avail, near, trains,
+      goals: Object.fromEntries(PLAN_GROUPS.map(g => [g, up(goals[g], o.base.goals[g])])),
+      parts: parts.map(p => ({ ...p, goal: up(p.goal, o.base.parts.find(x => x.name === p.name)?.goal ?? 0) })),
+    })
+    trim(cfg, out, Object.fromEntries(PLAN_GROUPS.map(g => [g, keepAt(goals[g], o.base.goals[g], total[g])])),
+      parts.map(p => ({ ...p, goal: keepAt(p.goal, o.base.parts.find(x => x.name === p.name)?.goal ?? 0, partTotal[p.name]) })), new Set())
+    return finish(cfg, out)
+  }
   sched.forEach((t, k) => {
     const d = skeleton({ cfg, k, type: t, goals, parts, has: g => skel[g] || 0, hasPart: n => skelParts[n] || 0, week, rand, avail, sched, leads, prev: out[k - 1], near, lead: o.lead, trains })
     for (const i of d.items) { add(cfg, skel, i.ex, i.sets); addParts(skelParts, i.ex, i.sets); for (const g of i.ex.p) skelDirect[g] = (skelDirect[g] || 0) + i.sets }
@@ -832,6 +894,11 @@ function weekOf(cfg, goals, parts, o, after) {
     if (o.balance !== false) balance(cfg, out, after.goals, after.parts, whole, near)
   }
   if (o.count != null) for (const d of out) fit({ cfg, day: d, count: o.count, goals, week, rand, avail, near, trains })
+  return finish(cfg, out)
+}
+
+// Each day's groups, minutes and sets, its lifts in slot order.
+function finish(cfg, out) {
   const order = { lead: 0, lower: 1, push: 2, pull: 3, accessory: 4 }
   for (const d of out) {
     d.groups = {}
