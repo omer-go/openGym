@@ -166,12 +166,14 @@ function SwapLift({ item, day, render, onSwap }) {
   const roles = rolesLoaded()
   const from = item.from || item.ex.id
   const others = day.items.filter(x => x !== item).map(x => x.ex.id).join()
+  // Equivalents once a lift, not again at each swap in its day: only the filter below is.
+  const eq = useMemo(() => equivalentsOf(S, from).map(x => x.ex.id), [S, from, roles])
   const ids = useMemo(() => {
     const taken = new Set(others.split(','))
-    const eq = equivalentsOf(S, from).map(x => x.ex.id).filter(id => !taken.has(id)).slice(0, SWAPS)
+    const top = eq.filter(id => !taken.has(id)).slice(0, SWAPS)
     // A lift picked from See all stays next to the planner's while it is the one in the slot.
-    return [from, ...(eq.includes(item.ex.id) || item.ex.id === from ? [] : [item.ex.id]), ...eq]
-  }, [S, from, others, item.ex.id, roles])
+    return [from, ...(top.includes(item.ex.id) || item.ex.id === from ? [] : [item.ex.id]), ...top]
+  }, [eq, from, others, item.ex.id])
   const at = ids.indexOf(item.ex.id)
   const go = n => (n === ids.length ? swapSheet(exOr(from), id => onSwap(from, id)) : n >= 0 && n < ids.length && onSwap(from, ids[n]))
   const row = (n, nav) => n === ids.length
@@ -262,7 +264,9 @@ function PlanBuilder({ template, close }) {
   const [groupsOpen, setGroupsOpen] = useState(false)
   // While the lifts are kept, a change of the goals alone keeps the week and moves its sets (planner.js baseOf).
   const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup } : undefined), [running])
-  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base, swap }), [S, roles, byGroup, keep, base, swap])
+  // Not the swaps: they leave every slot and its sets where they were, so what the controls can
+  // reach stays the same, and putting them here re-asked the planner for each option at every swipe.
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, volume: volumeOf(S), ...from, template }
@@ -279,7 +283,7 @@ function PlanBuilder({ template, close }) {
     if (!memo.has(key)) memo.set(key, blocker({ ...x, ...env }))
     return memo.get(key)
   }
-  const week = useMemo(() => plan({ ...o, ...env }), [o, env])
+  const week = useMemo(() => plan({ ...o, ...env, swap }), [o, env, swap])
   const cfg = week.cfg
 
   // The days and the minutes are the user's time, and neither moves the other: one that falls short
