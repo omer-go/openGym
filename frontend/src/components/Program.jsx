@@ -206,18 +206,18 @@ function PreviewDay({ day, k, change, onSwap }) {
     {open && <div className="ahead-b"><div className="list">{day.items.map(i => {
       const isNew = change && change.from != null && added.has(i.ex.id)
       return <SwapLift key={i.from || i.ex.id} item={i} day={day} onSwap={(from, to) => onSwap(k, from, to)} render={(ex, sw) =>
-        <div className={'item' + (sw.from ? ' plan-swap-on' : isNew ? ' plan-added' : '')} data-swap={sw.at}>
+        <div className={'item plan-row' + (sw.from ? ' plan-swap-on' : isNew ? ' plan-added' : '')} data-swap={sw.at}>
           <Thumb ex={ex} />
-          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
-            <div className="ss">{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...i.rx })}</div></div>
-          {isNew && !sw.from && <span className="plan-tag on">{t('New')}</span>}
-          {sw.nav && <div className="plan-swap-nav">
+          <div className="plan-row-n"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div></div>
+          <div className="ss plan-row-m">{isNew && !sw.from && <span className="plan-tag on">{t('New')}</span>}{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...i.rx })}</div>
+          {/* On the card sliding in too (no nav: inert), so it lines up with the one sliding out. */}
+          <div className="plan-swap-nav" inert={sw.nav ? undefined : true}>
             {/* Always there, hidden until a swap, so a row keeps its size as you swipe. */}
-            <button type="button" className={'iconbtn plan-swap-undo' + (sw.from ? '' : ' off')} aria-label={sw.from ? t('Back to {0}', exerciseNameFor(sw.from)) : undefined} aria-hidden={!sw.from} tabIndex={sw.from ? 0 : -1} onClick={sw.nav.undo}><Icon name="undo" /></button>
-            <button type="button" className="iconbtn" aria-label={t('Previous equivalent')} disabled={!sw.nav.prev} onClick={sw.nav.prev}><Icon name="chevronLeft" /></button>
+            <button type="button" className={'iconbtn plan-swap-undo' + (sw.from ? '' : ' off')} aria-label={sw.from ? t('Back to {0}', exerciseNameFor(sw.from)) : undefined} aria-hidden={!sw.from} tabIndex={sw.from ? 0 : -1} onClick={sw.nav?.undo}><Icon name="undo" /></button>
+            <button type="button" className="iconbtn" aria-label={t('Previous equivalent')} disabled={!sw.nav?.prev && sw.at === 0} onClick={sw.nav?.prev}><Icon name="chevronLeft" /></button>
             <span className="plan-swap-at">{t('{0} of {1}', sw.at + 1, sw.of)}</span>
-            <button type="button" className="iconbtn" aria-label={t('Next equivalent')} onClick={sw.nav.next}><Icon name="chevronRight" /></button>
-          </div>}
+            <button type="button" className="iconbtn" aria-label={t('Next equivalent')} onClick={sw.nav?.next}><Icon name="chevronRight" /></button>
+          </div>
         </div>} />
     })}{change?.removed.map(id => {
       const ex = exOr(id)

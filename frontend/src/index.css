@@ -2532,12 +2532,22 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .plan-added{box-shadow:inset 3px 0 0 var(--green)}
 .plan-removed{opacity:.55}
 .plan-removed .tt{text-decoration:line-through}
-.plan-prev .workout-swipe-surface{margin-bottom:4px}
+/* clip, not hidden: focusing an arrow scrolled a row a couple of pixels sideways under the clip. */
+.plan-prev .workout-swipe-surface{margin-bottom:4px;overflow:clip}
 .plan-prev .workout-swipe-surface:last-child{margin-bottom:0}
 /* Room for a swapped lift's border on every row, so a swap draws it without moving a thing. */
 .plan-prev .workout-swipe-surface .item{margin-bottom:0;padding:4px;border-radius:14px}
 .plan-prev .workout-swipe-card,.plan-prev .workout-swipe-preview{background:var(--surface)}
 .plan-swap-on{box-shadow:inset 0 0 0 2px var(--green)}
+/* A lift a row of fixed parts: the name always two lines tall (centred, clamped), the details one
+   line under it and the nav, so swiping to a longer name or a longer prescription moves nothing. */
+.plan-prev .item.plan-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"thumb name nav" "thumb meta meta";column-gap:12px;row-gap:2px;align-items:center}
+.plan-row>.thumb{grid-area:thumb}
+.plan-row-n{grid-area:name;display:flex;align-items:center;height:40px;min-width:0}
+.plan-row-n .tt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.plan-row-m{grid-area:meta;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-row-m .plan-tag{margin-inline-end:6px;padding-block:0}
+.plan-row>.plan-swap-nav{grid-area:nav}
 .plan-swap-nav{flex:none;display:flex;align-items:center;gap:2px}
 .plan-swap-nav .iconbtn{width:28px;height:28px;font-size:15px;background:none;color:var(--label-2)}
 .plan-swap-nav .iconbtn:disabled{opacity:.3}
