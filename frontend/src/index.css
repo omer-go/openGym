@@ -2532,15 +2532,17 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .plan-added{box-shadow:inset 3px 0 0 var(--green)}
 .plan-removed{opacity:.55}
 .plan-removed .tt{text-decoration:line-through}
-.plan-prev .workout-swipe-surface{margin-bottom:12px}
+.plan-prev .workout-swipe-surface{margin-bottom:4px}
 .plan-prev .workout-swipe-surface:last-child{margin-bottom:0}
-.plan-prev .workout-swipe-surface .item{margin-bottom:0}
+/* Room for a swapped lift's border on every row, so a swap draws it without moving a thing. */
+.plan-prev .workout-swipe-surface .item{margin-bottom:0;padding:4px;border-radius:14px}
 .plan-prev .workout-swipe-card,.plan-prev .workout-swipe-preview{background:var(--surface)}
-.plan-swapped{color:var(--acc)}
-.plan-swapped .linkish{font-weight:600}
+.plan-swap-on{box-shadow:inset 0 0 0 2px var(--green)}
 .plan-swap-nav{flex:none;display:flex;align-items:center;gap:2px}
 .plan-swap-nav .iconbtn{width:28px;height:28px;font-size:15px;background:none;color:var(--label-2)}
 .plan-swap-nav .iconbtn:disabled{opacity:.3}
+.plan-swap-nav .plan-swap-undo{color:var(--green)}
+.plan-swap-undo.off{visibility:hidden}
 .plan-swap-at{font-size:11px;color:var(--label-3);min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
 .plan-swap-all{gap:10px;color:var(--acc);min-height:44px!important}
 .plan-swap-all .icn{flex:none}
