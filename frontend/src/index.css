@@ -1771,6 +1771,15 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
 .mroles-more{display:flex;align-items:center;gap:6px;width:100%;padding:9px 0;color:var(--acc);font-size:14px;border-top:var(--hair) solid var(--sep)}
 .mroles-more .icn{transition:transform var(--fast)}
 .mroles-more[aria-expanded="true"] .icn{transform:rotate(90deg)}
+/* an exercise's equivalents (components/Equivalents.jsx) */
+.eqv-h{gap:10px;align-items:flex-end;margin-top:22px}
+.eqv-h h4.sec{margin:0 0 2px}
+.eqv-scope{flex:none;width:auto;font-size:12px}
+.eqv-scope button{padding-inline:10px;white-space:nowrap}
+.eqv-tier{margin-top:12px}
+.eqv-k{font-size:12px;color:var(--label-2);padding:0 4px 6px}
+.eqv-kits{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px}
+.eqv-kits .tag.pill{font-size:13px;padding:6px 12px;cursor:pointer}
 
 /* --- month calendar --- */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
@@ -2523,3 +2532,15 @@ button.cb-pic,button.cb-name{cursor:pointer}
 .plan-added{box-shadow:inset 3px 0 0 var(--green)}
 .plan-removed{opacity:.55}
 .plan-removed .tt{text-decoration:line-through}
+.plan-prev .workout-swipe-surface{margin-bottom:12px}
+.plan-prev .workout-swipe-surface:last-child{margin-bottom:0}
+.plan-prev .workout-swipe-surface .item{margin-bottom:0}
+.plan-prev .workout-swipe-card,.plan-prev .workout-swipe-preview{background:var(--surface)}
+.plan-swapped{color:var(--acc)}
+.plan-swapped .linkish{font-weight:600}
+.plan-swap-nav{flex:none;display:flex;align-items:center;gap:2px}
+.plan-swap-nav .iconbtn{width:28px;height:28px;font-size:15px;background:none;color:var(--label-2)}
+.plan-swap-nav .iconbtn:disabled{opacity:.3}
+.plan-swap-at{font-size:11px;color:var(--label-3);min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
+.plan-swap-all{gap:10px;color:var(--acc);min-height:44px!important}
+.plan-swap-all .icn{flex:none}

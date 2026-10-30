@@ -32,6 +32,9 @@ import { MUSCLE_NAME } from '../lib/muscles.js'
 import { isWarmupRow } from '../lib/workout-model.js'
 import { doneUnits, workoutDuration, workoutVolume } from '../lib/history.js'
 import { Thumb } from './Media.jsx'
+import SwipeCards from './SwipeCards.jsx'
+import Equivalents from './Equivalents.jsx'
+import { equivalentsOf } from '../lib/equivalents.js'
 
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
 // Schedule with Program chosen, the setup before a program starts, and Home's next-day and this-week cards.
@@ -143,11 +146,48 @@ const planSummary = pl => [t(SCHEMES[pl.goal]?.n), t(LEVELS[pl.level]?.n), t(EQU
 /** A program day's lift: sets × reps (a range) and its rest. */
 const liftLine = i => `${i.sets} × ${i.lo === i.hi ? i.lo : `${i.lo}–${i.hi}`}` + (i.rest ? ` · ${t('{0} rest', i.rest >= 120 && i.rest % 60 === 0 ? `${i.rest / 60} min` : `${i.rest}s`)}` : '')
 
+// A lift's swipe goes through this many of its equivalents, then See all.
+const SWAPS = 8
+
+/** Your pick for a program slot from all of a lift's equivalents (lib/equivalents.js). */
+const swapSheet = (ex, pick) => ui().openSheet(close => <>
+  <h3 style={{ marginBottom: 2 }}>{t('Instead of {0}', exerciseNameFor(ex))}</h3>
+  <div className="muted small">{t('Takes its slot and its sets in the program.')}</div>
+  <Equivalents ex={ex} onOpen={e => { pick(e.id); close() }} />
+</>)
+
 /**
- * One day of a plan being set up: its size, folded open to its lifts. Editing a program, `change`
- * (program.js weekChanges) marks what the day gains, drops and does other sets of.
+ * A program day's lift, swiped sideways through the lifts that could take its slot: the planner's
+ * pick, its closest equivalents in your list, then See all. `onSwap(from, to)` puts `to` in the
+ * slot of the planner's `from`; to `from` itself undoes it.
  */
-function PreviewDay({ day, k, change }) {
+function SwapLift({ item, day, render, onSwap }) {
+  const S = useStore(s => s.S)
+  const roles = rolesLoaded()
+  const from = item.from || item.ex.id
+  const others = day.items.filter(x => x !== item).map(x => x.ex.id).join()
+  const ids = useMemo(() => {
+    const taken = new Set(others.split(','))
+    const eq = equivalentsOf(S, from).map(x => x.ex.id).filter(id => !taken.has(id)).slice(0, SWAPS)
+    // A lift picked from See all stays next to the planner's while it is the one in the slot.
+    return [from, ...(eq.includes(item.ex.id) || item.ex.id === from ? [] : [item.ex.id]), ...eq]
+  }, [S, from, others, item.ex.id, roles])
+  const at = ids.indexOf(item.ex.id)
+  const go = n => (n === ids.length ? swapSheet(exOr(from), id => onSwap(from, id)) : n >= 0 && n < ids.length && onSwap(from, ids[n]))
+  const row = (n, nav) => n === ids.length
+    ? <div className="item plan-swap-all"><Icon name="shuffle" /><div className="grow tt">{t('See all equivalents')}</div><Icon name="chevronRight" /></div>
+    : render(exOr(ids[n]), { at: n, of: ids.length, from: n > 0 ? exOr(from) : null, nav })
+  return <SwipeCards index={at} count={ids.length + 1} revision={item.ex.id} onNavigate={d => go(at + d)} renderPreview={d => row(at + d)}>
+    {row(at, { prev: at > 0 ? () => go(at - 1) : null, next: () => go(at + 1), undo: () => onSwap(from, from) })}
+  </SwipeCards>
+}
+
+/**
+ * One day of a plan being set up: its size, folded open to its lifts, each swiped through its
+ * equivalents (SwapLift). Editing a program, `change` (program.js weekChanges) marks what the day
+ * gains, drops and does other sets of.
+ */
+function PreviewDay({ day, k, change, onSwap }) {
   const [open, setOpen] = useState(k === 0)
   const added = new Set(change?.added || [])
   const sets = new Map((change?.changed || []).map(c => [c.id, c.from]))
@@ -164,14 +204,20 @@ function PreviewDay({ day, k, change }) {
       <Icon name="chevronRight" />
     </button>
     {open && <div className="ahead-b"><div className="list">{day.items.map(i => {
-      const ex = exOr(i.ex.id)
       const isNew = change && change.from != null && added.has(i.ex.id)
-      return <div key={i.ex.id} className={'item' + (isNew ? ' plan-added' : '')}>
-        <Thumb ex={ex} />
-        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
-          <div className="ss">{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...i.rx })}</div></div>
-        {isNew && <span className="plan-tag on">{t('New')}</span>}
-      </div>
+      return <SwapLift key={i.from || i.ex.id} item={i} day={day} onSwap={(from, to) => onSwap(k, from, to)} render={(ex, sw) =>
+        <div className={'item' + (isNew ? ' plan-added' : '')} data-swap={sw.at}>
+          <Thumb ex={ex} />
+          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div>
+            <div className="ss">{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...i.rx })}</div>
+            {sw.from && <div className="ss plan-swapped">{t('Instead of {0}', exerciseNameFor(sw.from))}{sw.nav && <> · <button type="button" className="linkish" onClick={sw.nav.undo}>{t('Undo')}</button></>}</div>}</div>
+          {isNew && <span className="plan-tag on">{t('New')}</span>}
+          {sw.nav && <div className="plan-swap-nav">
+            <button type="button" className="iconbtn" aria-label={t('Previous equivalent')} disabled={!sw.nav.prev} onClick={sw.nav.prev}><Icon name="chevronLeft" /></button>
+            <span className="plan-swap-at">{t('{0} of {1}', sw.at + 1, sw.of)}</span>
+            <button type="button" className="iconbtn" aria-label={t('Next equivalent')} onClick={sw.nav.next}><Icon name="chevronRight" /></button>
+          </div>}
+        </div>} />
     })}{change?.removed.map(id => {
       const ex = exOr(id)
       return <div key={id} className="item plan-removed">
@@ -198,6 +244,14 @@ function PlanBuilder({ template, close }) {
   // The lifts the program has, kept where they still fit (planner.js variant); until Other lifts.
   const [keep, setKeep] = useState(() => (updating ? running.week.map(d => d.items.map(i => i.id)) : undefined))
   const [moreOpen, setMoreOpen] = useState(false)
+  // The lifts you swiped in, a day at a time: the planner's pick -> yours (planner.js swapIn).
+  const [swap, setSwap] = useState([])
+  const onSwap = (k, from, to) => setSwap(w => {
+    const out = [...w]
+    out[k] = { ...out[k], [from]: to }
+    if (to === from) delete out[k][from]
+    return out
+  })
   // What the plan leaves out and the goals it builds to; again once the muscle roles are in, as
   // the planner counts a set the way the app does with them.
   useMuscleRoles()
@@ -207,7 +261,7 @@ function PlanBuilder({ template, close }) {
   const [groupsOpen, setGroupsOpen] = useState(false)
   // While the lifts are kept, a change of the goals alone keeps the week and moves its sets (planner.js baseOf).
   const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup } : undefined), [running])
-  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base, swap }), [S, roles, byGroup, keep, base, swap])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, volume: volumeOf(S), ...from, template }
@@ -271,7 +325,7 @@ function PlanBuilder({ template, close }) {
     const go = () => {
       // An update keeps the weeks already done (the program still starts when it started) and,
       // until Other lifts, the lifts that still fit.
-      const program = newPlanProgram({ ...o, byGroup, base: env.base }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
+      const program = newPlanProgram({ ...o, byGroup, base: env.base, swap }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
       if (!program) return
       if (updating) program.startedAt = running.startedAt
       update(s => {
@@ -361,13 +415,15 @@ function PlanBuilder({ template, close }) {
         {moves.length > 0 && <div className="ss">{moves.map(([g, [a, b]]) => `${groupName(g)} ${a} → ${b}`).join(' · ')}</div>}
         <div className="ss">{[liftsIn && t('New lifts: {0}', liftsIn), liftsOut && t('Lifts dropped: {0}', liftsOut), ...changes.gone.map(d => t('Day {0} · {1} dropped', d.j + 1, t(DAY_NAME[d.type])))].filter(Boolean).join(' · ') || t('The same lifts')}</div>
       </>}</div>}
-      <div className="ahead-days">{week.days.map((d, k) => <PreviewDay key={`${k}-${d.type}-${d.items.map(i => i.ex.id).join()}`} day={d} k={k} change={changes?.days[k]} />)}</div>
+      <div className="ahead-days">{week.days.map((d, k) => <PreviewDay key={`${k}-${d.type}-${d.items.map(i => i.from || i.ex.id).join()}`} day={d} k={k} change={changes?.days[k]} onSwap={onSwap} />)}</div>
       <Button variant="tinted" icon="shuffle" style={{ marginTop: 10 }} onClick={() => {
-        // Another week of lifts, as long as it still reaches the goal; an edit stops keeping the old ones.
+        // Another week of lifts, as long as it still reaches the goal; an edit stops keeping the old
+        // ones and the ones you swiped in.
         if (keep) setKeep(undefined)
+        setSwap([])
         for (let seed = o.seed + 1, n = 0; n < 30; seed++, n++) if (!blocked({ ...o, seed }).length) return setO({ ...o, seed })
       }}>{t('Other lifts')}</Button>
-      <div className="muted small" style={{ marginTop: 6 }}>{updating
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Swipe a lift sideways for the ones that could take its place.')} {updating
         ? t('Lifts the program has stay where they still fit, with their progress.')
         : t('Each day keeps its lifts for the whole program; the weight and reps move on as you log them.')}</div>
 

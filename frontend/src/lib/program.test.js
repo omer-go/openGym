@@ -6,6 +6,7 @@ import { entryWeights, groupCredit } from './coverage.js'
 import { LEVELS } from './planner.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 import { weeklyTargetOf } from './goals.js'
+import { equivalentsOf } from './equivalents.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -275,6 +276,15 @@ describe('a program built from settings', () => {
     const was = newPlanProgram(ULO)
     expect(newPlanProgram(ULO, { from: was }).week).toEqual(was.week)
     expect(newPlanProgram(ULO, { today: '2026-10-01' }).startedAt).toBe('2026-10-01')
+  })
+
+  it('starts with the lifts swapped in on the program page', () => {
+    const was = newPlanProgram(ULO), lead = was.week[0].items[0]
+    const to = equivalentsOf({}, lead.id, { scope: 'all' })[0].ex.id
+    const p = newPlanProgram({ ...ULO, swap: [{ [lead.id]: to }] })
+    expect(p.week[0].items.find(i => i.id === to)).toMatchObject({ slot: lead.slot, sets: lead.sets })
+    expect(p.week[0].items.some(i => i.id === lead.id)).toBe(false)
+    expect(p.week.slice(1)).toEqual(was.week.slice(1))
   })
 
   it('tells what an update changes', () => {

@@ -4,6 +4,7 @@ import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets } from './goals.js'
 import { loadMuscleRoles } from './muscle-roles.js'
+import { equivalentsOf } from './equivalents.js'
 
 const ids = new Set(EXDB.map(e => e.id))
 
@@ -352,6 +353,41 @@ describe('planner', () => {
       const fresh = lifts(plan({ ...o, volume: 2 })).flat().filter(id => was.flat().includes(id)).length
       expect(kept, `${template} ${days}`).toBeGreaterThanOrEqual(fresh)
     }
+  })
+
+  it('a lift swapped in takes the slot and sets of the one it replaces, and swaps back', () => {
+    let n = 0
+    for (const template of ['full', 'ul', 'ppl']) {
+      const o = { template, days: 3, minutes: 60 }
+      const was = plan(o)
+      was.days.forEach((d, k) => d.items.forEach(i => {
+        const to = equivalentsOf({}, i.ex.id, { scope: 'all' }).map(x => x.ex.id).find(id => !d.items.some(x => x.ex.id === id))
+        if (!to) return
+        const at = `${template} day ${k} ${i.ex.id} -> ${to}`
+        const swap = []
+        swap[k] = { [i.ex.id]: to }
+        const now = plan({ ...o, swap })
+        const it = now.days[k].items.find(x => x.ex.id === to)
+        expect(it, at).toBeTruthy()
+        expect([it.from, it.slot, it.sets], at).toEqual([i.ex.id, i.slot, i.sets])
+        expect(it.rx, at).toEqual(prescribe(now.cfg, planLift(to), i.slot, planLift(to).p[0]))
+        // Every other lift of the week stays where it was.
+        const rest = p => p.days.map(x => x.items.filter(y => y.ex.id !== to && y.ex.id !== i.ex.id).map(y => `${y.ex.id}×${y.sets}`).sort())
+        expect(rest(now), at).toEqual(rest(was))
+        // Back to the planner's own is no swap at all.
+        swap[k] = { [i.ex.id]: i.ex.id }
+        expect(plan({ ...o, swap }).days[k].items.some(x => x.from), at).toBe(false)
+        n++
+      }))
+    }
+    expect(n).toBeGreaterThan(20)
+  })
+
+  it('a swap to a lift the day already has leaves the slot as it was', () => {
+    const o = { template: 'full', days: 3, minutes: 60 }
+    const [a, b] = plan(o).days[0].items
+    const now = plan({ ...o, swap: [{ [a.ex.id]: b.ex.id }] }).days[0].items
+    expect(now.map(i => i.ex.id)).toEqual(plan(o).days[0].items.map(i => i.ex.id))
   })
 
   it('a change of the volume alone keeps every lift and moves only the sets', () => {

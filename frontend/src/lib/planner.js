@@ -689,7 +689,8 @@ function balance(cfg, out, goals, parts, whole, near) {
  * never to pick (the ones skipped in the app), as long as the pattern has another. A group
  * `short` of its goal names its cause: a setting (time, accessories, equipment, caps, template)
  * or the planner's own rounding ('planner'); `feasible` when no setting is to blame. When the
- * settings can't hold every goal, the groups further down PRIORITY give way (`yields`).
+ * settings can't hold every goal, the groups further down PRIORITY give way (`yields`). `swap`:
+ * the lifts you chose over the planner's, a day at a time (swapIn).
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
@@ -698,7 +699,7 @@ export function plan(o = {}) {
   const base = baseOf(cfg, o)
   if (base) {
     // Only the goals moved: the week the program has, its sets taken up or down to them.
-    const out = weekOf(cfg, goals, parts, { ...o, base })
+    const out = swapIn(cfg, weekOf(cfg, goals, parts, { ...o, base }), o.swap)
     const { total, direct, partTotal } = totalsOf(out)
     let why
     const short = shortOf(goals, total, direct).map(x => ({ ...x, cause: (why ||= causesOf(weekOf(cfg, goals, parts, { ...o, base: null })))(x.g) }))
@@ -707,7 +708,8 @@ export function plan(o = {}) {
   }
   if (o.base) o = { ...o, base: null }
   const first = weekOf(cfg, goals, parts, o)
-  const { out, yields } = o.priority === false ? { out: first, yields: {} } : giveWay(cfg, goals, parts, o, first)
+  const built = o.priority === false ? { out: first, yields: {} } : giveWay(cfg, goals, parts, o, first)
+  const out = swapIn(cfg, built.out, o.swap), yields = built.yields
   const { total, direct, partTotal } = totalsOf(out)
   const why0 = causesOf(first)
   const short = shortOf(goals, total, direct).map(x => {
@@ -895,6 +897,23 @@ function weekOf(cfg, goals, parts, o, after) {
   }
   if (o.count != null) for (const d of out) fit({ cfg, day: d, count: o.count, goals, week, rand, avail, near, trains })
   return finish(cfg, out)
+}
+
+// The lifts you swapped in (`swap`, a map a day of the lift the planner picked to the one you chose,
+// equivalents.js): each takes the slot and sets of the one it replaces, prescribed for itself, and
+// keeps `from`, the planner's pick, so it can be swapped again or back. A lift already in the day
+// isn't taken twice.
+function swapIn(cfg, out, swap) {
+  if (!swap?.some(m => m && Object.keys(m).length)) return out
+  return finish(cfg, out.map((d, k) => {
+    const to = swap[k] || {}
+    const items = d.items.map(i => {
+      const ex = to[i.ex.id] && liftOf(to[i.ex.id])
+      if (!ex || d.items.some(x => x.ex.id === ex.id)) return i
+      return { ...i, ex, from: i.ex.id, rx: prescribe(cfg, ex, i.slot, ex.p[0]) }
+    })
+    return { ...d, items }
+  }))
 }
 
 // Each day's groups, minutes and sets, its lifts in slot order.
