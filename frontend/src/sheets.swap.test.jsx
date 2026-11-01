@@ -67,6 +67,62 @@ describe('active exercise swap sheet flow', () => {
   })
 })
 
+// Choosing the next lift is what a rest is for: a swap leaves the countdown running.
+describe('swapping during a rest', () => {
+  const config = { mode: 'reps', sets: 1, reps: 8, weight: 30 }
+  const log = idx => useStore.getState().update(s => { s.active.entries[idx].sets[0].done = true })
+  const confirmSwap = () => {
+    const confirm = useUI.getState().sheets.at(-1)
+    act(() => confirm.render(confirm.close).props.onConfirm())
+  }
+
+  it('keeps counting through a swap of another exercise', () => {
+    log(0)
+    useUI.getState().startRest(90, 0, { forSet: 0 })
+    const { endsAt } = useUI.getState().timer
+    submitSwap(1, EXDB[2], config)
+    vi.advanceTimersByTime(10_000)
+    expect(useUI.getState().timer).toMatchObject({ endsAt, forIdx: 0, forSet: 0, left: 80 })
+  })
+
+  it('keeps counting through the one-tap swap', () => {
+    log(0)
+    useUI.getState().startRest(90, 0, { forSet: 0 })
+    const { endsAt } = useUI.getState().timer
+    quickSwapActiveWorkoutExercise(1)
+    expect(useStore.getState().S.active.entries[1].id).not.toBe(ids[0])
+    expect(useUI.getState().timer).toMatchObject({ endsAt, forIdx: 0 })
+  })
+
+  it('stays with its exercise when the replacement goes in after logged sets', () => {
+    log(0)
+    useUI.getState().startRest(90, 0, { forSet: 0 })
+    submitSwap(0, EXDB[2], config)
+    confirmSwap()
+    expect(useStore.getState().S.active.entries.map(e => e.id)).toEqual([ids[0], ids[2], ids[0], ids[1]])
+    expect(useUI.getState().timer).toMatchObject({ forIdx: 0, forSet: 0 })
+  })
+
+  it('follows an exercise pushed down by the replacement', () => {
+    log(0)
+    log(2)
+    useUI.getState().startRest(90, 2, { forSet: 0 })
+    submitSwap(0, EXDB[2], config)
+    confirmSwap()
+    expect(useStore.getState().S.active.entries[3].id).toBe(ids[1])
+    expect(useUI.getState().timer).toMatchObject({ forIdx: 3, forSet: 0 })
+  })
+
+  it('lets go of a set replaced along with its exercise', () => {
+    useUI.getState().startRest(90, 1, { forSet: 0 })
+    const { endsAt } = useUI.getState().timer
+    submitSwap(1, EXDB[2], config)
+    const rest = useUI.getState().timer
+    expect(rest).toMatchObject({ endsAt, forIdx: 1 })
+    expect(rest.forSet).toBeUndefined()
+  })
+})
+
 // A slot of a routine kept out of progression (rehab, deload) stays out when it is swapped,
 // whether the replacement takes its place or, beside logged sets, goes in after it.
 describe('swapping an exercise kept out of progression', () => {

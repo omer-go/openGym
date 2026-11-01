@@ -1573,12 +1573,18 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   })
 
   const apply = options => {
-    // A timed callback closes over entry/set indexes. Invalidate it, and the current rest,
-    // before the selected occurrence can be replaced or a new entry shifts those indexes.
+    // A timed callback closes over entry/set indexes. Invalidate it before the selected occurrence
+    // can be replaced or a new entry shifts those indexes.
     ui().stopWork()
-    ui().stopRest()
     let res = null
     update(state => { res = swapActiveExercise(state.active, index, replacement, options) }, true)
+    // The rest keeps counting: picking the next lift is what a rest is for. It follows its
+    // exercise past a new entry, and lets go of a set that was replaced with its exercise.
+    if (res?.inserted) ui().shiftRestOwner(res.index, 1)
+    else if (res && !res.needsConfirmation && ui().timer?.forIdx === index) {
+      const { forSet, ...rest } = ui().timer
+      useUI.setState({ timer: rest })
+    }
     if (res && !res.needsConfirmation) done?.(res.index)
   }
   const logged = (current.sets || []).some(set => set.done === true)
