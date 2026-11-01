@@ -1,14 +1,16 @@
 // One colour per muscle group, so the exercises of a workout tell apart at a glance: the
 // one-tap setup's pills, Add exercise's groups, the exercise rows (their thumbnail's ring) and
 // the workout's exercise cards. The groups are Add exercise's (lib/add-exercise.js ADD_GROUPS);
-// an exercise takes its primary muscle's group. Cardio and stretches (lib/activities.js) keep
+// an exercise takes the group of the slot it fills (coverage.js slotMuscleOf), as a program's
+// rows name it: a sumo squat the catalogue files under glutes aims at the quads, so it is a squat's colour. Cardio and stretches (lib/activities.js) keep
 // their own group but get no colour, so the muscle groups have more hues to spread across.
 // Colours are CSS tokens (--mg-*, index.css), set for the dark and the light theme.
 import { ADD_GROUPS, groupOfMuscle } from './add-exercise.js'
 import { ACTIVITY_GROUPS, activityOf } from './activities.js'
 import { MUSCLE_NAME, muscleWeightsOf } from './muscles.js'
 import { smOf } from './exercises.js'
-import { primaryMuscleOf } from './strength-exercises.js'
+import { slotMuscleOf } from './coverage.js'
+import { rolesLoaded } from './muscle-roles.js'
 
 export const GROUP_COLOR_IDS = [
   'chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs',
@@ -18,15 +20,17 @@ export const GROUP_COLOR_IDS = [
 /** The CSS colour of a muscle group id ('chest', 'quads'…), or null for anything else. */
 export const groupColor = id => (GROUP_COLOR_IDS.includes(id) ? `var(--mg-${id})` : null)
 
-// The library is long and rows re-render often: remember each exercise object's group.
-const memo = new WeakMap()
+// The library is long and rows re-render often: remember each exercise object's group, until the
+// muscle roles load and may move it.
+let memo = new WeakMap(), memoRoles = false
 
 /** The colour group of an exercise: its activity (cardio, stretching), else its primary muscle's. */
 export function groupOfExercise(ex) {
   if (!ex || typeof ex !== 'object') return null
+  if (memoRoles !== rolesLoaded()) { memo = new WeakMap(); memoRoles = rolesLoaded() }
   if (memo.has(ex)) return memo.get(ex)
   const act = activityOf(ex)
-  const id = act ? act.group : groupOfMuscle(primaryMuscleOf(ex)?.slug)?.id || null
+  const id = act ? act.group : groupOfMuscle(slotMuscleOf(ex))?.id || null
   memo.set(ex, id)
   return id
 }

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { EXIDX } from './exercises.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { ACTIVITY_GROUPS } from './activities.js'
+import { loadMuscleRoles } from './muscle-roles.js'
+import { planLift } from './planner.js'
 import { GROUP_COLOR_IDS, groupColor, groupOfExercise, exerciseColor, muscleColor, muscleTagsOf, mcStyle } from './muscle-colors.js'
 
 describe('muscle group colours', () => {
@@ -19,6 +21,19 @@ describe('muscle group colours', () => {
     expect(groupOfExercise(EXIDX['1050'])).toBe('calves')      // smith calf raise
     expect(groupOfExercise(EXIDX['1032'])).toBe('biceps')      // lever alternate biceps curl
     expect(exerciseColor(EXIDX['1029'])).toBe('var(--mg-chest)')
+  })
+
+  it('colours a lift by the slot it fills, as the program names it, once the muscle roles are in', async () => {
+    await loadMuscleRoles()
+    // The catalogue files a sumo squat under glutes, but it aims at the quads: a squat's colour,
+    // like the barbell squat it swipes past.
+    for (const id of ['5121', '1063']) {                          // dumbbell / barbell sumo squat
+      expect(groupOfExercise(EXIDX[id])).toBe('quads')
+      expect(groupOfExercise(EXIDX[id])).toBe(planLift(id).p[0])
+    }
+    expect(groupOfExercise(EXIDX['0043'])).toBe('quads')         // barbell full squat
+    expect(groupOfExercise(EXIDX['0085'])).toBe(planLift('0085').p[0]) // barbell romanian deadlift
+    expect(groupOfExercise(EXIDX['1060'])).toBe('glutes')        // barbell hip thrust
   })
 
   it('puts cardio and stretches in their own group, whatever they work, and leaves them uncoloured', () => {
