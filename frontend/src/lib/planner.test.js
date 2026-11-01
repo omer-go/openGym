@@ -381,7 +381,7 @@ describe('planner', () => {
       }))
     }
     expect(n).toBeGreaterThan(20)
-  })
+  }, 30000) // every lift of three templates, planned twice each: seconds, more beside the rest of the suite
 
   it('a swap to a lift the day already has leaves the slot as it was', () => {
     const o = { template: 'full', days: 3, minutes: 60 }
