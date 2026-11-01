@@ -301,6 +301,17 @@ export function prescribe(cfg, ex, slot, group) {
   return { lo: s.lo, hi: s.hi, rir, rest: s.rest, secs }
 }
 
+/**
+ * A program's lift `item` with `id` in its place: the slot and sets stay, prescribed for itself
+ * under the settings `plan`, as swapIn does. One the planner doesn't know keeps the slot's numbers.
+ */
+export function swappedItem(plan, item, id) {
+  const ex = liftOf(id)
+  if (!ex) return { ...item, id }
+  const { lo, hi, rir, rest } = prescribe(configOf(plan), ex, item.slot, ex.p[0])
+  return { ...item, id, lo, hi, rir, rest }
+}
+
 // Group id -> what a set of the lift counts for, the way the app counts a logged set
 // (coverage.js plannedSets): its muscle roles once they are loaded, else the catalogue's muscles.
 let credits = new Map(), creditsWithRoles = false

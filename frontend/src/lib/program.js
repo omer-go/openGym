@@ -22,8 +22,8 @@ import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
-import { isWarmupRow } from './workout-model.js'
-import { DAY_TYPES, plan as planWeek, planLift } from './planner.js'
+import { hasCompletedWork, isWarmupRow } from './workout-model.js'
+import { DAY_TYPES, plan as planWeek, planLift, swappedItem } from './planner.js'
 import { defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
 import { buildPlannedEntry } from './session-start.js'
 import { EXIDX } from './exercises.js'
@@ -139,8 +139,34 @@ export function planEntries(S, items) {
       const per = isPerSide(cfg) ? 2 : 1
       Object.assign(cfg, { reps: it.hi * per, repsMin: it.lo * per, prog: 'double' })
     }
-    return { id, ...buildPlannedEntry(S, cfg, null), gen: { g: planLift(id)?.p[0] || null } }
+    return { id, ...buildPlannedEntry(S, cfg, null), planId: id, gen: { g: planLift(id)?.p[0] || null } }
   })
+}
+
+/**
+ * `program` with the swaps of the finished session `active` in its week. `planId` is the lift of
+ * the week an entry stands for, through every swap: the last entry of a slot with work logged is
+ * what the slot became, so a swap back or a lift never done changes nothing. The new lift takes
+ * the old one's place on every day of the week, as the program's editor would (swappedItem), and
+ * a lift already in a day isn't taken twice. The same `program` when nothing changed.
+ */
+export function carrySwaps(program, active) {
+  if (!isPlanProgram(program)) return program
+  const to = new Map()
+  for (const e of active?.entries || []) if (e.planId && (e.sets || []).some(hasCompletedWork)) to.set(e.planId, e.id)
+  const week = program.week.map(d => {
+    const moved = i => to.has(i.id) && to.get(i.id) !== i.id
+    const taken = new Set(d.items.filter(i => !moved(i)).map(i => i.id))
+    let changed = false
+    const items = d.items.map(i => {
+      if (!moved(i) || taken.has(to.get(i.id))) return i
+      taken.add(to.get(i.id))
+      changed = true
+      return swappedItem(program.plan, i, to.get(i.id))
+    })
+    return changed ? { ...d, items } : d
+  })
+  return week.every((d, k) => d === program.week[k]) ? program : { ...program, week }
 }
 
 const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoOf(d) }

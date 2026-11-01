@@ -62,7 +62,7 @@ import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { DAY_NAME, isPlanProgram, isProgram, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -1489,7 +1489,8 @@ export function swapActiveWorkoutExercise(index) {
   // The same screen as the workout's Add exercise, opened on the replaced exercise's muscle. The
   // "+" on a row commits with the default config, exactly as it does in the add flows; tapping
   // the row still opens the config sheet first.
-  // Worded for the session, not the routine: a swap changes today's workout only.
+  // Worded for the session, not the routine: a routine stays as it is. A program's week takes the
+  // swap when the workout is finished (lib/program.js carrySwaps).
   // The settings sheet opens on what the slot would get anyway (slotConfig): a pick from it
   // is then taken as typed, warm-ups and rest included.
   const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, slotConfig(S(), index, ex.id, defaultConfig(ex.id)).cfg, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
@@ -4028,7 +4029,7 @@ function doFinishWorkout() {
     snapshotFor: e => isCustomEx(EXIDX[e.id]) ? exerciseMuscleSnapshot(EXIDX[e.id]) : null,
   })
   w.vol = workoutVolume(w)
-  let shown = w
+  let shown = w, program = null
   update(s => {
     if (past) {
       // Its start and end are in the past; the stamp says when it was logged, which is what a
@@ -4048,6 +4049,9 @@ function doFinishWorkout() {
       s.workouts.push(w)
     }
     s.active = null
+    // A lift swapped in on a program day is that day's lift from now on.
+    const carried = carrySwaps(s.program, A)
+    if (carried !== s.program) { program = s.program; s.program = carried }
     // A rotation pass this app manages starts its next pass the moment the last session lands
     // (lib/rotation.js). A planner's queue is left alone: it completes and waits for its writer.
     refillAfter(s, w)
@@ -4060,4 +4064,5 @@ function doFinishWorkout() {
   useUI.getState().stopWork()
   beep(snd(), 880, 0.15); beep(snd(), 1100, 0.15, 0.18); beep(snd(), 1320, 0.3, 0.36)
   ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} close={close} />, { kind: 'center', locked: true })
+  if (program) ui().toast(t('Your swaps are in the program now.'), { action: t('Undo'), onAction: () => update(s => { s.program = program }) })
 }
