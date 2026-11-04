@@ -23,7 +23,8 @@ import { sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
-import { DAY_TYPES, plan as planWeek, planLift, swappedItem } from './planner.js'
+import { DAY_TYPES, paceMinutes, plan as planWeek, planLift, swappedItem } from './planner.js'
+import { setPaceOf } from './pace.js'
 import { ownRest } from './engine.js'
 import { defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
 import { buildPlannedEntry } from './session-start.js'
@@ -128,6 +129,16 @@ export const isProgram = p => !!p && Array.isArray(p.days) && p.days.length > 0 
  * its hi (a per-side count being both sides'), double progression and its rest, built the way a
  * routine's are (session-start.js buildPlannedEntry), so the weight moves on from last time.
  */
+/**
+ * Minutes of plan program `S.program`'s day `k`: at your own pace a set (pace.js) once there is
+ * one, as the editor times it now, else as long as the program was saved saying.
+ */
+export function planDayMinutes(S, k, pace = setPaceOf(S?.workouts)) {
+  const day = S?.program?.week?.[k]
+  if (!day) return 0
+  return pace ? paceMinutes(day.items.reduce((n, i) => n + i.sets, 0), pace) : day.minutes
+}
+
 export function planEntries(S, items, goal = S?.program?.plan?.goal) {
   return (items || []).filter(it => EXIDX[it.id]).map(it => {
     const id = it.id
@@ -368,6 +379,7 @@ export function programLayout(S, weekStart, now = Date.now()) {
 export function planAhead(S, { days = 6, now = Date.now() } = {}) {
   if (!isProgram(S?.program)) return []
   const out = []
+  const pace = setPaceOf(S?.workouts)
   let s = S, at = now
   for (let k = 0; k < days; k++) {
     const f = programForecast(s, at)[0]
@@ -377,8 +389,8 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
     const entries = programDayEntries(s, f, t)
     const work = e => e.sets.filter(x => !isWarmupRow(x))
     const sets = entries.reduce((n, e) => n + work(e).length, 0)
-    // A plan program's day knows its length, rests and all (planner.js).
-    const minutes = isPlanProgram(s.program) ? s.program.week[f.k].minutes : sessionMinutes(sets)
+    // A plan program's day knows its length, rests and all (planner.js), at your pace once known.
+    const minutes = isPlanProgram(s.program) ? planDayMinutes(s, f.k, pace) : sessionMinutes(sets)
     out.push({ type: f.type, k: f.k, iso: f.iso, entries, sets, minutes, groups: plannedSets(entries) })
     // Logged as done on its day, every work set, an hour long.
     const on = Math.max(t, new Date(f.iso + 'T12:00:00').getTime())

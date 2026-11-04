@@ -62,7 +62,7 @@ import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, planDayMinutes, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -3184,7 +3184,7 @@ function ProgramDay({ type, k, close }) {
     <div style={{ flex: 'none' }}>
       <h3>{t(DAY_NAME[type])}</h3>
       <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>
-        {t('Program · week {0} of {1}', pw.week, pw.weeks)} · {tn('{0} set', '{0} sets', sets)} · {t('≈ {0} min', day.minutes)}</div>
+        {t('Program · week {0} of {1}', pw.week, pw.weeks)} · {tn('{0} set', '{0} sets', sets)} · {t('≈ {0} min', planDayMinutes(st, k))}</div>
     </div>
     <div className="wd-scroll sheet-scroll">
       <div className="list">{entries.map(e => {
@@ -3194,7 +3194,7 @@ function ProgramDay({ type, k, close }) {
         const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
         const reps = cfg.repsMin > 0 && cfg.repsMin < cfg.reps ? `${cfg.repsMin}–${cfg.reps}` : cfg.reps
         const what = (modeOf(cfg) === 'time' ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${reps}`)
-          + (it?.rest ? ` · ${t('{0} rest', fmtRest(it.rest))}` : '')
+          + (cfg.restSec > 0 ? ` · ${t('{0} rest', fmtRest(cfg.restSec))}` : it?.rest ? ` · ${t('{0} rest', fmtRest(it.rest))}` : '')
         return <div key={e.id} className="item" role="button" {...tappable(() => exerciseDetailSheet(ex))}>
           <Thumb ex={ex} />
           <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>

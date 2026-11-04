@@ -11,7 +11,7 @@ import {
   sessionMinutes, volumeOf, weeklyTargets,
 } from '../lib/goals.js'
 import {
-  DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, newPlanProgram, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
+  DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, newPlanProgram, planDayMinutes, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
   programShare, programWeek, sizeDay, suggestDay, templateOf, weekChanges,
 } from '../lib/program.js'
 import {
@@ -62,7 +62,7 @@ export function DayChip({ type, done, next }) {
  */
 function dayEstimate(S, type, k) {
   const day = isPlanProgram(S.program) ? S.program.week[k] : null
-  if (day) return { count: day.items.length, sets: day.items.reduce((n, i) => n + i.sets, 0), minutes: day.minutes }
+  if (day) return { count: day.items.length, sets: day.items.reduce((n, i) => n + i.sets, 0), minutes: planDayMinutes(S, k) }
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
   if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
   const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })

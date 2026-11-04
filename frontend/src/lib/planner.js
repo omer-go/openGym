@@ -349,6 +349,8 @@ const add = (cfg, into, ex, sets) => {
 // `cfg.pace`, your own seconds a set (pace.js), times the sets when there is one; the slot's
 // reps and rest otherwise.
 const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * (cfg.pace || it.rx.secs), 0) / 60
+/** Minutes a day of `sets` work sets takes at `pace` seconds a set, its warm-up included. */
+export const paceMinutes = (sets, pace) => Math.round(ADV.warmupMin + sets * pace / 60)
 
 // The most popular lift not used yet this week, else the most popular of any; ties (lifts off
 // the popular list among them) by the seed. `cfg.shift` takes the one that many places further

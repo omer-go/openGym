@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, carrySwaps, dayShare, isPlanProgram, newPlanProgram, weekChanges, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, carrySwaps, dayShare, isPlanProgram, newPlanProgram, weekChanges, planDayMinutes, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
@@ -362,6 +362,14 @@ describe('a program built from settings', () => {
     // The goal of the program running, when none is given.
     expect(planEntries({ ...own, program: { plan: { goal: 'strength' } } }, items).map(e => e.target.restSec)).toEqual([60, 40, 30])
     expect(planEntries({ ...own, restAll: false }, items).map(e => e.target.restSec)).toEqual([180, 120, 90])
+  })
+
+  it('times a day at your own pace a set once there is one, else as the program was saved', () => {
+    const program = { week: [{ minutes: 71, items: [{ id: '0025', sets: 4 }, { id: '0025', sets: 3 }] }] }
+    expect(planDayMinutes({ workouts: [], program }, 0)).toBe(71)
+    // 7 sets at 120 s a set and 5 minutes of warm-up.
+    expect(planDayMinutes({ workouts: [], program }, 0, 120)).toBe(19)
+    expect(planDayMinutes({ workouts: [], program }, 3)).toBe(0)
   })
 
   it('plans the days ahead from the week it built', () => {
