@@ -53,6 +53,16 @@ export function slotScheme(slot, goal = ENGINE_GOAL) {
 }
 
 /**
+ * `rest`, a slot's seconds under `goal`, at the rest timer you set yourself (`mine`): an
+ * accessory rests `mine`, and a heavier slot as much longer as `goal` rests it (a lead lift
+ * twice as long under 'growth'). Rounded to 5 s.
+ */
+export function ownRest(rest, mine, goal = ENGINE_GOAL) {
+  const acc = (SCHEMES[goal] || SCHEMES[ENGINE_GOAL]).acc.rest
+  return Math.max(5, Math.round(rest * mine / acc / 5) * 5)
+}
+
+/**
  * The slots of a session's lifts, in the order they run: the first big lift leads, the rest go
  * by their kind (slotOf). Kinds -> slots, in the same order.
  */

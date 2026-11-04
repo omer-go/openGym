@@ -36,6 +36,7 @@ import SwipeCards from './SwipeCards.jsx'
 import Equivalents from './Equivalents.jsx'
 import { equivalentsOf } from '../lib/equivalents.js'
 import { setPaceOf } from '../lib/pace.js'
+import { ownRest } from '../lib/engine.js'
 import { fmtDuration } from '../lib/duration.js'
 
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
@@ -191,8 +192,11 @@ function SwapLift({ item, day, render, onSwap }) {
  * equivalents (SwapLift). Editing a program, `change` (program.js weekChanges) marks what the day
  * gains, drops and does other sets of.
  */
-function PreviewDay({ day, k, change, onSwap }) {
+function PreviewDay({ day, k, change, goal, onSwap }) {
   const [open, setOpen] = useState(k === 0)
+  // The rest a lift will take in the session: at your own rest timer when you set one (program.js planEntries).
+  const mine = useStore(s => (s.S.restAll && s.S.restSec > 0 ? s.S.restSec : 0))
+  const restOf = rx => (mine && rx.rest > 0 ? { ...rx, rest: ownRest(rx.rest, mine, goal) } : rx)
   const added = new Set(change?.added || [])
   const sets = new Map((change?.changed || []).map(c => [c.id, c.from]))
   const moved = change && (change.from == null || change.sets[0] !== change.sets[1] || change.added.length || change.removed.length)
@@ -213,7 +217,7 @@ function PreviewDay({ day, k, change, onSwap }) {
         <div className={'item plan-row' + (sw.from ? ' plan-swap-on' : isNew ? ' plan-added' : '')} data-swap={sw.at}>
           <Thumb ex={ex} />
           <div className="plan-row-n"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div></div>
-          <div className="ss plan-row-m">{isNew && !sw.from && <span className="plan-tag on">{t('New')}</span>}{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...i.rx })}</div>
+          <div className="ss plan-row-m">{isNew && !sw.from && <span className="plan-tag on">{t('New')}</span>}{groupName(i.ex.p[0])} · {sets.has(i.ex.id) && <><s>{sets.get(i.ex.id)}</s> → </>}{liftLine({ sets: i.sets, ...restOf(i.rx) })}</div>
           {/* On the card sliding in too (no nav: inert), so it lines up with the one sliding out. */}
           <div className="plan-swap-nav" inert={sw.nav ? undefined : true}>
             {/* Always there, hidden until a swap, so a row keeps its size as you swipe. */}
@@ -423,7 +427,7 @@ function PlanBuilder({ template, close }) {
         {moves.length > 0 && <div className="ss">{moves.map(([g, [a, b]]) => `${groupName(g)} ${a} → ${b}`).join(' · ')}</div>}
         <div className="ss">{[liftsIn && t('New lifts: {0}', liftsIn), liftsOut && t('Lifts dropped: {0}', liftsOut), ...changes.gone.map(d => t('Day {0} · {1} dropped', d.j + 1, t(DAY_NAME[d.type])))].filter(Boolean).join(' · ') || t('The same lifts')}</div>
       </>}</div>}
-      <div className="ahead-days">{week.days.map((d, k) => <PreviewDay key={`${k}-${d.type}-${d.items.map(i => i.from || i.ex.id).join()}`} day={d} k={k} change={changes?.days[k]} onSwap={onSwap} />)}</div>
+      <div className="ahead-days">{week.days.map((d, k) => <PreviewDay key={`${k}-${d.type}-${d.items.map(i => i.from || i.ex.id).join()}`} day={d} k={k} change={changes?.days[k]} goal={cfg.goal} onSwap={onSwap} />)}</div>
       <Button variant="tinted" icon="shuffle" style={{ marginTop: 10 }} onClick={() => {
         // Another week of lifts, as long as it still reaches the goal; an edit stops keeping the old
         // ones and the ones you swiped in.

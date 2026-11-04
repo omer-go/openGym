@@ -355,9 +355,13 @@ describe('a program built from settings', () => {
     expect(bench.gen.g).toBe('chest')
   })
 
-  it('leaves the rest to the rest timer you set yourself', () => {
-    const [bench] = planEntries({ ...state(), restSec: 20, restAll: true }, [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }])
-    expect(bench.target.restSec).toBeUndefined()
+  it('rests at the rest timer you set yourself, the heavier lifts as much longer as the goal says', () => {
+    const items = [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }, { id: '0025', sets: 3, lo: 8, hi: 12, rest: 120 }, { id: '0025', sets: 3, lo: 10, hi: 15, rest: 90 }]
+    const own = { ...state(), restSec: 30, restAll: true }
+    expect(planEntries(own, items, 'growth').map(e => e.target.restSec)).toEqual([60, 40, 30])
+    // The goal of the program running, when none is given.
+    expect(planEntries({ ...own, program: { plan: { goal: 'strength' } } }, items).map(e => e.target.restSec)).toEqual([60, 40, 30])
+    expect(planEntries({ ...own, restAll: false }, items).map(e => e.target.restSec)).toEqual([180, 120, 90])
   })
 
   it('plans the days ahead from the week it built', () => {

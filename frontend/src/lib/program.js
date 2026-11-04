@@ -24,6 +24,7 @@ import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { DAY_TYPES, plan as planWeek, planLift, swappedItem } from './planner.js'
+import { ownRest } from './engine.js'
 import { defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
 import { buildPlannedEntry } from './session-start.js'
 import { EXIDX } from './exercises.js'
@@ -127,14 +128,15 @@ export const isProgram = p => !!p && Array.isArray(p.days) && p.days.length > 0 
  * its hi (a per-side count being both sides'), double progression and its rest, built the way a
  * routine's are (session-start.js buildPlannedEntry), so the weight moves on from last time.
  */
-export function planEntries(S, items) {
+export function planEntries(S, items, goal = S?.program?.plan?.goal) {
   return (items || []).filter(it => EXIDX[it.id]).map(it => {
     const id = it.id
     const base = freestyleConfig(S, { id, ...defaultConfig(id) })
     const cfg = { id, ...defaultConfig(id, modeOf({ ...base, id })), sets: it.sets }
     for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) cfg[k] = base[k]
-    // A rest timer you set yourself (S.restAll) is every exercise's, the program's own rests too.
-    if (it.rest > 0 && !S?.restAll) cfg.restSec = it.rest
+    // A rest timer you set yourself (S.restAll) is the accessories' rest, and the program's
+    // heavier lifts rest as much longer than it as the goal's own rests say (engine.js ownRest).
+    if (it.rest > 0) cfg.restSec = S?.restAll && S.restSec > 0 ? ownRest(it.rest, S.restSec, goal) : it.rest
     if (modeOf(cfg) === 'reps') {
       const per = isPerSide(cfg) ? 2 : 1
       Object.assign(cfg, { reps: it.hi * per, repsMin: it.lo * per, prog: 'double' })
