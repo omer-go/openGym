@@ -35,6 +35,8 @@ import { Thumb } from './Media.jsx'
 import SwipeCards from './SwipeCards.jsx'
 import Equivalents from './Equivalents.jsx'
 import { equivalentsOf } from '../lib/equivalents.js'
+import { setPaceOf } from '../lib/pace.js'
+import { fmtDuration } from '../lib/duration.js'
 
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
 // Schedule with Program chosen, the setup before a program starts, and Home's next-day and this-week cards.
@@ -266,7 +268,7 @@ function PlanBuilder({ template, close }) {
   const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup } : undefined), [running])
   // Not the swaps: they leave every slot and its sets where they were, so what the controls can
   // reach stays the same, and putting them here re-asked the planner for each option at every swipe.
-  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), pace: setPaceOf(S.workouts), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, volume: volumeOf(S), ...from, template }
@@ -330,7 +332,7 @@ function PlanBuilder({ template, close }) {
     const go = () => {
       // An update keeps the weeks already done (the program still starts when it started) and,
       // until Other lifts, the lifts that still fit.
-      const program = newPlanProgram({ ...o, byGroup, base: env.base, swap }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
+      const program = newPlanProgram({ ...o, byGroup, base: env.base, pace: env.pace, swap }, { weeks, today: todayISO(), exclude: env.exclude, pool: env.pool, from: updating && keep ? running : undefined })
       if (!program) return
       if (updating) program.startedAt = running.startedAt
       update(s => {
@@ -373,6 +375,7 @@ function PlanBuilder({ template, close }) {
     {seg('minutes', PLAN_MINUTES, v => String(v))}
     <div className="muted small" style={{ marginTop: 6 }}>{t('Minutes a session, rests and warm-up sets included.')}</div>
     {spare && <div className="muted small" style={{ marginTop: 6 }} data-spare-time>{spare}</div>}
+    {cfg.pace && <div className="muted small" style={{ marginTop: 6 }} data-set-pace>{t('Times are at your own pace: about {0} a set with its rest, from your last workouts.', fmtDuration(cfg.pace))}</div>}
   </>
   const length = <>
     <h4 className="sec">{t('Length')}</h4>

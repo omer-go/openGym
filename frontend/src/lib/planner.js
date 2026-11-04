@@ -286,6 +286,7 @@ export function configOf(o = {}) {
     equipment: EQUIPMENT[o.equipment] ? o.equipment : PLAN_DEFAULTS.equipment,
     days: o.days || PLAN_DEFAULTS.days, minutes: o.minutes || PLAN_DEFAULTS.minutes,
     seed: o.seed ?? 1, shift: o.shift || 0, volume: VOLUMES.includes(o.volume) ? o.volume : 0,
+    pace: o.pace > 0 ? o.pace : null,
     keep: (o.keep || []).map(ids => new Set(ids)),
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
@@ -345,7 +346,9 @@ const add = (cfg, into, ex, sets) => {
   for (const [g, v] of Object.entries(creditOf(ex))) into[g] = (into[g] || 0) + v * sets
   return into
 }
-const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * it.rx.secs, 0) / 60
+// `cfg.pace`, your own seconds a set (pace.js), times the sets when there is one; the slot's
+// reps and rest otherwise.
+const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * (cfg.pace || it.rx.secs), 0) / 60
 
 // The most popular lift not used yet this week, else the most popular of any; ties (lifts off
 // the popular list among them) by the seed. `cfg.shift` takes the one that many places further

@@ -15,6 +15,18 @@ describe('planner', () => {
     for (const e of PLAN_LIB) expect(ids.has(e.id), e.id).toBe(true)
   })
 
+  it('times a day at your own pace a set when it has one, and fits more in the same minutes', () => {
+    const o = { template: 'full', goal: 'growth', days: 3, minutes: 75 }
+    const slot = plan(o), own = plan({ ...o, pace: 60 })
+    for (const d of own.days) expect(d.minutes).toBe(Math.round(5 + d.sets))
+    for (const d of slot.days) expect(d.minutes).toBeLessThanOrEqual(75)
+    const more = plan({ ...o, minutes: 45, byGroup: { chest: 16, back: 16, quads: 16 } })
+    const fast = plan({ ...o, minutes: 45, byGroup: { chest: 16, back: 16, quads: 16 }, pace: 60 })
+    const sets = p => p.days.reduce((n, d) => n + d.sets, 0)
+    expect(sets(fast)).toBeGreaterThan(sets(more))
+    expect(configOf({ pace: 0 }).pace).toBe(null)
+  })
+
   it('fills in defaults', () => {
     expect(configOf({ template: 'nope' }).template).toBe('full')
   })
