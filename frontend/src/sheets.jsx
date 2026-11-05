@@ -62,7 +62,7 @@ import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, planDayMinutes, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, planDayMinutes, planSwapEntry, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -1557,7 +1557,14 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   const past = sessionHistory(st)
   // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
   // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
-  const built = freestyle
+  // A program day's lift swaps to one the program prescribes for the slot, on its progression:
+  // built freestyle it would only repeat last time's numbers (lib/program.js planSwapEntry).
+  const k = st.active?.gen?.day
+  const programmed = freestyle && !typed && current.planId && current.noProg !== true && Number.isInteger(k)
+    ? planSwapEntry(past, st.program, k, current.planId, ex.id) : null
+  const built = programmed
+    ? { target: programmed.target, plan: programmed.plan, sets: programmed.sets }
+    : freestyle
     ? { target: withMeaning(st, cfg, ex.id), plan: null, sets: applyIntensifierPlan(buildSets(historyAs(past, ex.id, dbLoadFor(st, full)), full, { step: (modeOf(full) === 'reps' && ownedWeightsFor(st, full)) || step, ...(typed ? { useTarget: true } : { preferLast: true }) }), full, dropGrid(st, full)) }
     : buildPlannedEntry(past, full, slotRoutine, { noProg: builtOutOfProgression(current, slotRoutine) })
   const replacement = asComboSwap(current, {

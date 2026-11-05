@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, carrySwaps, dayShare, isPlanProgram, newPlanProgram, weekChanges, planDayMinutes, planEntries, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, carrySwaps, dayShare, isPlanProgram, newPlanProgram, weekChanges, planDayMinutes, planEntries, planSwapEntry, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
@@ -362,6 +362,23 @@ describe('a program built from settings', () => {
     // The goal of the program running, when none is given.
     expect(planEntries({ ...own, program: { plan: { goal: 'strength' } } }, items).map(e => e.target.restSec)).toEqual([60, 40, 30])
     expect(planEntries({ ...own, restAll: false }, items).map(e => e.target.restSec)).toEqual([180, 120, 90])
+  })
+
+  it('swaps a lift in mid-workout on the program\'s progression, not at last time\'s numbers', () => {
+    const lead = UL.week[0].items[0], id = lead.id === '0025' ? '0047' : '0025'
+    // Done once before, outside the program: every set at the top of the lead's range.
+    const sets = Array.from({ length: 4 }, () => ({ w: 60, r: lead.hi, done: true }))
+    const st = state({ workouts: [{ id: 'w1', d: '2026-09-10', start: at(2026, 9, 10), entries: [{ id, target: { reps: lead.hi }, sets }] }] })
+    const e = planSwapEntry(st, UL, 0, lead.id, id)
+    // The weight goes up, and the reps start again from the bottom of the range.
+    expect(e.target).toMatchObject({ prog: 'double', reps: lead.lo, repsMin: lead.lo, sets: lead.sets })
+    expect(e.planId).toBe(id)
+    const work = e.sets.filter(x => !x.warmup && !x.wu)
+    expect(work).toHaveLength(lead.sets)
+    expect(work.every(x => x.w > 60)).toBe(true)
+    // A lift not on that day, or no plan program, has nothing to go by.
+    expect(planSwapEntry(st, UL, 0, 'nope', id)).toBeNull()
+    expect(planSwapEntry(st, null, 0, lead.id, id)).toBeNull()
   })
 
   it('times a day at your own pace a set once there is one, else as the program was saved', () => {

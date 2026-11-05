@@ -157,6 +157,19 @@ export function planEntries(S, items, goal = S?.program?.plan?.goal) {
 }
 
 /**
+ * The session entry for exercise `id` swapped in mid-workout for the lift `planId` of plan
+ * program `program`'s day `k`: prescribed for its slot (planner.js swappedItem) and built as the
+ * day's own lifts are (planEntries), so it moves on from last time by the program's progression,
+ * not at last time's numbers. Null when the lift is not on that day.
+ */
+export function planSwapEntry(S, program, k, planId, id) {
+  if (!isPlanProgram(program)) return null
+  const item = program.week[k]?.items?.find(i => i.id === planId)
+  if (!item) return null
+  return planEntries(S, [swappedItem(program.plan, item, id)], program.plan?.goal)[0] || null
+}
+
+/**
  * `program` with the swaps of the finished session `active` in its week. `planId` is the lift of
  * the week an entry stands for, through every swap: the last entry of a slot with work logged is
  * what the slot became, so a swap back or a lift never done changes nothing. The new lift takes
