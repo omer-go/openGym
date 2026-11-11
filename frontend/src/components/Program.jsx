@@ -7,9 +7,12 @@ import { ADD_GROUPS } from '../lib/add-exercise.js'
 import { genConstraints, genDefaults, genSets, generateWorkout, planPool } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
-  MAX_GOAL, VOLUMES, VOLUME_NAME, defaultTargetFor, goalEstimate, goalGroups, goalTypeOf,
-  volumeOf, weeklyTargets,
+  MAX_GOAL, VOLUMES, VOLUME_NAME, goalEstimate, goalGroups, goalTypeOf,
+  volumeOf, weeklyTargetOf, weeklyTargets,
 } from '../lib/goals.js'
+
+// What the goal gives a group before a number of its own: the goal's at the group's focus (goals.js focusOf).
+const suggested = (S, g, type, volume) => weeklyTargetOf({ goals: { focus: S.goals?.focus, type, volume } }, g)
 import {
   DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, minutesFor, newPlanProgram, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
   programShare, programWeek, sizeDay, suggestDay, templateOf, weekChanges,
@@ -36,7 +39,7 @@ import SwipeCards from './SwipeCards.jsx'
 import Equivalents from './Equivalents.jsx'
 import { equivalentsOf } from '../lib/equivalents.js'
 import { setPaceOf } from '../lib/pace.js'
-import { ownRest } from '../lib/engine.js'
+import { ownRest, restRangeOf } from '../lib/engine.js'
 import { fmtDuration } from '../lib/duration.js'
 
 // The weekly goal and the program (lib/goals.js, lib/program.js): the goal screen, Plan →
@@ -85,7 +88,7 @@ function GoalSheet({ close }) {
   const programDays = isProgram(S.program) ? S.program.days.length : 0
   const setGroup = (g, v) => setByGroup(x => {
     const out = { ...x }
-    if (v === defaultTargetFor(g, type, volume) || v == null) delete out[g]
+    if (v === suggested(S, g, type, volume) || v == null) delete out[g]
     else out[g] = v
     return out
   })
@@ -119,7 +122,7 @@ function GoalSheet({ close }) {
       <h4 className="sec">{t('By muscle group')}</h4>
       <div className="list goal-groups">{ADD_GROUPS.map(g => {
         const own = byGroup[g.id] != null
-        const v = own ? byGroup[g.id] : defaultTargetFor(g.id, type, volume)
+        const v = own ? byGroup[g.id] : suggested(S, g.id, type, volume)
         return <div key={g.id} className="item">
           <div className="grow"><div className="tt">{t(g.n)}</div>
             <div className="ss">{own ? <button type="button" className="linkish" onClick={() => setGroup(g.id, null)}>{t('Set on its own · reset')}</button> : t('Follows the goal')}</div></div>
@@ -269,10 +272,10 @@ function PlanBuilder({ template, close }) {
   const [byGroup, setByGroup] = useState(() => ({ ...(S.goals?.byGroup || {}) }))
   const [groupsOpen, setGroupsOpen] = useState(false)
   // While the lifts are kept, a change of the goals alone keeps the week and moves its sets (planner.js baseOf).
-  const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup } : undefined), [running])
+  const base = useMemo(() => (updating ? { ...running, plan: { volume: volumeOf(S), ...running.plan }, byGroup: S.goals?.byGroup, focus: S.goals?.focus } : undefined), [running])
   // Not the swaps: they leave every slot and its sets where they were, so what the controls can
   // reach stays the same, and putting them here re-asked the planner for each option at every swipe.
-  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), pace: setPaceOf(S.workouts), byGroup, keep, base: keep && base }), [S, roles, byGroup, keep, base])
+  const env = useMemo(() => ({ exclude: planExclude(S), pool: planPool(S), pace: setPaceOf(S.workouts), byGroup, focus: S.goals?.focus, rests: restRangeOf(S), keep, base: keep && base }), [S, roles, byGroup, keep, base])
   const [o, setO] = useState(() => {
     const from = running?.template === template ? running.plan : {}
     const start = { ...PLAN_DEFAULTS, volume: volumeOf(S), ...from, template }
@@ -327,7 +330,7 @@ function PlanBuilder({ template, close }) {
   const changes = useMemo(() => updating ? weekChanges(running.week, week.days.map(d => ({ type: d.type, minutes: d.minutes, items: d.items.map(i => ({ id: i.ex.id, sets: i.sets })) }))) : null, [updating, running, week])
   const setGroup = (g, v) => setByGroup(x => {
     const out = { ...x }
-    if (v == null || v === defaultTargetFor(g, cfg.goal, cfg.volume)) delete out[g]
+    if (v == null || v === suggested(S, g, cfg.goal, cfg.volume)) delete out[g]
     else out[g] = v
     return out
   })
@@ -370,7 +373,7 @@ function PlanBuilder({ template, close }) {
           <span className="plan-gdot" style={{ background: groupColor(g.id) }} />
           <div className="grow"><div className="tt">{t(g.n)}</div>
             <div className="ss">{mine ? <button type="button" className="linkish" onClick={() => setGroup(g.id, null)}>{t('Set on its own · reset')}</button> : t('Follows the goal')}</div></div>
-          <Stepper value={mine ? byGroup[g.id] : defaultTargetFor(g.id, cfg.goal, cfg.volume)} step={1} min={0} max={MAX_GOAL} decimal={false} ariaLabel={t(g.n)} onChange={n => setGroup(g.id, n)} />
+          <Stepper value={mine ? byGroup[g.id] : suggested(S, g.id, cfg.goal, cfg.volume)} step={1} min={0} max={MAX_GOAL} decimal={false} ariaLabel={t(g.n)} onChange={n => setGroup(g.id, n)} />
         </div>
       })}</div>
     </>}

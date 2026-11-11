@@ -2,6 +2,7 @@
 // Settings v1.3.11: the root, the pages, the search and the rest wheels. Every row the search
 // knows has to be a row on its page, and every page and row title has a word in each pack.
 import React, { act } from 'react'
+import { ADD_GROUPS } from '../lib/add-exercise.js'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
@@ -273,8 +274,9 @@ describe('the pages', () => {
 
   it('every old row has a home: the Workout page holds the rest, logging and the before/during rows', () => {
     mount('workout')
-    expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['Rest', 'Logging', 'Before and during'])
-    expect(titles()).toEqual(['Rest timer', 'Rest-pause rest', 'Effort per set', 'Shown under each exercise', 'Layout',
+    expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['Rest', 'Workouts built for you', 'Muscle focus', 'Logging', 'Before and during'])
+    // The rests' two ends show while the range is on, as it is unless switched off; a row for each muscle group's focus.
+    expect(titles().filter(x => !ADD_GROUPS.some(g => g.n === x))).toEqual(['Rest timer', 'Rest-pause rest', 'Keep rests in a range', 'Shortest rest', 'Longest rest', 'Exercise rotation', 'Effort per set', 'Shown under each exercise', 'Layout',
       'Collapse completed exercises', 'Weigh in before workouts', 'Keep screen awake', 'Exercise animations', 'Fine-tuning'])
     // QA 10-05: the "screen stays on" line is the awake row's own subtitle, not a section footer
     // that read as if it explained the animations above it.

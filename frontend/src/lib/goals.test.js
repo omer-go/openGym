@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_GOAL, GOAL_SETS, VOLUMES, MAX_GOAL, PART_SHARE, PART_SHARES, daysOf, defaultTargetFor, goalEstimate, goalGroups,
-  goalTypeOf, goalWindow, partTargetOf, sessionMinutes, volumeOf, weeklyTargetOf, weeklyTargets, windowWorkouts,
+  floorOf, focusOf, FOCUS_DEFAULT, goalTypeOf, goalWindow, partTargetOf, sessionMinutes, volumeOf, weeklyTargetOf, weeklyTargets, windowWorkouts,
 } from './goals.js'
 import { GROUP_PARTS } from './coverage.js'
 import { ADD_GROUPS } from './add-exercise.js'
@@ -17,14 +17,16 @@ const BENCH = '0025'
 describe('the weekly goal', () => {
   it('is the muscle goal\'s default for each group unless set', () => {
     expect(goalTypeOf(state())).toBe('growth')
+    // the abs are wanted more unless set otherwise (FOCUS_DEFAULT): one volume step up
     expect(weeklyTargets(state(), ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'calves', 'abs']))
-      .toEqual({ chest: 14, back: 16, shoulders: 12, biceps: 12, triceps: 10, calves: 10, abs: 8 })
+      .toEqual({ chest: 14, back: 16, shoulders: 12, biceps: 12, triceps: 10, calves: 10, abs: 12 })
+    expect(weeklyTargetOf(state({ goals: { focus: { abs: 'normal' } } }), 'abs')).toBe(8)
     expect(defaultTargetFor('nope')).toBe(DEFAULT_GOAL)
   })
   it('takes the defaults of the kind of goal set, else the running program\'s', () => {
     expect(weeklyTargetOf(state({ goals: { type: 'strength' } }), 'chest')).toBe(9)
     expect(weeklyTargetOf(state({ goals: { type: 'maintain' } }), 'chest')).toBe(5)
-    expect(weeklyTargetOf(state({ program: { plan: { goal: 'endurance' } } }), 'abs')).toBe(10)
+    expect(weeklyTargetOf(state({ program: { plan: { goal: 'endurance' } } }), 'calves')).toBe(weeklyTargetOf(state({ goals: { type: 'endurance' } }), 'calves'))
     expect(weeklyTargetOf(state({ goals: { type: 'nope' } }), 'chest')).toBe(14)
   })
   it('every default sits in its range, and the shoulders sit with the arms', () => {
@@ -55,7 +57,7 @@ describe('the weekly goal', () => {
   })
   it('an old weekly number for every group is ignored', () => {
     const st = state({ goals: { weeklySets: 15 } })
-    expect(weeklyTargets(st, ['chest', 'shoulders', 'abs'])).toEqual({ chest: 14, shoulders: 12, abs: 8 })
+    expect(weeklyTargets(st, ['chest', 'shoulders', 'abs'])).toEqual({ chest: 14, shoulders: 12, abs: 12 })
     expect(weeklyTargetOf(state({ goals: { weeklySets: 6, type: 'strength' } }), 'chest')).toBe(9)
   })
   it('the parts share their group\'s goal, whatever it is', () => {
@@ -79,7 +81,7 @@ describe('the weekly goal', () => {
     expect(partTargetOf(st, 'chest', 'Upper chest')).toBeCloseTo(4.9)
     expect(partTargetOf(state({ goals: { byGroup: { shoulders: 20 } } }), 'shoulders', 'Side delts')).toBeCloseTo(9)
     // the glutes' parts have no share of their own: PART_SHARE of the group
-    expect(partTargetOf(st, 'glutes', 'Side glutes')).toBeCloseTo(8 * PART_SHARE)
+    expect(partTargetOf(state({ goals: { focus: { glutes: 'normal' } } }), 'glutes', 'Side glutes')).toBeCloseTo(8 * PART_SHARE)
   })
   it('a group set on its own keeps its number, 0 included', () => {
     const st = state({ goals: { byGroup: { biceps: 8, calves: 0, chest: 99 } } })
@@ -120,5 +122,48 @@ describe('the week a goal counts', () => {
     // 10 of 10 leaves no need; 10 of 20 leaves half, before rest
     expect(weeklyNeed(rolling, ['chest'], TUE).chest).toBe(0)
     expect(weeklyNeed(state({ workouts, goals: { byGroup: { chest: 20 } } }), ['chest'], TUE).chest).toBeGreaterThan(0)
+  })
+})
+
+describe('a group’s focus', () => {
+  it('is the group’s default unless set, and an unknown value counts as unset', () => {
+    expect(focusOf(state(), 'chest')).toBe('normal')
+    expect(FOCUS_DEFAULT).toEqual({ glutes: 'none', forearms: 'none', abs: 'more' })
+    for (const [g, f] of Object.entries(FOCUS_DEFAULT)) expect(focusOf(state(), g)).toBe(f)
+    expect(focusOf(state({ goals: { focus: { abs: 'lots' } } }), 'abs')).toBe('more')
+    expect(focusOf(state({ goals: { focus: { abs: 'normal', glutes: 'more' } } }), 'abs')).toBe('normal')
+    expect(focusOf(state({ goals: { focus: { chest: 'more' } } }), 'chest')).toBe('more')
+  })
+  it('with nothing set the glutes and forearms have no goal of their own', () => {
+    expect(weeklyTargetOf(state(), 'glutes')).toBe(0)
+    expect(weeklyTargetOf(state(), 'forearms')).toBe(0)
+    expect(goalGroups(state())).not.toContain('glutes')
+    expect(goalGroups(state({ goals: { focus: { glutes: 'normal' } } }))).toContain('glutes')
+  })
+  it('none gives the group no goal of its own and takes it off the goal screen', () => {
+    const st = state({ goals: { focus: { glutes: 'none', forearms: 'none' } } })
+    expect(weeklyTargetOf(st, 'glutes')).toBe(0)
+    expect(weeklyTargetOf(st, 'forearms')).toBe(0)
+    expect(goalGroups(st)).not.toContain('glutes')
+    expect(weeklyTargetOf(st, 'chest')).toBe(weeklyTargetOf(state(), 'chest'))
+  })
+  it('a number of its own wins over the focus', () => {
+    const st = state({ goals: { focus: { glutes: 'none' }, byGroup: { glutes: 6 } } })
+    expect(weeklyTargetOf(st, 'glutes')).toBe(6)
+    expect(goalGroups(st)).toContain('glutes')
+  })
+  it('more is the goal one volume step up, and no further at the top', () => {
+    const more = state({ goals: { focus: { chest: 'more' } } })
+    expect(weeklyTargetOf(more, 'chest')).toBe(weeklyTargetOf(state({ goals: { volume: 1 } }), 'chest'))
+    expect(weeklyTargetOf(more, 'chest')).toBeGreaterThan(weeklyTargetOf(state(), 'chest'))
+    const top = state({ goals: { volume: 2, focus: { chest: 'more' } } })
+    expect(weeklyTargetOf(top, 'chest')).toBe(weeklyTargetOf(state({ goals: { volume: 2 } }), 'chest'))
+  })
+  it('the floor is the group’s size, one more with more focus, never over its goal', () => {
+    expect(floorOf(state(), 'chest')).toBe(4)
+    expect(floorOf(state(), 'calves')).toBe(2)
+    expect(floorOf(state({ goals: { focus: { abs: 'more' } } }), 'abs')).toBe(3)
+    expect(floorOf(state({ goals: { focus: { glutes: 'none' } } }), 'glutes')).toBe(0)
+    expect(floorOf(state({ goals: { byGroup: { chest: 2 } } }), 'chest')).toBe(2)
   })
 })

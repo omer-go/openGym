@@ -97,11 +97,30 @@ export function defaultTargetFor(group, type = DEFAULT_TYPE, volume = 0) {
   return Math.round(def + (v > 0 ? hi - def : def - lo) * v / 2)
 }
 
-/** Sets a week `group` aims for. */
+/**
+ * How much a group is wanted (`S.goals.focus`): 'none' gives it no goal of its own, so nothing is
+ * planned for it and it is trained only by the lifts that work it anyway (the glutes by squats
+ * and hinges, the forearms by rows and curls); 'more' sets its goal one volume step up; 'normal'
+ * leaves it at the goal's.
+ */
+export const FOCUS = ['none', 'normal', 'more']
+/** The focus a group has until you choose one: glutes and forearms ride on the big lifts, abs get more. */
+export const FOCUS_DEFAULT = { glutes: 'none', forearms: 'none', abs: 'more' }
+export const focusOf = (S, group) => (FOCUS.includes(S?.goals?.focus?.[group]) ? S.goals.focus[group] : FOCUS_DEFAULT[group] || 'normal')
+
+// How big a group is: the fewest sets a week that count as having trained it (its floor).
+// A large one leads sessions, a small one is trained in passing by the big lifts.
+const FLOORS = { chest: 4, back: 4, quads: 4, hamstrings: 4, shoulders: 3, biceps: 3, triceps: 3, glutes: 3, calves: 2, abs: 2, forearms: 2 }
+/** The fewest sets a week `group` is to get whatever happens: its size's, never more than its goal. */
+export const floorOf = (S, group) => Math.min(weeklyTargetOf(S, group), (FLOORS[group] || 2) + (focusOf(S, group) === 'more' ? 1 : 0))
+
+/** Sets a week `group` aims for: its own number, else the goal's at the group's focus. */
 export function weeklyTargetOf(S, group) {
   const own = S?.goals?.byGroup?.[group]
   if (isNum(own) && own >= 0) return Math.min(MAX_GOAL, Math.round(own))
-  return defaultTargetFor(group, goalTypeOf(S), volumeOf(S))
+  const focus = focusOf(S, group)
+  if (focus === 'none') return 0
+  return defaultTargetFor(group, goalTypeOf(S), Math.min(2, volumeOf(S) + (focus === 'more' ? 1 : 0)))
 }
 
 /**
@@ -117,9 +136,9 @@ export function weeklyTargets(S, groups = ADD_GROUPS.map(g => g.id)) {
   return Object.fromEntries(groups.map(g => [g, weeklyTargetOf(S, g)]))
 }
 
-/** The groups the goal is shown for: all but the ones no day trains, unless given a goal. */
+/** The groups the goal is shown for: all but the ones no day trains or with no goal of their own (focusOf), unless given one. */
 export function goalGroups(S) {
-  return ADD_GROUPS.map(g => g.id).filter(g => !UNTRACKED.includes(g) || isNum(S?.goals?.byGroup?.[g]))
+  return ADD_GROUPS.map(g => g.id).filter(g => isNum(S?.goals?.byGroup?.[g]) || (!UNTRACKED.includes(g) && focusOf(S, g) !== 'none'))
 }
 
 /** Days a week of training, 2 to 7. */

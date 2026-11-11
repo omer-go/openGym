@@ -45,6 +45,10 @@ import { usePasskeys, PasskeysRow, DeviceLinkRow, openDeviceLinkRedeem } from '.
 import { Section, Row, SelectRow, Switch, Segmented, Button, TextField, SearchField } from '../components/ui.jsx'
 import { PAGES, ROOT_GROUPS, pageVisible, searchSettings, pageTrail } from './settings-pages.js'
 import { pickWorkoutView } from '../lib/workout-view.js'
+import { ADD_GROUPS } from '../lib/add-exercise.js'
+import { REST_DEFAULT, REST_RANGE, restRangeOf } from '../lib/engine.js'
+import { FOCUS_DEFAULT, focusOf } from '../lib/goals.js'
+import { rotationOf } from '../lib/profile.js'
 
 /* Settings (v1.3.11). The root is one screen: an account card, eleven rows that each open a page
    (/settings/<page>), and a search over every row. Rare things live one level further down
@@ -431,12 +435,51 @@ export default function Settings({ page = null, find = null, via = null }) {
       onDone: v => update(s => { s.restPauseSec = v }),
     })} />
 
+  // What a one-tap workout and a program's day are built from (lib/profile.js): the rests every
+  // lift stays within, how the lifts take turns, and how much each muscle group is wanted.
+  const rests = restRangeOf(S)
+  const builtRows = <>
+    <Section title={t('Workouts built for you')} footer={t('One-tap workouts and program days. In a range, the first big lift rests the longest and calves, abs and forearms the shortest.')}>
+      <Row icon="timer" iconTint="var(--orange)" title={t('Keep rests in a range')}
+        subtitle={t('Off rests as long as your goal says.')}>
+        <Switch checked={!!rests} onChange={v => update(s => { s.restRange = v ? { ...REST_DEFAULT } : false })} />
+      </Row>
+      {rests && <Row icon="timer" iconTint="var(--orange)" title={t('Shortest rest')} value={fmtDuration(rests.min)} accessory="chevron"
+        onClick={() => durationSheet({
+          title: t('Shortest rest'), value: rests.min, min: REST_RANGE.min, max: rests.max,
+          onDone: v => update(s => { s.restRange = { min: Math.min(v, rests.max), max: rests.max } }),
+        })} />}
+      {rests && <Row icon="timer" iconTint="var(--orange)" title={t('Longest rest')} value={fmtDuration(rests.max)} accessory="chevron"
+        onClick={() => durationSheet({
+          title: t('Longest rest'), value: rests.max, min: rests.min, max: REST_RANGE.max,
+          onDone: v => update(s => { s.restRange = { min: rests.min, max: Math.max(v, rests.min) } }),
+        })} />}
+      <SelectRow icon="repeat" iconTint="var(--blue)" title={t('Exercise rotation')}
+        value={rotationOf(S)} onChange={v => update(s => { s.rotation = v })}
+        options={[
+          { value: 'session', label: t('Every session'), subtitle: t('Each lift is the one of its kind you did longest ago.') },
+          { value: 'block', label: t('Lifts you know'), subtitle: t('The lifts you have logged come first, and a day keeps its first lift for a few weeks.') },
+        ]} />
+    </Section>
+    <Section title={t('Muscle focus')} footer={t('None plans no exercise for the muscle itself: the big lifts that work it anyway are enough. More raises its weekly sets.')}>
+      {ADD_GROUPS.map(g => <SelectRow key={g.id} title={t(g.n)} sheetTitle={t(g.n)}
+        value={focusOf(S, g.id)}
+        onChange={v => update(s => {
+          const focus = { ...(s.goals?.focus || {}) }
+          if (v === (FOCUS_DEFAULT[g.id] || 'normal')) delete focus[g.id]; else focus[g.id] = v
+          s.goals = { ...(s.goals || {}), focus }
+        })}
+        options={[{ value: 'none', label: t('None') }, { value: 'normal', label: t('Normal') }, { value: 'more', label: t('More') }]} />)}
+    </Section>
+  </>
+
   const pages = {
     workout: () => <>
       <Section title={t('Rest')} footer={t('Each exercise can have its own rest too. Set it in the exercise settings of a routine.')}>
         {restRow}
         {restPauseRow}
       </Section>
+      {builtRows}
       <Section title={t('Logging')}>
         {/* Two names for the same judgement, so the column asks in the scale you already think in.
             The (i) sits before the control: you read it on the way to the choice, not after it. */}

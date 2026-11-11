@@ -166,7 +166,8 @@ describe('planner', () => {
   })
 
   it('cuts the abs, glutes and calves, then the arms and shoulders, not the chest, back and legs, when the time can\'t hold every goal', () => {
-    const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 60 }
+    // every group with a goal of its own, as before a focus was each group's default
+    const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 60, focus: { glutes: 'normal', forearms: 'normal', abs: 'normal' } }
     // To the whole set, as giveWay counts: a deadlift's share of a set for the quads is no set.
     const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 0.5)
       && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 0.5)
@@ -432,5 +433,29 @@ describe('planner', () => {
       if (x.direct == null) expect(x.total, x.g).toBeLessThan(x.goal * 0.85)
       else expect(x.direct, x.g).toBeLessThan(x.directGoal * 0.85)
     }
+  })
+  it('keeps every rest inside the range you set, the lead the longest', () => {
+    const rests = { min: 20, max: 60 }
+    expect(configOf({ rests }).rests).toEqual(rests)
+    expect(configOf({ rests: { min: 60, max: 20 } }).rests).toBe(null)
+    expect(prescribe(configOf({ goal: 'growth', rests }), planLift('0025'), 'lead', 'chest').rest).toBe(60)
+    expect(prescribe(configOf({ goal: 'growth', rests }), planLift('0605'), 'accessory', 'calves').rest).toBe(20)
+    const p = plan({ template: 'full', goal: 'growth', days: 3, minutes: 60, rests })
+    for (const d of p.days) for (const l of d.items) { expect(l.rx.rest).toBeGreaterThanOrEqual(20); expect(l.rx.rest).toBeLessThanOrEqual(60) }
+  })
+  it('shorter rests fit more sets in the same minutes', () => {
+    const o = { template: 'full', goal: 'growth', days: 3, minutes: 45, byGroup: { chest: 16, back: 16, quads: 16 } }
+    const sets = p => p.days.reduce((n, d) => n + d.sets, 0)
+    expect(sets(plan({ ...o, rests: { min: 20, max: 60 } }))).toBeGreaterThan(sets(plan(o)))
+  })
+  it('a group with no goal of its own gets no lift of its own, one with more focus more sets', () => {
+    const o = { template: 'full', goal: 'growth', days: 3, minutes: 75 }
+    const base = plan({ ...o, focus: { glutes: 'normal', forearms: 'normal', abs: 'normal' } }), mine = plan({ ...o, focus: { glutes: 'none', forearms: 'none', abs: 'more' } })
+    const direct = (p, g) => p.days.flatMap(d => d.items).filter(l => l.ex.p[0] === g).reduce((n, l) => n + l.sets, 0)
+    expect(direct(mine, 'glutes')).toBe(0)
+    expect(direct(mine, 'forearms')).toBe(0)
+    expect(direct(mine, 'abs')).toBeGreaterThan(direct(base, 'abs'))
+    // and that is the week with no focus given
+    for (const g of ['glutes', 'forearms', 'abs']) expect(direct(plan(o), g)).toBe(direct(mine, g))
   })
 })

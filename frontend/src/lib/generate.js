@@ -36,11 +36,12 @@ import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerS
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
-import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, BLOCK_DAYS } from './engine.js'
+import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
 import { DAY_TYPES, planDay, partsFor } from './planner.js'
 import { listOf } from './curate.js'
-import { daysOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
+import { profileOf, rotationOf } from './profile.js'
 import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
@@ -175,13 +176,11 @@ export const genDefaults = type => ({
  * sized by its number of exercises instead.
  */
 export function genConstraints(S, setup = {}) {
-  const p = S?.program
-  const plan = p?.plan && Array.isArray(p.days) ? p.plan : null
+  const p = profileOf(S)
   return {
-    goal: plan?.goal || goalTypeOf(S),
-    level: plan?.level,
-    equipment: setup?.equipment || plan?.equipment,
-    minutes: setup?.minutes > 0 ? setup.minutes : plan?.minutes > 0 ? plan.minutes : 0,
+    goal: p.goal, level: p.level,
+    equipment: setup?.equipment || p.equipment,
+    minutes: setup?.minutes > 0 ? setup.minutes : p.minutes,
   }
 }
 
@@ -285,8 +284,13 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
     // Not on a muscle trained yesterday or today: a bench press the day after one waits its turn.
     const fit = ids.filter(id => patternOf(id) === pattern && !(dayNo(today) - dayNo(index.muscles[slotMuscleOf(EXIDX[id])] || '1970-01-01') <= 1))
     if (!fit.length) continue
-    const best = fit.map((id, rank) => ({ id, rank })).sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)
-      || (before[b.id] || 0) - (before[a.id] || 0) || (inBlock[b.id] || 0) - (inBlock[a.id] || 0) || a.rank - b.rank)[0]
+    // Taking turns (profile.js rotationOf 'session'): the lift of the movement done longest ago
+    // leads, one never done before any; else the one you know best, kept for the block.
+    const when = id => index.exercises[id]?.d || ''
+    const best = fit.map((id, rank) => ({ id, rank })).sort(rotationOf(S) === 'session'
+      ? (a, b) => (when(a.id) < when(b.id) ? -1 : when(a.id) > when(b.id) ? 1 : a.rank - b.rank)
+      : (a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)
+        || (before[b.id] || 0) - (before[a.id] || 0) || (inBlock[b.id] || 0) - (inBlock[a.id] || 0) || a.rank - b.rank)[0]
     return { id: best.id, pattern }
   }
   return null
@@ -333,6 +337,9 @@ export function monthShort(S, groups, now = Date.now()) {
   return Object.fromEntries(groups.map(g => [g, weeks ? (sums[g] || 0) / weeks : 0]))
 }
 
+/** Lift id -> the ISO day it was last done: what the lifts of a slot take turns by (planner.js variant). */
+export const lastDone = index => Object.fromEntries(Object.entries(index.exercises).map(([id, e]) => [id, e.d]))
+
 const KNOWN_DAYS = 56 // a lift logged in the last eight weeks is one you know
 
 /**
@@ -353,7 +360,7 @@ export function knownLifts(S, now = Date.now(), index = trainingIndex(S)) {
  * these days would give the group: every one for a full body, a third for push, pull or legs.
  * A group short over the weeks before (monthShort) takes up to half again, never past its lack.
  */
-function dayGoals(S, type, ticked, share, now) {
+function dayGoals(S, type, ticked, share, now, adopted = []) {
   const done = weeklyDone(S, now), week = windowWorkouts(S, now)
   const lack = g => Math.max(0, weeklyTargetOf(S, g) - (done[g] || 0))
   const cycle = S?.program?.days?.includes(type) ? S.program.days : type === 'full' ? ['full'] : ['push', 'pull', 'legs']
@@ -362,10 +369,11 @@ function dayGoals(S, type, ticked, share, now) {
   // A group the weeks before came up short on takes more of what this one still lacks (monthShort).
   const short = monthShort(S, ticked, now)
   const more = (g, n) => Math.min(lack(g), n * (1 + MONTH_CATCH_UP * (short[g] || 0)))
-  const goals = Object.fromEntries(ticked.map(g => [g, more(g, share ? share[g] || 0 : lack(g) / daysFor(g))]))
+  // A group taken in from a missed day gets its floor's worth as given, never more.
+  const goals = Object.fromEntries(ticked.map(g => [g, adopted.includes(g) ? share[g] : more(g, share ? share[g] || 0 : lack(g) / daysFor(g))]))
   // A part gets the share of what it lacks its group's day gets of the group's.
   const split = partSplitOf(week)
-  const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup, volumeOf(S))
+  const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup, volumeOf(S), S?.goals?.focus)
     .filter(p => ticked.includes(p.g) || DAY_TYPES[type].parts?.includes(p.name))
     .map(p => {
       const of = lack(p.g) ? (goals[p.g] ?? lack(p.g) / daysFor(p.g)) / lack(p.g) : 0
@@ -382,10 +390,11 @@ const FILL_SLACK = 5
  * `dayGoals`' goals and parts `k` times over. A group the week has already had its fill of
  * still gets a share once the day is raised, so a day late in the week can fill its time too.
  */
-function scaleGoals({ goals, parts }, ticked, k) {
+function scaleGoals({ goals, parts }, ticked, k, fixed = []) {
   const floor = (k - 1) * 2
   return {
-    goals: Object.fromEntries(ticked.map(g => [g, Math.max((goals[g] || 0) * k, floor)])),
+    // Not a group with no goal of its own (goals.js focusOf) or one taken in from a missed day.
+    goals: Object.fromEntries(ticked.map(g => [g, fixed.includes(g) ? goals[g] || 0 : Math.max((goals[g] || 0) * k, floor)])),
     parts: parts.map(p => ({ ...p, goal: p.goal * k })),
   }
 }
@@ -421,18 +430,23 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   if (!GEN_TYPES[type]) return []
   const c = genConstraints(S, { minutes, equipment })
   const index = trainingIndex(S)
-  const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
+  const picked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
+  // Groups a program day takes in from days missed (program.js adoptedShare): in its share, not its own.
+  const adopted = Object.keys(share || {}).filter(g => share[g] > 0 && !picked.includes(g) && !genGroupsOf(type).includes(g) && ADD_GROUPS.some(x => x.id === g))
+  const ticked = [...picked, ...adopted]
   const pool = planPool(S)
   const lead = leadFor(S, type, ticked, now, index)
+  const turns = rotationOf(S) === 'session'
   const [near = [], ...earlier] = recentSessionIds(S, now)
-  const base = dayGoals(S, type, ticked, share, now)
+  const base = dayGoals(S, type, ticked, share, now, adopted)
+  const fixed = [...adopted, ...ticked.filter(g => weeklyTargetOf(S, g) <= 0 && focusOf(S, g) === 'none')]
   const build = k => planDay({
     type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
-    ...(k === 1 ? base : { ...scaleGoals(base, ticked, k), moreAcc: Math.ceil((k - 1) * 2) }),
+    ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2) }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
     count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
-    minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), equipment: c.equipment, known: knownLifts(S, now, index),
+    minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), rests: restRangeOf(S), equipment: c.equipment, known: knownLifts(S, now, index), last: turns ? lastDone(index) : null,
     goal: c.goal, level: c.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
   const day = c.minutes ? fillMinutes(build, c.minutes) : build(1)
@@ -478,7 +492,11 @@ export function genConfig(S, id, setup, slot, extra = 0) {
   // A rest timer you set yourself (S.restAll) is the accessories' rest, and the heavier lifts rest
   // as much longer than it as the goal's own rests say (engine.js ownRest).
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
-  else if (want.rest > 0) cfg.restSec = S?.restAll && S.restSec > 0 ? ownRest(want.rest, S.restSec, goal) : want.rest
+  // A rest range (S.restRange) comes before both: the goal's rests, each inside it (engine.js rangedRest).
+  else if (want.rest > 0) {
+    const range = restRangeOf(S)
+    cfg.restSec = range ? rangedRest(want.rest, range, goal) : S?.restAll && S.restSec > 0 ? ownRest(want.rest, S.restSec, goal) : want.rest
+  }
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true
   return cfg

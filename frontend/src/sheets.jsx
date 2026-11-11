@@ -63,7 +63,7 @@ import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
 import { DAY_NAME, isProgram, minutesFor, programShare, programWeek, sizeDay } from './lib/program.js'
-import { SCHEMES, slotScheme } from './lib/engine.js'
+import { SCHEMES, slotScheme, restRangeOf } from './lib/engine.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -3083,6 +3083,9 @@ function GenSetup({ type, k, close }) {
     close()
     beginGenerated(type, entries, { shift, setup, ...(Number.isInteger(k) ? { day: k } : {}) })
   }
+  // The rest a lift takes when none is set here: the range you keep rests in, or your rest timer.
+  const range = restRangeOf(st)
+  const restDefault = range ? `${fmtRest(range.min)}–${fmtRest(range.max)}` : fmtRest(st.restSec)
   return <div className="wd-fit">
     <div className="row between" style={{ alignItems: 'flex-start', flex: 'none' }}>
       <div><h3>{t(DAY_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{pw
@@ -3134,10 +3137,10 @@ function GenSetup({ type, k, close }) {
       </div>}
       <div className="sect-b" style={{ marginBottom: 6 }}>
         <Row icon="timer" iconTint="var(--orange)" title={t('Rest between sets')} accessory="chevron"
-          value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', fmtRest(st.restSec))}
+          value={setup.restSec > 0 ? fmtRest(setup.restSec) : t('Default ({0})', restDefault)}
           onClick={() => durationSheet({
             title: t('Rest between sets'), value: setup.restSec > 0 ? setup.restSec : 0, max: REST_MAX,
-            off: t('Default ({0})', fmtRest(st.restSec)),
+            off: t('Default ({0})', restDefault),
             footer: t('Rest after each set of this exercise.'),
             onDone: v => set({ restSec: v }),
           })} />

@@ -35,7 +35,7 @@ import { EXIDX, patternOf } from './exercises.js'
 import { groupOfMuscle } from './add-exercise.js'
 import { VOLUMES, weeklyTargetOf, partTargetOf } from './goals.js'
 import { rolesLoaded, muscleRolesOf, ROLE_WEIGHT } from './muscle-roles.js'
-import { SCHEMES } from './engine.js'
+import { SCHEMES, rangedScheme } from './engine.js'
 import { variantOf } from './variant.js'
 import { popularPlace } from './popular.js'
 
@@ -266,13 +266,14 @@ function rng(seed) {
   }
 }
 // The app's weekly goal for each group (goals.js): the kind of goal's default, or a group's own.
-const goalsFor = (type, byGroup, volume) =>
-  Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { type, byGroup, volume } }, g)]))
+// A group's `focus` (goals.js focusOf) moves it: none of its own, or more.
+const goalsFor = (type, byGroup, volume, focus) =>
+  Object.fromEntries(PLAN_GROUPS.map(g => [g, weeklyTargetOf({ goals: { type, byGroup, volume, focus } }, g)]))
 // The shares of their groups' goals of the parts that need lifts of their own (goals.js
 // partTargetOf, PLANNED_PARTS): `[{ g, name, goal }]`.
-export const partsFor = (type, byGroup, volume) => PART_GROUPS.flatMap(g => GROUP_PARTS[g]
+export const partsFor = (type, byGroup, volume, focus) => PART_GROUPS.flatMap(g => GROUP_PARTS[g]
   .filter(([name]) => PLANNED_PARTS.includes(name))
-  .map(([name]) => ({ g, name, goal: partTargetOf({ goals: { type, byGroup, volume } }, g, name) })))
+  .map(([name]) => ({ g, name, goal: partTargetOf({ goals: { type, byGroup, volume, focus } }, g, name) })))
   .filter(p => p.goal > 0)
 const SHORT = 0.85 // under 85% of the goal counts as short
 
@@ -280,15 +281,17 @@ const SHORT = 0.85 // under 85% of the goal counts as short
 export function configOf(o = {}) {
   const goal = SCHEMES[o.goal] ? o.goal : PLAN_DEFAULTS.goal
   const level = LEVELS[o.level] ? o.level : PLAN_DEFAULTS.level
-  const sc = SCHEMES[goal]
+  // The rests you keep to (`o.rests`, engine.js restRangeOf): every slot's rest inside them.
+  const rests = o.rests?.max >= o.rests?.min && o.rests.min > 0 ? { min: o.rests.min, max: o.rests.max } : null
+  const sc = rangedScheme(goal, rests)
   return {
     template: PLAN_TEMPLATES[o.template] ? o.template : PLAN_DEFAULTS.template, goal, level,
     equipment: EQUIPMENT[o.equipment] ? o.equipment : PLAN_DEFAULTS.equipment,
     days: o.days || PLAN_DEFAULTS.days, minutes: o.minutes || PLAN_DEFAULTS.minutes,
     seed: o.seed ?? 1, shift: o.shift || 0, volume: VOLUMES.includes(o.volume) ? o.volume : 0,
-    pace: o.pace > 0 ? o.pace : null,
+    pace: o.pace > 0 ? o.pace : null, rests,
     keep: (o.keep || []).map(ids => new Set(ids)),
-    known: new Set(o.known || []),
+    known: new Set(o.known || []), last: o.last || null,
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
   }
@@ -349,7 +352,13 @@ const add = (cfg, into, ex, sets) => {
 }
 // `cfg.pace`, your own seconds a set (pace.js), times the sets when there is one; the slot's
 // reps and rest otherwise.
-const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * (cfg.pace || it.rx.secs), 0) / 60
+// With rests you keep to (`cfg.rests`) a set takes its reps, its rest and MOVING seconds of
+// getting to the next one: short rests leave the walking and loading a real part of the time,
+// and however long your sets ran before you set them says nothing of how long they run now.
+// A pace of your own that is quicker still stands.
+const MOVING = 30
+const setSecs = (cfg, it) => (cfg.rests ? Math.min(cfg.pace || Infinity, it.rx.secs + MOVING) : cfg.pace || it.rx.secs)
+const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * setSecs(cfg, it), 0) / 60
 /** Minutes a day of `sets` work sets takes at `pace` seconds a set, its warm-up included. */
 export const paceMinutes = (sets, pace) => Math.round(ADV.warmupMin + sets * pace / 60)
 
@@ -359,15 +368,19 @@ export const paceMinutes = (sets, pace) => Math.round(ADV.warmupMin + sets * pac
 // each day's lift ids as they were) takes a lift day `k` had before any other, so what still
 // fits stays and keeps its progress, and the same settings build the same week. A one-tap day
 // (`cfg.known`, the lifts you logged lately, generate.js knownLifts) takes one you know next, so
-// it moves on from last time; a lift you have never done only where none of them fits.
+// it moves on from last time; a lift you have never done only where none of them fits. Or, with
+// `cfg.last`, the lifts of a slot take turns instead.
 function variant(cfg, cands, used, rand, k) {
   if (!cands.length) return null
   const fresh = cands.filter(e => !used.has(e.id))
   const pool = fresh.length ? fresh : cands
   const kept = id => (cfg.keep[k]?.has(id) ? 0 : 1)
   const known = id => (cfg.known.has(id) ? 0 : 1)
-  const ranked = pool.map(e => ({ e, kept: kept(e.id), known: known(e.id), at: popularPlace(e.id), tie: rand() }))
-    .sort((a, b) => a.kept - b.kept || a.known - b.known || a.at - b.at || a.tie - b.tie)
+  // Taking turns (`cfg.last`, lift id -> the ISO day it was last done): the one done longest ago,
+  // one never done before any, so every lift of a slot on your list comes round.
+  const last = id => (cfg.last ? cfg.last[id] || '' : '')
+  const ranked = pool.map(e => ({ e, kept: kept(e.id), known: cfg.last ? 0 : known(e.id), last: last(e.id), at: popularPlace(e.id), tie: rand() }))
+    .sort((a, b) => a.kept - b.kept || a.known - b.known || (a.last < b.last ? -1 : a.last > b.last ? 1 : 0) || a.at - b.at || a.tie - b.tie)
   return ranked[cfg.shift % ranked.length].e
 }
 
@@ -714,8 +727,8 @@ function balance(cfg, out, goals, parts, whole, near) {
  */
 export function plan(o = {}) {
   const cfg = configOf(o)
-  const goals = goalsFor(cfg.goal, o.byGroup, cfg.volume)
-  const parts = partsFor(cfg.goal, o.byGroup, cfg.volume)
+  const goals = goalsFor(cfg.goal, o.byGroup, cfg.volume, o.focus)
+  const parts = partsFor(cfg.goal, o.byGroup, cfg.volume, o.focus)
   const base = baseOf(cfg, o)
   if (base) {
     // Only the goals moved: the week the program has, its sets taken up or down to them.
@@ -764,7 +777,7 @@ function baseOf(cfg, o) {
   const was = configOf({ ...b.plan, template: b.template })
   const same = ['template', 'goal', 'level', 'equipment', 'days', 'minutes', 'seed', 'shift'].every(k => was[k] === cfg[k])
   if (!same || b.week.length !== cfg.days) return null
-  return { week: b.week, goals: goalsFor(was.goal, b.byGroup, was.volume), parts: partsFor(was.goal, b.byGroup, was.volume) }
+  return { week: b.week, goals: goalsFor(was.goal, b.byGroup, was.volume, b.focus), parts: partsFor(was.goal, b.byGroup, was.volume, b.focus) }
 }
 
 // What each group is short for in a week: a setting is to blame only if every day that trains the

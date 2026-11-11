@@ -62,6 +62,46 @@ export function ownRest(rest, mine, goal = ENGINE_GOAL) {
   return Math.max(5, Math.round(rest * mine / acc / 5) * 5)
 }
 
+/** The longest and shortest rest a range may ask for, in seconds. */
+export const REST_RANGE = { min: 5, max: 600 }
+/** The range rests are kept in until you choose one, in seconds. */
+export const REST_DEFAULT = { min: 20, max: 60 }
+/**
+ * The rests every lift stays within (`S.restRange`, seconds): `{ min, max }`, REST_DEFAULT when
+ * none is chosen, or null when each goal rests as long as it says: the range switched off
+ * (`false`), or never chosen by someone who set their own rest timer for every lift (S.restAll).
+ */
+export function restRangeOf(S) {
+  const r = S?.restRange
+  if (r === false) return null
+  const min = Math.round(Number(r?.min)), max = Math.round(Number(r?.max))
+  if (min >= REST_RANGE.min && max >= min && max <= REST_RANGE.max) return { min, max }
+  return S?.restAll && S.restSec > 0 ? null : { ...REST_DEFAULT }
+}
+
+/**
+ * `rest`, a slot's seconds under `goal`, inside `range`: the goal's shortest rest (a calf
+ * raise's) becomes the range's shortest, its longest (the lead lift's) the range's longest, and
+ * the ones between keep their place between. Rounded to 5 s. `rest` as it is without a range.
+ */
+export function rangedRest(rest, range, goal = ENGINE_GOAL) {
+  if (!range || !(rest > 0)) return rest
+  const sc = SCHEMES[goal] || SCHEMES[ENGINE_GOAL]
+  const all = ['lead', 'main', 'acc', 'small'].map(k => sc[k].rest)
+  const lo = Math.min(...all), hi = Math.max(...all)
+  const at = hi > lo ? Math.max(0, Math.min(1, (rest - lo) / (hi - lo))) : 1
+  return Math.max(range.min, Math.min(range.max, Math.round((range.min + at * (range.max - range.min)) / 5) * 5))
+}
+
+/** `goal`'s scheme (SCHEMES) with every slot's rest inside `range` (rangedRest). */
+export function rangedScheme(goal, range) {
+  const sc = SCHEMES[goal] || SCHEMES[ENGINE_GOAL]
+  if (!range) return sc
+  const out = { ...sc }
+  for (const k of ['lead', 'main', 'acc', 'small']) out[k] = { ...sc[k], rest: rangedRest(sc[k].rest, range, goal) }
+  return out
+}
+
 /**
  * The slots of a session's lifts, in the order they run: the first big lift leads, the rest go
  * by their kind (slotOf). Kinds -> slots, in the same order.

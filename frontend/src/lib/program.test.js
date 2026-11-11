@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
 import { LEVELS } from './planner.js'
 import { loadMuscleRoles } from './muscle-roles.js'
-import { weeklyTargetOf } from './goals.js'
+import { floorOf, weeklyTargetOf } from './goals.js'
 import { equivalentsOf } from './equivalents.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
@@ -154,8 +154,10 @@ describe('sizing a day to the goal', () => {
     expect(share.chest).toBeCloseTo(weeklyTargetOf(st, 'chest') / 3)
   })
   it('a higher goal makes a longer day, within bounds', () => {
-    const low = sizeDay(state({ program: PPLF, goals: { type: 'maintain' } }), 'push', { now: THU })
-    const high = sizeDay(state({ program: PPLF, goals: { type: 'growth' } }), 'push', { now: THU })
+    // Two days, both still to come this week: none of another day's groups to take in.
+    const PP = { days: ['push', 'pull'], startedAt: '2026-09-02', weeks: 8 }
+    const low = sizeDay(state({ program: PP, goals: { type: 'maintain' } }), 'push', { now: THU })
+    const high = sizeDay(state({ program: PP, goals: { type: 'growth' } }), 'push', { now: THU })
     expect(low).toBeGreaterThanOrEqual(MIN_DAY)
     expect(high).toBeGreaterThan(low)
     expect(high).toBeLessThanOrEqual(MAX_GEN_COUNT)
@@ -400,3 +402,45 @@ describe('what a program added up to', () => {
     expect(sum.gains).toEqual([{ id: '0025', from: 60, to: 75 }])
   })
 })
+
+describe('a week with days missed', () => {
+  beforeAll(loadMuscleRoles)
+  // Thursday of the program's third week, nothing done in it: a push day today, a pull day on
+  // Saturday, and the leg day falls into next week.
+  const st = state({ program: PPLF })
+  it('a day takes in the groups no day left this week trains, up to their floor and no more', () => {
+    const got = adoptedShare(st, 'push', THU)
+    // not the glutes: they have no goal of their own unless given one
+    expect(Object.keys(got).sort()).toEqual(['abs', 'calves', 'hamstrings', 'quads'])
+    expect(Object.keys(adoptedShare(state({ program: PPLF, goals: { focus: { glutes: 'normal' } } }), 'push', THU))).toContain('glutes')
+    for (const [g, v] of Object.entries(got)) expect(v).toBe(floorOf(st, g))
+    expect(got.quads).toBeLessThan(weeklyTargetOf(st, 'quads'))
+    expect(dayShare(st, 'push', THU)).toMatchObject(got)
+  })
+  it('only what is still short of the floor', () => {
+    const legs = session('2026-09-15', 'legs', ['0043'], 3)
+    const got = adoptedShare({ ...st, workouts: [legs] }, 'full', THU)
+    expect(got).toEqual({})
+    const part = adoptedShare({ ...st, workouts: [session('2026-09-15', 'x', ['0043'], 2)] }, 'push', THU)
+    expect(part.quads).toBe(floorOf(st, 'quads') - 2)
+  })
+  it('none with every day still to come, in the week the program started, or without a program', () => {
+    expect(adoptedShare(st, 'push', at(2026, 9, 14))).toEqual({})
+    expect(adoptedShare(state({ program: newProgram('ppl-full-4', { weeks: 8, today: '2026-09-17' }) }), 'push', THU)).toEqual({})
+    expect(adoptedShare(state(), 'push', THU)).toEqual({})
+  })
+  it('a group with no goal of its own is not taken in', () => {
+    const got = adoptedShare(state({ program: PPLF, goals: { focus: { glutes: 'none' } } }), 'push', THU)
+    expect(got.glutes).toBeUndefined()
+    expect(got.quads).toBeGreaterThan(0)
+  })
+  it('the day built has a lift for what it took in, and its own groups first', () => {
+    const picks = generateWorkout(st, 'push', { count: null, now: THU, share: dayShare(st, 'push', THU) })
+    const groups = picks.map(p => groupCredit(entryWeights(p)))
+    expect(picks[0].slot).toBe('lead')
+    expect(groups.some(c => c.quads >= 1)).toBe(true)
+    expect(groups.some(c => c.hamstrings >= 1)).toBe(true)
+    expect(groups[0].chest || groups[0].shoulders).toBeGreaterThan(0)
+  })
+})
+

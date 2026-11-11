@@ -170,7 +170,7 @@ describe('the parts of a muscle', () => {
     const targets = p => muscleRolesOf(p.id)?.target || []
     // Picked first; a pull-up may still run first, its helpers counting for more groups.
     it('after pulldowns, a pull day leads with them and picks the mid back next', () => {
-      const st = state({ workouts: [session('2026-09-10', ['2330'])] })
+      const st = state({ rotation: 'block', workouts: [session('2026-09-10', ['2330'])] })
       const [lead, ...rest] = generateWorkout(st, 'pull', { now: NOW }).sort((a, b) => a.at - b.at)
       expect(lead.id).toBe('2330')
       expect(targets(rest.find(p => p.muscle === 'upper-back'))).toContain('middle-trap')

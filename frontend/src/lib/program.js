@@ -21,7 +21,7 @@
 import { ADD_GROUPS } from './add-exercise.js'
 import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
 import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
-import { sessionMinutes, weeklyTargetOf } from './goals.js'
+import { floorOf, sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { isWarmupRow } from './workout-model.js'
@@ -258,6 +258,34 @@ export function dayShare(S, type, now = Date.now()) {
     const hits = left.filter(t => genGroupsOf(t).includes(g)).length || 1
     const even = goal / (days.filter(t => genGroupsOf(t).includes(g)).length || 1)
     if (lack > 0) out[g] = Math.min(lack / hits, even * most)
+  }
+  return { ...out, ...adoptedShare(S, type, now) }
+}
+
+/**
+ * Group id -> sets a `type` day takes in for groups that are not its own: one still under its
+ * floor (goals.js floorOf, the fewest sets that count as trained this week) that no program day
+ * left this week trains gets what it lacks of the floor, and no more, so a week with missed days
+ * still reaches every muscle. A pull day on Saturday takes the legs when no leg day will fit.
+ * None in the week the program started (it has missed nothing yet), nor for a group with no
+ * goal of its own.
+ */
+export function adoptedShare(S, type, now = Date.now()) {
+  const p = S?.program
+  if (!isProgram(p) || !p.days.includes(type)) return {}
+  const weekStart = isoOf(startOfWeek(isoOf(new Date(now)), weekStartOf(S)))
+  if (p.startedAt > weekStart) return {}
+  const own = genGroupsOf(type)
+  const later = daysLeft(S, type, now)
+  later.splice(later.indexOf(type), 1)
+  const trained = new Set([...own, ...later.flatMap(genGroupsOf)])
+  // Only what the program trains at all: a group none of its days has is not a day missed.
+  const groups = [...new Set(p.days.flatMap(genGroupsOf))].filter(g => !trained.has(g))
+  const done = weeklyDone(S, now)
+  const out = {}
+  for (const g of groups) {
+    const short = floorOf(S, g) - (done[g] || 0)
+    if (short >= 1) out[g] = short
   }
   return out
 }
