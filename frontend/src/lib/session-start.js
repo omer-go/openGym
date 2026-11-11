@@ -9,6 +9,8 @@ import { nextPrescription, applyPrescription, defaultIncrement, weightIncrement,
 import { dropGrid } from './plates.js'
 import { backoffStepOf, applyBackoff } from './backoff.js'
 import { dbLoadFor, historyAs, ownedWeightsFor } from './dumbbells.js'
+import { withInferredWeight } from './infer-weight.js'
+import { EXIDX } from './exercises.js'
 
 /**
  * Where a planned session's reps come from (Settings → During a workout). 'plan', the default:
@@ -29,7 +31,10 @@ export const startsFromLast = st => st?.startFrom === 'last'
  * `typed` is a weight set by hand in a running session (the exercise's settings sheet): the
  * prescription keeps its say on reps and sets, but the open rows go to the weight you chose.
  */
-export function buildPlannedEntry(stored, cfg, routine, { noProg = false, typed = null } = {}) {
+export function buildPlannedEntry(stored, cfg0, routine, { noProg = false, typed = null } = {}) {
+  // A lift never logged opens at a weight read off a similar one you have (lib/infer-weight.js):
+  // a dumbbell bench from your barbell bench. A weight the routine sets is its own.
+  const { cfg, guess } = typed != null ? { cfg: cfg0, guess: null } : withInferredWeight(stored, cfg0)
   // What a dumbbell weight means for this exercise today (lib/dumbbells.js): the history it
   // progresses from is read in that meaning, so a switch from "40 total" to per bell opens at
   // 20, not at 40 a hand. Only a switch between the two explicit meanings converts anything.
@@ -40,7 +45,8 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false, typed 
   // Without it the prescription read the weight off history again and dropped the one just set.
   const plan = typed != null && prescribed.kind !== 'off' && modeOf(cfg) === 'reps'
     ? { ...prescribed, kind: 'hold', weight: typed, why: ['Your weight for today, set by you.'] }
-    : prescribed
+    : guess && prescribed.kind === 'first' ? { ...prescribed, why: ['Never logged, so this starts from your {0} ({1} {2} est. max), a little lighter.', EXIDX[guess.from]?.n || guess.from, guess.est, st.unit || 'kg'] }
+      : prescribed
   // The warm-up ramp and the prescription snap to the exercise's own increment (1.25 kg
   // plates exist), not the unit default; a timed exercise's `inc` is seconds, so it keeps the
   // default for its optional load.
@@ -77,7 +83,7 @@ export function buildPlannedEntry(stored, cfg, routine, { noProg = false, typed 
     && rows.some(s => !isWarmupRow(s) && s.r !== cfg.reps)
   // `planned` is what the routine asked for, kept apart from the target the prescription moved,
   // so the next session can tell an edited plan from a progressed one (nextPrescription).
-  return { target, plan, sets, planned: plannedOf(cfg), ...(carried ? { carried: true } : {}) }
+  return { target, plan, sets, planned: plannedOf(cfg0), ...(carried ? { carried: true } : {}) }
 }
 
 /**

@@ -37,6 +37,7 @@ import Elapsed from '../components/Elapsed.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button, Check, NumberField } from '../components/ui.jsx'
 import { defaultIncrement, weightIncrement, stepWeight } from '../lib/progression.js'
+import { withInferredWeight } from '../lib/infer-weight.js'
 import { progressionGuidance } from '../lib/progression-copy.js'
 import { buildPlannedEntry, plannedConfigOf, builtOutOfProgression } from '../lib/session-start.js'
 import { routineChangesFromEntry, updateRoutineFromEntry } from '../lib/routines.js'
@@ -1465,10 +1466,13 @@ function ActiveWorkout() {
   }
   // One added exercise's entry, inside an update: a planned session builds it the way its routine
   // would (prescription, reps source, target); freestyle reproduces what you did last time.
-  const buildAdded = (s, id, cfg, { curRid, routine, freestyle, noProg }, typed = false) => {
-    const full = { ...cfg, id }
+  const buildAdded = (s, id, cfg0, { curRid, routine, freestyle, noProg }, typed = false) => {
     // Read from before the session's day when it is logged into the past (sessionHistory).
     const past = sessionHistory(s)
+    // A freestyle lift never logged opens at a weight read off a similar one (lib/infer-weight.js);
+    // a planned one is given it by buildPlannedEntry.
+    const cfg = freestyle && !typed ? withInferredWeight(past, { ...cfg0, id }).cfg : cfg0
+    const full = { ...cfg, id }
     // Freestyle stamps the meaning of a dumbbell weight and reads last time in it, the way
     // buildPlannedEntry does for a planned exercise (lib/dumbbells.js).
     const built = freestyle

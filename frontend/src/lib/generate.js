@@ -44,6 +44,7 @@ import { setPaceOf } from './pace.js'
 import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
+import { withInferredWeight } from './infer-weight.js'
 
 export const GEN_TYPES = {
   full: [['chest', 1], ['upper-back', 1], ['deltoids', 1], ['quadriceps', 1], ['hamstring|gluteal', 1], ['biceps|triceps', 1], ['calves|abs', 1]],
@@ -509,7 +510,8 @@ export function generatedEntries(S, picks, setup = null) {
     // A lift of the setup moves on from its own last sessions the way a routine's does
     // (session-start.js buildPlannedEntry): more reps in the range, then more weight at its bottom.
     if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null), gen }
-    const cfg = freestyleConfig(S, { id, ...defaultConfig(id) })
+    // A lift never logged opens at a weight read off a similar one (lib/infer-weight.js).
+    const { cfg } = withInferredWeight(S, freestyleConfig(S, { id, ...defaultConfig(id) }))
     const full = { ...cfg, id }
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
     const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))
