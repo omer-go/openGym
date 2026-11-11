@@ -4,14 +4,14 @@ import { useUI } from '../store/useUI.js'
 import { t, tn, dateLocale, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { DAYS, fmtDate, fmtDateRange, fmtDur, fmtNum, isoOf, todayISO, weekOrder, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { genDefaults, genSets, generateWorkout, planPool } from '../lib/generate.js'
+import { genConstraints, genDefaults, genSets, generateWorkout, planPool } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
   MAX_GOAL, VOLUMES, VOLUME_NAME, defaultTargetFor, goalEstimate, goalGroups, goalTypeOf,
-  sessionMinutes, volumeOf, weeklyTargets,
+  volumeOf, weeklyTargets,
 } from '../lib/goals.js'
 import {
-  DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, newPlanProgram, planDayMinutes, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
+  DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, minutesFor, newPlanProgram, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
   programShare, programWeek, sizeDay, suggestDay, templateOf, weekChanges,
 } from '../lib/program.js'
 import {
@@ -58,16 +58,16 @@ export function DayChip({ type, done, next }) {
 /**
  * About how long a `type` day runs for `S`: exercises, work sets and minutes. Built as the Start
  * sheet builds it (sheets.jsx GenSetup), or the two say different numbers: the setup kept for the
- * day, sized to its share of the week on a program day. A plan program's day `k` is its own lifts.
+ * day, sized to its share of the week on a program day, or to the minutes it is given
+ * (generate.js genConstraints), at the goal's sets.
  */
-function dayEstimate(S, type, k) {
-  const day = isPlanProgram(S.program) ? S.program.week[k] : null
-  if (day) return { count: day.items.length, sets: day.items.reduce((n, i) => n + i.sets, 0), minutes: planDayMinutes(S, k) }
+function dayEstimate(S, type) {
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
-  if (isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
+  const c = genConstraints(S, setup)
+  if (!c.minutes && isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
   const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
-  const sets = picks.reduce((n, p) => n + genSets(p.id, setup, p.slot, p.extra), 0)
-  return { count: picks.length, sets, minutes: sessionMinutes(sets) }
+  const sets = picks.reduce((n, p) => n + genSets(p.id, { ...setup, goal: c.goal }, p.slot, p.extra), 0)
+  return { count: picks.length, sets, minutes: minutesFor(S, sets) }
 }
 
 /* ============================ the weekly goal ============================ */
@@ -194,7 +194,7 @@ function SwapLift({ item, day, render, onSwap }) {
  */
 function PreviewDay({ day, k, change, goal, onSwap }) {
   const [open, setOpen] = useState(k === 0)
-  // The rest a lift will take in the session: at your own rest timer when you set one (program.js planEntries).
+  // The rest a lift will take in the session: at your own rest timer when you set one (generate.js genConfig).
   const mine = useStore(s => (s.S.restAll && s.S.restSec > 0 ? s.S.restSec : 0))
   const restOf = rx => (mine && rx.rest > 0 ? { ...rx, rest: ownRest(rx.rest, mine, goal) } : rx)
   const added = new Set(change?.added || [])
@@ -422,6 +422,8 @@ function PlanBuilder({ template, close }) {
         : `${groupName(x.g)} ${x.total}/${x.goal}`) + ` (${t(CAUSE[x.cause])})`).join(', '))}</div>}
 
       <h4 className="sec">{updating ? t('Your week after the change') : t('Each week')}</h4>
+      {/* The program keeps its settings; each day is built when it starts (program.js programDayEntries). */}
+      <div className="muted small" style={{ marginBottom: 8 }}>{t('A sample week. Each workout picks its lifts when you start it, from what you trained this week and the weeks before, at the weight and reps you are ready for.')}</div>
       {changes && <div className="plan-diff" data-plan-diff>{same ? t('Nothing changes yet.') : <>
         <div className="tt">{setsOf(running.week) !== week.days.reduce((n, d) => n + d.sets, 0) && <><s>{setsOf(running.week)}</s> → </>}{t('{0} sets a week', week.days.reduce((n, d) => n + d.sets, 0))}</div>
         {moves.length > 0 && <div className="ss">{moves.map(([g, [a, b]]) => `${groupName(g)} ${a} → ${b}`).join(' · ')}</div>}
@@ -790,7 +792,7 @@ export function NextDayCard({ onPrograms }) {
   // estimate is of a different day than Start builds.
   useMuscleRoles()
   const k = pw?.next != null ? pw.items[pw.next].k : undefined
-  const est = useMemo(() => (type ? dayEstimate(S, type, k) : null), [S, type, k, rolesLoaded()])
+  const est = useMemo(() => (type ? dayEstimate(S, type) : null), [S, type, rolesLoaded()])
   const tpl = !p ? null : isPlanProgram(p) ? PLAN_TEMPLATES[p.template] : templateOf(p.template)
   const head = p
     ? (over ? t('Program done') : t('Program · week {0} of {1}', pw.week, p.weeks))

@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort } from './generate.js'
+import { goalTypeOf } from './goals.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
@@ -334,9 +335,12 @@ describe('sets and reps by the lift’s slot', () => {
     const [e] = generatedEntries(state(), [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], { ...genDefaults('full'), restSec: 20 })
     expect(e.target.restSec).toBe(20)
   })
-  it('a rest timer you set yourself wins over the slot’s', () => {
-    const [e] = generatedEntries({ ...state(), restSec: 20, restAll: true }, [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], genDefaults('full'))
-    expect(e.target.restSec).toBeUndefined()
+  it('rests at a rest timer you set yourself, a heavier slot as much longer as the goal rests it', () => {
+    const own = { ...state(), restSec: 20, restAll: true }
+    const picks = [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }, { id: CURL, muscle: 'biceps', last: null, slot: 'acc' }]
+    // Growth rests a lead 180 s and an accessory 90 s: twice as long.
+    expect(generatedEntries(own, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([40, 20])
+    expect(generatedEntries({ ...own, restAll: false }, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([180, 90])
   })
   it('a session leads with its first big lift, once', () => {
     const picks = generateWorkout(state(), 'full', { count: 7 })
@@ -458,5 +462,62 @@ describe('a lift added to or swapped into a one-tap workout', () => {
     expect(sessionConfig(state(), '1511', active)).toBeNull()
     expect(sessionConfig(state(), CURL, { gen: { type: 'push' } })).toBeNull()
     expect(sessionConfig(state(), CURL, { entries: [] })).toBeNull()
+  })
+})
+
+describe('a one-tap workout fits the program and your history', () => {
+  beforeAll(loadMuscleRoles)
+  const day = n => new Date(NOW - n * 864e5).toISOString().slice(0, 10)
+  const total = es => es.reduce((n, e) => n + e.target.sets, 0)
+
+  it('takes the goal, minutes and equipment of a program built from settings, the setup first', () => {
+    expect(genConstraints(state())).toMatchObject({ goal: goalTypeOf(state()), minutes: 0 })
+    const program = { days: ['upper', 'lower'], plan: { goal: 'strength', level: 'novice', equipment: 'db', minutes: 45 } }
+    expect(genConstraints(state({ program }))).toEqual({ goal: 'strength', level: 'novice', equipment: 'db', minutes: 45 })
+    expect(genConstraints(state({ program }), { minutes: 90, equipment: 'gym' })).toMatchObject({ minutes: 90, equipment: 'gym' })
+  })
+
+  it('a strength program\'s goal sets the lead\'s sets and reps', () => {
+    const program = { days: ['full'], plan: { goal: 'strength', minutes: 60 } }
+    const st = state({ program })
+    const picks = generateWorkout(st, 'full', { now: NOW })
+    const [lead] = generatedEntries(st, picks, genDefaults('full'))
+    expect(lead.target).toMatchObject({ sets: 5, repsMin: 3, prog: 'double' })
+  })
+
+  it('fits the day to the minutes it is given', () => {
+    const at = minutes => { const picks = generateWorkout(state(), 'full', { now: NOW, minutes }); return total(generatedEntries(state(), picks, genDefaults('full'))) }
+    expect(at(30)).toBeLessThan(at(90))
+  })
+
+  it('knows the lifts of the last eight weeks, most often first', () => {
+    const st = state({ workouts: [session(day(3), [BENCH, SQUAT]), session(day(10), [BENCH]), session(day(70), [CURL])] })
+    expect(knownLifts(st, NOW)).toEqual([BENCH, SQUAT])
+  })
+
+  it('reads how short each group came over the weeks before this one', () => {
+    expect(monthShort(state(), ['chest'], NOW).chest || 0).toBe(0)
+    // Three weeks of squats and nothing for the chest.
+    const st = state({ workouts: [8, 15, 22].map(n => session(day(n), [SQUAT], sets(4))) })
+    const short = monthShort(st, ['chest', 'quads'], NOW)
+    expect(short.chest).toBe(1)
+    expect(short.quads).toBeLessThan(1)
+  })
+
+  it('a group short all month takes more of the day than one that was not', () => {
+    // Six days a week: today's push day is one of two, so it takes half the chest's week.
+    const fresh = state({ goals: { days: 6 } }), behind = state({ goals: { days: 6 }, workouts: [8, 15, 22].map(n => session(day(n), [SQUAT], sets(4))) })
+    const chest = st => { const picks = generateWorkout(st, 'push', { now: NOW }); return generatedEntries(st, picks, genDefaults('push')).filter((e, i) => picks[i].muscle === 'chest').reduce((n, e) => n + e.target.sets, 0) }
+    expect(chest(behind)).toBeGreaterThan(chest(fresh))
+  })
+
+  it('moves a lift on from last time: every set at the top of its range takes more weight', () => {
+    const top = Array.from({ length: 4 }, () => row({ w: 60, r: 8 }))
+    const st = state({ workouts: [{ ...session(day(4), [BENCH], top), genType: 'push' }] })
+    const [e] = generatedEntries(st, [{ id: BENCH, muscle: 'chest', last: day(4), slot: 'lead' }], genDefaults('push'))
+    const work = e.sets.filter(x => !isWarmupRow(x))
+    expect(work.length).toBe(4)
+    expect(work.every(x => x.w > 60)).toBe(true)
+    expect(e.target).toMatchObject({ repsMin: 6, reps: 6, prog: 'double' })
   })
 })

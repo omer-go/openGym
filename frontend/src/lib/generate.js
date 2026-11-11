@@ -35,11 +35,13 @@ import { POPULAR_IDS, popularBySlug } from './popular.js'
 import { buildSets, applyIntensifierPlan, defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
 import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
-import { isoOf } from './format.js'
-import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, BLOCK_DAYS } from './engine.js'
+import { isoOf, startOfWeek, weekStartOf } from './format.js'
+import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, BLOCK_DAYS } from './engine.js'
 import { DAY_TYPES, planDay, partsFor } from './planner.js'
 import { listOf } from './curate.js'
-import { daysOf, goalTypeOf, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { daysOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { setPaceOf } from './pace.js'
+import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 
@@ -48,10 +50,15 @@ export const GEN_TYPES = {
   push: [['chest', 2], ['deltoids', 2], ['triceps', 2]],
   pull: [['upper-back', 3], ['trapezius', 1], ['biceps', 2]],
   legs: [['quadriceps', 2], ['hamstring', 2], ['gluteal', 1], ['calves', 1]],
+  // The days of an upper / lower program (planner.js PLAN_TEMPLATES); no tile of their own.
+  upper: [['chest', 2], ['upper-back', 2], ['deltoids', 1], ['biceps|triceps', 2]],
+  lower: [['quadriceps', 2], ['hamstring', 2], ['gluteal', 1], ['calves|abs', 1]],
 }
+// The day types with a one-tap tile, and the ones a day is suggested from without a program.
+export const TILE_TYPES = ['full', 'push', 'pull', 'legs']
 
 // English names, used as i18n keys where they are shown (t(GEN_NAME[type])).
-export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day', legs: 'Leg day' }
+export const GEN_NAME = { full: 'Full body', push: 'Push day', pull: 'Pull day', legs: 'Leg day', upper: 'Upper body', lower: 'Lower body' }
 
 // Staple lifts per muscle, best first. Only reached for exercises you have not logged yet. The
 // last few are the decline, smith and military-press variants the variety rotation moves on to.
@@ -156,10 +163,28 @@ export const genGroupsOf = type => {
 /** What the setup sheet opens on for `type`, before anything is changed. */
 export const genDefaults = type => ({
   count: genCount(type), groups: genGroupsOf(type), cardio: false, stretch: false,
-  byKind: true, sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false,
+  byKind: true, sets: 3, reps: 10, restSec: 0, warmupSets: 0, lastToFailure: false, minutes: 0,
 })
 
-// Sets and reps for muscle growth, by the lift's slot in the session (engine.js): the day's first
+/**
+ * What a one-tap day is built to: `{ goal, level, equipment, minutes }`. A program from settings
+ * (program.js isPlanProgram) gives its goal, level, equipment and session length, and only those:
+ * the lifts are picked fresh each day. Without one, the weekly goal's kind (goals.js goalTypeOf).
+ * The setup's own `minutes` and `equipment` come first; `minutes` 0 is no time limit, the day
+ * sized by its number of exercises instead.
+ */
+export function genConstraints(S, setup = {}) {
+  const p = S?.program
+  const plan = p?.plan && Array.isArray(p.days) ? p.plan : null
+  return {
+    goal: plan?.goal || goalTypeOf(S),
+    level: plan?.level,
+    equipment: setup?.equipment || plan?.equipment,
+    minutes: setup?.minutes > 0 ? setup.minutes : plan?.minutes > 0 ? plan.minutes : 0,
+  }
+}
+
+// Sets and reps for muscle growth (the goal's own with `setup.goal`, genScheme), by the lift's slot in the session (engine.js): the day's first
 // big lift leads at 4 × 6–8, the other big lifts take 3 × 8–12, the lifts for one muscle 3 × 10–15
 // and calves, forearms and abs 2 × 12–20. Used unless the setup turns `byKind` off and sets its
 // own for every lift.
@@ -169,7 +194,8 @@ export const GEN_SCHEME = Object.fromEntries(['lead', 'main', 'acc', 'small'].ma
  * `{ sets, lo, hi, rest }`, its slot's (GEN_SCHEME), or the setup's own sets and reps.
  */
 export const genScheme = (id, setup, slot = slotOf(liftKind(id))) => (setup?.byKind === false
-  ? { sets: setup.sets, lo: setup.reps, hi: setup.reps, rest: 0 } : GEN_SCHEME[slot] || GEN_SCHEME.main)
+  ? { sets: setup.sets, lo: setup.reps, hi: setup.reps, rest: 0 }
+  : setup?.goal ? slotScheme(GEN_SCHEME[slot] ? slot : 'main', setup.goal) : GEN_SCHEME[slot] || GEN_SCHEME.main)
 /**
  * The sets lift `id` in `slot` takes from `setup` (genScheme), with the `extra` a program day gave
  * it past its slot's (generateWorkout), never past engine.js roomOf.
@@ -278,12 +304,53 @@ export function planPool(S) {
     && (starred.has(ex.id) || !(isOlympic(ex) || isSkill(ex)))).map(ex => ex.id)
 }
 
+const MONTH_WEEKS = 3       // the weeks before this one monthShort reads
+const MONTH_CATCH_UP = 0.5  // a group short its whole goal all of them takes half again its share
+
+/**
+ * Group id -> how far short of its weekly goal (goals.js) each of `groups` came, 0 to 1, on
+ * average over the MONTH_WEEKS weeks before the one `now` is in: calendar weeks with a program,
+ * the seven days before each other without (goals.js goalWindow). A week with no strength
+ * workout in it (a holiday, before you started) says nothing and is left out.
+ */
+export function monthShort(S, groups, now = Date.now()) {
+  const calendar = goalWindow(S, now).calendar
+  const first = calendar ? startOfWeek(isoOf(new Date(now)), weekStartOf(S)).getTime() : now
+  const sums = {}
+  let weeks = 0
+  for (let i = 1; i <= MONTH_WEEKS; i++) {
+    // The last day of the week i back: the day before the next one starts.
+    const end = calendar ? first - (7 * (i - 1) + 1) * 864e5 : now - 7 * i * 864e5
+    if (!strengthWorkouts(windowWorkouts(S, end)).length) continue
+    weeks++
+    const done = weeklyDone(S, end)
+    for (const g of groups) {
+      const goal = weeklyTargetOf(S, g)
+      if (goal > 0) sums[g] = (sums[g] || 0) + Math.max(0, 1 - (done[g] || 0) / goal)
+    }
+  }
+  return Object.fromEntries(groups.map(g => [g, weeks ? (sums[g] || 0) / weeks : 0]))
+}
+
+const KNOWN_DAYS = 56 // a lift logged in the last eight weeks is one you know
+
+/**
+ * The lifts you have logged in the last KNOWN_DAYS days, most often first: the planner takes them
+ * before ones you have never done (planner.js variant), so their weights and reps can move on from
+ * last time. A new one comes in where none of them fits the slot, or on Shuffle.
+ */
+export function knownLifts(S, now = Date.now(), index = trainingIndex(S)) {
+  const from = isoOf(new Date(now - KNOWN_DAYS * 864e5))
+  return Object.entries(index.exercises).filter(([, e]) => e.d >= from).sort((a, b) => b[1].n - a[1].n).map(([id]) => id)
+}
+
 /**
  * Group id -> the sets a `type` day is to give, and its parts' (planner.js partsFor) the same way:
  * what each ticked group still lacks this week (goals.js), shared by the days left to train it.
  * A program day's `share` (program.js dayShare) is its groups' already; without a program the days
  * left are the week's days (goals.js daysOf) less the sessions done, as many of them as a cycle of
  * these days would give the group: every one for a full body, a third for push, pull or legs.
+ * A group short over the weeks before (monthShort) takes up to half again, never past its lack.
  */
 function dayGoals(S, type, ticked, share, now) {
   const done = weeklyDone(S, now), week = windowWorkouts(S, now)
@@ -291,7 +358,10 @@ function dayGoals(S, type, ticked, share, now) {
   const cycle = S?.program?.days?.includes(type) ? S.program.days : type === 'full' ? ['full'] : ['push', 'pull', 'legs']
   const left = Math.max(1, daysOf(S) - strengthWorkouts(week).length)
   const daysFor = g => Math.max(1, Math.round(left * cycle.filter(t => DAY_TYPES[t].groups.includes(g)).length / cycle.length))
-  const goals = Object.fromEntries(ticked.map(g => [g, share ? share[g] || 0 : lack(g) / daysFor(g)]))
+  // A group the weeks before came up short on takes more of what this one still lacks (monthShort).
+  const short = monthShort(S, ticked, now)
+  const more = (g, n) => Math.min(lack(g), n * (1 + MONTH_CATCH_UP * (short[g] || 0)))
+  const goals = Object.fromEntries(ticked.map(g => [g, more(g, share ? share[g] || 0 : lack(g) / daysFor(g))]))
   // A part gets the share of what it lacks its group's day gets of the group's.
   const split = partSplitOf(week)
   const parts = partsFor(goalTypeOf(S), S?.goals?.byGroup, volumeOf(S))
@@ -314,8 +384,9 @@ function dayGoals(S, type, ticked, share, now) {
  * `now` dates the week. A program day passes its `share` (program.js dayShare). With the setup's
  * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`.
  */
-export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets } = {}) {
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment } = {}) {
   if (!GEN_TYPES[type]) return []
+  const c = genConstraints(S, { minutes, equipment })
   const index = trainingIndex(S)
   const ticked = (groups || genGroupsOf(type)).filter(id => ADD_GROUPS.some(g => g.id === id))
   const pool = planPool(S)
@@ -325,17 +396,19 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const day = planDay({
     type, goals, parts, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
-    count: count === null ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
-    goal: goalTypeOf(S), level: S?.program?.plan?.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
+    // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
+    count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
+    minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), equipment: c.equipment, known: knownLifts(S, now, index),
+    goal: c.goal, level: c.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
-  const items = count === null ? day.items.slice(0, MAX_GEN_COUNT) : day.items
+  const items = count === null || c.minutes ? day.items.slice(0, MAX_GEN_COUNT) : day.items
   // The day's lead leads the session; without one, its first big lift (engine.js sessionSlots).
   const kinds = sessionSlots(items.map(i => liftKind(i.ex.id)))
   const led = items.some(i => i.slot === 'lead')
   const picks = items.map((it, at) => {
     const id = it.ex.id, slug = slotMuscleOf(EXIDX[id])
     const slot = !led ? kinds[at] : it.slot === 'lead' ? 'lead' : it.slot === 'accessory' ? slotOf(liftKind(id)) : 'main'
-    const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets }, slot).sets
+    const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets, goal: c.goal }, slot).sets
     return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 ? { extra } : {}) }
   })
   const pickFrom = (list, k, kind) => {
@@ -352,6 +425,8 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
  * last time's; an exercise's own numbers are set from its name in the workout once it starts.
  */
 export function genConfig(S, id, setup, slot, extra = 0) {
+  const goal = setup.goal || genConstraints(S, setup).goal
+  setup = { ...setup, goal }
   const base = freestyleConfig(S, { id, ...defaultConfig(id) })
   const def = defaultConfig(id, modeOf({ ...base, id }))
   const keep = {}
@@ -365,8 +440,10 @@ export function genConfig(S, id, setup, slot, extra = 0) {
     cfg.reps = Math.max(1, Math.round(want.hi) * per || def.reps)
     if (want.lo < want.hi) Object.assign(cfg, { repsMin: Math.round(want.lo) * per, prog: 'double' })
   }
+  // A rest timer you set yourself (S.restAll) is the accessories' rest, and the heavier lifts rest
+  // as much longer than it as the goal's own rests say (engine.js ownRest).
   if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
-  else if (want.rest > 0 && !S?.restAll) cfg.restSec = want.rest
+  else if (want.rest > 0) cfg.restSec = S?.restAll && S.restSec > 0 ? ownRest(want.rest, S.restSec, goal) : want.rest
   if (setup.warmupSets > 0) cfg.warmupSets = Math.round(setup.warmupSets)
   if (setup.lastToFailure) cfg.lastToFailure = true
   return cfg
@@ -428,11 +505,14 @@ export function sessionConfig(S, id, active, lead = false, extra = 0) {
 export function generatedEntries(S, picks, setup = null) {
   return picks.map(({ id, muscle, last, kind, slot, extra }) => {
     const planned = setup && !kind
-    const cfg = planned ? genConfig(S, id, setup, slot, extra) : freestyleConfig(S, { id, ...defaultConfig(id) })
+    const gen = kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) }
+    // A lift of the setup moves on from its own last sessions the way a routine's does
+    // (session-start.js buildPlannedEntry): more reps in the range, then more weight at its bottom.
+    if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null), gen }
+    const cfg = freestyleConfig(S, { id, ...defaultConfig(id) })
     const full = { ...cfg, id }
     const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
-    const opts = planned ? { step, useTarget: true } : { step, preferLast: true }
-    const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, opts), full, dropGrid(S, full))
-    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen: kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) } }
+    const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))
+    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen }
   })
 }

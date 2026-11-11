@@ -288,6 +288,7 @@ export function configOf(o = {}) {
     seed: o.seed ?? 1, shift: o.shift || 0, volume: VOLUMES.includes(o.volume) ? o.volume : 0,
     pace: o.pace > 0 ? o.pace : null,
     keep: (o.keep || []).map(ids => new Set(ids)),
+    known: new Set(o.known || []),
     ...ADV, leadSets: sc.leadSets, slotSets: sc.slotSets, slotMin: Math.min(sc.slotMin, sc.slotSets),
     accMin: sc.accMin, accMax: Math.max(sc.accMin, sc.accMax), maxAcc: LEVELS[level].maxAcc, rirShift: LEVELS[level].rir, scheme: sc,
   }
@@ -356,14 +357,17 @@ export const paceMinutes = (sets, pace) => Math.round(ADV.warmupMin + sets * pac
 // the popular list among them) by the seed. `cfg.shift` takes the one that many places further
 // down: Shuffle gives each slot its next lift. A program rebuilt from new settings (`cfg.keep`,
 // each day's lift ids as they were) takes a lift day `k` had before any other, so what still
-// fits stays and keeps its progress, and the same settings build the same week.
+// fits stays and keeps its progress, and the same settings build the same week. A one-tap day
+// (`cfg.known`, the lifts you logged lately, generate.js knownLifts) takes one you know next, so
+// it moves on from last time; a lift you have never done only where none of them fits.
 function variant(cfg, cands, used, rand, k) {
   if (!cands.length) return null
   const fresh = cands.filter(e => !used.has(e.id))
   const pool = fresh.length ? fresh : cands
   const kept = id => (cfg.keep[k]?.has(id) ? 0 : 1)
-  const ranked = pool.map(e => ({ e, kept: kept(e.id), at: popularPlace(e.id), tie: rand() }))
-    .sort((a, b) => a.kept - b.kept || a.at - b.at || a.tie - b.tie)
+  const known = id => (cfg.known.has(id) ? 0 : 1)
+  const ranked = pool.map(e => ({ e, kept: kept(e.id), known: known(e.id), at: popularPlace(e.id), tie: rand() }))
+    .sort((a, b) => a.kept - b.kept || a.known - b.known || a.at - b.at || a.tie - b.tie)
   return ranked[cfg.shift % ranked.length].e
 }
 

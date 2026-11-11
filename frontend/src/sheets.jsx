@@ -56,13 +56,14 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, genDefaults, GEN_NAME, GEN_SCHEME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
+import { generateWorkout, generatedEntries, genDefaults, genConstraints, GEN_NAME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { DAY_NAME, carrySwaps, isPlanProgram, isProgram, planDayMinutes, planSwapEntry, programDayEntries, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, isProgram, minutesFor, programShare, programWeek, sizeDay } from './lib/program.js'
+import { SCHEMES, slotScheme } from './lib/engine.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
 import { ACTIVITY_GROUPS } from './lib/activities.js'
@@ -1489,8 +1490,7 @@ export function swapActiveWorkoutExercise(index) {
   // The same screen as the workout's Add exercise, opened on the replaced exercise's muscle. The
   // "+" on a row commits with the default config, exactly as it does in the add flows; tapping
   // the row still opens the config sheet first.
-  // Worded for the session, not the routine: a routine stays as it is. A program's week takes the
-  // swap when the workout is finished (lib/program.js carrySwaps).
+  // Worded for the session, not the routine: a routine stays as it is.
   // The settings sheet opens on what the slot would get anyway (slotConfig): a pick from it
   // is then taken as typed, warm-ups and rest included.
   const picker = addExerciseSheet((ex, quick) => quick ? swapTo(ex, defaultConfig(ex.id)) : exConfigSheet(ex, null, cfg => swapTo(ex, cfg, true), null, null, slotConfig(S(), index, ex.id, defaultConfig(ex.id)).cfg, null, t('Use in this workout')), { title: t('Swap exercise'), like: active.entries[index].id })
@@ -1531,7 +1531,7 @@ function slotConfig(st, index, id, cfg) {
   if (!current) return { cfg, typed: false }
   // A big lift in place of the day's lead leads it too.
   const planned = current.rid ? null : sessionConfig(sessionHistory(st), id, st.active, current.gen?.slot === 'lead', current.gen?.more)
-  if (planned) return { cfg: planned, typed: true }
+  if (planned) return { cfg: planned, typed: true, setup: true }
   return { cfg: withSlotSettings({ ...cfg, id }, { id: current.id, ...(current.target || {}) }), typed: false }
 }
 
@@ -1541,8 +1541,8 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   if (!current) return
   // The workout's settings reach the new exercise: what was typed in the settings sheet stands
   // (it opened on them), anything else is set up for the slot.
-  let cfg = picked
-  if (!typed) ({ cfg, typed } = slotConfig(st, index, ex.id, picked))
+  let cfg = picked, setup = false
+  if (!typed) ({ cfg, typed, setup = false } = slotConfig(st, index, ex.id, picked))
   // A combo's member swaps to an exercise built for the combo's rounds and kind (lib/combo.js).
   const full = { ...cfg, ...comboSwapSeed(current), id: ex.id }
   // A swap is an in-place substitution — routine identity is unchanged, so the replacement
@@ -1557,11 +1557,11 @@ function swapEntryTo(index, ex, picked, extra = {}, done, typed = false) {
   const past = sessionHistory(st)
   // A freestyle swap logs dumbbell weights the way the exercise means them now, and starts
   // from last time read in that meaning (lib/dumbbells.js), as a planned one does.
-  // A program day's lift swaps to one the program prescribes for the slot, on its progression:
-  // built freestyle it would only repeat last time's numbers (lib/program.js planSwapEntry).
-  const k = st.active?.gen?.day
-  const programmed = freestyle && !typed && current.planId && current.noProg !== true && Number.isInteger(k)
-    ? planSwapEntry(past, st.program, k, current.planId, ex.id) : null
+  // A lift swapped into a one-tap workout or a program day goes on the slot's progression, as the
+  // generator builds its lifts (lib/generate.js generatedEntries): built freestyle it would only
+  // repeat last time's numbers.
+  const programmed = freestyle && setup && current.noProg !== true && modeOf(full) === 'reps'
+    ? buildPlannedEntry(past, full, null) : null
   const built = programmed
     ? { target: programmed.target, plan: programmed.plan, sets: programmed.sets }
     : freestyle
@@ -3019,13 +3019,12 @@ export function repeatWorkout(w, close) {
 // A one-tap workout (lib/generate.js): Full body, Push, Pull or Legs, built from the muscles
 // trained least lately. Its tile opens the setup first (GenSetup). A freestyle session
 // underneath — `gen` only remembers what it was built as and from, so the workout can offer
-// Shuffle until the first set is ticked. Day `k` of a program built from settings
-// (lib/program.js isPlanProgram) is its own lifts instead: ProgramDay.
+// Shuffle until the first set is ticked. Day `k` of the program running is built the same way,
+// to the program's goal, minutes and equipment (lib/generate.js genConstraints), and keeps `k`
+// so it ticks that day of the week.
 export function startGenerated(type, k) {
   if (S().active) { toast(t('Finish the current workout first.')); return }
-  const p = S().program
-  if (isPlanProgram(p) && Number.isInteger(k) && p.days[k] === type) ui().openSheet(close => <ProgramDay type={type} k={k} close={close} />)
-  else ui().openSheet(close => <GenSetup type={type} close={close} />)
+  ui().openSheet(close => <GenSetup type={type} k={k} close={close} />)
 }
 function beginGenerated(type, entries, gen) {
   const go = bw => {
@@ -3051,11 +3050,14 @@ function beginGenerated(type, entries, gen) {
 // the session these build. One exercise's own numbers (its weight above all) are set in the
 // workout, from its name, in the sheet a freestyle add opens. The choices are kept per day type
 // (S.genSetup) for next time. A day of the program running (lib/program.js) opens on as many
-// exercises as its share of the week's goal takes.
-function GenSetup({ type, close }) {
+// exercises as its share of the week's goal takes. A session length (the setup's, else the
+// program's) sizes the day by time instead, and the goal (the program's, else your own) sets the
+// sets, reps and rest of each slot (lib/generate.js genConstraints).
+const SCHEME_TITLE = { growth: 'Sets and reps for muscle growth', strength: 'Sets and reps for strength', maintain: 'Sets and reps to maintain', endurance: 'Sets and reps for endurance' }
+function GenSetup({ type, k, close }) {
   const st = useStore(s => s.S)
-  const inProgram = isProgram(st.program) && !isPlanProgram(st.program) && st.program.days.includes(type)
-  const sized = base => (inProgram ? { ...base, count: sizeDay(st, type, { groups: base.groups, setup: base }) } : base)
+  const inProgram = isProgram(st.program) && st.program.days.includes(type)
+  const sized = base => (inProgram && !genConstraints(st, base).minutes ? { ...base, count: sizeDay(st, type, { groups: base.groups, setup: base }) } : base)
   const [setup, setSetup] = useState(() => sized({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
   const pw = inProgram ? programWeek(st) : null
   const [shift, setShift] = useState(0)
@@ -3063,8 +3065,11 @@ function GenSetup({ type, close }) {
   const set = patch => setSetup(x => ({ ...x, ...patch }))
   useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, share: programShare(st, type) }),
-    [st, type, shift, setup.count, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
+    [st, type, shift, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
+  const c = genConstraints(st, setup), timed = c.minutes > 0
+  const programMinutes = genConstraints(st).minutes
+  const workSets = entries.reduce((n, e) => n + e.sets.filter(x => !isWarmupRow(x)).length, 0)
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
   // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's
   // name, lit in the group's colour (lib/muscle-colors.js) when the workout covers it.
@@ -3076,12 +3081,12 @@ function GenSetup({ type, close }) {
   const start = () => {
     update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: setup } })
     close()
-    beginGenerated(type, entries, { shift, setup })
+    beginGenerated(type, entries, { shift, setup, ...(Number.isInteger(k) ? { day: k } : {}) })
   }
   return <div className="wd-fit">
     <div className="row between" style={{ alignItems: 'flex-start', flex: 'none' }}>
       <div><h3>{t(DAY_NAME[type])}</h3><div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>{pw
-        ? t('Program · week {0} of {1} · sized to your weekly goal.', pw.week, pw.weeks)
+        ? (timed ? t('Program · week {0} of {1}', pw.week, pw.weeks) : t('Program · week {0} of {1} · sized to your weekly goal.', pw.week, pw.weeks))
         : t('Choose what to train, then start.')}</div></div>
       <Button size="sm" variant="plain" onClick={() => { setSetup(sized(genDefaults(type))); setShift(0) }}>{t('Reset')}</Button>
     </div>
@@ -3101,15 +3106,24 @@ function GenSetup({ type, close }) {
         {check('stretch', setup.stretch, actIcon('stretching'), t('Stretching'), () => set({ stretch: !setup.stretch }))}
       </div>
       <h4 className="sec">{t('Sets and rest')}</h4>
+      {/* How long the session runs: the day takes what fits, in place of a number of exercises. */}
+      <div className="sect-b" style={{ marginBottom: 12 }}>
+        <Row icon="clock" iconTint="var(--acc)" title={t('Session length')} accessory="chevron"
+          value={timed ? t('{0} min', c.minutes) : t('Off')}
+          onClick={() => menuSheet({ title: t('Session length'), subtitle: t('The workout takes as many exercises as fit in it, at your own pace.'), items: [
+            { label: programMinutes ? t('Program ({0} min)', programMinutes) : t('Off'), on: !(setup.minutes > 0), onClick: () => setSetup(x => sized({ ...x, minutes: 0 })) },
+            ...[30, 45, 60, 75, 90, 120].map(m => ({ label: t('{0} min', m), on: setup.minutes === m, onClick: () => set({ minutes: m }) })),
+          ] })} />
+      </div>
       <div className="row cfgrow" style={{ marginBottom: 12 }}>
-        <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />
+        {!timed && <Stepper label={t('Exercises')} value={setup.count} step={1} min={1} max={MAX_GEN_COUNT} decimal={false} onChange={v => set({ count: v })} />}
         <Stepper label={t('Warm-up sets')} value={setup.warmupSets} step={1} min={0} max={MAX_PLANNED_WARMUPS} decimal={false} onChange={v => set({ warmupSets: v })} />
       </div>
-      {/* Sets and reps by the lift's slot (GEN_SCHEME), or the same for every one. */}
+      {/* Sets and reps by the lift's slot and the goal (lib/engine.js), or the same for every one. */}
       <div className="sect-b" style={{ marginBottom: 12 }}>
-        <Row icon="dumbbell" iconTint="var(--blue)" title={t('Sets and reps for muscle growth')}
+        <Row icon="dumbbell" iconTint="var(--blue)" title={t(SCHEME_TITLE[c.goal] || SCHEME_TITLE.growth)}
           subtitle={setup.byKind !== false
-            ? t('Main lift {0}, other big lifts {1}, single-muscle lifts {2}, calves, forearms and abs {3}.', ...['lead', 'main', 'acc', 'small'].map(k => `${GEN_SCHEME[k].sets} × ${GEN_SCHEME[k].lo}–${GEN_SCHEME[k].hi}`))
+            ? t('Main lift {0}, other big lifts {1}, single-muscle lifts {2}, calves, forearms and abs {3}.', ...['lead', 'main', 'acc', 'small'].map(slot => slotScheme(slot, SCHEMES[c.goal] ? c.goal : undefined)).map(x => `${x.sets} × ${x.lo}–${x.hi}`))
             : t('Every exercise takes the sets and reps below.')}>
           <Switch checked={setup.byKind !== false} onChange={v => set({ byKind: v })} />
         </Row>
@@ -3137,7 +3151,7 @@ function GenSetup({ type, close }) {
       <h4 className="sec">{t('Exercises')}</h4>
       {entries.length ? <>
         <button type="button" className={'gs-exs' + (showEx ? ' open' : '')} aria-expanded={showEx} onClick={() => setShowEx(v => !v)}>
-          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)}</div>
+          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)} · {t('≈ {0} min', minutesFor(st, workSets))}</div>
             <div className="muted small">{showEx ? t('Hide') : t('Show the list')}</div></div>
           <Icon name="chevronRight" />
         </button>
@@ -3174,53 +3188,11 @@ function GenSetup({ type, close }) {
     </div>
   </div>
 }
-// A program day built from settings: its lifts as the program set them, at the weight and reps
-// they move on to from last time (lib/program.js planEntries). The workout keeps `gen.day`, so
-// it ticks this day of the week, and offers no Shuffle: the program chose the lifts.
-function ProgramDay({ type, k, close }) {
-  const st = useStore(s => s.S)
-  const entries = useMemo(() => programDayEntries(st, { type, k }), [st, type, k])
-  const pw = programWeek(st)
-  const day = st.program.week[k]
-  const sets = day.items.reduce((n, i) => n + i.sets, 0)
-  const start = () => {
-    close()
-    beginGenerated(type, entries, { day: k })
-  }
-  return <div className="wd-fit">
-    <div style={{ flex: 'none' }}>
-      <h3>{t(DAY_NAME[type])}</h3>
-      <div className="muted small" style={{ marginTop: -8, marginBottom: 6 }}>
-        {t('Program · week {0} of {1}', pw.week, pw.weeks)} · {tn('{0} set', '{0} sets', sets)} · {t('≈ {0} min', planDayMinutes(st, k))}</div>
-    </div>
-    <div className="wd-scroll sheet-scroll">
-      <div className="list">{entries.map(e => {
-        const ex = exOr(e.id), it = day.items.find(i => i.id === e.id)
-        const cfg = { ...e.target, id: e.id }
-        const work = e.sets.filter(x => !isWarmupRow(x))
-        const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
-        const reps = cfg.repsMin > 0 && cfg.repsMin < cfg.reps ? `${cfg.repsMin}–${cfg.reps}` : cfg.reps
-        const what = (modeOf(cfg) === 'time' ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${reps}`)
-          + (cfg.restSec > 0 ? ` · ${t('{0} rest', fmtRest(cfg.restSec))}` : it?.rest ? ` · ${t('{0} rest', fmtRest(it.rest))}` : '')
-        return <div key={e.id} className="item" role="button" {...tappable(() => exerciseDetailSheet(ex))}>
-          <Thumb ex={ex} />
-          <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
-          <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>
-        </div>
-      })}</div>
-      <div className="muted small" style={{ marginTop: 8 }}>{t('Reach the top of the rep range on every set and the weight goes up next time.')}</div>
-    </div>
-    <div className="wd-foot">
-      <Button variant="primary" disabled={!entries.length} onClick={start}>{t('Start workout')}</Button>
-    </div>
-  </div>
-}
-
 // Shuffle: the same day type one step further down each muscle's list. Only before anything is
 // logged — the workout hides the button after the first ticked set.
 export function shuffleGenerated() {
   const A = S().active
-  if (!A?.gen || Number.isInteger(A.gen.day) || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
+  if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
   const shift = (A.gen.shift || 0) + 1
   const setup = A.gen.setup || null
   const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift, share: programShare(S(), A.gen.type) }), setup)
@@ -4036,7 +4008,7 @@ function doFinishWorkout() {
     snapshotFor: e => isCustomEx(EXIDX[e.id]) ? exerciseMuscleSnapshot(EXIDX[e.id]) : null,
   })
   w.vol = workoutVolume(w)
-  let shown = w, program = null
+  let shown = w
   update(s => {
     if (past) {
       // Its start and end are in the past; the stamp says when it was logged, which is what a
@@ -4056,9 +4028,6 @@ function doFinishWorkout() {
       s.workouts.push(w)
     }
     s.active = null
-    // A lift swapped in on a program day is that day's lift from now on.
-    const carried = carrySwaps(s.program, A)
-    if (carried !== s.program) { program = s.program; s.program = carried }
     // A rotation pass this app manages starts its next pass the moment the last session lands
     // (lib/rotation.js). A planner's queue is left alone: it completes and waits for its writer.
     refillAfter(s, w)
@@ -4071,5 +4040,4 @@ function doFinishWorkout() {
   useUI.getState().stopWork()
   beep(snd(), 880, 0.15); beep(snd(), 1100, 0.15, 0.18); beep(snd(), 1320, 0.3, 0.36)
   ui().openSheet(close => <FinishSummary w={shown} prs={prs} e1prs={e1prs} close={close} />, { kind: 'center', locked: true })
-  if (program) ui().toast(t('Your swaps are in the program now.'), { action: t('Undo'), onAction: () => update(s => { s.program = program }) })
 }

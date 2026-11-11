@@ -10,24 +10,23 @@
 // A program built on the program page (lib/planner.js) also keeps its settings and the week it
 // built: `plan: { goal, level, equipment, days, minutes, seed }` and `week`, a list of days
 // `{ type, minutes, items: [{ id, sets, slot, lo, hi, rir, rest }] }` in order, `days` their types.
-// Its days are the same lifts every week (planEntries builds one, with progression), and a
-// session done as one of them keeps which (`programDay`, finish-workout.js).
+// Only its settings make its days (generate.js genConstraints): each is built by the one-tap
+// generator as any other program's, at the program's goal, length and equipment, the lifts picked
+// fresh and each moving on from its own last sessions. The week is the one the editor showed. A
+// session done as one of its days keeps which (`programDay`, finish-workout.js).
 //
 // Sizing. A program day is as long as the week's goal needs (goals.js): what a group still
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
 // takes as many exercises as the planner (planner.js planDay) builds that share with.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
 import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { sessionMinutes, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
-import { hasCompletedWork, isWarmupRow } from './workout-model.js'
-import { DAY_TYPES, paceMinutes, plan as planWeek, planLift, swappedItem } from './planner.js'
+import { isWarmupRow } from './workout-model.js'
+import { DAY_TYPES, paceMinutes, plan as planWeek } from './planner.js'
 import { setPaceOf } from './pace.js'
-import { ownRest } from './engine.js'
-import { defaultConfig, freestyleConfig, isPerSide, modeOf } from './history.js'
-import { buildPlannedEntry } from './session-start.js'
 import { EXIDX } from './exercises.js'
 import { suggestable } from './skipped.js'
 
@@ -123,77 +122,6 @@ export const isPlanProgram = p => !!p?.plan && Array.isArray(p.week) && Array.is
 /** Is `p` a program this build can run? */
 export const isProgram = p => !!p && Array.isArray(p.days) && p.days.length > 0 && typeof p.startedAt === 'string'
   && (isPlanProgram(p) || p.days.every(d => GEN_TYPES[d]))
-
-/**
- * Session entries for a plan program's day: each lift at its sets, a rep range from its lo to
- * its hi (a per-side count being both sides'), double progression and its rest, built the way a
- * routine's are (session-start.js buildPlannedEntry), so the weight moves on from last time.
- */
-/**
- * Minutes of plan program `S.program`'s day `k`: at your own pace a set (pace.js) once there is
- * one, as the editor times it now, else as long as the program was saved saying.
- */
-export function planDayMinutes(S, k, pace = setPaceOf(S?.workouts)) {
-  const day = S?.program?.week?.[k]
-  if (!day) return 0
-  return pace ? paceMinutes(day.items.reduce((n, i) => n + i.sets, 0), pace) : day.minutes
-}
-
-export function planEntries(S, items, goal = S?.program?.plan?.goal) {
-  return (items || []).filter(it => EXIDX[it.id]).map(it => {
-    const id = it.id
-    const base = freestyleConfig(S, { id, ...defaultConfig(id) })
-    const cfg = { id, ...defaultConfig(id, modeOf({ ...base, id })), sets: it.sets }
-    for (const k of ['bodyweight', 'side', 'sec']) if (base[k] !== undefined) cfg[k] = base[k]
-    // A rest timer you set yourself (S.restAll) is the accessories' rest, and the program's
-    // heavier lifts rest as much longer than it as the goal's own rests say (engine.js ownRest).
-    if (it.rest > 0) cfg.restSec = S?.restAll && S.restSec > 0 ? ownRest(it.rest, S.restSec, goal) : it.rest
-    if (modeOf(cfg) === 'reps') {
-      const per = isPerSide(cfg) ? 2 : 1
-      Object.assign(cfg, { reps: it.hi * per, repsMin: it.lo * per, prog: 'double' })
-    }
-    return { id, ...buildPlannedEntry(S, cfg, null), planId: id, gen: { g: planLift(id)?.p[0] || null } }
-  })
-}
-
-/**
- * The session entry for exercise `id` swapped in mid-workout for the lift `planId` of plan
- * program `program`'s day `k`: prescribed for its slot (planner.js swappedItem) and built as the
- * day's own lifts are (planEntries), so it moves on from last time by the program's progression,
- * not at last time's numbers. Null when the lift is not on that day.
- */
-export function planSwapEntry(S, program, k, planId, id) {
-  if (!isPlanProgram(program)) return null
-  const item = program.week[k]?.items?.find(i => i.id === planId)
-  if (!item) return null
-  return planEntries(S, [swappedItem(program.plan, item, id)], program.plan?.goal)[0] || null
-}
-
-/**
- * `program` with the swaps of the finished session `active` in its week. `planId` is the lift of
- * the week an entry stands for, through every swap: the last entry of a slot with work logged is
- * what the slot became, so a swap back or a lift never done changes nothing. The new lift takes
- * the old one's place on every day of the week, as the program's editor would (swappedItem), and
- * a lift already in a day isn't taken twice. The same `program` when nothing changed.
- */
-export function carrySwaps(program, active) {
-  if (!isPlanProgram(program)) return program
-  const to = new Map()
-  for (const e of active?.entries || []) if (e.planId && (e.sets || []).some(hasCompletedWork)) to.set(e.planId, e.id)
-  const week = program.week.map(d => {
-    const moved = i => to.has(i.id) && to.get(i.id) !== i.id
-    const taken = new Set(d.items.filter(i => !moved(i)).map(i => i.id))
-    let changed = false
-    const items = d.items.map(i => {
-      if (!moved(i) || taken.has(to.get(i.id))) return i
-      taken.add(to.get(i.id))
-      changed = true
-      return swappedItem(program.plan, i, to.get(i.id))
-    })
-    return changed ? { ...d, items } : d
-  })
-  return week.every((d, k) => d === program.week[k]) ? program : { ...program, week }
-}
 
 const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoOf(d) }
 const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / DAY)
@@ -297,7 +225,7 @@ export function programForecast(S, now = Date.now()) {
 export function suggestDay(S, now = Date.now()) {
   const pw = programWeek(S, now)
   if (pw) return pw.next == null ? null : pw.items[pw.next].type
-  const ranked = Object.keys(GEN_TYPES).map(type => {
+  const ranked = TILE_TYPES.map(type => {
     const groups = genGroupsOf(type)
     const need = weeklyNeed(S, groups, now)
     return { type, score: groups.reduce((n, g) => n + (need[g] || 0), 0) / (groups.length || 1) }
@@ -344,7 +272,7 @@ function daysLeft(S, type, now) {
 
 /** A `type` day's dayShare when the program S runs has that day, else null (generateWorkout's `share`). */
 export const programShare = (S, type, now = Date.now()) =>
-  (isProgram(S?.program) && !isPlanProgram(S.program) && S.program.days.includes(type) ? dayShare(S, type, now) : null)
+  (isProgram(S?.program) && S.program.days.includes(type) ? dayShare(S, type, now) : null)
 
 /**
  * How many exercises a `type` day takes to give its share (dayShare), from MIN_DAY to
@@ -382,6 +310,11 @@ export function programLayout(S, weekStart, now = Date.now()) {
   return days
 }
 
+/** The minutes `sets` work sets take: at your own pace a set once there is one (pace.js), else the goals' estimate. */
+export function minutesFor(S, sets, pace = setPaceOf(S?.workouts)) {
+  return pace ? paceMinutes(sets, pace) : sessionMinutes(sets)
+}
+
 /**
  * The program's next `days` days, one after another, as the Start sheet would build each if the
  * ones before it were done as planned: `[{ type, iso, entries, sets, minutes, groups }]`, `groups`
@@ -402,8 +335,7 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
     const entries = programDayEntries(s, f, t)
     const work = e => e.sets.filter(x => !isWarmupRow(x))
     const sets = entries.reduce((n, e) => n + work(e).length, 0)
-    // A plan program's day knows its length, rests and all (planner.js), at your pace once known.
-    const minutes = isPlanProgram(s.program) ? planDayMinutes(s, f.k, pace) : sessionMinutes(sets)
+    const minutes = minutesFor(S, sets, pace)
     out.push({ type: f.type, k: f.k, iso: f.iso, entries, sets, minutes, groups: plannedSets(entries) })
     // Logged as done on its day, every work set, an hour long.
     const on = Math.max(t, new Date(f.iso + 'T12:00:00').getTime())
@@ -419,13 +351,13 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
 }
 
 /**
- * The session entries of program day `f` (`{ type, k }`) on `now`: a plan program's lifts for
- * that day (planEntries), else the one-tap day the Start sheet would build, sized to its share.
+ * The session entries of program day `f` (`{ type, k }`) on `now`: the one-tap day the Start
+ * sheet would build (generate.js), sized to its share of the week, or by the session length a
+ * program from settings or the setup gives (genConstraints).
  */
 export function programDayEntries(S, f, now = Date.now()) {
-  if (isPlanProgram(S?.program)) return planEntries(S, S.program.week[f.k]?.items)
   const setup = { ...genDefaults(f.type), ...(S.genSetup?.[f.type] || {}) }
-  const count = sizeDay(S, f.type, { now, groups: setup.groups, setup })
+  const count = genConstraints(S, setup).minutes ? null : sizeDay(S, f.type, { now, groups: setup.groups, setup })
   const picks = generateWorkout(S, f.type, { ...setup, count, now, share: programShare(S, f.type, now) })
   return generatedEntries(S, picks, setup)
 }

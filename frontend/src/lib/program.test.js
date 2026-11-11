@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, carrySwaps, dayShare, isPlanProgram, newPlanProgram, weekChanges, planDayMinutes, planEntries, planSwapEntry, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
@@ -7,8 +7,6 @@ import { LEVELS } from './planner.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 import { weeklyTargetOf } from './goals.js'
 import { equivalentsOf } from './equivalents.js'
-import { swapActiveExercise } from './active-exercise-swap.js'
-import { buildCompletedWorkout } from './finish-workout.js'
 
 const row = () => ({ w: 60, r: 8, done: true })
 const session = (d, genType, ids = ['0025'], n = 3, start = 0) => ({
@@ -25,7 +23,7 @@ describe('a program', () => {
     expect(PPLF).toEqual({ template: 'ppl-full-4', days: ['push', 'pull', 'legs', 'full'], startedAt: '2026-09-02', weeks: 8 })
     expect(newProgram('nope')).toBe(null)
     expect(isProgram(PPLF)).toBe(true)
-    expect(isProgram({ days: ['upper'], startedAt: '2026-09-02' })).toBe(false)
+    expect(isProgram({ days: ['arms'], startedAt: '2026-09-02' })).toBe(false)
   })
   it('moves to its next week once every day of one is done, and is over after its last', () => {
     const one = ['push', 'pull', 'legs', 'full'].map((k, i) => session('2026-09-0' + (3 + i), k))
@@ -232,7 +230,7 @@ describe('planning the days ahead', () => {
     const count = sizeDay(st, 'full', { now: on, groups: setup.groups, setup })
     expect(ids(plan[0])).toEqual(generateWorkout(st, 'full', { ...setup, count, now: on, share: programShare(st, 'full', on) }).map(p => p.id))
     expect(plan[0].sets).toBe(plan[0].entries.reduce((n, e) => n + e.target.sets, 0))
-    expect(plan[0].entries[0].target).toMatchObject({ sets: 4, repsMin: 6, reps: 8, prog: 'double' })
+    expect(plan[0].entries[0].target).toMatchObject({ sets: 4, repsMin: 6, prog: 'double' })
     expect(plan[0].groups.chest).toBeGreaterThan(0)
   })
   it('builds a day still to come on its own date, not today', () => {
@@ -256,6 +254,7 @@ describe('planning the days ahead', () => {
 })
 
 describe('a program built from settings', () => {
+  beforeAll(loadMuscleRoles)
   const UL = newPlanProgram({ template: 'ul', goal: 'growth', level: 'intermediate', equipment: 'gym', days: 4, minutes: 60 }, { weeks: 6, today: '2026-09-14' })
   const planSession = (d, k, start = 0) => ({ ...session(d, UL.days[k], [UL.week[k].items[0].id], 3, start), programDay: k })
 
@@ -271,17 +270,6 @@ describe('a program built from settings', () => {
   })
 
   const ULO = { template: UL.template, ...UL.plan }
-  it.each(['lead', 'accessory'])('updated from new settings, keeps a %s swapped in on a workout day', slot => {
-    const was = UL.week[0].items.find(i => i.slot === slot)
-    const to = equivalentsOf({}, was.id, { scope: 'all' }).map(e => e.ex.id).find(id => !UL.week.some(d => d.items.some(i => i.id === id)))
-    const carried = carrySwaps(UL, { entries: [{ id: to, planId: was.id, sets: [{ done: true }] }] })
-    expect(carried.week[0].items.map(i => i.id)).toContain(to)
-    // As the program page updates it, keeping the lifts (Program.jsx start).
-    const update = o => newPlanProgram({ ...o, base: { ...carried, plan: { volume: 0, ...carried.plan } } }, { pool: planPool({}), from: carried })
-    expect(update(ULO).week[0].items.map(i => i.id)).toContain(to)
-    expect(update({ ...ULO, volume: 2 }).week[0].items.map(i => i.id)).toContain(to)
-  })
-
   it('updated from new settings, keeps its start and the lifts that still fit', () => {
     const more = newPlanProgram({ ...ULO, volume: 2 }, { today: '2026-10-01', from: UL })
     expect(more.startedAt).toBe('2026-09-14')
@@ -345,151 +333,37 @@ describe('a program built from settings', () => {
     expect(programForecast(st, at(2026, 9, 15)).slice(0, 3).map(f => f.k)).toEqual([1, 2, 3])
   })
 
-  it('builds a day from its own lifts, a rep range on double progression and its rest', () => {
-    const items = [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }, { id: '2290', sets: 3, lo: 8, hi: 12, rest: 120 }]
-    const [bench, split] = planEntries(state(), items)
-    expect(bench.target).toMatchObject({ sets: 4, reps: 8, repsMin: 6, prog: 'double', restSec: 180 })
-    expect(bench.sets.filter(x => !x.warmup && !x.wu).length).toBeGreaterThanOrEqual(4)
-    // A one-leg lift counts both legs.
-    expect(split.target).toMatchObject({ reps: 24, repsMin: 16 })
-    expect(bench.gen.g).toBe('chest')
+  it('builds each day with the generator, at the goal, the minutes and the equipment it was set to', () => {
+    const plan = o => newPlanProgram({ ...ULO, ...o }, { weeks: 6, today: '2026-09-14' })
+    const day = o => programDayEntries(state({ program: plan(o) }), { type: 'upper', k: 0 })
+    const strength = day({ goal: 'strength' })
+    expect(strength.length).toBeGreaterThan(0)
+    expect(strength[0].target).toMatchObject({ sets: 5, repsMin: 3, prog: 'double' })
+    expect(day({ goal: 'growth' })[0].target).toMatchObject({ sets: 4, repsMin: 6 })
+    // A shorter session is fewer sets.
+    const sets = es => es.reduce((n, e) => n + e.target.sets, 0)
+    expect(sets(day({ minutes: 30 }))).toBeLessThan(sets(day({ minutes: 90 })))
+    // Bodyweight only: nothing that needs more than that.
+    const need = Object.fromEntries(planPool({}).map(l => [l.id, l.need]))
+    for (const e of day({ equipment: 'bw' })) if (need[e.id]) expect(need[e.id]).toBe('bw')
+    // Lower days too, which no one-tap tile has.
+    expect(programDayEntries(state({ program: UL }), { type: 'lower', k: 1 }).length).toBeGreaterThan(0)
   })
 
-  it('rests at the rest timer you set yourself, the heavier lifts as much longer as the goal says', () => {
-    const items = [{ id: '0025', sets: 4, lo: 6, hi: 8, rest: 180 }, { id: '0025', sets: 3, lo: 8, hi: 12, rest: 120 }, { id: '0025', sets: 3, lo: 10, hi: 15, rest: 90 }]
-    const own = { ...state(), restSec: 30, restAll: true }
-    expect(planEntries(own, items, 'growth').map(e => e.target.restSec)).toEqual([60, 40, 30])
-    // The goal of the program running, when none is given.
-    expect(planEntries({ ...own, program: { plan: { goal: 'strength' } } }, items).map(e => e.target.restSec)).toEqual([60, 40, 30])
-    expect(planEntries({ ...own, restAll: false }, items).map(e => e.target.restSec)).toEqual([180, 120, 90])
+  it('shares the week out by its own days', () => {
+    const st = state({ program: UL })
+    const share = programShare(st, 'upper', at(2026, 9, 14))
+    expect(share).toEqual(dayShare(st, 'upper', at(2026, 9, 14)))
+    expect(Object.values(share).some(n => n > 0)).toBe(true)
+    expect(programShare(st, 'push', at(2026, 9, 14))).toBeNull()
   })
 
-  it('swaps a lift in mid-workout on the program\'s progression, not at last time\'s numbers', () => {
-    const lead = UL.week[0].items[0], id = lead.id === '0025' ? '0047' : '0025'
-    // Done once before, outside the program: every set at the top of the lead's range.
-    const sets = Array.from({ length: 4 }, () => ({ w: 60, r: lead.hi, done: true }))
-    const st = state({ workouts: [{ id: 'w1', d: '2026-09-10', start: at(2026, 9, 10), entries: [{ id, target: { reps: lead.hi }, sets }] }] })
-    const e = planSwapEntry(st, UL, 0, lead.id, id)
-    // The weight goes up, and the reps start again from the bottom of the range.
-    expect(e.target).toMatchObject({ prog: 'double', reps: lead.lo, repsMin: lead.lo, sets: lead.sets })
-    expect(e.planId).toBe(id)
-    const work = e.sets.filter(x => !x.warmup && !x.wu)
-    expect(work).toHaveLength(lead.sets)
-    expect(work.every(x => x.w > 60)).toBe(true)
-    // A lift not on that day, or no plan program, has nothing to go by.
-    expect(planSwapEntry(st, UL, 0, 'nope', id)).toBeNull()
-    expect(planSwapEntry(st, null, 0, lead.id, id)).toBeNull()
-  })
-
-  it('times a day at your own pace a set once there is one, else as the program was saved', () => {
-    const program = { week: [{ minutes: 71, items: [{ id: '0025', sets: 4 }, { id: '0025', sets: 3 }] }] }
-    expect(planDayMinutes({ workouts: [], program }, 0)).toBe(71)
-    // 7 sets at 120 s a set and 5 minutes of warm-up.
-    expect(planDayMinutes({ workouts: [], program }, 0, 120)).toBe(19)
-    expect(planDayMinutes({ workouts: [], program }, 3)).toBe(0)
-  })
-
-  it('plans the days ahead from the week it built', () => {
+  it('plans the days ahead, each as Start builds it', () => {
     const st = state({ program: UL })
     const ahead = planAhead(st, { days: 4, now: at(2026, 9, 14) })
     expect(ahead.map(d => d.k)).toEqual([0, 1, 2, 3])
-    for (const d of ahead) expect(d.entries.map(e => e.id)).toEqual(UL.week[d.k].items.map(i => i.id))
-    expect(programDayEntries(st, { type: 'lower', k: 1 }).map(e => e.id)).toEqual(UL.week[1].items.map(i => i.id))
-  })
-})
-
-describe('a swap made on a program day', () => {
-  const plan = { goal: 'growth', level: 'intermediate', equipment: 'gym', days: 3, minutes: 75, seed: 1 }
-  const item = (id, slot = 'accessory') => ({ id, sets: 3, slot, lo: 8, hi: 12, rir: 2, rest: 120 })
-  const program = () => ({
-    template: 'full', plan, days: ['full', 'full'], startedAt: '2026-10-28', weeks: 8,
-    week: [{ type: 'full', minutes: 60, items: [item('0025', 'push'), item('0773')] },
-      { type: 'full', minutes: 60, items: [item('0027', 'pull'), item('0031')] }],
-  })
-  const session = p => ({ gen: { type: 'full', day: 0 }, cur: 0, entries: planEntries({ workouts: [], exWeights: {} }, p.week[0].items) })
-  const tick = e => { e.sets = e.sets.map(s => ({ ...s, done: true })) }
-  const next = id => ({ id, target: { sets: 1, reps: 5, weight: 0 }, sets: [{ w: 0, r: 5, done: false }] })
-  const ids = p => p.week.map(d => d.items.map(i => i.id))
-
-  it('is that slot\'s lift from then on, at its sets, prescribed for itself', () => {
-    const p = program(), a = session(p)
-    swapActiveExercise(a, 1, next('1385'))
-    tick(a.entries[1])
-    const out = carrySwaps(p, a)
-    expect(ids(out)).toEqual([['0025', '1385'], ['0027', '0031']])
-    expect(out.week[0].items[1]).toMatchObject({ id: '1385', sets: 3, slot: 'accessory' })
-    expect(out.week[0].items[1].rest).toBeGreaterThan(0)
-    expect(out.week[0].items[0]).toBe(p.week[0].items[0])
-    expect(ids(p)).toEqual([['0025', '0773'], ['0027', '0031']])
-    expect(planEntries({ workouts: [], exWeights: {} }, out.week[0].items).map(e => e.id)).toEqual(['0025', '1385'])
-  })
-
-  it('takes the last of several swaps, and a swap back is none', () => {
-    const p = program(), a = session(p)
-    swapActiveExercise(a, 1, next('1385'))
-    swapActiveExercise(a, 1, next('0826'))
-    tick(a.entries[1])
-    expect(ids(carrySwaps(p, a))[0]).toEqual(['0025', '0826'])
-    swapActiveExercise(a, 1, { ...next('0773'), sets: [{ w: 0, r: 5, done: true }] }, { loggedConfirmed: true })
-    expect(ids(carrySwaps(p, a))[0]).toEqual(['0025', '0773'])
-  })
-
-  it('counts a lift swapped in after logged sets, once it has work of its own', () => {
-    const p = program(), a = session(p)
-    tick(a.entries[1])
-    swapActiveExercise(a, 1, next('1385'), { loggedConfirmed: true })
-    expect(a.entries.map(e => e.id)).toEqual(['0025', '0773', '1385'])
-    expect(carrySwaps(p, a)).toBe(p)
-    tick(a.entries[2])
-    expect(ids(carrySwaps(p, a))[0]).toEqual(['0025', '1385'])
-  })
-
-  it('leaves the program alone for a lift swapped in and never done', () => {
-    const p = program(), a = session(p)
-    swapActiveExercise(a, 1, next('1385'))
-    tick(a.entries[0])
-    expect(carrySwaps(p, a)).toBe(p)
-  })
-
-  it('leaves it alone for a lift added to the day, one taken out, or no swap at all', () => {
-    const p = program(), a = session(p)
-    a.entries.forEach(tick)
-    a.entries.push({ ...next('1385'), sets: [{ w: 0, r: 5, done: true }] })
-    expect(carrySwaps(p, a)).toBe(p)
-    a.entries.splice(1)
-    expect(carrySwaps(p, a)).toBe(p)
-  })
-
-  it('reaches the lift on the week\'s other days, unless the day already has the new one', () => {
-    const p = program()
-    p.week[1].items.push(item('0773'))
-    const a = session(p)
-    swapActiveExercise(a, 1, next('1385'))
-    tick(a.entries[1])
-    expect(ids(carrySwaps(p, a))).toEqual([['0025', '1385'], ['0027', '0031', '1385']])
-    p.week[1].items[1] = item('1385')
-    expect(ids(carrySwaps(p, a))).toEqual([['0025', '1385'], ['0027', '1385', '0773']])
-  })
-
-  it('lets two lifts of a day trade places', () => {
-    const p = program(), a = session(p)
-    swapActiveExercise(a, 0, next('0773'))
-    swapActiveExercise(a, 1, next('0025'))
-    a.entries.forEach(tick)
-    expect(ids(carrySwaps(p, a))[0]).toEqual(['0773', '0025'])
-  })
-
-  it('only reads a program built from settings', () => {
-    const p = newProgram('ppl-3', { today: '2026-10-28' })
-    expect(isProgram(p)).toBe(true)
-    expect(carrySwaps(p, { entries: [{ id: 'x', planId: 'y', sets: [{ done: true }] }] })).toBe(p)
-    expect(carrySwaps(null, null)).toBe(null)
-  })
-
-  it('stays out of the saved workout', () => {
-    const a = session(program())
-    tick(a.entries[0])
-    expect(buildCompletedWorkout(a).entries[0]).not.toHaveProperty('planId')
+    for (const d of ahead) expect(d.entries.length).toBeGreaterThan(0)
+    expect(ahead[0].entries.map(e => e.id)).toEqual(programDayEntries(st, { type: 'upper', k: 0 }, at(2026, 9, 14)).map(e => e.id))
   })
 })
 

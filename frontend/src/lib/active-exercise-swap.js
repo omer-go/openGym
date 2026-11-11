@@ -68,8 +68,6 @@ export function swapActiveExercise(active, index, replacement, {
     // A swap does not change which routine the slot belongs to — carry its `rid` the same
     // way `sg` is carried, so a combined session's WorkoutDetail groups stay contiguous.
     ...(current.rid ? { rid: current.rid } : {}),
-    // Nor which lift of the program's week it stands for (program.js carrySwaps).
-    ...(current.planId ? { planId: current.planId } : {}),
     ...(keepGroup ? { sg: current.sg } : {})
   })
   active.cur = insertAt

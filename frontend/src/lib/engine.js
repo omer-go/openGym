@@ -81,7 +81,7 @@ export function sessionSlots(kinds) {
 // takes its kind's in turn. Pattern names are the catalogue's (exercises.js patternOf).
 const LOWER_LEADS = ['squat', 'hinge']
 const UPPER_LEADS = ['push-horizontal', 'pull-vertical', 'push-vertical', 'pull-horizontal']
-const TYPE_LEADS = { push: ['push-horizontal', 'push-vertical'], pull: ['pull-vertical', 'pull-horizontal'], legs: LOWER_LEADS }
+const TYPE_LEADS = { push: ['push-horizontal', 'push-vertical'], pull: ['pull-vertical', 'pull-horizontal'], legs: LOWER_LEADS, upper: UPPER_LEADS, lower: LOWER_LEADS }
 // A block: the weeks a day keeps its lead lift, so it has time to climb.
 export const BLOCK_DAYS = 28
 
