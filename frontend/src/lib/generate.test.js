@@ -490,6 +490,21 @@ describe('a one-tap workout fits the program and your history', () => {
     expect(at(30)).toBeLessThan(at(90))
   })
 
+  it('a longer session gets more work, not only a higher cap', () => {
+    const run = (st, minutes) => {
+      const picks = generateWorkout(st, 'full', { now: NOW, minutes })
+      return { n: picks.length, sets: total(generatedEntries(st, picks, genDefaults('full'))) }
+    }
+    const fresh = state()
+    const [m60, m75, m90] = [60, 75, 90].map(m => run(fresh, m))
+    expect(m75.sets).toBeGreaterThan(m60.sets)
+    expect(m90.sets).toBeGreaterThan(m75.sets)
+    expect(m90.n).toBeGreaterThanOrEqual(m60.n)
+    // A week whose sets are already done still fills the time it is given.
+    const done = state({ workouts: [0, 1, 2].map(n => session(day(n + 1), [BENCH, SQUAT, CURL])) })
+    expect(run(done, 90).sets).toBeGreaterThan(run(done, 45).sets)
+  })
+
   it('knows the lifts of the last eight weeks, most often first', () => {
     const st = state({ workouts: [session(day(3), [BENCH, SQUAT]), session(day(10), [BENCH]), session(day(70), [CURL])] })
     expect(knownLifts(st, NOW)).toEqual([BENCH, SQUAT])

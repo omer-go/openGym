@@ -986,10 +986,12 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
  * One day of `type`, built the way a week's are, for a one-tap workout (generate.js): `goals`
  * (group -> sets) and `parts` (`[{ g, name, goal }]`) are what the day is to give, the week's
  * share of what is left; `pattern`, the lead's (PATTERN_GROUPS); `count`, how many lifts. The rest
- * of `o` as plan's and weekOf's. `{ type, items, groups, minutes, sets }`.
+ * of `o` as plan's and weekOf's; `moreAcc`, accessories past the level's. `{ type, items, groups, minutes, sets }`.
  */
 export function planDay(o = {}) {
   const cfg = configOf({ ...o, days: 1, minutes: o.minutes || 999 })
+  // A day raised to fill a longer session (generate.js fillMinutes) has room for more accessories.
+  if (o.moreAcc > 0) cfg.maxAcc += o.moreAcc
   const goals = Object.fromEntries(PLAN_GROUPS.map(g => [g, o.goals?.[g] || 0]))
   const pattern = o.pattern || (o.type === 'full' ? FULL_LEADS(1)[0] : DAY_TYPES[o.type].leads[0])
   return weekOf(cfg, goals, o.parts || [], { ...o, sched: [o.type], leads: [pattern], balance: false })[0]

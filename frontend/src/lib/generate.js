@@ -374,6 +374,38 @@ function dayGoals(S, type, ticked, share, now) {
   return { goals, parts }
 }
 
+// How far a timed day's goals are raised to fill its minutes, and how close to them is full.
+const FILL_STEPS = [1, 1.25, 1.5, 2, 2.5, 3, 4]
+const FILL_SLACK = 5
+
+/**
+ * `dayGoals`' goals and parts `k` times over. A group the week has already had its fill of
+ * still gets a share once the day is raised, so a day late in the week can fill its time too.
+ */
+function scaleGoals({ goals, parts }, ticked, k) {
+  const floor = (k - 1) * 2
+  return {
+    goals: Object.fromEntries(ticked.map(g => [g, Math.max((goals[g] || 0) * k, floor)])),
+    parts: parts.map(p => ({ ...p, goal: p.goal * k })),
+  }
+}
+
+/**
+ * The day `build(k)` (goals k times over) that comes closest to `minutes` without going over:
+ * a session length is the time you have, so a longer one gets more work, not only a higher cap.
+ */
+function fillMinutes(build, minutes) {
+  let best = build(1)
+  for (const k of FILL_STEPS.slice(1)) {
+    if (best.minutes >= minutes - FILL_SLACK) break
+    const d = build(k)
+    if (d.minutes > minutes) break
+    if (d.minutes <= best.minutes) continue
+    best = d
+  }
+  return best
+}
+
 /**
  * The exercises of a `type` session: [{ id, muscle, last, at, slot }], built the way a program's
  * day is (planner.js planDay) from your list (planPool): the day's share of what the week still
@@ -393,15 +425,17 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const pool = planPool(S)
   const lead = leadFor(S, type, ticked, now, index)
   const [near = [], ...earlier] = recentSessionIds(S, now)
-  const { goals, parts } = dayGoals(S, type, ticked, share, now)
-  const day = planDay({
-    type, goals, parts, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
+  const base = dayGoals(S, type, ticked, share, now)
+  const build = k => planDay({
+    type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
+    ...(k === 1 ? base : { ...scaleGoals(base, ticked, k), moreAcc: Math.ceil((k - 1) * 2) }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
     count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
     minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), equipment: c.equipment, known: knownLifts(S, now, index),
     goal: c.goal, level: c.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
+  const day = c.minutes ? fillMinutes(build, c.minutes) : build(1)
   const items = count === null || c.minutes ? day.items.slice(0, MAX_GEN_COUNT) : day.items
   // The day's lead leads the session; without one, its first big lift (engine.js sessionSlots).
   const kinds = sessionSlots(items.map(i => liftKind(i.ex.id)))
