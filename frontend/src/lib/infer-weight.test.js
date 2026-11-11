@@ -20,6 +20,14 @@ const at = (max, reps) => max / (e1(100, reps + 2) / 100)
 beforeAll(loadMuscleRoles)
 
 describe('a first weight read off a similar lift', () => {
+  it('a cable lift reads another on the same stack as it is: no kit to convert between', () => {
+    // a standing rear delt row off the seated one
+    const S = state({ workouts: [session('2026-10-01', '0203', 50, 10)] })
+    const g = inferWeight(S, { id: '0233', reps: 10, mode: 'reps' })
+    expect(g.from).toBe('0203')
+    expect(g.est).toBeCloseTo(e1(50, 10) * NEW_LIFT, 0)
+    expect(g.w).toBeLessThanOrEqual(at(g.est, 10))
+  })
   it('a barbell bench from a Smith bench is lighter: the Smith machine steadies the bar', () => {
     const S = state({ workouts: [session('2026-10-01', SMITH_BENCH, 100)] })
     const g = inferWeight(S, { id: BENCH, reps: 5, mode: 'reps' })

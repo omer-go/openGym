@@ -47,6 +47,8 @@ const kitOf = ex => (OWN_SCALE.has(ex?.eq) ? ex.eq : KIT[ex?.eq] != null ? ex.eq
 /** How a load on exercise `ex` (in the meaning `as`, dumbbells.js) compares with a barbell's. */
 function toBar(load, ex, as, cfg) {
   const k = KIT[ex.eq]
+  // A stack or a machine reads only its own kind (OWN_SCALE): the load as it is.
+  if (k == null) return load
   if (typeof k === 'number') return load / k
   // A two-bell lift logged as both together is two bells' worth; as entered or each is one bell.
   const n = bellsIn(cfg)
@@ -55,6 +57,7 @@ function toBar(load, ex, as, cfg) {
 }
 function fromBar(load, ex, as, cfg) {
   const k = KIT[ex.eq]
+  if (k == null) return load
   if (typeof k === 'number') return load * k
   const n = bellsIn(cfg)
   const bell = load * (n === 2 ? k.bell : k.one)
