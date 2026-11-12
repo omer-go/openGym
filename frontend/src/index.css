@@ -2241,12 +2241,16 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:10px 12px;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.12)}
 .cu-count{text-align:center;margin:-6px 0 10px}
 /* Which lifts of the group a swipe round goes through (curate.js ROUNDS). */
-.cu-rounds{justify-content:center;margin:-4px 0 12px}
+.cu-rounds{justify-content:safe center;margin:-4px 0 12px}
 .cu-subs{justify-content:safe center;margin:-8px 0 12px}
 .cu-next{text-align:center;color:var(--acc);font-weight:600;margin:-6px 0 8px}
 .cu-card{position:relative;touch-action:none;user-select:none;cursor:grab;transition:transform .2s ease;padding:12px}
 .cu-card.drag{transition:none;cursor:grabbing}
 .cu-media{border-radius:var(--r-md,12px);overflow:hidden}
+/* The animation gives way to the rows above it and the buttons below, so the buttons stay
+   above the tab bar on a short screen or with large text. */
+.cu-media .exmedia{margin-bottom:0}
+.cu-media .exmedia :is(img,video),.cu-media .exmedia-x{height:clamp(140px,calc(100dvh - 540px - var(--sab)),320px)}
 .cu-name{font-size:19px;font-weight:600;line-height:1.25;margin:12px 2px 8px;text-transform:capitalize}
 .cu-tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 8px}
 .cu-roles{display:flex;flex-direction:column;gap:3px;margin:0 2px}
