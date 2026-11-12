@@ -1,22 +1,29 @@
 // A first weight for a lift you have never logged, read off a similar one you have: a dumbbell
-// bench press from your barbell bench, a barbell bench from your Smith bench. Pure.
+// bench press from your barbell bench, a barbell bench from your Smith bench, and, when nothing
+// that close is logged, another lift for the same muscles. Pure.
 //
-// "Similar" is the same lift on other kit (equivalents.js, tier 'lift': the popular list groups a
-// dumbbell and a Smith bench with the barbell one), or the same named movement on other kit (a
-// dumbbell preacher curl for the barbell preacher curl). A front squat is not a back squat with
-// another bar, nor a goblet squat a squat with a dumbbell: their numbers are not one another's, so
-// only the name with its kit taken out has to match.
+// The closer the source, the more of it carries over (REACH):
+//   0  the same lift on other kit (equivalents.js, tier 'lift': the popular list groups a dumbbell
+//      and a Smith bench with the barbell one), or the same named movement on other kit (a
+//      dumbbell preacher curl for the barbell preacher curl): a tenth off;
+//   1  another variant of the movement (a hack squat for a Smith squat, an alternate curl for a
+//      barbell curl), or the same lift across a cable stack or a machine: a quarter off;
+//   2  another movement for the same slot and muscles (a front squat off a back squat, a kickback
+//      off a lying triceps extension): about a third off.
+// Their numbers are not one another's, so the far ones start well under what the source says:
+// a first weight too light costs a set, one too heavy the session.
 //
 // The load moves between kits through what each lets you lift against a barbell (KIT): a Smith
 // machine steadies the bar, so you move about a tenth more on it; two dumbbells take about four
 // fifths of the bar between them, balanced on their own; one dumbbell in one hand a little more
-// than half of that. A cable stack or a machine is its own scale, so it only reads its own kind.
-// The estimate is the source's recent best one-rep max carried over, a tenth off for a lift you
-// have not done yet, at today's reps with two in the tank, rounded down to a weight you can load.
+// than half of that. A cable stack or a machine is its own scale: read across from another kind,
+// its load is taken as it is, a step further off. The estimate is the source's recent best
+// one-rep max carried over, cut by its reach, at today's reps with two in the tank, rounded down
+// to a weight you can load.
 import { EXIDX, isBodyweightEq } from './exercises.js'
 import { equivalentsOf } from './equivalents.js'
-import { e1rmSeries, estimate1RM, formulaOf } from './onerm.js'
-import { bestWeightFor, modeOf, isPerSide } from './history.js'
+import { e1rmSeries, estimate1RM, formulaOf, REP_CAP, WEIGHTED_REP_CAP } from './onerm.js'
+import { bestWeightFor, modeOf, isPerSide, workoutAt } from './history.js'
 import { BELL_EQ, bellsIn, currentDbLoad, dbLoadFor, ownedWeightsFor, ownedFloor } from './dumbbells.js'
 import { weightIncrement } from './progression.js'
 import { barWeightFor } from './bar.js'
@@ -29,8 +36,10 @@ const KIT = {
 }
 // Their own scale: read only from the same kind.
 const OWN_SCALE = new Set(['cable', 'leverage machine', 'sled machine'])
-// A tenth off: the first time on a lift is no time for its heaviest weight.
-export const NEW_LIFT = 0.9
+// What carries over at each reach, closest first (above). A tenth off even for the same lift: the
+// first time on it is no time for its heaviest weight.
+export const REACH = [0.9, 0.75, 0.65]
+export const NEW_LIFT = REACH[0]
 // Reps left in the tank at the estimate.
 const RIR = 2
 // The last sessions a source's best is read from, so a year-old peak is not today's.
@@ -82,33 +91,50 @@ export function inferWeight(S, cfg) {
   const formula = formulaOf(S)
   let best = null
   for (const { ex: src, tier } of equivalentsOf(S, cfg.id, { scope: 'all' })) {
-    if (tier === 'muscle' || (tier === 'move' && coreOf(src.n) !== core)) continue
     const own = kitOf(src)
-    // A stack or a machine only speaks for its own kind.
-    if (!own || ((OWN_SCALE.has(own) || OWN_SCALE.has(kit)) && own !== kit)) continue
+    if (!own) continue
+    // A stack or a machine is its own scale: across to another kind is a step further off.
+    const across = (OWN_SCALE.has(own) || OWN_SCALE.has(kit)) && own !== kit
+    const near = tier === 'lift' || (tier === 'move' && coreOf(src.n) === core)
+    const rank = tier === 'muscle' ? 2 : near && !across ? 0 : 1
+    if (best && rank > best.rank) continue
     const as = currentDbLoad(S, src.id)
-    const pts = e1rmSeries(S, src.id, formula, as).slice(-RECENT)
-    if (!pts.length) continue
-    const top = Math.max(...pts.map(p => p.y))
-    const at = pts[pts.length - 1].t || 0
-    const rank = tier === 'lift' ? 0 : 1
-    // The closest tier, then the lift you trained last.
-    if (!best || rank < best.rank || (rank === best.rank && at > best.at)) best = { src, as, top, at, rank }
+    const seen = recentMax(S, src.id, formula, as)
+    if (!seen) continue
+    // The closest reach, then the lift you trained last.
+    if (!best || rank < best.rank || seen.at > best.at) best = { src, as, ...seen, rank }
   }
   if (!best) return null
   const as = dbLoadFor(S, cfg)
   const srcCfg = { id: best.src.id }
-  const est = fromBar(toBar(best.top, best.src, best.as, srcCfg), ex, as, cfg) * NEW_LIFT
-  // Today's reps are each arm's or leg's; a per-side count is the total across both.
-  const reps = Math.max(1, Math.round((cfg.repsMin > 0 ? cfg.repsMin : cfg.reps || 8) / (isPerSide(cfg) ? 2 : 1)))
-  const ratio = (estimate1RM(100, reps + RIR, formula) || 100) / 100
+  const est = fromBar(toBar(best.top, best.src, best.as, srcCfg), ex, as, cfg) * REACH[best.rank]
+  // Sized for the reps the rows open at (the top of a range, `reps`), so a set of fifteen is not
+  // loaded for ten. Each arm's or leg's: a per-side count is the total across both.
+  const reps = Math.max(1, Math.round((cfg.reps > 0 ? cfg.reps : cfg.repsMin || 8) / (isPerSide(cfg) ? 2 : 1)))
+  // Past the formula's rep cap Epley's line carries on (a max over one rep's weight of 1 + reps / 30);
+  // without it a set of fifteen would open at the whole max.
+  const ratio = (estimate1RM(100, reps + RIR, formula) || 100 * (1 + (reps + RIR) / 30)) / 100
   const raw = est / ratio
   const owned = BELL_EQ.has(ex.eq) ? ownedWeightsFor(S, cfg) : null
   const inc = weightIncrement(cfg, S.unit)
   let w = owned ? ownedFloor(owned, raw) : Math.floor(raw / inc + 1e-9) * inc
   w = Math.max(w, barWeightFor(S, cfg.id) || 0)
   if (!(w > 0)) return null
-  return { w: Math.round(w * 1000) / 1000, from: best.src.id, est: Math.round(est * 10) / 10 }
+  return { w: Math.round(w * 1000) / 1000, from: best.src.id, est: Math.round(est * 10) / 10, reach: best.rank }
+}
+
+// Lift `id`'s best one-rep max over its last sessions, and when it was trained last: `{ top, at }`,
+// null with no load logged. Sets past the formula's rep cap give no estimate (a calf raise for
+// twenty); read as if done at the cap they come out under the real max, which a first weight
+// can afford.
+function recentMax(S, id, formula, as) {
+  const pts = e1rmSeries(S, id, formula, as).slice(-RECENT)
+  if (pts.length) return { top: Math.max(...pts.map(p => p.y)), at: pts[pts.length - 1].t || 0 }
+  const w = bestWeightFor(S, id, as)
+  const top = w > 0 ? estimate1RM(w, formula === 'weighted' ? WEIGHTED_REP_CAP : REP_CAP, formula) : null
+  if (!(top > 0)) return null
+  const last = (S.workouts || []).filter(x => x.entries?.some(e => e.id === id)).pop()
+  return { top, at: (last && workoutAt(last)) || 0 }
 }
 
 /**

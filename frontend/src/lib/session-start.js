@@ -45,7 +45,7 @@ export function buildPlannedEntry(stored, cfg0, routine, { noProg = false, typed
   // Without it the prescription read the weight off history again and dropped the one just set.
   const plan = typed != null && prescribed.kind !== 'off' && modeOf(cfg) === 'reps'
     ? { ...prescribed, kind: 'hold', weight: typed, why: ['Your weight for today, set by you.'] }
-    : guess && prescribed.kind === 'first' ? { ...prescribed, why: ['Never logged, so this starts from your {0} ({1} {2} est. max), a little lighter.', EXIDX[guess.from]?.n || guess.from, guess.est, st.unit || 'kg'] }
+    : guess && prescribed.kind === 'first' ? { ...prescribed, why: [guess.reach === 2 ? 'Never logged, so this is a guess from your {0}, a different lift for the same muscles ({1} {2} est. max here), started well under it.' : guess.reach === 1 ? 'Never logged, so this is a guess from your {0}, a close variant ({1} {2} est. max here), started a bit under it.' : 'Never logged, so this starts from your {0} ({1} {2} est. max), a little lighter.', EXIDX[guess.from]?.n || guess.from, guess.est, st.unit || 'kg'] }
       : prescribed
   // The warm-up ramp and the prescription snap to the exercise's own increment (1.25 kg
   // plates exist), not the unit default; a timed exercise's `inc` is seconds, so it keeps the

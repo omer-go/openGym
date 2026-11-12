@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { inferWeight, withInferredWeight, NEW_LIFT } from './infer-weight.js'
+import { inferWeight, withInferredWeight, NEW_LIFT, REACH } from './infer-weight.js'
 import { buildPlannedEntry } from './session-start.js'
 import { generatedEntries } from './generate.js'
 import { estimate1RM, formulaOf } from './onerm.js'
@@ -59,13 +59,49 @@ describe('a first weight read off a similar lift', () => {
     expect(inferWeight(S, { id: DB_BENCH, reps: 8, mode: 'reps' }).w).toBe(24)
   })
 
-  it('reads the same named movement on other kit, never another movement', () => {
+  it('reads the same named movement on other kit first', () => {
     const curls = state({ workouts: [session('2026-10-01', PREACHER, 40, 10)] })
-    expect(inferWeight(curls, { id: DB_PREACHER, reps: 10, mode: 'reps' })?.from).toBe(PREACHER)
-    // A front squat is no back squat with another bar.
+    expect(inferWeight(curls, { id: DB_PREACHER, reps: 10, mode: 'reps' })).toMatchObject({ from: PREACHER, reach: 0 })
     const squats = state({ workouts: [session('2026-10-01', SQUAT, 140)] })
-    expect(inferWeight(squats, { id: FRONT_SQUAT, reps: 5, mode: 'reps' })).toBeNull()
-    expect(inferWeight(squats, { id: SMITH_SQUAT, reps: 5, mode: 'reps' })?.from).toBe(SQUAT)
+    expect(inferWeight(squats, { id: SMITH_SQUAT, reps: 5, mode: 'reps' })).toMatchObject({ from: SQUAT, reach: 0 })
+  })
+
+  it('falls back on another lift for the same muscles, started well under it', () => {
+    // A front squat is no back squat with another bar, but your back squat still says roughly
+    // what it will be: well under the same lift's guess.
+    const squats = state({ workouts: [session('2026-10-01', SQUAT, 140)] })
+    const front = inferWeight(squats, { id: FRONT_SQUAT, reps: 5, mode: 'reps' })
+    expect(front).toMatchObject({ from: SQUAT })
+    expect(front.reach).toBeGreaterThan(0)
+    expect(front.est).toBeCloseTo(e1(140, 5) * REACH[front.reach], 0)
+    expect(front.w).toBeLessThan(inferWeight(squats, { id: SMITH_SQUAT, reps: 5, mode: 'reps' }).w / 1.1)
+    // A bench on the cable stack reads the barbell's load as it is, a step further off.
+    const S = state({ workouts: [session('2026-10-01', BENCH, 100)] })
+    const cable = inferWeight(S, { id: CABLE_BENCH, reps: 10, mode: 'reps' })
+    expect(cable).toMatchObject({ from: BENCH, reach: 1 })
+    expect(cable.est).toBeCloseTo(e1(100, 5) * REACH[1], 0)
+  })
+
+  it('prefers the closest source to the one trained last', () => {
+    // The cable bench was trained last, but it is a stack: the barbell bench says more.
+    const S = state({ workouts: [session('2026-10-01', BENCH, 100), session('2026-10-08', CABLE_BENCH, 40, 10)] })
+    expect(inferWeight(S, { id: DB_BENCH, reps: 8, mode: 'reps' })).toMatchObject({ from: BENCH, reach: 0 })
+  })
+
+  it('loads for the reps the rows open at, the top of a range', () => {
+    const S = state({ workouts: [session('2026-10-01', BENCH, 100)] })
+    const ten = inferWeight(S, { id: DB_BENCH, reps: 10, mode: 'reps' })
+    const range = inferWeight(S, { id: DB_BENCH, repsMin: 10, reps: 15, mode: 'reps' })
+    expect(range.w).toBeLessThan(ten.w)
+    expect(range.w).toBe(inferWeight(S, { id: DB_BENCH, reps: 15, mode: 'reps' }).w)
+  })
+
+  it('reads a lift done past the rep cap as if done at the cap', () => {
+    // Calf raises for twenty give no one-rep max, but the load still says something.
+    const S = state({ workouts: [session('2026-10-01', '0417', 40, 20)] })
+    const g = inferWeight(S, { id: '0773', reps: 12, mode: 'reps' })
+    expect(g?.from).toBe('0417')
+    expect(g.w).toBeGreaterThan(0)
   })
 
   it('takes the recent best, and the lift trained last of two', () => {
@@ -73,11 +109,10 @@ describe('a first weight read off a similar lift', () => {
     expect(inferWeight(S, { id: BENCH, reps: 5, mode: 'reps' }).from).toBe(DB_BENCH)
   })
 
-  it('leaves alone a lift with a weight of its own, a stack, a bodyweight lift, and a lift with nothing like it', () => {
+  it('leaves alone a lift with a weight of its own, a bodyweight lift, and a lift with nothing like it', () => {
     const S = state({ workouts: [session('2026-10-01', BENCH, 100)] })
     expect(inferWeight({ ...S, exWeights: { [DB_BENCH]: { w: 30, d: '2026-09-01' } } }, { id: DB_BENCH, reps: 8, mode: 'reps' })).toBeNull()
     expect(inferWeight(S, { id: BENCH, reps: 5, mode: 'reps' })).toBeNull()
-    expect(inferWeight(S, { id: CABLE_BENCH, reps: 10, mode: 'reps' })).toBeNull()
     expect(inferWeight(S, { id: PUSHUP, reps: 10, mode: 'reps' })).toBeNull()
     expect(inferWeight(state(), { id: DB_BENCH, reps: 8, mode: 'reps' })).toBeNull()
     expect(withInferredWeight(S, { id: DB_BENCH, reps: 8, weight: 18 }).cfg.weight).toBe(18)
