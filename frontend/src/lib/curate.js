@@ -205,8 +205,9 @@ export function nextGroup(S, groupId, have = gymOf(S), passed = []) {
 
 /**
  * The rounds a group's pile can be gone through again in (views/Curate.jsx ?round=): the lifts
- * on your list (inList), those you dropped, the rest (neither, so a lift is in one of the three
- * and comes up once), or all of them. English names are i18n keys.
+ * you have kept, those you dropped, the rest (neither, the popular lifts on your list until you
+ * swipe them among them, so a lift is in one of the three and comes up once), or all of them.
+ * English names are i18n keys.
  */
 export const ROUNDS = [
   { id: 'unreviewed', n: 'Unreviewed' },
@@ -217,9 +218,9 @@ export const ROUNDS = [
 
 /** Whether `ex` is dealt in `round` (ROUNDS), going by what you have decided so far. */
 export function inRound(S, ex, round) {
-  if (round === 'kept') return inList(S, ex)
+  if (round === 'kept') return favIds(S).includes(ex.id)
   if (round === 'dropped') return skipIds(S).includes(ex.id)
-  if (round === 'unreviewed') return !inList(S, ex) && !skipIds(S).includes(ex.id)
+  if (round === 'unreviewed') return !reviewedIds(S).has(ex.id)
   return round === 'all'
 }
 

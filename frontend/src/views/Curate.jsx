@@ -24,7 +24,7 @@ import { Button } from '../components/ui.jsx'
 // you stop or go back. Your list starts as the
 // popular lifts (lib/popular.js); one-tap workouts and program days pick from it. Your list shows
 // it whole, a group at a time, to take a lift off or put one back without swiping, or swipe through
-// a group's kept lifts again. The piles,
+// the lifts you kept of a group again. The piles,
 // their order and what counts as on the list live in lib/curate.js.
 
 const FLING = 90     // px a card travels before letting go of it decides it

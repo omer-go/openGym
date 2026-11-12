@@ -204,14 +204,12 @@ describe('a round of one group', () => {
     decide(S, rare.id, 'keep')
     const ids = r => pool(S).filter(ex => inRound(S, ex, r)).map(ex => ex.id)
     expect(ids('dropped')).toEqual([BENCH])
-    // Kept is your list: a popular lift not dropped is on it without a star.
-    expect(ids('kept')).toContain(rare.id)
-    expect(ids('kept')).toContain(DBBENCH)
-    expect(ids('kept')).not.toContain(BENCH)
+    expect(ids('kept')).toEqual([rare.id])
     expect(ids('unreviewed')).not.toContain(BENCH)
     expect(ids('unreviewed')).not.toContain(rare.id)
-    // Unreviewed is neither: a popular lift on your list is not dealt again there.
-    expect(ids('unreviewed')).not.toContain(DBBENCH)
+    // A popular lift on your list you have not swiped is still to review, among the popular ones.
+    expect(ids('unreviewed')).toContain(DBBENCH)
+    expect(subCounts(S, pool(S), 'unreviewed').popular).toBeGreaterThan(0)
     expect(ids('all')).toHaveLength(pool(S).length)
     expect(ids('kept').length + ids('dropped').length + ids('unreviewed').length).toBe(pool(S).length)
     expect(roundCounts(S, pool(S))).toEqual(Object.fromEntries(ROUNDS.map(r => [r.id, ids(r.id).length])))
@@ -243,7 +241,8 @@ describe('a round of one group', () => {
 
   it('narrows a round to the popular lifts or one kind of kit, and counts each way', () => {
     const S = S0()
-    decide(S, BENCH, 'drop')
+    decide(S, BENCH, 'drop'); decide(S, DBBENCH, 'keep')
+    decide(S, pool(S).find(ex => !onList(ex) && kitOf(ex) === 'cable').id, 'keep')
     const list = pool(S)
     const kept = list.filter(ex => inRound(S, ex, 'kept'))
     expect(kept.filter(ex => inSub(ex, 'dumbbell')).map(ex => ex.id)).toContain(DBBENCH)
@@ -252,7 +251,8 @@ describe('a round of one group', () => {
     expect(c['']).toBe(kept.length)
     // Every lift has one kind of kit: the kits add up to the round.
     expect(SUBS.filter(s => s.id !== 'popular').reduce((n, s) => n + c[s.id], 0)).toBe(kept.length)
-    expect(c.popular).toBe(kept.filter(onList).length)
+    expect(c.popular).toBe(1)
+    expect(c.cable).toBe(1)
     expect(subCounts(S, list, 'dropped').barbell).toBe(1)
     // The round counts follow the kit picked.
     expect(roundCounts(S, list, 'barbell').dropped).toBe(1)
