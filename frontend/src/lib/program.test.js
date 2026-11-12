@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, genDefaults, genSets, generateWorkout, planPool } from './generate.js'
+import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, minutesFor, sizeDay, suggestDay, weekOf } from './program.js'
+import { MAX_GEN_COUNT, genDefaults, genSets, generatedEntries, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
 import { LEVELS } from './planner.js'
@@ -341,7 +341,8 @@ describe('a program built from settings', () => {
     const strength = day({ goal: 'strength' })
     expect(strength.length).toBeGreaterThan(0)
     expect(strength[0].target).toMatchObject({ sets: 5, repsMin: 3, prog: 'double' })
-    expect(day({ goal: 'growth' })[0].target).toMatchObject({ sets: 4, repsMin: 6 })
+    // With the time for them: short of it, the sets the planner trims stay trimmed.
+    expect(day({ goal: 'growth', minutes: 90 })[0].target).toMatchObject({ sets: 4, repsMin: 6 })
     // A shorter session is fewer sets.
     const sets = es => es.reduce((n, e) => n + e.target.sets, 0)
     expect(sets(day({ minutes: 30 }))).toBeLessThan(sets(day({ minutes: 90 })))
@@ -444,3 +445,37 @@ describe('a week with days missed', () => {
   })
 })
 
+
+describe('minutesFor', () => {
+  const lift = (restSec, n = 3, r = 10, extra = {}) => ({ id: '0025', target: { reps: r, restSec, ...extra }, sets: Array.from({ length: n }, () => ({ w: 60, r })) })
+
+  it('times each set by its reps and its rest, within your rest range', () => {
+    // 3 sets of 10 at 3 s a rep, 30 s rest and 30 s moving: 90 s a set, 4.5 min and the 5 of warm-up.
+    expect(minutesFor(state(), [lift(30)], null)).toBe(Math.round(5 + 4.5))
+    expect(minutesFor(state(), [lift(20, 6)], null)).toBeLessThan(minutesFor(state(), [lift(60, 6)], null))
+  })
+
+  it('leaves warm-up rows out, and doubles the reps of a lift done a side at a time', () => {
+    const warm = { ...lift(30), sets: [{ w: 20, r: 10, warmup: true }, ...lift(30).sets] }
+    expect(minutesFor(state(), [warm], null)).toBe(minutesFor(state(), [lift(30)], null))
+    expect(minutesFor(state(), [lift(30, 6, 10, { side: true })], null)).toBeGreaterThan(minutesFor(state(), [lift(30, 6)], null))
+  })
+
+  it('takes your own pace where it is quicker, and only your pace with no rest range', () => {
+    expect(minutesFor(state(), [lift(60, 10)], 45)).toBe(Math.round(5 + 10 * 45 / 60))
+    expect(minutesFor(state({ restRange: false }), [lift(20, 10)], 200)).toBe(Math.round(5 + 10 * 200 / 60))
+  })
+
+  it('a lift with no rest of its own rests your default', () => {
+    expect(minutesFor(state({ restRange: false, restSec: 30 }), [lift(0)], null)).toBe(minutesFor(state({ restRange: false }), [lift(30)], null))
+  })
+
+  it('says about the minutes a one-tap day was built to fill, not more', () => {
+    for (const minutes of [30, 45, 60]) {
+      const st = state(), setup = { ...genDefaults('full'), minutes }
+      const entries = generatedEntries(st, generateWorkout(st, 'full', setup), setup)
+      expect(minutesFor(st, entries)).toBeLessThanOrEqual(minutes + 2)
+      expect(minutesFor(st, entries)).toBeGreaterThanOrEqual(minutes - 15)
+    }
+  })
+})

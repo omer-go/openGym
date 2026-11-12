@@ -357,10 +357,17 @@ const add = (cfg, into, ex, sets) => {
 // and however long your sets ran before you set them says nothing of how long they run now.
 // A pace of your own that is quicker still stands.
 const MOVING = 30
-const setSecs = (cfg, it) => (cfg.rests ? Math.min(cfg.pace || Infinity, it.rx.secs + MOVING) : cfg.pace || it.rx.secs)
+const secsAt = (own, { pace, rests }) => (rests ? Math.min(pace || Infinity, own + MOVING) : pace || own)
+const setSecs = (cfg, it) => secsAt(it.rx.secs, cfg)
 const minutesOf = (cfg, items) => cfg.warmupMin + items.reduce((m, it) => m + it.sets * setSecs(cfg, it), 0) / 60
 /** Minutes a day of `sets` work sets takes at `pace` seconds a set, its warm-up included. */
 export const paceMinutes = (sets, pace) => Math.round(ADV.warmupMin + sets * pace / 60)
+/**
+ * Minutes the work sets of `entries` (`[{ reps, rest, perSide }]`, one a set) take, timed as the
+ * planner times a day it builds: each set its reps and the rest after it, under `{ pace, rests }`.
+ */
+export const setsMinutes = (sets, env) =>
+  Math.round(ADV.warmupMin + sets.reduce((m, s) => m + secsAt((s.reps || 0) * ADV.secPerRep * (s.perSide ? 2 : 1) + (s.rest || 0), env), 0) / 60)
 
 // The most popular lift not used yet this week, else the most popular of any; ties (lifts off
 // the popular list among them) by the seed. `cfg.shift` takes the one that many places further

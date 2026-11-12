@@ -3069,7 +3069,6 @@ function GenSetup({ type, k, close }) {
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const c = genConstraints(st, setup), timed = c.minutes > 0
   const programMinutes = genConstraints(st).minutes
-  const workSets = entries.reduce((n, e) => n + e.sets.filter(x => !isWarmupRow(x)).length, 0)
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
   // Add exercise's groups (AddExerciseSheet) as pills: the muscles pictured and the group's
   // name, lit in the group's colour (lib/muscle-colors.js) when the workout covers it.
@@ -3154,7 +3153,7 @@ function GenSetup({ type, k, close }) {
       <h4 className="sec">{t('Exercises')}</h4>
       {entries.length ? <>
         <button type="button" className={'gs-exs' + (showEx ? ' open' : '')} aria-expanded={showEx} onClick={() => setShowEx(v => !v)}>
-          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)} · {t('≈ {0} min', minutesFor(st, workSets))}</div>
+          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)} · {t('≈ {0} min', minutesFor(st, entries))}</div>
             <div className="muted small">{showEx ? t('Hide') : t('Show the list')}</div></div>
           <Icon name="chevronRight" />
         </button>

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone, genSets } from './generate.js'
 import { goalTypeOf } from './goals.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
@@ -612,5 +612,21 @@ describe('lifts taking turns', () => {
     const [turn] = run({ workouts }, 1)
     expect(turn[0]).not.toBe(SQUAT)
     expect(patternOf(turn[0])).toBe('squat')
+  })
+})
+
+describe('a timed one-tap day', () => {
+  it('keeps the sets it was fitted with, fewer than a slot has too, so it does not run over', () => {
+    const setup = { ...genDefaults('full'), minutes: 45 }
+    const picks = generateWorkout(state(), 'full', setup)
+    expect(picks.some(p => p.extra < 0)).toBe(true)
+    for (const p of picks) expect(genSets(p.id, setup, p.slot, p.extra)).toBeGreaterThanOrEqual(1)
+    const entries = generatedEntries(state(), picks, setup)
+    for (const [i, p] of picks.entries()) expect(entries[i].sets.length).toBe(genSets(p.id, setup, p.slot, p.extra))
+  })
+
+  it('a day sized by a count still gives each lift at least its slot\'s sets', () => {
+    const setup = genDefaults('full')
+    expect(generateWorkout(state(), 'full', setup).every(p => !(p.extra < 0))).toBe(true)
   })
 })

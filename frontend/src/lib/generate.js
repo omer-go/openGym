@@ -202,7 +202,7 @@ export const genScheme = (id, setup, slot = slotOf(liftKind(id))) => (setup?.byK
  */
 export const genSets = (id, setup, slot, extra = 0) => {
   const n = genScheme(id, setup, slot).sets || 0
-  return Math.min(roomOf(n), n + (extra || 0))
+  return Math.max(1, Math.min(roomOf(n), n + (extra || 0)))
 }
 export const MAX_GEN_COUNT = 15
 
@@ -424,7 +424,8 @@ function fillMinutes(build, minutes) {
  * `count` and `groups` are the setup's (genDefaults), `count: null` the day's own size; `cardio`
  * adds a run and `stretch` two stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }.
  * `now` dates the week. A program day passes its `share` (program.js dayShare). With the setup's
- * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`.
+ * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`;
+ * on a timed day one it gives fewer has them as a negative `extra`.
  */
 export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment } = {}) {
   if (!GEN_TYPES[type]) return []
@@ -457,8 +458,9 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const picks = items.map((it, at) => {
     const id = it.ex.id, slug = slotMuscleOf(EXIDX[id])
     const slot = !led ? kinds[at] : it.slot === 'lead' ? 'lead' : it.slot === 'accessory' ? slotOf(liftKind(id)) : 'main'
+    // A timed day keeps the sets it was fitted with (fewer than the slot's too), or it runs over.
     const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets, goal: c.goal }, slot).sets
-    return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 ? { extra } : {}) }
+    return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 || (extra < 0 && c.minutes) ? { extra } : {}) }
   })
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })

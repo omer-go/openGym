@@ -21,11 +21,13 @@
 import { ADD_GROUPS } from './add-exercise.js'
 import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
 import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
-import { floorOf, sessionMinutes, weeklyTargetOf } from './goals.js'
+import { floorOf, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
 import { isWarmupRow } from './workout-model.js'
-import { DAY_TYPES, paceMinutes, plan as planWeek } from './planner.js'
+import { DAY_TYPES, plan as planWeek, setsMinutes } from './planner.js'
+import { restRangeOf } from './engine.js'
+import { isPerSide } from './history.js'
 import { setPaceOf } from './pace.js'
 import { EXIDX } from './exercises.js'
 import { suggestable } from './skipped.js'
@@ -338,9 +340,21 @@ export function programLayout(S, weekStart, now = Date.now()) {
   return days
 }
 
-/** The minutes `sets` work sets take: at your own pace a set once there is one (pace.js), else the goals' estimate. */
-export function minutesFor(S, sets, pace = setPaceOf(S?.workouts)) {
-  return pace ? paceMinutes(sets, pace) : sessionMinutes(sets)
+/**
+ * The minutes the work sets of `entries` take, as the generator times the day it builds
+ * (planner.js setsMinutes): each set its reps and its rest, the lift's own or your default, kept
+ * within your rest range, and at your own pace a set (pace.js) where that is quicker or no range
+ * is set. Rows with no reps (a held or timed set) count the lift's target reps, else ten.
+ */
+export function minutesFor(S, entries, pace = setPaceOf(S?.workouts)) {
+  const rests = restRangeOf(S)
+  const sets = []
+  for (const e of entries || []) {
+    const rest = e.target?.restSec > 0 ? e.target.restSec : S?.restSec > 0 ? S.restSec : 90
+    const perSide = isPerSide(e.target) || isPerSide(e)
+    for (const x of e.sets || []) if (!isWarmupRow(x)) sets.push({ reps: x.r || e.target?.reps || 10, rest, perSide })
+  }
+  return setsMinutes(sets, { pace, rests })
 }
 
 /**
@@ -363,7 +377,7 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
     const entries = programDayEntries(s, f, t)
     const work = e => e.sets.filter(x => !isWarmupRow(x))
     const sets = entries.reduce((n, e) => n + work(e).length, 0)
-    const minutes = minutesFor(S, sets, pace)
+    const minutes = minutesFor(S, entries, pace)
     out.push({ type: f.type, k: f.k, iso: f.iso, entries, sets, minutes, groups: plannedSets(entries) })
     // Logged as done on its day, every work set, an hour long.
     const on = Math.max(t, new Date(f.iso + 'T12:00:00').getTime())
