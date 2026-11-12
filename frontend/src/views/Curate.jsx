@@ -193,7 +193,7 @@ function Deck({ S, update, group, have, all, kit, round, sub, onRound, onAll, on
   const [ids] = useState(() => (round ? list.filter(x => inSub(x, sub) && inRound(S, x, round)).map(x => x.id) : null))
   const deck = round ? roundDeck(list, ids, { done: done.filter(d => d.group === group).map(d => d.id), passed }) : deckOf(S, list, { all, kit, passed })
   const p = progressOf(S, list)
-  const counts = roundCounts(S, list, sub)
+  const counts = roundCounts(S, list)
   const subs = round ? subCounts(S, list, round) : null
   // The kit picked is in view, so the counts above it read as its own.
   const subRow = useRef(null)

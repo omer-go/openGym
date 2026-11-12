@@ -226,16 +226,21 @@ export function inRound(S, ex, round) {
 
 /**
  * What a round can be narrowed to (views/Curate.jsx ?sub=): the lifts on the list a pile deals
- * first (onList), or one kind of kit (exercise-facets.js KITS). English names are i18n keys.
+ * first (onList), or the rest by kind of kit (exercise-facets.js KITS). Each lift is in exactly
+ * one, so going through them one at a time never deals a lift twice: a popular barbell lift is
+ * under Popular, not Barbell. English names are i18n keys.
  */
 export const SUBS = [{ id: 'popular', n: 'Popular' }, ...KITS.map(k => ({ id: k.id, n: k.n }))]
 
-/** Whether `ex` is in `sub` (SUBS); every lift when there is none. */
-export const inSub = (ex, sub) => !sub || (sub === 'popular' ? onList(ex) : kitOf(ex) === sub)
+/** The sub (SUBS) `ex` is in. */
+export const subOf = ex => (onList(ex) ? 'popular' : kitOf(ex))
 
-/** Round id -> how many of `list` it deals, narrowed to `sub`. */
-export const roundCounts = (S, list, sub = null) =>
-  Object.fromEntries(ROUNDS.map(r => [r.id, list.filter(ex => inSub(ex, sub) && inRound(S, ex, r.id)).length]))
+/** Whether `ex` is in `sub` (SUBS); every lift when there is none. */
+export const inSub = (ex, sub) => !sub || subOf(ex) === sub
+
+/** Round id -> how many of `list` it deals: the whole group, whatever sub is picked. */
+export const roundCounts = (S, list) =>
+  Object.fromEntries(ROUNDS.map(r => [r.id, list.filter(ex => inRound(S, ex, r.id)).length]))
 
 /** Sub id (SUBS, '' for none) -> how many of `list` `round` deals narrowed to it. */
 export function subCounts(S, list, round) {

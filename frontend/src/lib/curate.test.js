@@ -245,18 +245,24 @@ describe('a round of one group', () => {
     decide(S, pool(S).find(ex => !onList(ex) && kitOf(ex) === 'cable').id, 'keep')
     const list = pool(S)
     const kept = list.filter(ex => inRound(S, ex, 'kept'))
-    expect(kept.filter(ex => inSub(ex, 'dumbbell')).map(ex => ex.id)).toContain(DBBENCH)
+    // A popular lift is under Popular only, not under its kit too.
+    expect(kept.filter(ex => inSub(ex, 'popular')).map(ex => ex.id)).toEqual([DBBENCH])
+    expect(kept.some(ex => inSub(ex, 'dumbbell'))).toBe(false)
     expect(kept.every(ex => inSub(ex, null))).toBe(true)
+    // Each lift is in one sub: the subs add up to the round, for every round.
+    for (const r of ROUNDS) {
+      const c = subCounts(S, list, r.id)
+      expect(SUBS.reduce((n, s) => n + c[s.id], 0)).toBe(c[''])
+    }
     const c = subCounts(S, list, 'kept')
     expect(c['']).toBe(kept.length)
-    // Every lift has one kind of kit: the kits add up to the round.
-    expect(SUBS.filter(s => s.id !== 'popular').reduce((n, s) => n + c[s.id], 0)).toBe(kept.length)
     expect(c.popular).toBe(1)
     expect(c.cable).toBe(1)
-    expect(subCounts(S, list, 'dropped').barbell).toBe(1)
-    // The round counts follow the kit picked.
-    expect(roundCounts(S, list, 'barbell').dropped).toBe(1)
-    expect(roundCounts(S, list, 'dumbbell').dropped).toBe(0)
-    expect(roundCounts(S, list, 'dumbbell').all).toBe(list.filter(ex => kitOf(ex) === 'dumbbell').length)
+    expect(subCounts(S, list, 'dropped').popular).toBe(1)
+    expect(subCounts(S, list, 'dropped').barbell).toBe(0)
+    // The round counts are the whole group's.
+    expect(roundCounts(S, list).dropped).toBe(1)
+    expect(roundCounts(S, list).kept).toBe(2)
+    expect(roundCounts(S, list).all).toBe(list.length)
   })
 })
