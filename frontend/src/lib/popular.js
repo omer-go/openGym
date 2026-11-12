@@ -1,6 +1,7 @@
 // The popular lifts: the list your exercises start from. Each muscle's most common lifts, most
 // popular first, done with a barbell, dumbbell or machine (EZ and trap bars, Smith, cable and
-// landmine count); body weight only for push-ups, pull-ups and dips. Each lift lists the kit it
+// landmine count); body weight only for push-ups, pull-ups, dips and abs, where planks, crunches
+// and leg raises are what most people train them with. Each lift lists the kit it
 // is done on, most common first, as catalogue ids: every id is an exercise of its own.
 //
 // The ranking is our own call, weighing logged-set shares and per-body-part popularity from
@@ -143,13 +144,30 @@ export const POPULAR = {
   ],
   Abs: [
     ['Cable crunch', ['0175']],
-    ['Russian twist', ['3449']],
+    ['Plank', ['0463']],
+    ['Crunch', ['0274']],
+    ['Hanging leg raise', ['0472']],
+    ['Russian twist', ['3449', '0687']],
+    ['Lying leg raise', ['1163']],
     ['Ab wheel rollout', ['4189']],
+    ['Bicycle crunch', ['6211']],
+    ['Dead bug', ['0276']],
+    ['Side plank', ['0715']],
+    ['Sit-up', ['0736']],
+    ['Reverse crunch', ['0872']],
     ['Pallof press', ['4224']],
+    ['Hanging knee raise', ['9819']],
     ['Woodchop', ['11251']],
     ['Ab crunch machine', ['1452']],
+    ['Decline crunch', ['0277']],
+    ['V-up', ['3622']],
+    ['Hollow hold', ['1246']],
     ['Side bend', ['0407', '0222']],
+    ['Toes to bar', ['3891']],
+    ["Captain's chair leg raise", ['5107']],
     ['Landmine rotation', ['0562']],
+    ['Oblique crunch', ['0635']],
+    ['Dragon flag', ['4058']],
   ],
   Quads: [
     ['Back squat', ['0043', '0770']],

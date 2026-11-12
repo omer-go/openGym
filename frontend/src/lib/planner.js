@@ -628,7 +628,10 @@ function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains,
       const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && n.aimed(e) && !d.items.some(i => i.ex.id === e.id) && !repeats(d.items, e))
       if (!cands.length) return false
       const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand, d.k)
-      const it = { ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
+      // A group that gave way takes all it still needs in the one lift, on a day with the minutes
+      // for it: one calf raise of four sets, not two of two on days too full to grow them.
+      const sets = whole.has(g) ? Math.max(cfg.accMin, Math.min(cfg.accMax, Math.ceil((n.goal - t[n.key]) / (n.credit(ex) || 1)))) : cfg.accMin
+      const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
       if (minutesOf(cfg, [...d.items, it]) > cfg.minutes) return false
       d.items.push(it)
       week.used.add(ex.id)

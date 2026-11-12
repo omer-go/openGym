@@ -8,11 +8,15 @@ describe('the popular list', () => {
   it('names catalogue exercises, each once', () => {
     expect(POPULAR_IDS.filter(id => !EXIDX[id])).toEqual([])
     expect(new Set(POPULAR_IDS).size).toBe(POPULAR_IDS.length)
-    expect(POPULAR_IDS).toHaveLength(296)
+    expect(POPULAR_IDS).toHaveLength(314)
   })
-  it('has body-weight work only for push-ups, pull-ups and chin-ups', () => {
+  it('has body-weight work only for push-ups, pull-ups, chin-ups and abs', () => {
     const bw = POPULAR_IDS.map(id => EXIDX[id]).filter(ex => ex.eq === 'body weight')
-    expect(bw.filter(ex => !/push[- ]?up|pull-up|chin-up/.test(ex.n.toLowerCase()))).toEqual([])
+    expect(bw.filter(ex => ex.bp !== 'waist' && !/push[- ]?up|pull-up|chin-up/.test(ex.n.toLowerCase()))).toEqual([])
+    expect(POPULAR.Abs.flatMap(([, ids]) => ids).filter(id => EXIDX[id].eq === 'body weight').length).toBeGreaterThan(10)
+  })
+  it('keeps the abs\' staples on the list', () => {
+    expect(STAPLES.abs).toEqual(['0175', '0472', '0274', '0463', '0276', '3449'])
   })
   it('sorts every lift under the muscle it works, in list order', () => {
     const by = popularBySlug()

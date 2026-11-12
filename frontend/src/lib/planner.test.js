@@ -132,7 +132,9 @@ describe('planner', () => {
   })
 
   it('is the same week from the same settings, another from another seed', () => {
-    const o = { template: 'ul', days: 4, minutes: 60 }
+    // The seed only breaks ties between lifts at the same place on the popular list, so it takes a
+    // week with such a tie in it: three upper/lower days of an hour have one.
+    const o = { template: 'ul', days: 3, minutes: 60 }
     const names = p => p.days.map(d => d.items.map(i => i.ex.id).join()).join('|')
     expect(names(plan(o))).toBe(names(plan(o)))
     const seeds = new Set([1, 2, 3, 4, 5].map(seed => names(plan({ ...o, seed }))))
