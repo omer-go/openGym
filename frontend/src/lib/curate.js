@@ -204,6 +204,43 @@ export function nextGroup(S, groupId, have = gymOf(S), passed = []) {
 }
 
 /**
+ * The rounds a group's pile can be gone through again in (views/Curate.jsx ?round=): the lifts
+ * you have not reviewed yet, those on your list (inList), those you dropped, or all of them.
+ * English names are i18n keys.
+ */
+export const ROUNDS = [
+  { id: 'unreviewed', n: 'Unreviewed' },
+  { id: 'kept', n: 'Kept' },
+  { id: 'dropped', n: 'Dropped' },
+  { id: 'all', n: 'All' },
+]
+
+/** Whether `ex` is dealt in `round` (ROUNDS), going by what you have decided so far. */
+export function inRound(S, ex, round) {
+  if (round === 'kept') return inList(S, ex)
+  if (round === 'dropped') return skipIds(S).includes(ex.id)
+  if (round === 'unreviewed') return !reviewedIds(S).has(ex.id)
+  return round === 'all'
+}
+
+/** Round id -> how many of `list` it deals. */
+export const roundCounts = (S, list) =>
+  Object.fromEntries(ROUNDS.map(r => [r.id, list.filter(ex => inRound(S, ex, r.id)).length]))
+
+/**
+ * What a round still deals: `ids`, the ones it took in when it began, so a lift you keep in a
+ * round of the dropped ones still goes by once and no more, less those decided (`done`) or
+ * skipped (`passed`) in it, in the order of `list`.
+ */
+export function roundDeck(list, ids, { done = [], passed = [] } = {}) {
+  const want = new Set(ids), gone = new Set([...done, ...passed])
+  return list.filter(ex => want.has(ex.id) && !gone.has(ex.id))
+}
+
+/** What you have said of lift `id`: 'keep', 'drop' or null, as decide() writes it. */
+export const verdictOf = (S, id) => (favIds(S).includes(id) ? 'keep' : skipIds(S).includes(id) ? 'drop' : null)
+
+/**
  * Records a card in a state draft: 'keep' stars it, 'drop' leaves it out of suggestions, and
  * either clears the other. `null` forgets the choice (Undo).
  */

@@ -565,6 +565,7 @@ h4.sec{
   font-weight:500;text-transform:capitalize;
 }
 .tag.acc{background:var(--acc-soft);color:var(--acc)}
+.tag.warn{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
 .tag.mg{background:color-mix(in srgb,var(--mc) 16%,transparent);color:color-mix(in srgb,var(--mc) 80%,var(--label))}
 /* An exercise's chips (its muscle group, muscle, equipment): pills with a hairline edge, the
    group's one carrying a dot in its colour (lib/muscle-colors.js). Sentence case, set in the
@@ -2239,6 +2240,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-bar i{display:block;height:100%;background:var(--mc,var(--acc))}
 .cu-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:10px 12px;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.12)}
 .cu-count{text-align:center;margin:-6px 0 10px}
+/* Which lifts of the group a swipe round goes through (curate.js ROUNDS). */
+.cu-rounds{justify-content:center;margin:-4px 0 12px}
 .cu-next{text-align:center;color:var(--acc);font-weight:600;margin:-6px 0 8px}
 .cu-card{position:relative;touch-action:none;user-select:none;cursor:grab;transition:transform .2s ease;padding:12px}
 .cu-card.drag{transition:none;cursor:grabbing}

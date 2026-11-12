@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed, rareKits } from './curate.js'
+import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed, rareKits, ROUNDS, inRound, roundCounts, roundDeck, verdictOf } from './curate.js'
 import { ALL_EQUIPMENT } from './equipment.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { kitOf } from './exercise-facets.js'
@@ -190,5 +190,52 @@ describe('your list', () => {
     toggleListed(s, tail)
     expect(inList(s, tail)).toBe(false)
     expect(s).toMatchObject({ favEx: [], skipEx: [] })   // one of the rest again, not dropped
+  })
+})
+
+describe('a round of one group', () => {
+  const S0 = () => ({ favEx: [], skipEx: [], customEx: [] })
+  const pool = S => groupPool(S, 'chest', GYM)
+
+  it('deals the kept, the dropped, the unreviewed or all of a group', () => {
+    const S = S0()
+    decide(S, BENCH, 'drop')
+    const rare = pool(S).find(ex => !onList(ex))
+    decide(S, rare.id, 'keep')
+    const ids = r => pool(S).filter(ex => inRound(S, ex, r)).map(ex => ex.id)
+    expect(ids('dropped')).toEqual([BENCH])
+    // Kept is your list: a popular lift not dropped is on it without a star.
+    expect(ids('kept')).toContain(rare.id)
+    expect(ids('kept')).toContain(DBBENCH)
+    expect(ids('kept')).not.toContain(BENCH)
+    expect(ids('unreviewed')).not.toContain(BENCH)
+    expect(ids('unreviewed')).not.toContain(rare.id)
+    expect(ids('unreviewed')).toContain(DBBENCH)
+    expect(ids('all')).toHaveLength(pool(S).length)
+    expect(roundCounts(S, pool(S))).toEqual(Object.fromEntries(ROUNDS.map(r => [r.id, ids(r.id).length])))
+  })
+
+  it('goes by each lift it began with once, whatever you decide of it on the way', () => {
+    const S = S0()
+    decide(S, BENCH, 'drop'); decide(S, DBBENCH, 'drop')
+    const list = pool(S), ids = list.filter(ex => inRound(S, ex, 'dropped')).map(ex => ex.id)
+    expect(roundDeck(list, ids).map(ex => ex.id)).toEqual(ids)
+    // Kept in a round of the dropped ones: no longer dropped, and not dealt again.
+    decide(S, BENCH, 'keep')
+    expect(inRound(S, list.find(ex => ex.id === BENCH), 'dropped')).toBe(false)
+    expect(roundDeck(list, ids, { done: [BENCH] }).map(ex => ex.id)).toEqual([DBBENCH])
+    expect(roundDeck(list, ids, { done: [BENCH], passed: [DBBENCH] })).toEqual([])
+  })
+
+  it('knows what you said of a lift before, for Undo to put back', () => {
+    const S = S0()
+    expect(verdictOf(S, BENCH)).toBe(null)
+    decide(S, BENCH, 'drop')
+    expect(verdictOf(S, BENCH)).toBe('drop')
+    decide(S, BENCH, 'keep')
+    expect(verdictOf(S, BENCH)).toBe('keep')
+    decide(S, BENCH, 'drop')   // Undo of the keep
+    expect(S.skipEx).toEqual([BENCH])
+    expect(S.favEx).toEqual([])
   })
 })
