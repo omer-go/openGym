@@ -2242,6 +2242,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cu-count{text-align:center;margin:-6px 0 10px}
 /* Which lifts of the group a swipe round goes through (curate.js ROUNDS). */
 .cu-rounds{justify-content:center;margin:-4px 0 12px}
+.cu-subs{justify-content:safe center;margin:-8px 0 12px}
 .cu-next{text-align:center;color:var(--acc);font-weight:600;margin:-6px 0 8px}
 .cu-card{position:relative;touch-action:none;user-select:none;cursor:grab;transition:transform .2s ease;padding:12px}
 .cu-card.drag{transition:none;cursor:grabbing}

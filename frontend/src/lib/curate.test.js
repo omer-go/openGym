@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed, rareKits, ROUNDS, inRound, roundCounts, roundDeck, verdictOf } from './curate.js'
+import { GYM_KIT, gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, onList, inList, groupPool, progressOf, deckOf, nextGroup, decide, reviewedIds, listOf, toggleListed, rareKits, ROUNDS, inRound, roundCounts, roundDeck, verdictOf, SUBS, inSub, subCounts } from './curate.js'
 import { ALL_EQUIPMENT } from './equipment.js'
 import { ADD_GROUPS } from './add-exercise.js'
 import { kitOf } from './exercise-facets.js'
@@ -210,8 +210,10 @@ describe('a round of one group', () => {
     expect(ids('kept')).not.toContain(BENCH)
     expect(ids('unreviewed')).not.toContain(BENCH)
     expect(ids('unreviewed')).not.toContain(rare.id)
-    expect(ids('unreviewed')).toContain(DBBENCH)
+    // Unreviewed is neither: a popular lift on your list is not dealt again there.
+    expect(ids('unreviewed')).not.toContain(DBBENCH)
     expect(ids('all')).toHaveLength(pool(S).length)
+    expect(ids('kept').length + ids('dropped').length + ids('unreviewed').length).toBe(pool(S).length)
     expect(roundCounts(S, pool(S))).toEqual(Object.fromEntries(ROUNDS.map(r => [r.id, ids(r.id).length])))
   })
 
@@ -237,5 +239,24 @@ describe('a round of one group', () => {
     decide(S, BENCH, 'drop')   // Undo of the keep
     expect(S.skipEx).toEqual([BENCH])
     expect(S.favEx).toEqual([])
+  })
+
+  it('narrows a round to the popular lifts or one kind of kit, and counts each way', () => {
+    const S = S0()
+    decide(S, BENCH, 'drop')
+    const list = pool(S)
+    const kept = list.filter(ex => inRound(S, ex, 'kept'))
+    expect(kept.filter(ex => inSub(ex, 'dumbbell')).map(ex => ex.id)).toContain(DBBENCH)
+    expect(kept.every(ex => inSub(ex, null))).toBe(true)
+    const c = subCounts(S, list, 'kept')
+    expect(c['']).toBe(kept.length)
+    // Every lift has one kind of kit: the kits add up to the round.
+    expect(SUBS.filter(s => s.id !== 'popular').reduce((n, s) => n + c[s.id], 0)).toBe(kept.length)
+    expect(c.popular).toBe(kept.filter(onList).length)
+    expect(subCounts(S, list, 'dropped').barbell).toBe(1)
+    // The round counts follow the kit picked.
+    expect(roundCounts(S, list, 'barbell').dropped).toBe(1)
+    expect(roundCounts(S, list, 'dumbbell').dropped).toBe(0)
+    expect(roundCounts(S, list, 'dumbbell').all).toBe(list.filter(ex => kitOf(ex) === 'dumbbell').length)
   })
 })

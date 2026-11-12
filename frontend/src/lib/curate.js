@@ -205,8 +205,8 @@ export function nextGroup(S, groupId, have = gymOf(S), passed = []) {
 
 /**
  * The rounds a group's pile can be gone through again in (views/Curate.jsx ?round=): the lifts
- * you have not reviewed yet, those on your list (inList), those you dropped, or all of them.
- * English names are i18n keys.
+ * on your list (inList), those you dropped, the rest (neither, so a lift is in one of the three
+ * and comes up once), or all of them. English names are i18n keys.
  */
 export const ROUNDS = [
   { id: 'unreviewed', n: 'Unreviewed' },
@@ -219,13 +219,28 @@ export const ROUNDS = [
 export function inRound(S, ex, round) {
   if (round === 'kept') return inList(S, ex)
   if (round === 'dropped') return skipIds(S).includes(ex.id)
-  if (round === 'unreviewed') return !reviewedIds(S).has(ex.id)
+  if (round === 'unreviewed') return !inList(S, ex) && !skipIds(S).includes(ex.id)
   return round === 'all'
 }
 
-/** Round id -> how many of `list` it deals. */
-export const roundCounts = (S, list) =>
-  Object.fromEntries(ROUNDS.map(r => [r.id, list.filter(ex => inRound(S, ex, r.id)).length]))
+/**
+ * What a round can be narrowed to (views/Curate.jsx ?sub=): the lifts on the list a pile deals
+ * first (onList), or one kind of kit (exercise-facets.js KITS). English names are i18n keys.
+ */
+export const SUBS = [{ id: 'popular', n: 'Popular' }, ...KITS.map(k => ({ id: k.id, n: k.n }))]
+
+/** Whether `ex` is in `sub` (SUBS); every lift when there is none. */
+export const inSub = (ex, sub) => !sub || (sub === 'popular' ? onList(ex) : kitOf(ex) === sub)
+
+/** Round id -> how many of `list` it deals, narrowed to `sub`. */
+export const roundCounts = (S, list, sub = null) =>
+  Object.fromEntries(ROUNDS.map(r => [r.id, list.filter(ex => inSub(ex, sub) && inRound(S, ex, r.id)).length]))
+
+/** Sub id (SUBS, '' for none) -> how many of `list` `round` deals narrowed to it. */
+export function subCounts(S, list, round) {
+  const ins = list.filter(ex => inRound(S, ex, round))
+  return Object.fromEntries([['', ins.length], ...SUBS.map(s => [s.id, ins.filter(ex => inSub(ex, s.id)).length])])
+}
 
 /**
  * What a round still deals: `ids`, the ones it took in when it began, so a lift you keep in a

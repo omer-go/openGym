@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, progressOf, deckOf, rareKits, nextGroup, decide, onList, listOf, toggleListed, ROUNDS, inRound, roundCounts, roundDeck, verdictOf } from '../lib/curate.js'
+import { gymOf, gymRows, rowOn, flipRow, gymFit, saveGym, groupPool, progressOf, deckOf, rareKits, nextGroup, decide, onList, listOf, toggleListed, ROUNDS, inRound, roundCounts, roundDeck, verdictOf, SUBS, inSub, subCounts } from '../lib/curate.js'
 import { activeProfile } from '../lib/equipment.js'
 import { isCustomEx } from '../lib/exercises.js'
 import { roleChips } from '../lib/muscle-roles.js'
@@ -39,7 +39,8 @@ export default function Curate() {
   // up one step, never out of the deck: /library, the Exercises tab, is the groups (Your gym on a
   // first visit, with no gym saved), /library/all every exercise to search (views/Library.jsx), /library/pick/gym Your gym, /library/pick/list Your list and
   // /library/pick/<group> its deck; ?kit=<id> deals the rarer ones of one kind of kit (rareKits),
-  // ?all all of them, ?round=<id> goes through the group again (curate.js ROUNDS). Going on to the next group
+  // ?all all of them, ?round=<id> goes through the group again (curate.js ROUNDS) and &sub=<id> only
+  // its popular lifts or one kind of kit (SUBS). Going on to the next group
   // replaces the path, so Back leaves the deck wherever you are in it, and hands the deck what it
   // has done so far in the history state (the page is remounted on every path).
   const { group: gp } = useParams()
@@ -71,10 +72,12 @@ export default function Curate() {
   </>
 
   if (!g) return null
+  const round = ROUNDS.some(r => r.id === search.get('round')) ? search.get('round') : null
+  const sub = round && SUBS.some(x => x.id === search.get('sub')) ? search.get('sub') : null
   return <>
     {head(t(g.n), null)}
-    <Deck key={search.get('round') || ''} S={S} update={update} group={group} have={have} all={search.has('all')} kit={search.get('kit')}
-      round={ROUNDS.some(r => r.id === search.get('round')) ? search.get('round') : null} onRound={id => setSearch({ round: id }, { replace: true })}
+    <Deck key={(round || '') + '/' + (sub || '')} S={S} update={update} group={group} have={have} all={search.has('all')} kit={search.get('kit')}
+      round={round} sub={sub} onRound={(id, s) => setSearch(s ? { round: id, sub: s } : { round: id }, { replace: true })}
       onAll={() => setSearch({ all: '' }, { replace: true })} onKit={id => setSearch({ kit: id }, { replace: true })}
       onGo={(id, deck) => nav(`/library/pick/${id}`, { replace: true, state: { deck } })} onDone={back} />
   </>
@@ -179,17 +182,19 @@ function YourList({ S, update, have, head, onGroup }) {
 // at once (lib/curate.js decide); what you pass on is only left out until you leave the deck. Undo
 // takes back the last card either way, to what it was before, going back to its group if the deck
 // has moved on. A `round` (curate.js ROUNDS) goes through this group's lifts again, the ones it
-// took in when it began, and stays in the group.
-function Deck({ S, update, group, have, all, kit, round, onRound, onAll, onKit, onGo, onDone }) {
+// took in when it began, and stays in the group; `sub` narrows it to the popular lifts or one
+// kind of kit.
+function Deck({ S, update, group, have, all, kit, round, sub, onRound, onAll, onKit, onGo, onDone }) {
   const carried = useLocation().state?.deck   // from the group before, when the deck moved on
   const [passed, setPassed] = useState(() => carried?.passed || [])
   const [done, setDone] = useState(() => carried?.done || [])   // [{ id, group, verdict, was }], newest last
   const [from, setFrom] = useState(() => carried?.from || null) // the group just gone through, named over the next one's first card
   const list = groupPool(S, group, have)
-  const [ids] = useState(() => (round ? list.filter(x => inRound(S, x, round)).map(x => x.id) : null))
+  const [ids] = useState(() => (round ? list.filter(x => inSub(x, sub) && inRound(S, x, round)).map(x => x.id) : null))
   const deck = round ? roundDeck(list, ids, { done: done.filter(d => d.group === group).map(d => d.id), passed }) : deckOf(S, list, { all, kit, passed })
   const p = progressOf(S, list)
-  const counts = roundCounts(S, list)
+  const counts = roundCounts(S, list, sub)
+  const subs = round ? subCounts(S, list, round) : null
   const kits = round ? [] : rareKits(S, list, passed)
   const ex = deck[0]
   const next = ex || round ? null : nextGroup(S, group, have, passed)
@@ -218,12 +223,19 @@ function Deck({ S, update, group, have, all, kit, round, onRound, onAll, onKit, 
   }
   const kept = done.filter(d => d.verdict === 'keep').length, dropped = done.filter(d => d.verdict === 'drop').length
   const nameOf = id => t(ADD_GROUPS.find(x => x.id === id)?.n || id)
-  // Which lifts to go through: the round picked, else the ones to go (the deck as it deals).
-  const rounds = <div className="chips cu-rounds" role="group" aria-label={t('Go through')}>
-    {ROUNDS.map(r => { const on = (round || 'unreviewed') === r.id
-      return <button key={r.id} className={'chip nocap' + (on ? ' on' : '')} aria-pressed={on} disabled={!counts[r.id] && !on}
-        onClick={() => onRound(r.id)}>{t(r.n)} <span className="dim">{fmtNum(counts[r.id])}</span></button> })}
-  </div>
+  // Which lifts to go through again: a round, and under it what to narrow it to (the kinds of kit
+  // it has any of). None picked is the deck as it deals on a first go.
+  const chip = (id, n, count, on, go) => <button key={id} className={'chip nocap' + (on ? ' on' : '')} aria-pressed={on} disabled={!count && !on}
+    onClick={go}>{t(n)} <span className="dim">{fmtNum(count)}</span></button>
+  const rounds = <>
+    <div className="chips cu-rounds" role="group" aria-label={t('Go through')}>
+      {ROUNDS.map(r => chip(r.id, r.n, counts[r.id], round === r.id, () => onRound(r.id, sub)))}
+    </div>
+    {subs && <div className="chips cu-subs" role="group" aria-label={t('Equipment')}>
+      {chip('', 'Any equipment', subs[''], !sub, () => onRound(round, null))}
+      {SUBS.filter(x => subs[x.id] || sub === x.id).map(x => chip(x.id, x.n, subs[x.id], sub === x.id, () => onRound(round, x.id)))}
+    </div>}
+  </>
 
   if (!ex) {
     const rare = all ? 0 : kits.reduce((n, k) => n + k.count, 0)
