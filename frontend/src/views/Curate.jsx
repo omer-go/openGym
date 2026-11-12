@@ -195,6 +195,14 @@ function Deck({ S, update, group, have, all, kit, round, sub, onRound, onAll, on
   const p = progressOf(S, list)
   const counts = roundCounts(S, list, sub)
   const subs = round ? subCounts(S, list, round) : null
+  // The kit picked is in view, so the counts above it read as its own.
+  const subRow = useRef(null)
+  useEffect(() => {
+    const row = subRow.current, on = row?.querySelector('.chip.on')
+    if (!on) return
+    const a = row.getBoundingClientRect(), b = on.getBoundingClientRect()
+    row.scrollLeft += b.left - a.left - (a.width - b.width) / 2
+  }, [])
   const kits = round ? [] : rareKits(S, list, passed)
   const ex = deck[0]
   const next = ex || round ? null : nextGroup(S, group, have, passed)
@@ -231,7 +239,7 @@ function Deck({ S, update, group, have, all, kit, round, sub, onRound, onAll, on
     <div className="chips cu-rounds" role="group" aria-label={t('Go through')}>
       {ROUNDS.map(r => chip(r.id, r.n, counts[r.id], round === r.id, () => onRound(r.id, sub)))}
     </div>
-    {subs && <div className="chips cu-subs" role="group" aria-label={t('Equipment')}>
+    {subs && <div ref={subRow} className="chips cu-subs" role="group" aria-label={t('Equipment')}>
       {chip('', 'Any equipment', subs[''], !sub, () => onRound(round, null))}
       {SUBS.filter(x => subs[x.id] || sub === x.id).map(x => chip(x.id, x.n, subs[x.id], sub === x.id, () => onRound(round, x.id)))}
     </div>}
@@ -261,7 +269,7 @@ function Deck({ S, update, group, have, all, kit, round, sub, onRound, onAll, on
   return <>
     {rounds}
     {from && from !== group && <div className="cu-next small">{t('{0} done. On to {1}.', nameOf(from), nameOf(group))}</div>}
-    <div className="cu-count muted small">{t('{0} to go', fmtNum(deck.length))}{kit ? ' · ' + t(kits.find(k => k.id === kit)?.n || '') : !all && !round && p.rare > 0 && ' · ' + t('popular lifts first')}</div>
+    <div className="cu-count muted small">{t('{0} to go', fmtNum(deck.length))}{sub ? ' · ' + t(SUBS.find(x => x.id === sub).n) : kit ? ' · ' + t(kits.find(k => k.id === kit)?.n || '') : !all && !round && p.rare > 0 && ' · ' + t('popular lifts first')}</div>
     <Card key={ex.id} ex={ex} was={verdictOf(S, ex.id)} onVerdict={act} />
     <div className="cu-btns">
       <button className="cu-b" onClick={undo} disabled={!done.length} aria-label={t('Undo')}><Icon name="undo" /></button>
