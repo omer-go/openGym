@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
+import { plan, planDay, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
 import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets } from './goals.js'
@@ -186,6 +186,25 @@ describe('planner', () => {
     // day has room for.
     expect(p.feasible).toBe(false)
     expect(p.short.some(x => ['time', 'accessories'].includes(x.cause))).toBe(true)
+  })
+
+  it('gives way a day at a time as a week does: the calves and the arms before the back and the legs', () => {
+    // A full-body day owing more than 75 minutes hold, as a program's last day of the week can.
+    const goals = { chest: 7, back: 9, shoulders: 6, biceps: 6, triceps: 5, abs: 7, quads: 6, hamstrings: 8, calves: 4 }
+    const o = { type: 'full', goal: 'growth', equipment: 'gym', level: 'advanced', minutes: 75, goals }
+    const got = d => {
+      const t = {}
+      for (const i of d.items) for (const [g, c] of Object.entries(creditOf(i.ex))) t[g] = (t[g] || 0) + c * i.sets
+      return t
+    }
+    const shortAt = (t, tier) => Object.entries(goals).filter(([g]) => PRIORITY[g] === tier).reduce((n, [g, v]) => n + Math.max(0, v - (t[g] || 0)), 0)
+    const flat = got(planDay({ ...o, priority: false })), d = got(planDay(o))
+    // Picked by the sets each lacks, the abs' plank and a second row came before the chest's
+    // second lift, and the chest ended four short.
+    expect(shortAt(d, 0)).toBeLessThan(shortAt(flat, 0))
+    // The chest takes its push-ups for the plank's minutes; nothing at the top is left over two short.
+    expect(d.chest).toBeGreaterThan(flat.chest)
+    for (const [g, v] of Object.entries(goals)) if (v - (d[g] || 0) > 2) expect(PRIORITY[g], g).toBeGreaterThanOrEqual(1)
   })
 
   it('gives the bottom tier away first when the time is far too short, though the squats and hinges still train the glutes', () => {

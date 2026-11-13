@@ -818,14 +818,16 @@ function totalsOf(out) {
 // would have. The week whose more important groups come out least short wins, the one that took
 // the least away on a tie: a set for the chest, back or legs is worth whatever it costs below.
 // `yields` is the share of its goal each group that gave way was built for.
-function giveWay(cfg, goals, parts, o, first) {
+// `slack`: the sets a group may be short and still count as there; a day (planDay) allows one, so
+// its calves don't go for the abs' last half set.
+function giveWay(cfg, goals, parts, o, first, slack = 0) {
   // Sets short of the goal at each PRIORITY, whole sets, a part counted with its group. A part
   // within SHORT of its minimum counts as there: a day holds one lift for the shoulders, so the
   // delts can't always take their last set, and nothing else gives way for it.
   const tiers = Math.max(...Object.values(PRIORITY)) + 1
   const shortBy = out => {
     const { total, partTotal } = totalsOf(out), v = Array(tiers).fill(0)
-    for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, goals[g] - (total[g] || 0))
+    for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, goals[g] - (total[g] || 0) - slack)
     for (const p of parts) if ((partTotal[p.name] || 0) < p.goal * SHORT) v[PRIORITY[p.g]] += p.goal - (partTotal[p.name] || 0)
     return v.map(Math.round)
   }
@@ -1017,7 +1019,11 @@ export function planDay(o = {}) {
   if (o.moreAcc > 0) cfg.maxAcc += o.moreAcc
   const goals = Object.fromEntries(PLAN_GROUPS.map(g => [g, o.goals?.[g] || 0]))
   const pattern = o.pattern || (o.type === 'full' ? FULL_LEADS(1)[0] : DAY_TYPES[o.type].leads[0])
-  return weekOf(cfg, goals, o.parts || [], { ...o, sched: [o.type], leads: [pattern], balance: false })[0]
+  const parts = o.parts || [], w = { ...o, sched: [o.type], leads: [pattern], balance: false }
+  // A day that can't hold all it owes gives way as a week does (giveWay): the calves and the arms
+  // before the back and the legs.
+  const first = weekOf(cfg, goals, parts, w)
+  return (o.priority === false ? first : giveWay(cfg, goals, parts, w, first, 1).out)[0]
 }
 
 /** Why the settings `o` can't reach the goal: `[{ g, cause }]` of the groups to blame, empty when they can. */
