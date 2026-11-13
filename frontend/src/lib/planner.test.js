@@ -333,6 +333,25 @@ describe('planner', () => {
     }
   })
 
+  it('pulls the other way for the back\'s second lift: a pulldown after the row, not a second row', () => {
+    const days = [...weeks().flatMap(({ p }) => p.days)]
+    // A one-tap full-body day led by a hinge, owing the back more than its row: the mid back is the
+    // part furthest behind, and only rows aim at it.
+    for (const minutes of [60, 75, 90]) days.push(planDay({ type: 'full', pattern: 'hinge', goal: 'growth', level: 'advanced', equipment: 'gym', minutes,
+      goals: { chest: 7, back: 9, shoulders: 6, biceps: 5, triceps: 5, abs: 4, quads: 6, hamstrings: 8, calves: 2 },
+      parts: [{ g: 'back', name: 'Mid back', goal: 6 }, { g: 'back', name: 'Lats', goal: 3 }] }))
+    let seen = 0
+    for (const d of days) {
+      // A pull day's backbone has the pull-up and the row both already.
+      const base = new Set(d.items.filter(i => i.slot !== 'accessory' && ['hpull', 'vpull'].includes(i.ex.pat)).map(i => i.ex.pat))
+      const slot = d.items.find(i => i.slot === 'pull'), second = d.items.find(i => i.slot === 'accessory' && i.ex.p[0] === 'back')
+      if (!slot || !second || base.size > 1) continue
+      seen++
+      expect(second.ex.pat, `${slot.ex.id} then ${second.ex.id}`).not.toBe(slot.ex.pat)
+    }
+    expect(seen).toBeGreaterThan(3)
+  })
+
   it('takes no third lift of one movement: after two presses a fly, after two rows a pullover', () => {
     for (const { template, days, p } of weeks()) for (const d of p.days) {
       const pats = {}

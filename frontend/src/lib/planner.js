@@ -246,10 +246,15 @@ const far = (cands, near) => { const out = cands.filter(e => !near.has(e.id)); r
 // No third lift of one movement while another will do: after the pull-up and the pulldown a row or a
 // pullover, not a chin-up. An incline press after the bench is still a press. And a group's second
 // lift on another tool: a cable row after the machine one. Prefers those of `cands`.
+// And the back's second pull the other way while one will do: a pulldown after the row, not a
+// second row because the mid back was the part furthest behind.
+const PULLS = ['hpull', 'vpull']
 const toolOf = e => variantOf(EXIDX[e.id]).tool
 const novel = (cands, items) => {
   const moves = cands.filter(e => e.kind !== 'compound' || items.filter(i => i.ex.pat === e.pat).length < 2)
-  const pool = moves.length ? moves : cands
+  const pulled = PULLS.filter(p => items.some(i => i.ex.pat === p))
+  const turn = pulled.length === 1 ? moves.filter(e => e.pat !== pulled[0]) : moves
+  const pool = turn.length ? turn : moves.length ? moves : cands
   const tools = pool.filter(e => !items.some(i => i.ex.p[0] === e.p[0] && toolOf(i.ex) === toolOf(e)))
   return tools.length ? tools : pool
 }
