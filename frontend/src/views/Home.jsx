@@ -15,7 +15,7 @@ import { dayNoteOf } from '../lib/day-notes.js'
 import { GEN_NAME } from '../lib/generate.js'
 import { KIND_COLOR, workoutsOn } from '../lib/workout-kind.js'
 import { NextDayCard, PlannedOn, WeekGoalCard, PROGRAM_SHORT } from '../components/Program.jsx'
-import { programLayout } from '../lib/program.js'
+import { programLayout, programWeek } from '../lib/program.js'
 import { PLAN_VIEW_KEY } from './Plan.jsx'
 
 // A day's label in the week strip: the day type, short, or the routine's own name.
@@ -119,6 +119,8 @@ export default function Home() {
   }
 
   // Each tile wears its kind's colour, the one its sessions get in the week strip.
+  const pwNow = programWeek(S)
+  const next = pwNow?.next != null ? pwNow.items[pwNow.next] : null
   const tile = (key, icon, title, sub, onClick) => <div key={key} className="gen-tile kind" style={{ '--kind': KIND_COLOR[key] }} role="button" aria-label={title} {...tappable(onClick)}>
     <div className="row" style={{ gap: 8 }}>
       <span className="lrow-i" style={{ width: 30, height: 30, borderRadius: 8, fontSize: 17 }}><Icon name={icon} /></span>
@@ -157,7 +159,10 @@ export default function Home() {
     <div className="card">
       <h2 style={{ marginBottom: 10 }}>{t('Start workout')}</h2>
       <div className="gen-grid">
-        {GEN_TILES.map(({ type, glyph, what }) => tile(type, glyphOf(glyph), t(GEN_NAME[type]), t(what), () => startGenerated(type)))}
+        {/* The program's next day under its own tile is that day, the one the card above starts. */}
+        {GEN_TILES.map(({ type, glyph, what }) => next?.type === type
+          ? tile(type, glyphOf(glyph), t(GEN_NAME[type]), t('Next program day'), () => startGenerated(type, next.k))
+          : tile(type, glyphOf(glyph), t(GEN_NAME[type]), t(what), () => startGenerated(type)))}
         {tile('free', 'shuffle', t('Freestyle'), t('Pick exercises as you go'), () => startFlow([]))}
         {tile('routine', 'clipboard', t('Saved routines'), tn('{0} routine', '{0} routines', S.routines.length), () => routinesSheet(S, nav))}
       </div>

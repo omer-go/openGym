@@ -15,7 +15,7 @@ import {
 const suggested = (S, g, type, volume) => weeklyTargetOf({ goals: { focus: S.goals?.focus, type, volume } }, g)
 import {
   DAY_NAME, DEFAULT_WEEKS, PROGRAM_WEEKS, isPlanProgram, isProgram, minutesFor, newPlanProgram, planExclude, programCalendar, programForecast, programMonths, programOver, programSummary, planAhead,
-  programShare, programWeek, sizeDay, suggestDay, templateOf, weekChanges,
+  nextDayAt, programShare, programWeek, sizeDay, suggestDay, templateOf, weekChanges,
 } from '../lib/program.js'
 import {
   DAY_TYPES, EQUIPMENT, LEVELS, PLAN_DAYS, PLAN_DEFAULTS, PLAN_MINUTES, PLAN_TEMPLATES, SCHEMES, blocker, configOf, fixFor, plan, scheduleOf,
@@ -64,11 +64,13 @@ export function DayChip({ type, done, next }) {
  * day, sized to its share of the week on a program day, or to the minutes it is given
  * (generate.js genConstraints), at the goal's sets.
  */
-function dayEstimate(S, type) {
+function dayEstimate(S, type, k) {
   const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
   const c = genConstraints(S, setup)
-  if (!c.minutes && isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { groups: setup.groups, setup })
-  const picks = generateWorkout(S, type, { ...setup, share: programShare(S, type) })
+  // The day as it is planned, on its own date (lib/program.js nextDayAt).
+  const now = nextDayAt(S, type, k)
+  if (!c.minutes && isProgram(S.program) && S.program.days.includes(type)) setup.count = sizeDay(S, type, { now, groups: setup.groups, setup })
+  const picks = generateWorkout(S, type, { ...setup, now, share: programShare(S, type, now) })
   const sets = picks.reduce((n, p) => n + genSets(p.id, { ...setup, goal: c.goal }, p.slot, p.extra), 0)
   return { count: picks.length, sets, minutes: minutesFor(S, generatedEntries(S, picks, setup)) }
 }
@@ -795,7 +797,7 @@ export function NextDayCard({ onPrograms }) {
   // estimate is of a different day than Start builds.
   useMuscleRoles()
   const k = pw?.next != null ? pw.items[pw.next].k : undefined
-  const est = useMemo(() => (type ? dayEstimate(S, type) : null), [S, type, rolesLoaded()])
+  const est = useMemo(() => (type ? dayEstimate(S, type, k) : null), [S, type, k, rolesLoaded()])
   const tpl = !p ? null : isPlanProgram(p) ? PLAN_TEMPLATES[p.template] : templateOf(p.template)
   const head = p
     ? (over ? t('Program done') : t('Program · week {0} of {1}', pw.week, p.weeks))

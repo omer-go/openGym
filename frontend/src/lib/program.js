@@ -19,8 +19,8 @@
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
 // takes as many exercises as the planner (planner.js planDay) builds that share with.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool } from './generate.js'
-import { plannedSets, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool, trainingIndex } from './generate.js'
+import { liftKind, plannedSets, slotMuscleOf, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { floorOf, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { workoutKind } from './workout-kind.js'
@@ -402,6 +402,34 @@ export function programDayEntries(S, f, now = Date.now()) {
   const count = genConstraints(S, setup).minutes ? null : sizeDay(S, f.type, { now, groups: setup.groups, setup })
   const picks = generateWorkout(S, f.type, { ...setup, count, now, share: programShare(S, f.type, now) })
   return generatedEntries(S, picks, setup)
+}
+
+/**
+ * When the program's next day is built: at noon on the date the forecast gives it (now, once that
+ * has come), as planAhead builds it, so the calendar, the program card and the Start sheet show
+ * the one same day whenever you look. Now for a `type` (or a week place `k`) that isn't next.
+ */
+export function nextDayAt(S, type, k, now = Date.now()) {
+  const f = programForecast(S, now)[0]
+  if (!f || f.type !== type || (Number.isInteger(k) && f.k !== k)) return now
+  return Math.max(now, new Date(f.iso + 'T12:00:00').getTime())
+}
+
+/**
+ * What starting early, on `now`, a day built for `at` runs into: the lift it opens with works a
+ * muscle you trained today or yesterday, which on its own date has had its rest.
+ * `{ id, muscle, when: 'today' | 'yesterday' }`, else null.
+ */
+export function earlyClash(S, entries, at, now = Date.now()) {
+  const today = isoOf(new Date(now))
+  if (isoOf(new Date(at)) <= today) return null
+  const lead = (entries || []).find(e => EXIDX[e.id] && liftKind(e.id))
+  const muscle = lead && slotMuscleOf(EXIDX[lead.id])
+  const last = muscle && trainingIndex(S).muscles[muscle]
+  if (!last) return null
+  const yesterday = isoOf(new Date(new Date(today + 'T12:00:00').getTime() - 864e5))
+  const when = last >= today ? 'today' : last === yesterday ? 'yesterday' : null
+  return when ? { id: lead.id, muscle, when } : null
 }
 
 /**

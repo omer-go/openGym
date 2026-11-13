@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, minutesFor, sizeDay, suggestDay, weekOf } from './program.js'
+import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, nextDayAt, earlyClash, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, minutesFor, sizeDay, suggestDay, weekOf } from './program.js'
 import { MAX_GEN_COUNT, genDefaults, genSets, generatedEntries, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
@@ -252,6 +252,41 @@ describe('planning the days ahead', () => {
     const next = new Date(plan[1].iso + 'T12:00:00').getTime()   // built on its own day
     expect(ids(planAhead(done, { days: 1, now: next })[0])).toEqual(ids(plan[1]))
     expect(ids(plan[1])).not.toEqual(ids(plan[0]))
+  })
+})
+
+describe('the next day, wherever it shows', () => {
+  beforeAll(loadMuscleRoles)
+  const SUN = at(2026, 9, 20)
+  const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-14' }), workouts: [
+    session('2026-09-15', 'full', ['0025', '0043', '0027']), session('2026-09-17', 'full', ['0025', '0085', '0652']),
+    session('2026-09-19', 'full', ['0025', '0043', '0027']),
+  ] })
+  const ids = es => es.map(e => e.id)
+
+  it('is built on its planned date, the same day the calendar plans, a day early or on the day', () => {
+    const f = programForecast(st, SUN)[0], noon = new Date(f.iso + 'T12:00:00').getTime()
+    expect(f.iso).toBe('2026-09-22')   // a new week, on its seven-day beat
+    expect(nextDayAt(st, 'full', f.k, SUN)).toBe(noon)
+    expect(ids(programDayEntries(st, f, nextDayAt(st, 'full', f.k, SUN)))).toEqual(ids(planAhead(st, { days: 1, now: SUN })[0].entries))
+    // On the day itself, later than noon: now.
+    expect(nextDayAt(st, 'full', f.k, noon + 36e5)).toBe(noon + 36e5)
+  })
+  it('is now for a day that is not next', () => {
+    const st2 = state({ program: newProgram('ppl-full-4', { weeks: 8, today: '2026-09-14' }) })
+    expect(nextDayAt(st2, 'legs', undefined, SUN)).toBe(SUN)
+    expect(nextDayAt(st, 'full', 2, SUN)).toBe(SUN)
+    expect(nextDayAt(state(), 'full', undefined, SUN)).toBe(SUN)
+  })
+  it('notes a lead lift on a muscle trained today or yesterday when started early', () => {
+    const mon = at(2026, 9, 21)
+    expect(earlyClash(st, [{ id: '0025' }], mon, SUN)).toEqual({ id: '0025', muscle: 'chest', when: 'yesterday' })
+    const today = { ...st, workouts: [...st.workouts, session('2026-09-20', 'full', ['0043'])] }
+    expect(earlyClash(today, [{ id: '0043' }, { id: '0025' }], mon, SUN)).toMatchObject({ id: '0043', when: 'today' })
+    // Rested, on its own day, or nothing to open with: nothing to say.
+    expect(earlyClash(st, [{ id: '0085' }], mon, SUN)).toBe(null)
+    expect(earlyClash(st, [{ id: '0025' }], SUN, SUN)).toBe(null)
+    expect(earlyClash(st, [], mon, SUN)).toBe(null)
   })
 })
 

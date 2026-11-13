@@ -62,7 +62,7 @@ import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
 import { primaryMuscleOf } from './lib/strength-exercises.js'
 import { weeklyTargets } from './lib/goals.js'
-import { DAY_NAME, isProgram, minutesFor, programShare, programWeek, sizeDay } from './lib/program.js'
+import { DAY_NAME, earlyClash, isProgram, minutesFor, nextDayAt, programShare, programWeek, sizeDay } from './lib/program.js'
 import { SCHEMES, slotScheme, restRangeOf } from './lib/engine.js'
 import CoverageStrip from './components/CoverageStrip.jsx'
 import { groupColor, muscleTagsOf, mcStyle } from './lib/muscle-colors.js'
@@ -3057,15 +3057,24 @@ const SCHEME_TITLE = { growth: 'Sets and reps for muscle growth', strength: 'Set
 function GenSetup({ type, k, close }) {
   const st = useStore(s => s.S)
   const inProgram = isProgram(st.program) && st.program.days.includes(type)
-  const sized = base => (inProgram && !genConstraints(st, base).minutes ? { ...base, count: sizeDay(st, type, { groups: base.groups, setup: base }) } : base)
+  // The program's next day is built for the date it is planned on (lib/program.js nextDayAt), the
+  // day the calendar and the program card show; started early, it stays that day unless you
+  // adjust it for today, when muscles trained today or yesterday wait and the date's picks change.
+  const [now] = useState(() => Date.now())
+  const [planned] = useState(() => (inProgram ? nextDayAt(st, type, k, now) : now))
+  const ahead = isoOf(new Date(planned)) > isoOf(new Date(now))
+  const [forToday, setForToday] = useState(false)
+  const at = forToday ? now : planned
+  const sized = (base, on = at) => (inProgram && !genConstraints(st, base).minutes ? { ...base, count: sizeDay(st, type, { now: on, groups: base.groups, setup: base }) } : base)
   const [setup, setSetup] = useState(() => sized({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
   const pw = inProgram ? programWeek(st) : null
   const [shift, setShift] = useState(0)
+  const adjust = v => { setForToday(v); setShift(0); setSetup(x => sized(x, v ? now : planned)) }
   const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
   useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
-  const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, share: programShare(st, type) }),
-    [st, type, shift, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
+  const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, now: at, share: programShare(st, type, at) }),
+    [st, type, shift, at, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   const c = genConstraints(st, setup), timed = c.minutes > 0
   const programMinutes = genConstraints(st).minutes
@@ -3080,8 +3089,11 @@ function GenSetup({ type, k, close }) {
   const start = () => {
     update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: setup } })
     close()
-    beginGenerated(type, entries, { shift, setup, ...(Number.isInteger(k) ? { day: k } : {}) })
+    beginGenerated(type, entries, { shift, setup, ...(at !== now ? { at } : {}), ...(Number.isInteger(k) ? { day: k } : {}) })
   }
+  const clash = ahead && !forToday ? earlyClash(st, entries, planned, now) : null
+  const plannedDay = new Date(planned).getDay()
+  const plannedFor = isoOf(new Date(planned)) === isoOf(new Date(now + 864e5)) ? t('tomorrow') : t(DAYN[plannedDay])
   // The rest a lift takes when none is set here: the range you keep rests in, or your rest timer.
   const range = restRangeOf(st)
   const restDefault = range ? `${fmtRest(range.min)}–${fmtRest(range.max)}` : fmtRest(st.restSec)
@@ -3092,6 +3104,15 @@ function GenSetup({ type, k, close }) {
         : t('Choose what to train, then start.')}</div></div>
       <Button size="sm" variant="plain" onClick={() => { setSetup(sized(genDefaults(type))); setShift(0) }}>{t('Reset')}</Button>
     </div>
+    {/* Started before its date: the planned day, said so, with the way to build it for today. */}
+    {ahead && <div className="gs-early">
+      <div className="grow small">{forToday
+        ? t('Adjusted for today: muscles you trained today or yesterday wait.')
+        : clash
+          ? t('Planned for {0}. You trained {1} {2}; this day opens with {3}.', plannedFor, t(MUSCLE_NAME[clash.muscle]).toLowerCase(), clash.when === 'today' ? t('today') : t('yesterday'), exerciseNameText(exOr(clash.id)))
+          : t('Planned for {0}.', plannedFor)}</div>
+      <Button size="sm" variant="tinted" onClick={() => adjust(!forToday)}>{forToday ? t('Planned day') : t('Adjust for today')}</Button>
+    </div>}
     <div className="wd-scroll sheet-scroll">
       <h4 className="sec">{t('Upper body')}</h4>
       <div className="gs-pills">{ADD_GROUPS.filter(g => !g.low).map(groupTile)}</div>
@@ -3197,7 +3218,9 @@ export function shuffleGenerated() {
   if (!A?.gen || A.entries.some(e => (e.sets || []).some(hasCompletedWork))) return
   const shift = (A.gen.shift || 0) + 1
   const setup = A.gen.setup || null
-  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift, share: programShare(S(), A.gen.type) }), setup)
+  // Built for the date the session was: a program day started early stays that day's.
+  const now = A.gen.at || Date.now()
+  const entries = generatedEntries(S(), generateWorkout(S(), A.gen.type, { ...setup, shift, now, share: programShare(S(), A.gen.type, now) }), setup)
   if (!entries.length) return
   useUI.getState().stopRest()
   update(s => { s.active.entries = entries; s.active.cur = 0; s.active.gen = { ...s.active.gen, shift } })

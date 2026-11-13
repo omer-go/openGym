@@ -1935,6 +1935,10 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* one-tap workout setup (sheets.jsx GenSetup) */
 .gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 /* The one-tap setup: the exercises it picked fold away under one row. */
+/* A program day started before its date (sheets.jsx GenSetup): what it is planned for, and the way to build it for today. */
+.gs-early{flex:none;display:flex;align-items:center;gap:10px;margin:2px 0 10px;padding:10px 12px;border-radius:var(--r-lg);background:var(--surface);color:var(--label-2)}
+.gs-early .grow{flex:1;min-width:0}
+.gs-early .btn{flex:none}
 .gs-exs{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border-radius:var(--r-lg);background:var(--surface);color:var(--label);text-align:start}
 .gs-exs .grow{flex:1;min-width:0}
 .gs-exs .icn{color:var(--label-3);transition:transform .2s}
