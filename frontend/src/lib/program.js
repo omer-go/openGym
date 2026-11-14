@@ -19,7 +19,7 @@
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
 // takes as many exercises as the planner (planner.js planDay) builds that share with.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, generateWorkout, generatedEntries, planPool, trainingIndex } from './generate.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, genSlotCount, generateWorkout, generatedEntries, planPool, trainingIndex } from './generate.js'
 import { liftKind, plannedSets, slotMuscleOf, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { floorOf, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
@@ -313,7 +313,7 @@ export function sizeDay(S, type, { now = Date.now(), groups, setup } = {}) {
   const share = dayShare(S, type, now)
   if (!Object.values(share).some(v => v > 0)) return Math.min(genCount(type), MAX_GEN_COUNT)
   const picks = generateWorkout(S, type, { count: null, groups, now, share, byKind: setup?.byKind, sets: setup?.sets })
-  return Math.max(MIN_DAY, Math.min(MAX_GEN_COUNT, picks.length))
+  return Math.max(MIN_DAY, Math.min(MAX_GEN_COUNT, genSlotCount(picks)))
 }
 
 /** Group id -> sets done this week and the goal, for the groups a program's days train. */

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { MIN_DAY, DAY_NAME, adoptedShare, dayShare, isPlanProgram, newPlanProgram, weekChanges, programDayEntries, nextDayAt, earlyClash, isProgram, programShare, newProgram, programCalendar, programForecast, programLayout, programMonths, programOver, programSummary, programWeek, planAhead, minutesFor, sizeDay, suggestDay, weekOf } from './program.js'
-import { MAX_GEN_COUNT, genDefaults, genSets, generatedEntries, generateWorkout, planPool } from './generate.js'
+import { MAX_GEN_COUNT, genDefaults, genSets, genSlotCount, pickSets, generatedEntries, generateWorkout, planPool } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { entryWeights, groupCredit } from './coverage.js'
 import { LEVELS } from './planner.js'
@@ -116,10 +116,11 @@ describe('sizing a day to the goal', () => {
       const now = at(2026, 9, 16)
       const share = programShare(st, 'full', now)
       const n = sizeDay(st, 'full', { now })
-      const own = generateWorkout(st, 'full', { count: null, now, share }).map(p => p.id)
-      expect(n).toBe(Math.max(MIN_DAY, own.length))
+      const picks = generateWorkout(st, 'full', { count: null, now, share }), own = picks.map(p => p.id)
+      // An abs combo's exercises fill one slot between them (generate.js genSlotCount).
+      expect(n).toBe(Math.max(MIN_DAY, genSlotCount(picks)))
       expect(generateWorkout(st, 'full', { count: n, now, share }).map(p => p.id)).toEqual(own)
-      for (const k of [4, 7]) expect(generateWorkout(st, 'full', { count: k, now, share })).toHaveLength(k)
+      for (const k of [4, 7]) expect(genSlotCount(generateWorkout(st, 'full', { count: k, now, share }))).toBe(k)
     })
     // Each group to its own share, not 85% of the sum: that stopped a day at six with back,
     // biceps and hamstrings each a set or more short, chest over. Each lift counts the sets it
@@ -140,7 +141,7 @@ describe('sizing a day to the goal', () => {
     it('a day with more to give takes more sets, its lifts capped by the level', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }) })
       const sets = now => generateWorkout(st, 'full', { count: sizeDay(st, 'full', { now }), now, share: dayShare(st, 'full', now) })
-        .reduce((a, p) => a + genSets(p.id, undefined, p.slot, p.extra), 0)
+        .reduce((a, p) => a + pickSets(p), 0)
       const mon = at(2026, 9, 14), fri = at(2026, 9, 18)
       expect(sizeDay(st, 'full', { now: mon })).toBeGreaterThanOrEqual(MIN_DAY)
       expect(sizeDay(st, 'full', { now: fri })).toBeLessThanOrEqual(1 + 3 + LEVELS.intermediate.maxAcc)

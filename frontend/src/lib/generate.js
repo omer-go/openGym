@@ -37,7 +37,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
-import { DAY_TYPES, planDay, partsFor } from './planner.js'
+import { DAY_TYPES, EQUIPMENT, planDay, partsFor } from './planner.js'
 import { listOf } from './curate.js'
 import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
@@ -46,6 +46,8 @@ import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 import { withInferredWeight } from './infer-weight.js'
+import { absTurn, absDayCombo, weightedAbs, ABS_DAY_ROUNDS, ABS_DAY_MIN_ROUNDS, ABS_DAY_NAME, ABS_DAY_REST } from './abs-combo.js'
+import { asComboMember } from './combo.js'
 
 export const GEN_TYPES = {
   full: [['chest', 1], ['upper-back', 1], ['deltoids', 1], ['quadriceps', 1], ['hamstring|gluteal', 1], ['biceps|triceps', 1], ['calves|abs', 1]],
@@ -462,6 +464,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets, goal: c.goal }, slot).sets
     return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 || (extra < 0 && c.minutes) ? { extra } : {}) }
   })
+  turnAbs(S, picks, items, { now, shift, pool, avoid: [near, ...earlier].flat(), has: EQUIPMENT[c.equipment]?.has, index, timed: c.minutes > 0 })
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }
@@ -469,6 +472,41 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   if (stretch) pickFrom(stretchCandidates(S, index, new Set(picks.map(p => p.muscle))), GEN_STRETCHES, 'stretch')
   return picks
 }
+
+/**
+ * The day's abs work, by its turn (abs-combo.js absTurn): a combo of body-weight floor exercises
+ * in place of the abs lift the planner picked, its rounds that lift's sets, or a lift with weight
+ * on it in place of a body-weight one. The same for the same day and `shift`, so the calendar and
+ * the Start sheet agree. Gear for neither, or too few floor exercises, leaves the pick as it was.
+ * A timed day's is two exercises for ABS_DAY_MIN_ROUNDS, to stay about inside its time.
+ * Mutates `picks` (generateWorkout's, `items` the planner's in the same order).
+ */
+function turnAbs(S, picks, items, { now, shift, pool, avoid, has, index, timed }) {
+  const at = picks.findIndex(p => p.muscle === 'abs')
+  if (at < 0) return
+  const p = picks[at]
+  if (absTurn(S, now) === 'combo') {
+    // A timed day was fitted with the abs lift's sets: its combo is the smallest, two exercises
+    // for the fewest rounds, so it stays about inside the time.
+    const ids = absDayCombo(S, dayNo(isoOf(new Date(now))) * 7 + shift, avoid).slice(0, timed ? 2 : undefined)
+    if (ids.length < 2) return
+    const sets = Math.round(items[at]?.sets) || ABS_DAY_ROUNDS
+    const rounds = Math.max(ABS_DAY_MIN_ROUNDS, Math.min(ABS_DAY_ROUNDS, timed ? 0 : sets))
+    const combo = { sg: 'sgabs' + shift, rounds, name: ABS_DAY_NAME, rest: ABS_DAY_REST, kind: 'strength' }
+    picks.splice(at, 1, ...ids.map(id => ({ id, muscle: 'abs', last: p.last, slot: p.slot, combo })))
+    picks.forEach((q, i) => { q.at = i })
+    return
+  }
+  if (EXIDX[p.id]?.eq !== 'body weight') return
+  const id = weightedAbs(S, pool, { has, avoid: [...avoid, ...picks.map(q => q.id)], shift, index })
+  if (id) picks[at] = { ...p, id }
+}
+
+/** The slots `picks` (generateWorkout) fill: an abs combo's exercises fill one between them. */
+export const genSlotCount = picks => new Set(picks.map((p, i) => p.combo?.sg || i)).size
+
+/** The work sets pick `p` (generateWorkout) takes from `setup`: an abs combo's member, its rounds. */
+export const pickSets = (p, setup) => (p.combo ? p.combo.rounds : genSets(p.id, setup, p.slot, p.extra))
 
 /**
  * The target of one lift in a session built from `setup` (genDefaults): its sets and reps (genScheme),
@@ -558,17 +596,22 @@ export function sessionConfig(S, id, active, lead = false, extra = 0) {
  * reaches the saved workout.
  */
 export function generatedEntries(S, picks, setup = null) {
-  return picks.map(({ id, muscle, last, kind, slot, extra }) => {
-    const planned = setup && !kind
-    const gen = kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) }
-    // A lift of the setup moves on from its own last sessions the way a routine's does
-    // (session-start.js buildPlannedEntry): more reps in the range, then more weight at its bottom.
-    if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null), gen }
-    // A lift never logged opens at a weight read off a similar one (lib/infer-weight.js).
-    const { cfg } = withInferredWeight(S, freestyleConfig(S, { id, ...defaultConfig(id) }))
-    const full = { ...cfg, id }
-    const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
-    const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))
-    return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen }
+  return picks.map(pick => {
+    const entry = generatedEntry(S, pick, setup)
+    // An abs combo's members: one card, a round each of them at a time (lib/combo.js).
+    return pick.combo ? asComboMember(entry, pick.combo, { onTarget: true }) : entry
   })
+}
+function generatedEntry(S, { id, muscle, last, kind, slot, extra }, setup) {
+  const planned = setup && !kind
+  const gen = kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) }
+  // A lift of the setup moves on from its own last sessions the way a routine's does
+  // (session-start.js buildPlannedEntry): more reps in the range, then more weight at its bottom.
+  if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null), gen }
+  // A lift never logged opens at a weight read off a similar one (lib/infer-weight.js).
+  const { cfg } = withInferredWeight(S, freestyleConfig(S, { id, ...defaultConfig(id) }))
+  const full = { ...cfg, id }
+  const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
+  const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))
+  return { id, target: withMeaning(S, cfg, id), plan: null, sets, gen }
 }

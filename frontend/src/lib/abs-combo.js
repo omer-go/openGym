@@ -9,6 +9,7 @@ import { EXIDX, isCardio } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { suggestable } from './skipped.js'
 import { trainingIndex } from './generate.js'
+import { isoOf } from './format.js'
 
 export const ABS_STYLES = ['lower', 'crunch', 'twist', 'brace']
 
@@ -284,4 +285,74 @@ export function resizeAbsCombo(S, ids, gear, count, { random = Math.random } = {
     out.push(id)
   }
   return out
+}
+
+// One-tap days take their abs work in turns: a combo of body-weight floor exercises one time, a
+// single abs lift with weight on it the next (generate.js generateWorkout). The combo is a
+// strength one, so its rounds count toward the abs' weekly goal the way a superset's sets do.
+export const ABS_DAY_COMBO = 3       // exercises in a one-tap day's abs combo
+export const ABS_DAY_ROUNDS = 3      // its most rounds: the abs slot's sets, up to this
+export const ABS_DAY_MIN_ROUNDS = 2  // its fewest, and a timed day's
+export const ABS_DAY_REST = 60       // seconds between its rounds
+export const ABS_DAY_NAME = 'Abs combo'
+
+const isBodyWeight = ex => ex?.eq === 'body weight'
+const dateAt = w => w.start || 0
+
+/**
+ * What the abs work of a day built at `now` takes its turn as: 'weighted' when the last workout
+ * before it with abs work in it had them as a combo, 'combo' otherwise (none yet included).
+ */
+export function absTurn(S, now = Date.now()) {
+  const iso = isoOf(new Date(now))
+  const done = (S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d <= iso && dateAt(w) < now && Array.isArray(w.entries))
+    .sort((a, b) => (a.d < b.d ? 1 : a.d > b.d ? -1 : dateAt(b) - dateAt(a)))
+  for (const w of done) {
+    const abs = w.entries.filter(e => e && isAbs(EXIDX[e.id]) && (e.sets || []).some(s => s?.done))
+    if (abs.length) return abs.some(e => e.target?.sgCombo === true) ? 'weighted' : 'combo'
+  }
+  return 'combo'
+}
+
+/** A random() that gives the same numbers for the same `seed`: a planned day's combo stays put. */
+export function seededRandom(seed) {
+  let a = (Math.round(Number(seed) || 0) >>> 0) ^ 0x9e3779b9
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/**
+ * The body-weight abs combo of a one-tap day: ABS_DAY_COMBO floor exercises (randomAbsCombo),
+ * each a different way the core works, the same for the same `seed`. `avoid`: the ids of the
+ * last sessions, passed over while anything else is left.
+ */
+export function absDayCombo(S, seed, avoid = []) {
+  const { ids } = randomAbsCombo(S, { count: ABS_DAY_COMBO, spot: 'floor', avoid, random: seededRandom(seed) })
+  return ids.filter(id => isBodyWeight(EXIDX[id]))
+}
+
+/**
+ * A weighted abs lift for a day's single abs exercise, from `pool` (exercise ids): one with gear
+ * `has` allows (planner.js EQUIPMENT: 'gym', 'db'), the one you did longest ago among those you
+ * have logged before the ones you have not, which come in `pool`'s order; `shift` steps along.
+ * `avoid`'s are passed over while anything else is left. Null when none fits.
+ */
+export function weightedAbs(S, pool, { has = ['gym', 'db', 'bw'], avoid = [], shift = 0, index = trainingIndex(S) } = {}) {
+  const needOf = ex => (ex.eq === 'dumbbell' ? 'db' : 'gym')
+  const fit = [...new Set(pool)].filter(id => {
+    const ex = EXIDX[id]
+    return isAbs(ex) && !isBodyWeight(ex) && has.includes(needOf(ex)) && suggestable(S, ex)
+  })
+  const fresh = fit.filter(id => !avoid.includes(id))
+  const list = fresh.length ? fresh : fit
+  if (!list.length) return null
+  const when = id => index.exercises[id]?.d || null
+  const known = list.filter(when).sort((a, b) => (when(a) < when(b) ? -1 : when(a) > when(b) ? 1 : 0))
+  const order = [...known, ...list.filter(id => !when(id))]
+  return order[Math.max(0, Math.round(shift) || 0) % order.length]
 }

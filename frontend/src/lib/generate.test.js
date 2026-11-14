@@ -142,7 +142,8 @@ describe('generateWorkout', () => {
   it('builds every day type with the slot counts it promises', () => {
     for (const [type, slots] of Object.entries(GEN_TYPES)) {
       const picks = generateWorkout(state(), type)
-      expect(picks, type).toHaveLength(slots.reduce((n, [, c]) => n + c, 0))
+      // An abs combo (abs-combo.js absTurn) fills its one slot with a few exercises.
+      expect(new Set(picks.map(p => p.combo?.sg || p.id)).size, type).toBe(slots.reduce((n, [, c]) => n + c, 0))
       expect(new Set(picks.map(p => p.id)).size, type).toBe(picks.length)
     }
   })
@@ -622,11 +623,60 @@ describe('a timed one-tap day', () => {
     expect(picks.some(p => p.extra < 0)).toBe(true)
     for (const p of picks) expect(genSets(p.id, setup, p.slot, p.extra)).toBeGreaterThanOrEqual(1)
     const entries = generatedEntries(state(), picks, setup)
-    for (const [i, p] of picks.entries()) expect(entries[i].sets.length).toBe(genSets(p.id, setup, p.slot, p.extra))
+    // An abs combo's members take its rounds: the sets the abs were fitted with.
+    for (const [i, p] of picks.entries()) expect(entries[i].sets.length).toBe(p.combo ? p.combo.rounds : genSets(p.id, setup, p.slot, p.extra))
   })
 
   it('a day sized by a count still gives each lift at least its slot\'s sets', () => {
     const setup = genDefaults('full')
     expect(generateWorkout(state(), 'full', setup).every(p => !(p.extra < 0))).toBe(true)
+  })
+})
+
+describe('the abs of a one-tap day take turns', () => {
+  const absOf = picks => picks.filter(p => p.muscle === 'abs')
+  const comboDone = (d, ids) => ({ ...session(d, ids, [row({ w: 0, r: 15 })]), start: new Date(d + 'T10:00:00').getTime(),
+    entries: [{ id: BENCH, target: { reps: 8 }, sets: [row()] },
+      ...ids.map(id => ({ id, sg: 'g1', target: { reps: 15, sgCombo: true, sgKind: 'strength' }, sets: [row({ w: 0, r: 15 })] }))] })
+
+  it('as a combo of body-weight exercises, one card of rounds that count as strength work', () => {
+    const picks = generateWorkout(state(), 'full', { now: NOW })
+    const abs = absOf(picks)
+    expect(abs.length).toBeGreaterThanOrEqual(2)
+    expect(abs.every(p => p.combo && EXIDX[p.id].eq === 'body weight')).toBe(true)
+    expect(picks.map(p => p.at)).toEqual(picks.map((_, i) => i))
+    const setup = genDefaults('full')
+    const entries = generatedEntries(state(), picks, setup).filter(e => e.target?.sgCombo)
+    expect(entries).toHaveLength(abs.length)
+    expect(new Set(entries.map(e => e.sg)).size).toBe(1)
+    for (const e of entries) {
+      expect(e.target).toMatchObject({ sgKind: 'strength', sgName: 'Abs combo', sgRest: 60, sets: abs[0].combo.rounds })
+      expect(e.sets.filter(s => !isWarmupRow(s))).toHaveLength(abs[0].combo.rounds)
+    }
+  })
+  it('on a timed day, the smallest combo: two exercises for two rounds', () => {
+    const abs = absOf(generateWorkout(state(), 'full', { ...genDefaults('full'), minutes: 45, now: NOW }))
+    expect(abs).toHaveLength(2)
+    expect(abs.every(p => p.combo?.rounds === 2)).toBe(true)
+  })
+  it('the same combo for the same day, another one on a shuffle', () => {
+    const ids = s => absOf(generateWorkout(state(), 'full', { now: NOW, shift: s })).map(p => p.id).join()
+    expect(ids(0)).toBe(ids(0))
+    expect(new Set([0, 1, 2, 3].map(ids)).size).toBeGreaterThan(1)
+  })
+  it('after a combo, as one lift with weight on it', () => {
+    const st = state({ workouts: [comboDone('2026-08-20', ['0274', '0463', '0872'])] })
+    for (const shift of [0, 1, 2]) {
+      const abs = absOf(generateWorkout(st, 'full', { now: NOW, shift, count: 10 }))
+      expect(abs).toHaveLength(1)
+      expect(abs[0].combo).toBeUndefined()
+      expect(EXIDX[abs[0].id].eq).not.toBe('body weight')
+    }
+  })
+  it('a body-weight-only setup keeps its single lift body weight', () => {
+    const st = state({ workouts: [comboDone('2026-08-20', ['0274', '0463', '0872'])] })
+    const abs = absOf(generateWorkout(st, 'full', { now: NOW, equipment: 'bw', count: 10 }))
+    expect(abs.length).toBeGreaterThanOrEqual(1)
+    expect(abs.every(p => !p.combo && EXIDX[p.id].eq === 'body weight')).toBe(true)
   })
 })

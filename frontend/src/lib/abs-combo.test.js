@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ABS_STYLES, ABS_STAPLES, ABS_SPOTS, ABS_ITEMS, ABS_COMBO_MAX, absStyleOf, absGearOf, absPositionOf,
   absCandidates, absSpotsOpen, absStylesFor, absOrder, randomAbsCombo, swapAbsExercise, resizeAbsCombo,
+  ABS_DAY_COMBO, absTurn, seededRandom, absDayCombo, weightedAbs,
 } from './abs-combo.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
@@ -227,5 +228,66 @@ describe('resizeAbsCombo', () => {
     const three = ABS_STYLES.slice(0, 3).map(s => ABS_STAPLES.floor.find(id => style(id) === s))
     const four = resizeAbsCombo(state(), three, 'floor', 4, { random: seeded() })
     expect(style(four[3])).toBe(ABS_STYLES[3])
+  })
+})
+
+describe('the abs turns of one-tap days', () => {
+  const NOW = new Date(2026, 8, 15, 12).getTime()
+  const done = (d, entries) => ({ id: 'w' + d, d, start: new Date(d + 'T10:00:00').getTime(), entries })
+  const lift = (id, target = {}) => ({ id, target: { reps: 12, ...target }, sets: [{ w: 20, r: 12, done: true }] })
+  const combo = id => lift(id, { sgCombo: true, sgKind: 'strength' })
+
+  it('start with a combo, and take turns with a weighted lift after that', () => {
+    expect(absTurn(state(), NOW)).toBe('combo')
+    expect(absTurn(state({ workouts: [done('2026-09-12', [combo('0274'), combo('0463')])] }), NOW)).toBe('weighted')
+    expect(absTurn(state({ workouts: [done('2026-09-12', [lift('0175')])] }), NOW)).toBe('combo')
+  })
+  it('go by the last workout with abs work in it, not by the last workout', () => {
+    const workouts = [done('2026-09-10', [lift('0025'), combo('0274'), combo('0463')]), done('2026-09-13', [lift('0043')])]
+    expect(absTurn(state({ workouts }), NOW)).toBe('weighted')
+    workouts.push(done('2026-09-14', [lift('0175')]))
+    expect(absTurn(state({ workouts }), NOW)).toBe('combo')
+  })
+  it('count abs sets you ticked only, and nothing after the day being built', () => {
+    const skipped = { ...lift('0175'), sets: [{ w: 20, r: 12, done: false }] }
+    expect(absTurn(state({ workouts: [done('2026-09-12', [combo('0274')]), done('2026-09-13', [skipped])] }), NOW)).toBe('weighted')
+    expect(absTurn(state({ workouts: [done('2026-09-12', [combo('0274')]), done('2026-09-16', [lift('0175')])] }), NOW)).toBe('weighted')
+  })
+
+  it('build the combo from body-weight floor exercises of different styles, the same for the same seed', () => {
+    for (let seed = 0; seed < 40; seed++) {
+      const ids = absDayCombo(state(), seed)
+      expect(ids).toHaveLength(ABS_DAY_COMBO)
+      for (const id of ids) {
+        expect(EXIDX[id].eq, EXIDX[id].n).toBe('body weight')
+        expect(gear(id)).toBe('floor')
+      }
+      expect(new Set(ids.map(id => absStyleOf(EXIDX[id]))).size).toBe(ABS_DAY_COMBO)
+      expect(absDayCombo(state(), seed)).toEqual(ids)
+    }
+    expect(new Set(Array.from({ length: 10 }, (_, s) => absDayCombo(state(), s).join())).size).toBeGreaterThan(1)
+  })
+  it('seededRandom repeats itself for a seed and stays in [0, 1)', () => {
+    const a = seededRandom(7), b = seededRandom(7)
+    for (let i = 0; i < 50; i++) {
+      const x = a()
+      expect(x).toBe(b())
+      expect(x >= 0 && x < 1).toBe(true)
+    }
+  })
+
+  const POOL = ['0463', '0274', '0175', '1452', '3449', '0407']
+  it('pick a weighted lift for the single: never a body-weight one, the gear allowed', () => {
+    expect(weightedAbs(state(), POOL)).toBe('0175')
+    expect(weightedAbs(state(), POOL, { has: ['db', 'bw'] })).toBe('3449')
+    expect(weightedAbs(state(), POOL, { has: ['bw'] })).toBe(null)
+    expect(weightedAbs(state(), ['0463', '0274'])).toBe(null)
+  })
+  it('lean to the logged lift done longest ago, pass over the last sessions\' and step along with shift', () => {
+    const st = state({ workouts: [done('2026-09-01', [lift('1452')]), done('2026-09-08', [lift('0175')])] })
+    expect(weightedAbs(st, POOL)).toBe('1452')
+    expect(weightedAbs(st, POOL, { avoid: ['1452'] })).toBe('0175')
+    expect(weightedAbs(st, POOL, { shift: 1 })).toBe('0175')
+    expect(weightedAbs(st, POOL, { avoid: POOL })).toBe('1452')
   })
 })
