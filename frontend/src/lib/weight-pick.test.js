@@ -70,6 +70,20 @@ describe('quick picks', () => {
   it('offers a light start the first time', () => {
     expect(quickPicks({ ex: bar, last: null, reps: 10, unit: 'kg' })).toEqual({ next: { w: 20, reps: 10, why: 'start' }, same: null })
   })
+  it('reads a per-side lift per arm: 24 logged as 12 a side is 12', () => {
+    const row = sides => ({ d: '2026-11-12', sets: sides.map(([w, l, r]) => ({ w, r: l + r, done: true, sides: { L: { w, r: l }, R: { w, r } } })) })
+    expect(lastTop(row([[55, 12, 12], [55, 12, 12]]), 2)).toEqual({ w: 55, reps: 12, sets: 2, d: '2026-11-12' })
+    // The weaker arm is what you hit.
+    expect(lastTop(row([[55, 12, 11]]), 2).reps).toBe(11)
+    // Logged without sides: half the total.
+    expect(lastTop(last([[55, 24]]), 2).reps).toBe(12)
+  })
+  it('suggests one more rep a side, not one more on the total', () => {
+    const row = { d: '2026-11-12', sets: [{ w: 55, r: 22, done: true, sides: { L: { w: 55, r: 11 }, R: { w: 55, r: 11 } } }] }
+    const p = quickPicks({ ex: bell, last: row, reps: 12, unit: 'lb', per: 2 })
+    expect(p.next).toEqual({ w: 55, reps: 12, why: 'rep' })
+    expect(p.same.reps).toBe(11)
+  })
   it('steps in the exercise’s own unit', () => {
     expect(quickPicks({ ex: bell, last: last([[20, 10]]), reps: 10, unit: 'kg' }).next.w).toBe(21)
   })

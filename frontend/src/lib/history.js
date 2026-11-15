@@ -267,6 +267,9 @@ export function setsRepsOf(cfg) {
   if (isPyramid(cfg)) return pyramidLabel(cfg.pyramid)
   // Triple progression's set range reads as a range too: "3–5 × 8–12".
   const sets = cfg.setsMax > n ? `${n}–${cfg.setsMax}` : n
+  // A one-arm row's 24 is the two arms counted together (sideReps): it reads as the 12 each arm
+  // does, "3 × 12/side", since that is the number you count while doing it.
+  if (isPerSide(cfg)) return `${sets} × ${t('{0}/side', repsOf(cfg, v => fmtNum(sideReps(v))))}`
   return `${sets} × ${repsOf(cfg)}`
 }
 
@@ -285,9 +288,8 @@ export function exLine(cfg, unit, speedUnit) {
   // A timed hold has no rep count to spell a split out of ("8/side" below) — "per side" says it
   // happens twice, once each side (buildWorkSets), rather than trying to divide a duration.
   if (mode === 'time') return `${setsRepsOf(cfg)}${load}${isPerSide(cfg) ? ' · ' + t('per side') : ''}`
-  // This is the line with room for it, so the split is spelled out: "3 × 16 · 8/side".
-  const split = isPerSide(cfg) ? ' · ' + t('{0}/side', repsOf(cfg, v => fmtNum(sideReps(v)))) : ''
-  return `${setsRepsOf(cfg)}${load}${split}`
+  // Per side reads per side already: "3 × 8/side · 20 kg" (setsRepsOf).
+  return `${setsRepsOf(cfg)}${load}`
 }
 
 // Drop superset ids that no longer have an adjacent partner (after unlink/reorder/remove).

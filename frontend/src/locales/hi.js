@@ -836,7 +836,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{1} रेप्स के {0} सेट। अब वज़न बढ़ाने या कोई कठिन वैरिएशन आज़माने का समय।',
   '{0} per side': 'प्रति तरफ़ {0}',
   'Per side': 'प्रति तरफ़',
-  'You still log the total: {0} is {1} per side.': 'आप कुल ही दर्ज करते हैं: {0} यानी प्रति तरफ़ {1}।',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'कोच आपकी ट्रेनिंग पढ़ रहा है…',

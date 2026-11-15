@@ -670,7 +670,6 @@ export default {
   '{0} reps in every set! Add a set and go back to {1}.': '{0} تكرارات في كل مجموعة! أضف مجموعة وعد إلى {1}.',
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} مجموعات من {1}. حان وقت إضافة الوزن أو تجربة تنويع أصعب.',
   '{0} per side': '{0} لكل جانب',
-  'You still log the total: {0} is {1} per side.': 'ما زلت تسجل الإجمالي: {0} تعني {1} لكل جانب.',
   '{0} sets · {1} work': '{0} مجموعات · {1} عمل',
   'Make superset with previous': 'اربطه في سوبر سِت مع التمرين السابق',
   'Make superset with next': 'اربطه في سوبر سِت مع التمرين التالي',

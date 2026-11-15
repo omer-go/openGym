@@ -818,7 +818,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} × {1}. Пора добавить вес или взять вариант посложнее.',
   '{0} per side': '{0} на сторону',
   'Per side': 'На сторону',
-  'You still log the total: {0} is {1} per side.': 'Вы по-прежнему записываете общий вес: {0} это {1} на сторону.',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'Тренер читает ваши тренировки…',

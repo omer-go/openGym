@@ -643,7 +643,6 @@ export default {
   '{0} reps in every set! Add a set and go back to {1}.': '{0} повторень в усіх підходах! Додай підхід і повернись до {1}.',
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} підходи по {1}. Час додати вагу або спробувати складніший варіант.',
   '{0} per side': '{0} на сторону',
-  'You still log the total: {0} is {1} per side.': 'Ти й далі записуєш загальну кількість: {0} означає {1} на сторону.',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'Тренер читає твої тренування…',

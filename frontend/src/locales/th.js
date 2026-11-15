@@ -806,7 +806,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} เซ็ต เซ็ตละ {1} ถึงเวลาเพิ่มน้ำหนักหรือลองท่าที่ยากขึ้นแล้ว',
   '{0} per side': '{0} ต่อข้าง',
   'Per side': 'ต่อข้าง',
-  'You still log the total: {0} is {1} per side.': 'บันทึกจำนวนรวมตามปกติ: {0} คือ {1} ต่อข้าง',
   '{0} sets · {1} work': '{0} เซ็ต · เซ็ตหลัก {1}',
   'Make superset with previous': 'รวมเป็นซูเปอร์เซ็ตกับท่าก่อนหน้า',
   'Make superset with next': 'รวมเป็นซูเปอร์เซ็ตกับท่าถัดไป',

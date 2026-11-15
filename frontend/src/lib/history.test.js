@@ -409,8 +409,8 @@ describe('setLabel — bodyweight', () => {
 })
 
 describe('exLine', () => {
-  it('shows the split where there is room for it, next to the total you log', () => {
-    expect(exLine({ id: LIFT, sets: 3, reps: 16, side: true }, 'kg')).toBe('3 × 16 · 8/side')
+  it('reads a per-side target per side, the reps each arm or leg does', () => {
+    expect(exLine({ id: LIFT, sets: 3, reps: 16, side: true }, 'kg')).toBe('3 × 8/side')
   })
   it('marks added weight as added', () => {
     expect(exLine({ id: BW, sets: 3, reps: 8, weight: 10 }, 'kg')).toBe('3 × 8 · +10 kg')
@@ -425,7 +425,7 @@ describe('exLine', () => {
   it('reads a double-progression range as the range, not as its top', () => {
     // "Reps from 10, up to 15" used to read "2 × 15" in the plan and then open at 10.
     expect(exLine({ id: LIFT, sets: 2, reps: 15, repsMin: 10, weight: 40 }, 'kg')).toBe('2 × 10–15 · 40 kg')
-    expect(exLine({ id: LIFT, sets: 3, reps: 16, repsMin: 12, side: true }, 'kg')).toBe('3 × 12–16 · 6–8/side')
+    expect(exLine({ id: LIFT, sets: 3, reps: 16, repsMin: 12, side: true }, 'kg')).toBe('3 × 6–8/side')
     // A bottom at or above the top is not a range.
     expect(exLine({ id: LIFT, sets: 2, reps: 10, repsMin: 10 }, 'kg')).toBe('2 × 10')
   })
@@ -433,6 +433,11 @@ describe('exLine', () => {
     expect(setsRepsOf({ id: LIFT, sets: 2, reps: 10, weight: 60 })).toBe('2 × 10')
     expect(setsRepsOf({ id: LIFT, sets: 3, reps: 12, repsMin: 8, weight: 40 })).toBe('3 × 8–12')
     expect(setsRepsOf({ id: LIFT, sets: 2, sec: 45, mode: 'time' })).toBe('2 × 0:45')
+  })
+  it('gives a one-arm row its reps per arm: 24 logged is 12 each', () => {
+    expect(setsRepsOf({ id: LIFT, sets: 3, reps: 24, side: true })).toBe('3 × 12/side')
+    expect(setsRepsOf({ id: LIFT, sets: 3, reps: 24, repsMin: 16, side: true })).toBe('3 × 8–12/side')
+    expect(exLine({ id: LIFT, sets: 3, reps: 24, weight: 55, side: true }, 'lb')).toBe('3 × 12/side · 55 lb')
   })
 })
 

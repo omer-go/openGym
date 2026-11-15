@@ -836,7 +836,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} serie po {1}. Czas dodać ciężar albo spróbować trudniejszego wariantu.',
   '{0} per side': '{0} na stronę',
   'Per side': 'Na stronę',
-  'You still log the total: {0} is {1} per side.': 'Nadal zapisujesz łączną liczbę: {0} to {1} na stronę.',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'Trener czyta twoje treningi…',

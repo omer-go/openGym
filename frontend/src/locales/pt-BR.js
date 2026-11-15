@@ -259,7 +259,6 @@ export const PT_BR_OVERRIDES = {
   'No weight to enter. Just log the reps.': 'Sem peso para informar. É só registrar as repetições.',
   'Reps climb by one whenever every set was clean. Set a ceiling to add sets instead of reps forever.': 'As repetições aumentam em uma quando todas as séries são concluídas. Defina um limite para adicionar séries em vez de aumentar repetições indefinidamente.',
   '{0} reps in every set! Add a set and go back to {1}.': '{0} repetições em todas as séries! Adicione uma série e volte para {1}.',
-  'You still log the total: {0} is {1} per side.': 'Você ainda registra o total: {0} corresponde a {1} de cada lado.',
   'Two straight sets plus a final set taken to failure. Beat the target on that set and the weight goes up (twice as much if you double the reps). One failure resets 10 %.': 'Duas séries normais e uma série final até a falha. Supere a meta nessa série e o peso sobe (em dobro se você dobrar as repetições). Uma falha reduz 10 %.',
   'Reps climb to {0}, then a set is added and the reps start over. At {1} sets it asks you to add weight instead.': 'As repetições aumentam até {0}; depois, uma série é adicionada e as repetições recomeçam. Ao chegar a {1} séries, o app sugere adicionar peso.',
 

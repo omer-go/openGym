@@ -836,7 +836,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{1} tekrarlık {0} set. Ağırlık eklemenin ya da daha zor bir varyasyon denemenin zamanı.',
   '{0} per side': 'Taraf başına {0}',
   'Per side': 'Taraf başına',
-  'You still log the total: {0} is {1} per side.': 'Toplamı kaydetmeye devam ediyorsun: {0}, taraf başına {1} demek.',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'Koç antrenmanlarını okuyor…',

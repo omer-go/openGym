@@ -825,7 +825,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} 組 × {1} 下。該加重或換個更難的變化式了。',
   '{0} per side': '單側 {0} 次',
   'Per side': '單側',
-  'You still log the total: {0} is {1} per side.': '你輸入的依舊是總次數：{0} 代表每邊各 {1} 下。',
 
   // --- AI Coach ---
   'The Coach is reading your training…': 'AI 教練正在分析你的訓練資料…',

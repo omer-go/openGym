@@ -806,7 +806,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{0} sorozat {1} ismétléssel. Ideje súlyt hozzáadni vagy nehezebb variációt kipróbálni.',
   '{0} per side': '{0} oldalanként',
   'Per side': 'Oldalanként',
-  'You still log the total: {0} is {1} per side.': 'Továbbra is az összeset rögzíted: {0} az {1} oldalanként.',
   '{0} sets · {1} work': '{0} sorozat · {1} munka',
   'Make superset with previous': 'Szuperszett az előzővel',
   'Make superset with next': 'Szuperszett a következővel',

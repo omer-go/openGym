@@ -15,9 +15,10 @@ export const fmtPick = (w, reps, unit) => `${fmtNum(w)} ${unit} × ${reps}`
  * `weight`, `anchor`, `last` and the quick picks are all in `unit` (lb). `anchor` is where the
  * grid opens when no weight is set (last time's, else a light start); `last` is last time's
  * weight, marked in the grid. `onQuick` gets a pick ({ w, reps }) — the sheet saves on it, so
- * it is one tap.
+ * it is one tap. `repsLabel` names the chips when they are not plain reps ("Reps per side"), and `fmtReps`
+ * writes a card's reps to match ("12/side").
  */
-export default function WeightPicker({ ex, unit, weight, reps, onWeight, onReps, quick, onQuick, anchor, last, repStep = 1, showReps = true }) {
+export default function WeightPicker({ ex, unit, weight, reps, onWeight, onReps, quick, onQuick, anchor, last, repStep = 1, showReps = true, repsLabel = null, fmtReps = r => r }) {
   const step = pickStep(ex, unit)
   const cur = weight > 0 ? weight : 0
   const from = cur > 0 ? cur : anchor || 0
@@ -33,7 +34,7 @@ export default function WeightPicker({ ex, unit, weight, reps, onWeight, onReps,
   const card = (cls, label, pick, sub) => (
     <button type="button" className={'qk ' + cls} onClick={() => onQuick(pick)}>
       <small>{label}</small>
-      <b>{fmtNum(pick.w)}<em> {unit}</em> × {pick.reps}</b>
+      <b>{fmtNum(pick.w)}<em> {unit}</em> × {fmtReps(pick.reps)}</b>
       <span>{sub}</span>
     </button>
   )
@@ -69,7 +70,7 @@ export default function WeightPicker({ ex, unit, weight, reps, onWeight, onReps,
       <button type="button" className="link" disabled={base + GRID_N > top} onClick={() => setBase(b => Math.min(top - GRID_N + 1, b + GRID_N))}>{t('Heavier')} ›</button>
     </div>
     {showReps && <>
-      <div className="wlabel">{t('Reps')}</div>
+      <div className="wlabel">{repsLabel || t('Reps')}</div>
       <div className="rgrid" role="group" aria-label={t('Reps')} style={{ '--n': reps0.length }}>
         {reps0.map(r => <button type="button" key={r} className={'chip' + (r === reps ? ' on' : '')} aria-pressed={r === reps}
           disabled={repStep > 1 && r % repStep !== 0} onClick={() => onReps(r)}>{r}</button>)}

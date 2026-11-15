@@ -916,7 +916,6 @@ export default {
   '{0} sets of {1}. Time to add weight or try a harder variation.': '{1} রেপের {0} সেট। এবার ওজন বাড়ানোর বা কঠিন ভ্যারিয়েশন চেষ্টা করার সময়।',
   '{0} per side': 'প্রতি পাশে {0}',
   'Per side': 'প্রতি পাশে',
-  'You still log the total: {0} is {1} per side.': 'আপনি তবুও মোট লগ করেন: {0} মানে প্রতি পাশে {1}।',
   // --- AI Coach ---
   'The Coach is reading your training…': 'কোচ আপনার ট্রেনিং পড়ছে…',
   'Could not ask the Coach': 'কোচকে জিজ্ঞেস করা যায়নি',

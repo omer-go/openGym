@@ -66,24 +66,28 @@ export const keepBase = (base, w, step, unit, n = GRID_N) => {
  * Last time's work, read off `last` (history.js lastEntryFor): the heaviest weight and the
  * fewest reps any set managed at it, so "you hit 8" means every heavy set did. null when there
  * is nothing loaded to read.
+ *
+ * `per` 2 reads a per-side exercise per side: a one-arm row logged as 24 (12 each arm) is 12,
+ * and with one arm short (12 and 11) it is the 11 the weaker arm managed.
  */
-export function lastTop(last) {
+export function lastTop(last, per = 1) {
   const sets = (last?.sets || []).filter(s => Number(s.w) > 0 && Number(s.r) > 0)
   if (!sets.length) return null
+  const repsOf = s => {
+    if (per === 1) return Number(s.r)
+    const sides = [s.sides?.L?.r, s.sides?.R?.r].map(Number).filter(r => r > 0)
+    return sides.length === 2 ? Math.min(...sides) : Math.max(1, Math.floor(Number(s.r) / per))
+  }
   const w = Math.max(...sets.map(s => Number(s.w)))
-  const reps = Math.min(...sets.filter(s => Number(s.w) === w).map(s => Number(s.r)))
+  const reps = Math.min(...sets.filter(s => Number(s.w) === w).map(repsOf))
   return { w, reps, sets: (last.sets || []).length, d: last.d || null }
 }
 
-/**
- * The two one-tap cards. With history: `next` is one step heavier at the target reps if every
- * heavy set reached the target last time, else the same weight for one more rep; `same` repeats
- * last time. Without history: `next` is a light start at the target reps, `same` is null.
- * Weights are in `unit`; `step` is its step for the equipment (pickStep).
- */
-export function quickPicks({ ex, last, reps, unit, step = pickStep(ex, unit) }) {
+export function quickPicks({ ex, last, reps, unit, step = pickStep(ex, unit), per = 1 }) {
+  // `reps` and every rep count returned are per side when `per` is 2 (lastTop): "one more rep"
+  // is one more with each arm, not one more on the total.
   const target = Math.max(1, Math.round(reps) || 10)
-  const top = lastTop(last)
+  const top = lastTop(last, per)
   if (!top) return { next: { w: startWeight(ex, unit), reps: target, why: 'start' }, same: null }
   const next = top.reps >= target
     ? { w: snapWeight(top.w + step, step, unit), reps: target, why: 'hit' }

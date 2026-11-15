@@ -6,7 +6,7 @@ import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
 import { activeProfile, exAvailable, ALL_EQUIPMENT, newProfile, profileEquipment, ACC_V } from './lib/equipment.js'
 import { capFirst, fmtDate, fmtDateRange, fmtNum, fmtPlate, exerciseNameText, fmtVol, fmtDur, durPart, todayISO, isoOf, uid, exCount, routineCount, setsWorkCount, DAYN, DAYS, weekOrder, weekStartOf, weekDayOffset, MONTHS_LONG, ACCENTS } from './lib/format.js'
-import { lastEntryFor, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, doneLine, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, sideReps, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
+import { lastEntryFor, setsRepsOf, bestWeightFor, bestWeightForEntry, buildSets, effectiveRoutineIds, workoutDay, workoutVolume, setsDone, setsDoneActive, setUnitsTotal, lastBW, sessionSections, setLabel, doneLine, defaultConfig, cleanupSg, modeOf, effortOf, EFFORT, capEffort, stepEffort, isBw, isPerSide, workSetsDone, applyIntensifierPlan, MAX_PLANNED_WARMUPS, NOTE_MAX } from './lib/history.js'
 import { usesBar, defaultBarWeight, hasBarOverride, isNoBar } from './lib/bar.js'
 import { PLATE_SIZES, pairsOf, ownsPlates, withPlatePairs, withStandardPlates, withLoadKind, loadKindFor, baseWeightFor, dropGrid } from './lib/plates.js'
 import { toScale, rirOf, EFFORT_PRESETS, effortColor } from './lib/effort.js'
@@ -1740,10 +1740,12 @@ function ProgressionFields({ ex, mode, c, setC, routine, unit, perSide, bw }) {
       {climbsRange(active) && <>
         {/* The draft stays as typed: normalising on every keystroke turned "12" into 92 (the
             "1" was pulled above the lower bound first). Save and the engine normalise anyway. */}
-        <Stepper label={t('Reps from')} value={c.repsMin ?? range.repsMin} step={stride} decimal={false}
-          onChange={v => setC(x => ({ ...x, repsMin: v }))} />
-        <Stepper label={t('Reps up to')} value={c.reps ?? range.reps} step={stride} decimal={false}
-          onChange={v => setC(x => ({ ...x, reps: v }))} />
+        {/* Per side, the range is typed per side, as the reps are counted (12 each arm), and
+            kept as the total of both sides (sideReps). */}
+        <Stepper label={t('Reps from')} value={perSideShown(c.repsMin ?? range.repsMin, stride)} step={1} decimal={false}
+          onChange={v => setC(x => ({ ...x, repsMin: perSideStored(v, stride) }))} />
+        <Stepper label={t('Reps up to')} value={perSideShown(c.reps ?? range.reps, stride)} step={1} decimal={false}
+          onChange={v => setC(x => ({ ...x, reps: perSideStored(v, stride) }))} />
       </>}
       {/* Where triple progression stops adding sets; the Sets above are where it starts. */}
       {active === 'triple' && <Stepper label={t('Sets up to')} value={c.setsMax ?? setsMaxOf(c)} step={1} decimal={false}
@@ -1781,6 +1783,12 @@ const intensifierToSave = x => (x.type === 'dropset'
     ? { ...x, totalReps: Math.max(1, Math.round(x.totalReps) || 0), restSec: Math.max(5, Number(x.restSec) || 0) }
     : x)
 
+// A per-side target is kept as the total of both sides (history.js sideReps: 24 is 12 each arm)
+// and shown, typed and picked per side, the number you count during the set. `per` is 2 per
+// side, else 1; a field being emptied passes through as typed.
+const perSideShown = (v, per) => (per > 1 && Number(v) > 0 ? Number(v) / per : v)
+const perSideStored = (v, per) => (per > 1 && Number(v) > 0 ? Number(v) * per : v)
+
 export const MORE_KEY = 'gym_cfg_more'
 function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, initial, saveLabel }) {
   const st = useStore(s => s.S)
@@ -1803,6 +1811,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // Both default from the dataset and are then whatever the config says — see isBw.
   const bw = !cardio && isBw({ ...c, id: ex.id })
   const perSide = isPerSide(c)
+  const per = perSide && mode === 'reps' ? 2 : 1
   // Pyramid sets: one rep target per set, in place of the flat Sets × Reps (CONTEXT.md).
   const pyramid = mode === 'reps' && isPyramid({ ...c, mode })
   const setPyramidAt = (i, v) => setC(x => ({ ...x, pyramid: x.pyramid.map((p, j) => (j === i ? v : p)) }))
@@ -1833,10 +1842,11 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   // c.dbLoad is the only part of the config the lookup reads.
   const last = useMemo(() => (picker && !bw ? lastEntryFor(historyAs(st, ex.id, dbLoadFor(st, { ...c, id: ex.id })), ex.id, routine?.id) : null),
     [picker, bw, st, ex.id, routine?.id, c.dbLoad])
-  const top = lastTop(last)
-  const quick = picker && !bw ? quickPicks({ ex, last, reps: c.reps, unit: st.unit }) : null
+  // Both read per side on a per-side lift (lib/weight-pick.js), the reps you count with each arm.
+  const top = lastTop(last, per)
+  const quick = picker && !bw ? quickPicks({ ex, last, reps: perSideShown(c.reps, per), unit: st.unit, per }) : null
   // A tap on a card is the whole job: those numbers, saved.
-  const save = (pick = null) => saveWith(pick ? { ...c, weight: pick.w, reps: pick.reps } : c)
+  const save = (pick = null) => saveWith(pick ? { ...c, weight: pick.w, reps: perSideStored(pick.reps, per) } : c)
   const saveWith = c => {
     if (progressionStepInvalid) return
     close()
@@ -1921,11 +1931,14 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const label = saveLabel || (existing ? t('Save') : t('Add to routine'))
   const setCount = Math.max(1, Math.round(c.sets) || 1)
   const restPause = c.intensifier?.type === 'restpause'
+  // "12/side" on a per-side lift, the reps one arm does.
+  const repsShown = r => (per > 1 ? t('{0}/side', fmtNum(perSideShown(r, per))) : r)
   // What saving gives you, on the button: "3 × 135 lb × 8".
   const summary = !picker || restPause ? null
-    : !bw && c.weight > 0 ? `${setCount} × ${fmtPick(c.weight, c.reps, st.unit)}` : `${setCount} × ${c.reps}`
+    : !bw && c.weight > 0 ? `${setCount} × ${fmtPick(c.weight, repsShown(c.reps), st.unit)}` : `${setCount} × ${repsShown(c.reps)}`
   const setChips = [1, 2, 3, 4, 5, 6].concat(c.sets > 6 ? [c.sets] : [])
-  const repChipsBw = REP_CHIPS.concat(REP_CHIPS.includes(c.reps) || !(c.reps > 0) ? [] : [c.reps]).sort((x, y) => x - y)
+  const shownReps = perSideShown(c.reps, per)
+  const repChipsBw = REP_CHIPS.concat(REP_CHIPS.includes(shownReps) || !(shownReps > 0) ? [] : [shownReps]).sort((x, y) => x - y)
   const setReps = r => setC(x => {
     const next = { ...x, reps: r }
     return ranged ? { ...next, ...pickTopReps(r, x, perSide ? 2 : 1) } : next
@@ -1949,17 +1962,17 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
       <Thumb ex={ex} />
       <div className="grow">
         <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
-        <div className="ss">{[t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp), t(ex.eq), top && t('last {0}', fmtPick(top.w, top.reps, st.unit))].filter(Boolean).join(' · ')}</div>
+        <div className="ss">{[t(MUSCLE_NAME[ex.tg] || ex.tg || ex.bp), t(ex.eq), top && t('last {0}', fmtPick(top.w, per > 1 ? t('{0}/side', top.reps) : top.reps, st.unit))].filter(Boolean).join(' · ')}</div>
       </div>
     </div>
-    {picker && !bw && <WeightPicker ex={ex} unit={st.unit} weight={c.weight} reps={c.reps}
-      onWeight={w => setC(x => ({ ...x, weight: w }))} onReps={setReps} repStep={perSide ? 2 : 1}
+    {picker && !bw && <WeightPicker ex={ex} unit={st.unit} weight={c.weight} reps={shownReps} repsLabel={per > 1 ? t('Reps per side') : null} fmtReps={per > 1 ? r => t('{0}/side', r) : undefined}
+      onWeight={w => setC(x => ({ ...x, weight: w }))} onReps={r => setReps(perSideStored(r, per))}
       quick={quick} onQuick={save} anchor={top ? top.w : quick?.next.w} last={top?.w || 0} />}
     {picker && bw && <div className="wpick">
       <div className="wlabel">{t('Reps')}</div>
       <div className="rgrid" role="group" aria-label={t('Reps')} style={{ '--n': repChipsBw.length }}>
-        {repChipsBw.map(r => <button type="button" key={r} className={'chip' + (r === c.reps ? ' on' : '')} aria-pressed={r === c.reps}
-          disabled={perSide && r % 2 !== 0} onClick={() => setReps(r)}>{r}</button>)}
+        {repChipsBw.map(r => <button type="button" key={r} className={'chip' + (r === shownReps ? ' on' : '')} aria-pressed={r === shownReps}
+          onClick={() => setReps(perSideStored(r, per))}>{r}</button>)}
       </div>
     </div>}
     {picker && !restPause && <>
@@ -1997,7 +2010,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
         <div className="row cfgrow" style={{ marginBottom: 4 }}>
           {p === PYRAMID_MAX
             ? <div className="small"><strong>{t('Set {0}', i + 1)}</strong> · {t('Max: as many reps as you can')}</div>
-            : <Stepper label={t('Set {0}', i + 1)} value={p} step={perSide ? 2 : 1} min={1} decimal={false} onChange={v => setPyramidAt(i, v)} />}
+            : <Stepper label={t('Set {0}', i + 1)} value={perSideShown(p, per)} step={1} min={1} decimal={false} onChange={v => setPyramidAt(i, perSideStored(v, per))} />}
           <Stepper label={t('Rest (s)')} value={(c.pyramidRest || [])[i] || 0} step={15} decimal={false}
             onChange={v => setC(x => {
               const rest = Array.from({ length: x.pyramid.length }, (_, j) => (x.pyramidRest || [])[j] || 0)
@@ -2107,9 +2120,9 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
           ? (perSide
             ? tn('{0} set becomes {1}: one on each side, {2}s held every time.', '{0} sets become {1}: one on each side, {2}s held every time.', c.sets || 0, (c.sets || 0) * 2, c.sec || 0)
             : t('For side planks, single-arm holds and the like. Trains each side on its own.'))
-          : (perSide ? t('You still log the total: {0} is {1} per side.', c.reps || 0, fmtNum(sideReps(c.reps))) : t('For lunges, single-arm rows and the like.'))}>
-        {/* Reps: a per-side target counts both sides, so the reps and their floor double going on
-            and halve going off (lib/rep-range.js repsForSides): 11 a side reads 22, and back to 11.
+          : t('For lunges, single-arm rows and the like.')}>
+        {/* Reps: a per-side target is kept as both sides' total, so the reps and their floor double
+            going on and halve going off (lib/rep-range.js repsForSides): 11 reps stay 11, each side.
             Time: a hold's whole duration happens twice, so only the flag changes (buildWorkSets
             doubles the planned sets). */}
         <Switch checked={perSide} onChange={v => setC(x => {
@@ -3097,7 +3110,7 @@ function GenSetup({ type, k, close }) {
     const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
     const timed = modeOf(cfg) === 'time'
     const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
-      : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
+      : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : setsRepsOf({ ...cfg, sets: work.length, repsMin: undefined, setsMax: undefined, pyramid: undefined }))
     return <div key={e.id} className="item">
       <Thumb ex={ex} />
       <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
