@@ -22,7 +22,8 @@ import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
 import { durationSheet } from './components/DurationPicker.jsx'
 import { SG_NAME_MAX } from './lib/superset-meta.js'
-import { comboSwapSeed, asComboSwap } from './lib/combo.js'
+import { comboSwapSeed, asComboSwap, comboSlots } from './lib/combo.js'
+import ComboSlot from './components/ComboSlot.jsx'
 import { randomAbsCombo, swapAbsExercise, resizeAbsCombo, absSpotsOpen, ABS_COMBO_COUNT, ABS_COMBO_MAX } from './lib/abs-combo.js'
 import { savedCombosOf, saveCombo, removeCombo } from './lib/saved-combos.js'
 import { REST_MAX, fmtRest } from './lib/duration.js'
@@ -3091,18 +3092,7 @@ function GenSetup({ type, k, close }) {
     [st, type, shift, at, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
   // The list's cards: one per exercise, a combo's exercises sharing one between them.
-  const slots = useMemo(() => {
-    const out = [], bySg = {}
-    entries.forEach((e, i) => {
-      const it = { e, i, pick: picks[i] }
-      if (e.sg && e.target?.sgCombo) {
-        if (bySg[e.sg]) return bySg[e.sg].push(it)
-        out.push(bySg[e.sg] = [it])
-      } else out.push([it])
-    })
-    return out
-  }, [entries, picks])
-  const [openCombos, setOpenCombos] = useState([])
+  const slots = useMemo(() => comboSlots(entries).map(s => s.map(i => ({ e: entries[i], i, pick: picks[i] }))), [entries, picks])
   const exRow = ({ e, pick }) => {
     const ex = exOr(e.id)
     const cfg = { ...e.target, id: e.id }
@@ -3233,19 +3223,8 @@ function GenSetup({ type, k, close }) {
           <div className="list">{slots.map(slot => {
             if (slot.length === 1) return exRow(slot[0])
             // A combo (the abs' body-weight one) is one card, folded; open, it lists its exercises.
-            const [first] = slot, tg = first.e.target, sg = first.e.sg, open = openCombos.includes(sg)
-            const what = [t(MUSCLE_NAME[first.pick.muscle]), tn('{0} exercise', '{0} exercises', slot.length),
-              tn('{0} set', '{0} sets', slot.length * (tg.sets || 1))].join(' · ')
-            return <div key={sg} className="gs-combo">
-              <button type="button" className={'item' + (open ? ' open' : '')} aria-expanded={open}
-                onClick={() => setOpenCombos(l => (open ? l.filter(x => x !== sg) : [...l, sg]))}>
-                <Thumb ex={exOr(first.e.id)} />
-                <div className="grow"><div className="tt">{tg.sgName || t('Combo')}</div><div className="ss">{what}</div></div>
-                <span className="muted small">{t('Bodyweight')}</span>
-                <Icon name="chevronRight" />
-              </button>
-              {open && <div className="gs-combo-in">{slot.map(exRow)}</div>}
-            </div>
+            return <ComboSlot key={slot[0].e.sg} members={slot.map(s => s.e)} muscle={t(MUSCLE_NAME[slot[0].pick.muscle])}
+              row={(_, j) => exRow(slot[j])} />
           })}</div>
         </>}
       </> : <div className="muted small">{t('Tick at least one muscle group.')}</div>}

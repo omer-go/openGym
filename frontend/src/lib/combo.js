@@ -122,3 +122,19 @@ export function comboWeightChips(value, step, below = 2, above = 3) {
   }
   return out
 }
+
+/**
+ * A list of entries as the cards that show it: each entry its own, but a combo's members (one
+ * `sg`, `target.sgCombo`) one card between them, where its first member stands. Indices into
+ * `entries`, so a caller keeps whatever it holds beside them (a pick, a key). Its length is the
+ * list's exercise count as it reads on screen: the abs combo is one, not four.
+ */
+export function comboSlots(entries) {
+  const out = [], bySg = {}
+  ;(entries || []).forEach((e, i) => {
+    if (!(e?.sg && e.target?.sgCombo)) return out.push([i])
+    if (bySg[e.sg]) return bySg[e.sg].push(i)
+    out.push(bySg[e.sg] = [i])
+  })
+  return out
+}

@@ -35,6 +35,8 @@ import { MUSCLE_NAME } from '../lib/muscles.js'
 import { isWarmupRow } from '../lib/workout-model.js'
 import { doneUnits, workoutDuration, workoutVolume } from '../lib/history.js'
 import { Thumb } from './Media.jsx'
+import ComboSlot from './ComboSlot.jsx'
+import { comboSlots } from '../lib/combo.js'
 import SwipeCards from './SwipeCards.jsx'
 import Equivalents from './Equivalents.jsx'
 import { equivalentsOf } from '../lib/equivalents.js'
@@ -487,21 +489,33 @@ const useAhead = (S, days) => {
 // The forecast days up to and including the last one on or before `iso`, for useAhead.
 const aheadTo = (S, iso) => programForecast(S).findLastIndex(f => f.iso <= iso) + 1
 
+const groupOf = e => (e.gen?.g ? groupName(e.gen.g) : t(MUSCLE_NAME[e.gen?.m] || ''))
+// The exercises a planned day lists, a combo counting as one (lib/combo.js comboSlots).
+const exCount = days => days.reduce((n, d) => n + comboSlots(d.entries).length, 0)
+
+/** One lift of a day ahead: its group, sets × reps, and the weight. */
+function AheadRow({ S, e }) {
+  const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
+  const reps = e.target?.repsMin > 0 && e.target.repsMin < e.target.reps ? `${e.target.repsMin}–${e.target.reps}` : e.target?.reps ?? ''
+  const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${reps}`
+  const w = work.find(x => x.w > 0)?.w
+  const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching') : `${groupOf(e)} · ${how}` + (w ? ` · ${fmtNum(w)} ${S.unit}` : '')
+  return <div className="item">
+    <Thumb ex={ex} />
+    <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+  </div>
+}
+
 /** What a day ahead gives each group, then its lifts as planned: sets × reps, and the weight. */
 function AheadBody({ S, day }) {
   return <div className="ahead-b">
     <CoverageStrip groups={groupsOf(S, day.type)} adds={day.groups} goals={weeklyTargets(S)} label={t('Sets per group this day, toward your weekly goal')} />
-    <div className="list">{day.entries.map(e => {
-      const ex = exOr(e.id), work = e.sets.filter(x => !isWarmupRow(x))
-      const reps = e.target?.repsMin > 0 && e.target.repsMin < e.target.reps ? `${e.target.repsMin}–${e.target.reps}` : e.target?.reps ?? ''
-      const how = e.target?.sec ? `${work.length} × ${fmtNum(e.target.sec)}s` : `${work.length} × ${reps}`
-      const w = work.find(x => x.w > 0)?.w
-      const what = e.gen?.k ? t(e.gen.k === 'cardio' ? 'Cardio' : 'Stretching')
-        : `${e.gen?.g ? groupName(e.gen.g) : t(MUSCLE_NAME[e.gen?.m] || '')} · ${how}` + (w ? ` · ${fmtNum(w)} ${S.unit}` : '')
-      return <div key={e.id} className="item">
-        <Thumb ex={ex} />
-        <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
-      </div>
+    <div className="list">{comboSlots(day.entries).map(slot => {
+      const members = slot.map(i => day.entries[i])
+      // The abs combo is one card here as on the Start sheet: folded, it opens to its exercises.
+      return members.length > 1
+        ? <ComboSlot key={members[0].sg} members={members} muscle={groupOf(members[0])} row={e => <AheadRow key={e.id} S={S} e={e} />} />
+        : <AheadRow key={members[0].id} S={S} e={members[0]} />
     })}</div>
   </div>
 }
@@ -521,7 +535,7 @@ export function PlannedOn({ iso, close }) {
   const ahead = all.filter(d => d.iso === iso)
   if (!ahead.length) return <h3>{fmtDate(iso, true)}</h3>
   const next = all[0].iso === iso
-  const n = ahead.reduce((a, d) => ({ ex: a.ex + d.entries.length, sets: a.sets + d.sets, min: a.min + d.minutes }), { ex: 0, sets: 0, min: 0 })
+  const n = { ex: exCount(ahead), ...ahead.reduce((a, d) => ({ sets: a.sets + d.sets, min: a.min + d.minutes }), { sets: 0, min: 0 }) }
   return <>
     <h3 style={{ '--kind': KIND_COLOR[ahead[0].type] }}>{ahead.map(d => t(DAY_NAME[d.type])).join(' + ')}<span className="ahead-next">{t('Planned')}</span></h3>
     <div className="muted small">{fmtDate(iso, true)} · {tn('{0} exercise', '{0} exercises', n.ex)} · {tn('{0} set', '{0} sets', n.sets)} · {t('≈ {0} min', n.min)}</div>
@@ -628,7 +642,7 @@ function PlannedDay({ S, iso, items }) {
   const next = items.some(x => x.state === 'next')
   const state = next ? 'next' : 'planned'
   if (!ahead.length) return null
-  const n = ahead.reduce((a, d) => ({ ex: a.ex + d.entries.length, sets: a.sets + d.sets, min: a.min + d.minutes }), { ex: 0, sets: 0, min: 0 })
+  const n = { ex: exCount(ahead), ...ahead.reduce((a, d) => ({ sets: a.sets + d.sets, min: a.min + d.minutes }), { sets: 0, min: 0 }) }
   const kind = KIND_COLOR[ahead[0].type]
   return <section className="card pday" data-day-panel={state}>
     <div className="pday-h">
@@ -664,7 +678,7 @@ function WeekPanel({ S, row, onSel }) {
     <div className="list pweek-days">{items.map((it, i) => {
       const a = ahead.find(d => d.iso === it.iso && d.type === it.type)
       const sub = it.w ? [tn('{0} exercise', '{0} exercises', (it.w.entries || []).length), tn('{0} set', '{0} sets', doneSets(it.w)), workoutDuration(it.w) >= 60000 && fmtDur(workoutDuration(it.w))]
-        : a ? [tn('{0} exercise', '{0} exercises', a.entries.length), tn('{0} set', '{0} sets', a.sets), t('≈ {0} min', a.minutes)] : []
+        : a ? [tn('{0} exercise', '{0} exercises', exCount([a])), tn('{0} set', '{0} sets', a.sets), t('≈ {0} min', a.minutes)] : []
       return <div key={it.iso + i} className="item" role="button" {...tappable(() => onSel({ iso: it.iso }))}>
         <span className={'pweek-dot' + (it.state === 'done' ? '' : ' open')} style={{ '--kind': KIND_COLOR[it.type] }} />
         <div className="grow"><div className="tt">{fmtDate(it.iso, true)} · {t('Day {0}', it.k + 1)}</div><div className="ss">{sub.filter(Boolean).join(' · ')}</div></div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember, comboSwapSeed, asComboSwap, comboRowsFrom, comboWeightChips } from './combo.js'
+import { comboSpans, comboSpanAt, comboRound, fitRounds, asComboMember, comboSwapSeed, asComboSwap, comboRowsFrom, comboWeightChips, comboSlots } from './combo.js'
 
 const row = (done = false, extra = {}) => ({ w: 20, r: 10, done, ...extra })
 
@@ -131,5 +131,22 @@ describe('comboWeightChips', () => {
   })
   it('reads an empty weight as zero', () => {
     expect(comboWeightChips('', by5, 1, 1)).toEqual([0, 5, 10])
+  })
+})
+
+describe('the cards a list of entries shows', () => {
+  const lift = id => ({ id, sets: [] })
+  const member = (id, sg) => ({ id, sg, target: { sgCombo: true }, sets: [] })
+  it('folds a combo into one card where its first member stands', () => {
+    const entries = [lift('a'), member('c1', 7), member('c2', 7), lift('b'), member('c3', 7), member('c4', 7)]
+    expect(comboSlots(entries)).toEqual([[0], [1, 2, 4, 5], [3]])
+  })
+  it('leaves a plain superset as cards of its own', () => {
+    const entries = [{ id: 'a', sg: 3, target: {}, sets: [] }, { id: 'b', sg: 3, target: {}, sets: [] }]
+    expect(comboSlots(entries)).toEqual([[0], [1]])
+  })
+  it('keeps two combos apart', () => {
+    expect(comboSlots([member('a', 1), member('b', 2), member('c', 1)])).toEqual([[0, 2], [1]])
+    expect(comboSlots(null)).toEqual([])
   })
 })
