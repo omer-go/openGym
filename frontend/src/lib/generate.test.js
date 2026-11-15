@@ -642,8 +642,9 @@ describe('the abs of a one-tap day take turns', () => {
   it('as a combo of body-weight exercises, one card of rounds that count as strength work', () => {
     const picks = generateWorkout(state(), 'full', { now: NOW })
     const abs = absOf(picks)
-    expect(abs.length).toBeGreaterThanOrEqual(2)
-    expect(abs.every(p => p.combo && EXIDX[p.id].eq === 'body weight')).toBe(true)
+    expect(abs.length).toBeGreaterThanOrEqual(4)
+    expect(new Set(abs.map(p => p.id)).size).toBe(abs.length)
+    expect(abs.every(p => p.combo?.rounds === 1 && EXIDX[p.id].eq === 'body weight')).toBe(true)
     expect(picks.map(p => p.at)).toEqual(picks.map((_, i) => i))
     const setup = genDefaults('full')
     const entries = generatedEntries(state(), picks, setup).filter(e => e.target?.sgCombo)
@@ -654,10 +655,10 @@ describe('the abs of a one-tap day take turns', () => {
       expect(e.sets.filter(s => !isWarmupRow(s))).toHaveLength(abs[0].combo.rounds)
     }
   })
-  it('on a timed day, the smallest combo: two exercises for two rounds', () => {
+  it('on a timed day too, four exercises for one set each', () => {
     const abs = absOf(generateWorkout(state(), 'full', { ...genDefaults('full'), minutes: 45, now: NOW }))
-    expect(abs).toHaveLength(2)
-    expect(abs.every(p => p.combo?.rounds === 2)).toBe(true)
+    expect(abs).toHaveLength(4)
+    expect(abs.every(p => p.combo?.rounds === 1)).toBe(true)
   })
   it('the same combo for the same day, another one on a shuffle', () => {
     const ids = s => absOf(generateWorkout(state(), 'full', { now: NOW, shift: s })).map(p => p.id).join()

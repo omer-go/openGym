@@ -3076,6 +3076,39 @@ function GenSetup({ type, k, close }) {
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, now: at, share: programShare(st, type, at) }),
     [st, type, shift, at, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
+  // The list's cards: one per exercise, a combo's exercises sharing one between them.
+  const slots = useMemo(() => {
+    const out = [], bySg = {}
+    entries.forEach((e, i) => {
+      const it = { e, i, pick: picks[i] }
+      if (e.sg && e.target?.sgCombo) {
+        if (bySg[e.sg]) return bySg[e.sg].push(it)
+        out.push(bySg[e.sg] = [it])
+      } else out.push([it])
+    })
+    return out
+  }, [entries, picks])
+  const [openCombos, setOpenCombos] = useState([])
+  const exRow = ({ e, pick }) => {
+    const ex = exOr(e.id)
+    const cfg = { ...e.target, id: e.id }
+    const work = e.sets.filter(x => !isWarmupRow(x))
+    const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
+    const timed = modeOf(cfg) === 'time'
+    const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
+      : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
+    return <div key={e.id} className="item">
+      <Thumb ex={ex} />
+      <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
+      {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
+      {/* Not one you want: never suggested again, and the list rebuilds without it. */}
+      <button type="button" className="iconbtn" aria-label={t('More')} style={{ padding: 8, margin: -8 }}
+        onClick={() => menuSheet({ title: exerciseNameFor(ex), titleClass: exerciseNameClass(ex), items: [
+          { icon: 'info', label: t('How to do it'), onClick: () => exerciseDetailSheet(ex) },
+          skipMenuItem(st, ex),
+        ] })}><Icon name="more" /></button>
+    </div>
+  }
   const c = genConstraints(st, setup), timed = c.minutes > 0
   const programMinutes = genConstraints(st).minutes
   const toggleGroup = id => set({ groups: ADD_GROUPS.map(g => g.id).filter(g => (g === id) !== setup.groups.includes(g)) })
@@ -3174,7 +3207,7 @@ function GenSetup({ type, k, close }) {
       <h4 className="sec">{t('Exercises')}</h4>
       {entries.length ? <>
         <button type="button" className={'gs-exs' + (showEx ? ' open' : '')} aria-expanded={showEx} onClick={() => setShowEx(v => !v)}>
-          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', entries.length)} · {t('≈ {0} min', minutesFor(st, entries))}</div>
+          <div className="grow"><div>{tn('{0} exercise', '{0} exercises', slots.length)} · {t('≈ {0} min', minutesFor(st, entries))}</div>
             <div className="muted small">{showEx ? t('Hide') : t('Show the list')}</div></div>
           <Icon name="chevronRight" />
         </button>
@@ -3183,24 +3216,21 @@ function GenSetup({ type, k, close }) {
             <div className="muted small">{t('In the workout, tap an exercise’s name to set its weight, sets and rest.')}</div>
             <Button size="sm" variant="tinted" icon="shuffle" onClick={() => setShift(n => n + 1)}>{t('Shuffle')}</Button>
           </div>
-          <div className="list">{entries.map((e, i) => {
-            const ex = exOr(e.id), pick = picks[i]
-            const cfg = { ...e.target, id: e.id }
-            const work = e.sets.filter(x => !isWarmupRow(x))
-            const w = Number(work[0]?.w ?? work[0]?.sides?.L?.w) || 0
-            const timed = modeOf(cfg) === 'time'
-            const what = pick.kind ? t(pick.kind === 'cardio' ? 'Cardio' : 'Stretching')
-              : t(MUSCLE_NAME[pick.muscle]) + ' · ' + (timed ? `${work.length} × ${fmtNum(cfg.sec)}s` : `${work.length} × ${cfg.reps}`)
-            return <div key={e.id} className="item">
-              <Thumb ex={ex} />
-              <div className="grow"><div className={`tt ${exerciseNameClass(ex)}`}>{exerciseNameFor(ex)}</div><div className="ss">{what}</div></div>
-              {!pick.kind && <span className="muted small">{isBw(cfg) ? t('Bodyweight') : w > 0 ? `${fmtNum(w)} ${st.unit}` : ''}</span>}
-              {/* Not one you want: never suggested again, and the list rebuilds without it. */}
-              <button type="button" className="iconbtn" aria-label={t('More')} style={{ padding: 8, margin: -8 }}
-                onClick={() => menuSheet({ title: exerciseNameFor(ex), titleClass: exerciseNameClass(ex), items: [
-                  { icon: 'info', label: t('How to do it'), onClick: () => exerciseDetailSheet(ex) },
-                  skipMenuItem(st, ex),
-                ] })}><Icon name="more" /></button>
+          <div className="list">{slots.map(slot => {
+            if (slot.length === 1) return exRow(slot[0])
+            // A combo (the abs' body-weight one) is one card, folded; open, it lists its exercises.
+            const [first] = slot, tg = first.e.target, sg = first.e.sg, open = openCombos.includes(sg)
+            const what = [t(MUSCLE_NAME[first.pick.muscle]), tn('{0} exercise', '{0} exercises', slot.length),
+              tn('{0} set each', '{0} sets each', tg.sets || 1)].join(' · ')
+            return <div key={sg} className="gs-combo">
+              <button type="button" className={'item' + (open ? ' open' : '')} aria-expanded={open}
+                onClick={() => setOpenCombos(l => (open ? l.filter(x => x !== sg) : [...l, sg]))}>
+                <Thumb ex={exOr(first.e.id)} />
+                <div className="grow"><div className="tt">{tg.sgName || t('Combo')}</div><div className="ss">{what}</div></div>
+                <span className="muted small">{t('Bodyweight')}</span>
+                <Icon name="chevronRight" />
+              </button>
+              {open && <div className="gs-combo-in">{slot.map(exRow)}</div>}
             </div>
           })}</div>
         </>}

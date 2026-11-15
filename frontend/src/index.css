@@ -1943,6 +1943,13 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gs-exs .grow{flex:1;min-width:0}
 .gs-exs .icn{color:var(--label-3);transition:transform .2s}
 .gs-exs.open .icn{transform:rotate(90deg)}
+/* A combo in the Start sheet's list: one card, its exercises inside it once opened. */
+.gs-combo{background:var(--surface);border-radius:var(--r-card)}
+.gs-combo>.item{background:none}
+.gs-combo>.item .icn{color:var(--label-3);transition:transform .2s}
+.gs-combo>.item.open .icn{transform:rotate(90deg)}
+.gs-combo-in{display:flex;flex-direction:column;gap:6px;padding:0 8px 8px}
+.gs-combo-in .item{background:var(--surface-2);min-height:52px}
 /* The one-tap setup's groups: pills with Add exercise's pictures (.ava), lit when the workout
    covers the group; one left out dims. */
 .gs-pills{display:flex;flex-wrap:wrap;gap:8px}

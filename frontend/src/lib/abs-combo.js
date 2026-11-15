@@ -289,10 +289,9 @@ export function resizeAbsCombo(S, ids, gear, count, { random = Math.random } = {
 
 // One-tap days take their abs work in turns: a combo of body-weight floor exercises one time, a
 // single abs lift with weight on it the next (generate.js generateWorkout). The combo is a
-// strength one, so its rounds count toward the abs' weekly goal the way a superset's sets do.
-export const ABS_DAY_COMBO = 3       // exercises in a one-tap day's abs combo
-export const ABS_DAY_ROUNDS = 3      // its most rounds: the abs slot's sets, up to this
-export const ABS_DAY_MIN_ROUNDS = 2  // its fewest, and a timed day's
+// strength one, so its sets count toward the abs' weekly goal the way a superset's do.
+export const ABS_DAY_COMBO = 4       // exercises in a one-tap day's abs combo, each a different style
+export const ABS_DAY_ROUNDS = 1      // one set of each, back to back
 export const ABS_DAY_REST = 60       // seconds between its rounds
 export const ABS_DAY_NAME = 'Abs combo'
 

@@ -46,7 +46,7 @@ import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 import { withInferredWeight } from './infer-weight.js'
-import { absTurn, absDayCombo, weightedAbs, ABS_DAY_ROUNDS, ABS_DAY_MIN_ROUNDS, ABS_DAY_NAME, ABS_DAY_REST } from './abs-combo.js'
+import { absTurn, absDayCombo, weightedAbs, ABS_DAY_COMBO, ABS_DAY_ROUNDS, ABS_DAY_NAME, ABS_DAY_REST } from './abs-combo.js'
 import { asComboMember } from './combo.js'
 
 export const GEN_TYPES = {
@@ -464,7 +464,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     const extra = byKind === false ? 0 : it.sets - genScheme(id, { byKind, sets, goal: c.goal }, slot).sets
     return { id, muscle: slug, last: index.muscles[slug] || null, at, slot, ...(extra > 0 || (extra < 0 && c.minutes) ? { extra } : {}) }
   })
-  turnAbs(S, picks, items, { now, shift, pool, avoid: [near, ...earlier].flat(), has: EQUIPMENT[c.equipment]?.has, index, timed: c.minutes > 0 })
+  turnAbs(S, picks, { now, shift, pool, avoid: [near, ...earlier].flat(), has: EQUIPMENT[c.equipment]?.has, index })
   const pickFrom = (list, k, kind) => {
     for (let i = 0; i < Math.min(k, list.length); i++) picks.push({ id: list[(shift + i) % list.length], muscle: null, last: null, kind })
   }
@@ -475,24 +475,19 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
 
 /**
  * The day's abs work, by its turn (abs-combo.js absTurn): a combo of body-weight floor exercises
- * in place of the abs lift the planner picked, its rounds that lift's sets, or a lift with weight
- * on it in place of a body-weight one. The same for the same day and `shift`, so the calendar and
- * the Start sheet agree. Gear for neither, or too few floor exercises, leaves the pick as it was.
- * A timed day's is two exercises for ABS_DAY_MIN_ROUNDS, to stay about inside its time.
- * Mutates `picks` (generateWorkout's, `items` the planner's in the same order).
+ * in place of the abs lift the planner picked, ABS_DAY_COMBO of them for one set each, or a lift
+ * with weight on it in place of a body-weight one. The same for the same day and `shift`, so the
+ * calendar and the Start sheet agree. Gear for neither, or too few floor exercises, leaves the
+ * pick as it was. Mutates `picks` (generateWorkout's).
  */
-function turnAbs(S, picks, items, { now, shift, pool, avoid, has, index, timed }) {
+function turnAbs(S, picks, { now, shift, pool, avoid, has, index }) {
   const at = picks.findIndex(p => p.muscle === 'abs')
   if (at < 0) return
   const p = picks[at]
   if (absTurn(S, now) === 'combo') {
-    // A timed day was fitted with the abs lift's sets: its combo is the smallest, two exercises
-    // for the fewest rounds, so it stays about inside the time.
-    const ids = absDayCombo(S, dayNo(isoOf(new Date(now))) * 7 + shift, avoid).slice(0, timed ? 2 : undefined)
-    if (ids.length < 2) return
-    const sets = Math.round(items[at]?.sets) || ABS_DAY_ROUNDS
-    const rounds = Math.max(ABS_DAY_MIN_ROUNDS, Math.min(ABS_DAY_ROUNDS, timed ? 0 : sets))
-    const combo = { sg: 'sgabs' + shift, rounds, name: ABS_DAY_NAME, rest: ABS_DAY_REST, kind: 'strength' }
+    const ids = absDayCombo(S, dayNo(isoOf(new Date(now))) * 7 + shift, avoid)
+    if (ids.length < ABS_DAY_COMBO) return
+    const combo = { sg: 'sgabs' + shift, rounds: ABS_DAY_ROUNDS, name: ABS_DAY_NAME, rest: ABS_DAY_REST, kind: 'strength' }
     picks.splice(at, 1, ...ids.map(id => ({ id, muscle: 'abs', last: p.last, slot: p.slot, combo })))
     picks.forEach((q, i) => { q.at = i })
     return
