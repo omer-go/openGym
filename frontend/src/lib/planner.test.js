@@ -352,6 +352,20 @@ describe('planner', () => {
     expect(seen).toBeGreaterThan(3)
   })
 
+  it('gives a day one abs exercise, however much time and abs goal it has', () => {
+    // A day's abs are one slot, the combo or a weighted lift by turn (generate.js turnAbs). A long
+    // day at a two-minute pace, owing the abs a lot and topped up with accessories to fill its time,
+    // used to take two or three of them: on the combo turn that was six abs exercises.
+    const days = [...weeks().flatMap(({ p }) => p.days)]
+    const goals = { chest: 4, back: 5, shoulders: 5, biceps: 5.5, triceps: 7.5, abs: 9, quads: 4, hamstrings: 8, calves: 9 }
+    for (const pattern of ['squat', 'hpress', 'hinge']) for (const moreAcc of [0, 1, 2, 3, 4]) for (const seed of [1, 2, 3])
+      days.push(planDay({ type: 'full', pattern, goal: 'growth', level: 'advanced', equipment: 'gym', minutes: 90, pace: 120, seed, moreAcc, goals }))
+    for (const d of days) {
+      const abs = d.items.filter(i => i.ex.p.includes('abs'))
+      expect(abs.length, `${d.type} ${abs.map(i => i.ex.id)}`).toBeLessThanOrEqual(1)
+    }
+  })
+
   it('takes no third lift of one movement: after two presses a fly, after two rows a pullover', () => {
     for (const { template, days, p } of weeks()) for (const d of p.days) {
       const pats = {}

@@ -226,7 +226,10 @@ const ISO_ONLY = ['biceps', 'triceps', 'shoulders']
 const accessoryFor = (e, g) => !e.leadOnly && (e.kind === 'iso' || !ISO_ONLY.includes(g))
 // A second lift aimed at the shoulders, a press or a raise, whichever delt: the presses and rows
 // already work them, and the published full-body programs give them one a session or none.
-const ONE_A_DAY = ['shoulders']
+// And a second one for the abs: a day's abs are one slot, which its turn (abs-combo.js absTurn)
+// makes a body-weight combo or a weighted lift. A crunch and a Russian twist left beside it made
+// the combo day six abs exercises.
+const ONE_A_DAY = ['shoulders', 'abs']
 // And one movement once: a barbell and a dumbbell pullover are one pullover on two tools.
 const TOOLS = /\b(ez barbell|ez bar|trap bar|barbell|dumbbell|kettlebell|cable|lever|smith|band|weighted|sled)\b/g
 // Standing is how most are done: a shrug and a standing shrug are one shrug. Seated isn't (a seated

@@ -642,7 +642,7 @@ describe('the abs of a one-tap day take turns', () => {
   it('as a combo of body-weight exercises, one card of rounds that count as strength work', () => {
     const picks = generateWorkout(state(), 'full', { now: NOW })
     const abs = absOf(picks)
-    expect(abs.length).toBeGreaterThanOrEqual(4)
+    expect(abs).toHaveLength(4)
     expect(new Set(abs.map(p => p.id)).size).toBe(abs.length)
     expect(abs.every(p => p.combo?.rounds === 1 && EXIDX[p.id].eq === 'body weight')).toBe(true)
     expect(picks.map(p => p.at)).toEqual(picks.map((_, i) => i))
@@ -677,7 +677,22 @@ describe('the abs of a one-tap day take turns', () => {
   it('a body-weight-only setup keeps its single lift body weight', () => {
     const st = state({ workouts: [comboDone('2026-08-20', ['0274', '0463', '0872'])] })
     const abs = absOf(generateWorkout(st, 'full', { now: NOW, equipment: 'bw', count: 10 }))
-    expect(abs.length).toBeGreaterThanOrEqual(1)
+    expect(abs).toHaveLength(1)
     expect(abs.every(p => !p.combo && EXIDX[p.id].eq === 'body weight')).toBe(true)
+  })
+  // A long day has time for more abs work than one slot, and the planner used to give it a crunch
+  // and a Russian twist besides the one its turn swapped: the combo then came with two abs lifts
+  // after it, six abs exercises on one day.
+  it('a long advanced day still has its abs in one slot, on either turn', () => {
+    const long = { ...genDefaults('full'), minutes: 90, goal: 'growth', level: 'advanced', equipment: 'gym' }
+    const after = state({ workouts: [comboDone('2026-08-20', ['0274', '0463', '0872'])] })
+    for (const shift of [0, 1, 2, 3]) {
+      const combo = absOf(generateWorkout(state(), 'full', { ...long, now: NOW, shift }))
+      expect(combo, `combo, shift ${shift}`).toHaveLength(4)
+      expect(combo.every(p => p.combo), `combo, shift ${shift}`).toBe(true)
+      const lift = absOf(generateWorkout(after, 'full', { ...long, now: NOW, shift }))
+      expect(lift, `weighted, shift ${shift}`).toHaveLength(1)
+      expect(lift[0].combo).toBeUndefined()
+    }
   })
 })
