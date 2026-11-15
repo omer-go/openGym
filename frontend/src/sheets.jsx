@@ -46,7 +46,7 @@ import { estimate1RM, best1RM, is1RMRecord, REP_CAP, formulaOf, FORMULA_NAMES } 
 import { exerciseHistory } from './lib/exercise-history.js'
 import { isBellEx, dbLoadOf, dbLoadFor, withDbLoad, withMeaning, historyAs, entryDbLoad, currentDbLoad, isOneArm, ownedWeightsFor, dumbbellsOf, ownsDumbbells, withDumbbells, presetWeights, cleanWeights } from './lib/dumbbells.js'
 import { policyFor, defaultIncrement, POLICIES_FOR, POLICY_NAME, POLICY_DESC, MAX_BW_SETS, MAX_TRIPLE_SETS, weightIncrement } from './lib/progression.js'
-import { normalizeRepRange } from './lib/rep-range.js'
+import { normalizeRepRange, pickTopReps, repsForSides } from './lib/rep-range.js'
 import { isBackoff, backoffWeights } from './lib/backoff.js'
 import { isPyramid, normalizePyramid, normalizePyramidRest, normalizePyramidWeight, pyramidFromFlat, flatFromPyramid, pyramidLabel, PYRAMID_MAX, MAX_PYRAMID_SETS, PYRAMID_PRESETS } from './lib/pyramid.js'
 import { MOBILE, shareExport, shareExportBlob, printHtml } from './lib/mobile.js'
@@ -1928,7 +1928,7 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
   const repChipsBw = REP_CHIPS.concat(REP_CHIPS.includes(c.reps) || !(c.reps > 0) ? [] : [c.reps]).sort((x, y) => x - y)
   const setReps = r => setC(x => {
     const next = { ...x, reps: r }
-    return ranged ? { ...next, ...normalizeRepRange(r, x.repsMin, perSide ? 2 : 1) } : next
+    return ranged ? { ...next, ...pickTopReps(r, x, perSide ? 2 : 1) } : next
   })
   // What is set under "More settings", so a closed section still says it is not empty.
   const moreBits = [
@@ -2108,12 +2108,13 @@ function ExConfig({ ex, existing, onSave, onDelete, onReplace, close, routine, i
             ? tn('{0} set becomes {1}: one on each side, {2}s held every time.', '{0} sets become {1}: one on each side, {2}s held every time.', c.sets || 0, (c.sets || 0) * 2, c.sec || 0)
             : t('For side planks, single-arm holds and the like. Trains each side on its own.'))
           : (perSide ? t('You still log the total: {0} is {1} per side.', c.reps || 0, fmtNum(sideReps(c.reps))) : t('For lunges, single-arm rows and the like.'))}>
-        {/* Reps: turning it on rounds the target up to an even number, since half of an odd total
-            is a rep one side does not get. Time: nothing to round — a hold's whole duration
-            happens twice, so only the flag changes (buildWorkSets doubles the planned sets). */}
+        {/* Reps: a per-side target counts both sides, so the reps and their floor double going on
+            and halve going off (lib/rep-range.js repsForSides): 11 a side reads 22, and back to 11.
+            Time: a hold's whole duration happens twice, so only the flag changes (buildWorkSets
+            doubles the planned sets). */}
         <Switch checked={perSide} onChange={v => setC(x => {
           if (mode === 'time') return { ...x, side: v || undefined }
-          const next = { ...x, side: v || undefined, reps: v ? Math.ceil((x.reps || 0) / 2) * 2 : x.reps }
+          const next = { ...x, side: v || undefined, ...repsForSides(x, v) }
           return climbsRange(policyFor({ ...next, id: ex.id }, routine, 'reps'))
             ? { ...next, ...normalizeRepRange(next.reps, next.repsMin, v ? 2 : 1) }
             : next
@@ -3221,7 +3222,7 @@ function GenSetup({ type, k, close }) {
             // A combo (the abs' body-weight one) is one card, folded; open, it lists its exercises.
             const [first] = slot, tg = first.e.target, sg = first.e.sg, open = openCombos.includes(sg)
             const what = [t(MUSCLE_NAME[first.pick.muscle]), tn('{0} exercise', '{0} exercises', slot.length),
-              tn('{0} set each', '{0} sets each', tg.sets || 1)].join(' · ')
+              tn('{0} set', '{0} sets', slot.length * (tg.sets || 1))].join(' · ')
             return <div key={sg} className="gs-combo">
               <button type="button" className={'item' + (open ? ' open' : '')} aria-expanded={open}
                 onClick={() => setOpenCombos(l => (open ? l.filter(x => x !== sg) : [...l, sg]))}>
