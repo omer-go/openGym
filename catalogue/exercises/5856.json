@@ -21,9 +21,10 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "biceps"
+      "biceps-short-head"
     ],
     "synergists": [
+      "biceps-long-head",
       "brachialis",
       "brachioradialis"
     ],

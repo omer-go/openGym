@@ -66,7 +66,14 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   trunk against the stabilizers' pull. A muscle has one role; leave an empty role out. The app shows
   them on the exercise's detail sheet. The shoulder, chest, back, arm, leg and core exercises were seeded from movement templates
   ([`scripts/catalogue/seed-roles.mjs`](../scripts/catalogue/seed-roles.mjs)); once you edit an
-  entry's roles, the seeder never touches it again.
+  entry's roles, the seeder never touches it again. A correction to many entries at once can be a
+  table read by hand and applied with
+  [`scripts/catalogue/apply-roles-table.mjs`](../scripts/catalogue/apply-roles-table.mjs): the
+  biceps heads were decided that way, one curl at a time, in
+  [`roles/biceps-heads.tsv`](../scripts/catalogue/roles/biceps-heads.tsv). A curl with the arm behind
+  the body, a drag or a close grip targets `biceps-long-head`; one with the arm in front, on a pad
+  or overhead, or a wide grip, `biceps-short-head`; a standard curl with the elbows at the sides
+  stays `biceps`, both heads evenly.
 
   ```json
   "muscleRoles": {

@@ -26,7 +26,7 @@ export const ROLE_MUSCLES = list(`
   front-delt, side-delt, rear-delt, supraspinatus, infraspinatus, teres-minor, subscapularis, teres-major,
   upper-trap, middle-trap, lower-trap, rhomboids, levator-scapulae, serratus-anterior, pec-minor,
   pec-major-clavicular, pec-major-sternal, lats, coracobrachialis,
-  biceps, brachialis, brachioradialis, triceps, triceps-long-head, wrist-flexors, wrist-extensors,
+  biceps, biceps-long-head, biceps-short-head, brachialis, brachioradialis, triceps, triceps-long-head, wrist-flexors, wrist-extensors,
   rectus-abdominis, obliques, transverse-abdominis, erector-spinae, quadratus-lumborum,
   glute-max, glute-med, hip-flexors, adductors, adductor-magnus, hamstrings, quads, calves, tibialis-anterior,
   sternocleidomastoid, neck-extensors`)

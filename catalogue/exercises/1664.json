@@ -19,9 +19,10 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
-      "biceps"
+      "biceps-short-head"
     ],
     "synergists": [
+      "biceps-long-head",
       "brachialis",
       "brachioradialis"
     ],

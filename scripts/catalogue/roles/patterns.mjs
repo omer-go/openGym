@@ -739,6 +739,6 @@ export const TARGET_OF = {
   'pec-major-sternal': 'pectorals', 'pec-major-clavicular': 'pectorals', 'serratus-anterior': 'serratus anterior',
   'erector-spinae': 'spine', 'teres-major': 'lats',
   hamstrings: 'hamstrings', 'glute-med': 'abductors, glutes', adductors: 'adductors', calves: 'calves', 'tibialis-anterior': 'calves',
-  brachialis: 'biceps', brachioradialis: 'forearms, biceps', 'triceps-long-head': 'triceps', 'wrist-flexors': 'forearms', 'wrist-extensors': 'forearms',
+  'biceps-long-head': 'biceps', 'biceps-short-head': 'biceps', brachialis: 'biceps', brachioradialis: 'forearms, biceps', 'triceps-long-head': 'triceps', 'wrist-flexors': 'forearms', 'wrist-extensors': 'forearms',
   'hip-flexors': 'abs, quads', 'rectus-abdominis': 'abs', obliques: 'abs', 'transverse-abdominis': 'abs', 'quadratus-lumborum': 'spine',
 }

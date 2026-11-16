@@ -22,11 +22,11 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "biceps"
-    ],
-    "synergists": [
       "brachialis",
       "brachioradialis"
+    ],
+    "synergists": [
+      "biceps"
     ],
     "stabilizers": [
       "wrist-flexors",
