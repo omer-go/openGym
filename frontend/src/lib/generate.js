@@ -37,7 +37,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
-import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, partsFor } from './planner.js'
+import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, partsFor, familyOf, familyDays } from './planner.js'
 import { listOf } from './curate.js'
 import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
@@ -301,10 +301,14 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
     const fit = ids.filter(id => patternOf(id) === pattern && !(dayNo(today) - dayNo(index.muscles[slotMuscleOf(EXIDX[id])] || '1970-01-01') <= 1))
     if (!fit.length) continue
     // Taking turns (profile.js rotationOf 'session'): the lift of the movement done longest ago
-    // leads, one never done before any; else the one you know best, kept for the block.
+    // leads, one never done before any; else the one you know best, kept for the block. A chest
+    // press takes the chest's half whose turn it is first (planner.js familyOf), upper or mid and
+    // lower, so an incline follows a flat bench.
     const when = id => index.exercises[id]?.d || ''
+    const halves = pattern === 'push-horizontal' ? familyDays(lastDone(index), 'chest') : {}
+    const half = id => halves[familyOf('chest', { id })] || ''
     const best = fit.map((id, rank) => ({ id, rank })).sort(rotationOf(S) === 'session'
-      ? (a, b) => (when(a.id) < when(b.id) ? -1 : when(a.id) > when(b.id) ? 1 : a.rank - b.rank)
+      ? (a, b) => (half(a.id) < half(b.id) ? -1 : half(a.id) > half(b.id) ? 1 : when(a.id) < when(b.id) ? -1 : when(a.id) > when(b.id) ? 1 : a.rank - b.rank)
       : (a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)
         || (before[b.id] || 0) - (before[a.id] || 0) || (inBlock[b.id] || 0) - (inBlock[a.id] || 0) || a.rank - b.rank)[0]
     return { id: best.id, pattern }

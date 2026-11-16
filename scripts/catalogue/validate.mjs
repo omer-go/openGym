@@ -21,7 +21,7 @@ export const CATEGORIES = list('strength, stretching, mobility, plyometrics, car
 export const PATTERNS = list('squat, hinge, lunge, push-horizontal, push-vertical, pull-horizontal, pull-vertical, carry, core, isolation')
 // The movement, for an entry whose name doesn't say it: the ids of MOVES in the app's
 // exercise-facets.js, plus "other" for one that was read and fits none.
-export const MOVES = list('mobility, neck, skill, calf, ankle, legpress, legext, legcurl, thrust, kickback, abduct, adduct, hinge, lunge, squat, jump, legraise, strike, throw, carry, pullup, pulldown, facepull, upright, rear, rotation, ytw, row, shrug, backext, pullover, pushup, dip, crossover, fly, lateral, front, pushdown, skull, wrist, curl, grip, crunch, plank, twist, rollout, climber, press, raise, clean, other')
+export const MOVES = list('mobility, neck, skill, seatedcalf, calf, ankle, legpress, legext, legcurl, thrust, kickback, abduct, adduct, hinge, lunge, squat, jump, legraise, strike, throw, carry, pullup, pulldown, facepull, upright, rear, rotation, ytw, row, shrug, backext, pullover, pushup, dip, crossover, fly, lateral, front, pushdown, ohext, skull, wrist, hammer, stretchcurl, curl, grip, crunch, plank, twist, rollout, climber, ohp, press, raise, clean, other')
 export const MUSCLES = list('trapezius, deltoids, chest, upper-back, serratus, biceps, triceps, forearm, abs, obliques, lower-back, gluteal, quadriceps, hamstring, adductors, hip-flexors, calves, tibialis')
 // Single muscles for "muscleRoles", finer than the body map: which muscle moves the weight, which
 // help, which hold a joint still. Data only for now, the app does not read it yet.

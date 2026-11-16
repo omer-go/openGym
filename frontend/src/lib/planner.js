@@ -38,6 +38,7 @@ import { rolesLoaded, muscleRolesOf, ROLE_WEIGHT } from './muscle-roles.js'
 import { SCHEMES, rangedScheme } from './engine.js'
 import { variantOf } from './variant.js'
 import { popularPlace } from './popular.js'
+import { moveOf as facetMove, kitOf } from './exercise-facets.js'
 
 export { SCHEMES }
 export const PLAN_GROUPS = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abs', 'quads', 'hamstrings', 'glutes', 'calves']
@@ -403,18 +404,98 @@ export const setsMinutes = (sets, env) =>
 // (`cfg.known`, the lifts you logged lately, generate.js knownLifts) takes one you know next, so
 // it moves on from last time; a lift you have never done only where none of them fits. Or, with
 // `cfg.last`, the lifts of a slot take turns instead.
-function variant(cfg, cands, used, rand, k) {
+function variant(cfg, cands, used, rand, k, items = []) {
   if (!cands.length) return null
   const fresh = cands.filter(e => !used.has(e.id))
   const pool = fresh.length ? fresh : cands
   const kept = id => (cfg.keep[k]?.has(id) ? 0 : 1)
   const known = id => (cfg.known.has(id) ? 0 : 1)
-  // Taking turns (`cfg.last`, lift id -> the ISO day it was last done): the one done longest ago,
-  // one never done before any, so every lift of a slot on your list comes round.
+  // Taking turns (`cfg.last`, lift id -> the ISO day it was last done): the movement done longest
+  // ago first (a rear-delt fly after last time's face pull), then the lift done longest ago, one
+  // never done before any, so every lift of a slot on your list comes round.
+  const turns = cfg.last ? turnsOf(cfg) : null
+  const moveDay = e => (turns ? turns.moves[liftMove(e)] || '' : '')
   const last = id => (cfg.last ? cfg.last[id] || '' : '')
-  const ranked = pool.map(e => ({ e, kept: kept(e.id), known: cfg.last ? 0 : known(e.id), last: last(e.id), at: popularPlace(e.id), tie: rand() }))
-    .sort((a, b) => a.kept - b.kept || a.known - b.known || (a.last < b.last ? -1 : a.last > b.last ? 1 : 0) || a.at - b.at || a.tie - b.tie)
-  return ranked[cfg.shift % ranked.length].e
+  const ranked = pool.map(e => ({ e, kept: kept(e.id), known: cfg.last ? 0 : known(e.id), move: moveDay(e), last: last(e.id), at: popularPlace(e.id), tie: rand() }))
+    .sort((a, b) => a.kept - b.kept || a.known - b.known || cmp(a.move, b.move) || cmp(a.last, b.last) || a.at - b.at || a.tie - b.tie)
+  return (turns ? kitTurn(ranked, turns, items, rand) : ranked)[cfg.shift % ranked.length].e
+}
+const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
+// The movement and the kit of a lift, as Add exercise names them (exercise-facets.js): the
+// movement says a hammer curl from a curl and a seated calf raise from a standing one.
+const liftMove = e => (EXIDX[e.id] ? facetMove(EXIDX[e.id]) : 'other')
+const liftKit = e => (EXIDX[e.id] ? kitOf(EXIDX[e.id]) : 'other')
+// What taking turns reads off your history, once a build: the day each movement was last done
+// and the kit it was done with then.
+function turnsOf(cfg) {
+  if (cfg.turns) return cfg.turns
+  const moves = {}, kits = {}
+  for (const [id, d] of Object.entries(cfg.last)) {
+    if (!d || !EXIDX[id]) continue
+    const m = facetMove(EXIDX[id])
+    if (!moves[m] || d > moves[m]) { moves[m] = d; kits[m] = kitOf(EXIDX[id]) }
+  }
+  return (cfg.turns = { moves, kits })
+}
+// The kit takes turns too, at random: of the lifts of the movement that won, one on a kit other
+// than the one it had last time, and not one that already has half the day's lifts (two of the
+// first three, three of six). Only a kit that is there to take: one barbell lift on your list is
+// still the barbell's every time. The rest of `ranked` keeps its order behind them.
+function kitTurn(ranked, turns, items, rand) {
+  const head = ranked.filter(r => r.kept === ranked[0].kept && r.move === ranked[0].move && liftMove(r.e) === liftMove(ranked[0].e))
+  const kits = [...new Set(head.map(r => liftKit(r.e)))]
+  if (kits.length < 2) return ranked
+  const had = kitCount(items), cap = Math.max(2, Math.ceil((items.length + 1) / 2))
+  const roomy = kits.filter(kit => (had[kit] || 0) < cap)
+  const fresh = (roomy.length ? roomy : kits).filter(kit => kit !== turns.kits[liftMove(ranked[0].e)])
+  const from = fresh.length ? fresh : roomy.length ? roomy : kits
+  const kit = from[Math.floor(rand() * from.length)]
+  const first = head.filter(r => liftKit(r.e) === kit)
+  return [...first, ...ranked.filter(r => !first.includes(r))]
+}
+const kitCount = items => items.reduce((n, i) => ({ ...n, [liftKit(i.ex)]: (n[liftKit(i.ex)] || 0) + 1 }), {})
+// Taking turns within a group (`cfg.last`): some groups' lifts fall into families that take turns
+// from one workout to the next, whatever the week's parts ask. The chest's upper and its mid and
+// lower half. The abs' flexion (a crunch, a leg raise), rotation (a twist, a woodchop) and bracing
+// (a plank, a rollout). The shoulders' side delts, rear delts and overhead press, side, rear,
+// side, press: the side delts get every second turn, since nothing else reaches them, and the
+// press comes round once in four (dueFamily).
+const ABS_FAMILY = { crunch: 'flexion', legraise: 'flexion', climber: 'flexion', twist: 'rotation', plank: 'bracing', rollout: 'bracing' }
+export const familyOf = (g, e) => (g === 'shoulders' ? (liftMove(e) === 'ohp' ? 'ohp' : aimsAt(e, 'Rear delts') ? 'rear' : aimsAt(e, 'Side delts') ? 'side' : null)
+  : g === 'chest' ? (aimsAt(e, 'Upper chest') ? 'upper' : aimsAt(e, 'Mid and lower chest') ? 'mid' : null)
+  : g === 'abs' ? ABS_FAMILY[liftMove(e)] || null : null)
+// The day each family of group `g` was last done, from `last` (lift id -> ISO day).
+export function familyDays(last, g) {
+  const days = {}
+  for (const [id, d] of Object.entries(last || {})) {
+    const f = d && EXIDX[id] && familyOf(g, { id })
+    if (f && (!days[f] || d > days[f])) days[f] = d
+  }
+  return days
+}
+// The family whose turn it is, of those in `present`: the one done longest ago, one never done
+// first. The shoulders' after the side delts is the older of the rear delts and the press, and
+// after either of those the side delts again.
+function dueFamily(cfg, g, present) {
+  const memo = (turnsOf(cfg).families ||= {})
+  const days = (memo[g] ||= familyDays(cfg.last, g))
+  if (g === 'shoulders') {
+    const latest = ['side', 'rear', 'ohp'].reduce((a, b) => ((days[b] || '') > (days[a] || '') ? b : a))
+    return days.side && latest === 'side' ? (cmp(days.ohp || '', days.rear || '') < 0 ? 'ohp' : 'rear') : 'side'
+  }
+  return [...present].sort((a, b) => cmp(days[a] || '', days[b] || ''))[0]
+}
+// The small muscles take turns in pairs, one lower and one upper: the calves and the traps one
+// workout, the leg extension and the forearms the next. Each a group and the movements that
+// count for it (a shrug for the traps, a leg extension for the quads' rectus femoris).
+const SMALL_PAIRS = [
+  [['calves', ['calf', 'seatedcalf']], ['back', ['shrug']]],
+  [['quads', ['legext']], ['forearms', ['wrist', 'grip']]],
+]
+const pairDay = (turns, pair) => pair.flatMap(([, moves]) => moves).reduce((d, m) => (cmp(turns.moves[m] || '', d) > 0 ? turns.moves[m] : d), '')
+const smallTurn = cfg => {
+  const turns = turnsOf(cfg)
+  return cmp(pairDay(turns, SMALL_PAIRS[1]), pairDay(turns, SMALL_PAIRS[0])) < 0 ? 1 : 0
 }
 
 /** The day types of the week, in order. */
@@ -455,15 +536,20 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
     pool = far(pool, near(k))
     // A group with parts takes the lift aimed at the part furthest behind its share, the bigger
     // share on a tie: a flat bench press, then an incline one.
-    if (rolesLoaded()) {
-      const g0 = PATTERN_GROUPS[pat][0]
+    // With your history (`cfg.last`), the chest's half whose turn it is instead (dueFamily): an
+    // incline press after last time's flat one.
+    const g0 = PATTERN_GROUPS[pat][0]
+    const fams = cfg.last && g0 === 'chest' && rolesLoaded() ? new Set(pool.map(e => familyOf(g0, e)).filter(Boolean)) : new Set()
+    const due = fams.size ? dueFamily(cfg, g0, fams) : null
+    if (due) pool = pool.filter(e => familyOf(g0, e) === due)
+    else if (rolesLoaded()) {
       const lag = parts.filter(p => p.g === g0).sort((a, b) => partRatio(a.name, g0) - partRatio(b.name, g0) || b.goal - a.goal)
       for (const p of lag) {
         const aimed = pool.filter(e => aimsAt(e, p.name))
         if (aimed.length) { pool = aimed; break }
       }
     }
-    return variant(cfg, pool, week.used, rand, k)
+    return variant(cfg, pool, week.used, rand, k, items)
   }
   const take = (pat, slot, lead = false) => {
     let sets = cfg.leadSets
@@ -536,7 +622,10 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
   // A heavy hinge as an accessory only on a day with none, next to days with none.
   const backFree = () => !items.some(i => heavyHinge(i.ex)) && ![...nearby].some(id => heavyHinge(liftOf(id) || { id }))
   const today = () => { const c = {}; for (const i of items) add(cfg, c, i.ex, i.sets); return c }
-  const fresh = e => !items.some(i => i.ex.id === e.id) && !repeats(items, e) && (!heavyHinge(e) || backFree())
+  // A full day with your history takes the small muscles of its pair (smallTurn) and not the other's.
+  const pair = cfg.last && day.type === 'full' ? smallTurn(cfg) : -1
+  const offPair = e => pair >= 0 && SMALL_PAIRS[1 - pair].some(([g, moves]) => moves.includes(liftMove(e)) || (g !== 'quads' && g !== 'back' && e.p.includes(g)))
+  const fresh = e => !items.some(i => i.ex.id === e.id) && !repeats(items, e) && (!heavyHinge(e) || backFree()) && !offPair(e)
   // Among the lifts for group `g`, prefer one that also feeds another group still short (hammer
   // curls feed forearms) and not one already at its goal.
   const helps = e => Object.entries(creditOf(e)).filter(([o, c]) => !e.p.includes(o) && c >= 0.25)
@@ -557,14 +646,38 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     const mine = list.filter(e => aimsAt(e, d))
     return mine.length ? mine : list
   }
+  // With your history (`cfg.last`), the family whose turn it is (dueFamily), when there is a lift
+  // of it to take. And the hamstrings' lift on a day with no hinge is a leg curl, so each workout
+  // trains them at the hip or at the knee.
+  const hinged = () => items.some(i => i.ex.pat === 'hinge' || patternOf(EXIDX[i.ex.id]) === 'hinge')
+  const inTurn = (g, list) => {
+    if (!cfg.last) return list
+    if (g === 'hamstrings') {
+      const curls = hinged() ? [] : list.filter(e => liftMove(e) === 'legcurl')
+      return curls.length ? curls : list
+    }
+    // Only lifts filed under the group: an around-the-world reaches the upper chest but is a shoulder lift.
+    const own = list.filter(e => e.p.includes(g))
+    const fams = new Set(own.map(e => familyOf(g, e)).filter(Boolean))
+    if (!fams.size) return list
+    // A workout is one half of the chest: its fly goes where its press went, so the next workout's
+    // turn is plain.
+    const had = g === 'chest' && items.find(i => i.ex.p.includes(g) && familyOf(g, i.ex))
+    const due = had ? familyOf(g, had.ex) : dueFamily(cfg, g, fams)
+    const mine = own.filter(e => familyOf(g, e) === due)
+    return mine.length ? mine : own.length ? own : list
+  }
+  // The overhead press is a shoulder accessory when it is the press's turn.
+  const pressTurn = () => cfg.last && dueFamily(cfg, 'shoulders', new Set()) === 'ohp'
+  const forG = (e, g) => accessoryFor(e, g) || (g === 'shoulders' && !e.leadOnly && liftMove(e) === 'ohp' && pressTurn())
   // Not a lift a day next to this one has, before anything else: a pullover two days running
   // was the one that also helped the triceps both times.
   const choose = (g, list) => {
-    const cands = far(novel(list, items), nearby)
+    const cands = inTurn(g, far(novel(list, items), nearby))
     const top = Math.max(...cands.map(e => behind(g, e)))
     const aimed = turnOf(g, cands.filter(e => behind(g, e) === top))
     const best = Math.max(...aimed.map(helps))
-    return variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k)
+    return variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k, items)
   }
   const push = it => {
     items.push(it)
@@ -584,7 +697,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
   const fewest = i => (i.slot === 'lead' ? Math.min(i.sets, LEAD_MIN) : i.slot === 'accessory' ? Math.min(i.sets, cfg.accMin) : Math.min(i.sets, cfg.slotMin))
   for (const g of daily) {
     if (!trains(day.type, g) || items.some(i => i.ex.p.includes(g))) continue
-    const cands = avail.filter(e => accessoryFor(e, g) && e.p.includes(g) && fresh(e))
+    const cands = avail.filter(e => forG(e, g) && e.p.includes(g) && fresh(e))
     if (!cands.length) continue
     const ex = choose(g, cands)
     const gap = Math.max(goals[g] - has(g), Math.ceil(DIRECT_MIN[g] * goals[g]) - hasDirect(g))
@@ -598,6 +711,20 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     }
     push(it)
   }
+  // Then the small muscles whose turn it is, each at its fewest sets, where the minutes and the
+  // level's accessories allow (`turn`: trim keeps it, though the squats gave the calves their count).
+  if (pair >= 0) {
+    for (const [g, moves] of SMALL_PAIRS[pair]) {
+      if (!trains(day.type, g) || items.filter(i => i.slot === 'accessory').length >= cfg.maxAcc) continue
+      if (items.some(i => moves.includes(liftMove(i.ex)))) continue
+      const cands = avail.filter(e => accessoryFor(e, g) && e.p.includes(g) && moves.includes(liftMove(e)) && fresh(e))
+      if (!cands.length) continue
+      const ex = variant(cfg, far(cands, nearby), week.used, rand, day.k, items)
+      const it = { ex, sets: cfg.accMin, slot: 'accessory', turn: true, rx: prescribe(cfg, ex, 'accessory', g) }
+      if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; continue }
+      push(it)
+    }
+  }
   for (;;) {
     if (items.filter(i => i.slot === 'accessory').length >= cfg.maxAcc) { day.limit = 'accessories'; break }
     const t = today()
@@ -607,7 +734,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
       const forDirect = dGap > goals[g] - has(g)
       const gap = Math.max(goals[g] - has(g), dGap)
       const direct = items.filter(i => i.ex.p.includes(g)).length
-      const cands = avail.filter(e => accessoryFor(e, g) && e.p.includes(g) && fresh(e))
+      const cands = avail.filter(e => forG(e, g) && e.p.includes(g) && fresh(e))
       const blocked = noTime[g] ? 'time' : items.some(i => i.slot === 'accessory' && i.ex.p.includes(g)) ? 'has'
         : direct >= (ONE_A_DAY.includes(g) ? 1 : cfg.maxDirect) || (t[g] || 0) >= cfg.sessionCap ? 'caps'
         : !cands.length ? 'equipment' : ''
@@ -691,7 +818,7 @@ function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains,
     const added = days.some(d => {
       const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && n.aimed(e) && !d.items.some(i => i.ex.id === e.id) && !repeats(d.items, e))
       if (!cands.length) return false
-      const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand, d.k)
+      const ex = variant(cfg, far(novel(cands, d.items), near(d.k)), week.used, rand, d.k, d.items)
       // A group that gave way takes all it still needs in the one lift, on a day with the minutes
       // for it: one calf raise of four sets, not two of two on days too full to grow them.
       const sets = whole.has(g) ? Math.max(cfg.accMin, Math.min(cfg.accMax, Math.ceil((n.goal - t[n.key]) / (n.credit(ex) || 1)))) : cfg.accMin
@@ -730,6 +857,7 @@ function trim(cfg, out, goals, parts, whole, daily = []) {
       if (!n) continue
       if (n === it.sets && Object.entries(partCreditOf(it.ex)).some(([p, v]) => v >= 1 && partGoal[p] && aimed[p] === 1)) continue
       if (n === it.sets && soleDaily(d.items, it, daily)) continue
+      if (n === it.sets && it.turn) continue
       const c = Object.entries(creditOf(it.ex))
       const keeps = c.every(([g, v]) => (t[g] || 0) - v * n >= goals[g] - 1e-9)
         && it.ex.p.every(g => dr[g] - n >= Math.ceil(DIRECT_MIN[g] * goals[g]))
@@ -1078,7 +1206,7 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains, daily = 
     if (!g) break
     const cands = avail.filter(e => accessoryFor(e, g) && !heavyHinge(e) && e.p.includes(g) && !items.some(i => i.ex.id === e.id) && !repeats(items, e))
     if (!cands.length) { full.add(g); continue }
-    const ex = variant(cfg, far(novel(cands, items), nearby), week.used, rand, day.k)
+    const ex = variant(cfg, far(novel(cands, items), nearby), week.used, rand, day.k, items)
     items.push({ ex, sets: cfg.accMin, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) })
     week.used.add(ex.id)
   }

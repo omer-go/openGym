@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { MOVES, kitOf, moveOf, angleOf, isTail, rareWords, optionsOf, narrow, KIT_FACET, MOVE_FACET, ANGLE_FACET, FEW } from './exercise-facets.js'
 import { CATALOGUE as EXERCISES } from './exercises.js'
 import { MOVES as CATALOGUE_MOVES } from '../../../scripts/catalogue/validate.mjs'
+import ROLES from './exercise-roles.json'
+import fs from 'node:fs'
 
 const ex = (n, eq = 'barbell', more = {}) => ({ id: n, n, eq, ...more })
 
@@ -41,6 +43,50 @@ describe('tags', () => {
     expect(set.length).toBeGreaterThan(100)
     for (const e of set) expect(CATALOGUE_MOVES).toContain(e.mo)
   })
+  it('tells a shoulder press from a chest press, and splits the extensions, curls and calf raises', () => {
+    expect(moveOf(ex('dumbbell seated shoulder press', 'dumbbell'))).toBe('ohp')
+    expect(moveOf(ex('barbell standing military press'))).toBe('ohp')
+    expect(moveOf(ex('dumbbell arnold press', 'dumbbell'))).toBe('ohp')
+    expect(moveOf(ex('lever press', 'leverage machine', { pt: 'push-vertical' }))).toBe('ohp')
+    expect(moveOf(ex('lever press', 'leverage machine', { pt: 'push-horizontal' }))).toBe('press')
+    expect(moveOf(ex('barbell clean and press'))).toBe('clean')
+    expect(moveOf(ex('cable overhead triceps extension (rope attachment)', 'cable'))).toBe('ohext')
+    expect(moveOf(ex('dumbbell seated triceps extension', 'dumbbell'))).toBe('ohext')
+    expect(moveOf(ex('ez bar standing french press', 'ez barbell'))).toBe('ohext')
+    expect(moveOf(ex('barbell lying triceps extension skull crusher'))).toBe('skull')
+    expect(moveOf(ex('dumbbell standing bent over one arm triceps extension', 'dumbbell'))).toBe('skull')
+    expect(moveOf(ex('dumbbell hammer curl', 'dumbbell'))).toBe('hammer')
+    expect(moveOf(ex('cable standing biceps curl (with rope)', 'cable'))).toBe('hammer')
+    expect(moveOf(ex('dumbbell revers grip biceps curl', 'dumbbell'))).toBe('hammer')
+    expect(moveOf(ex('dumbbell incline curl', 'dumbbell'))).toBe('stretchcurl')
+    expect(moveOf(ex('ez barbell preacher curl', 'ez barbell'))).toBe('stretchcurl')
+    expect(moveOf(ex('barbell prone incline curl'))).toBe('curl')
+    expect(moveOf(ex('barbell spider curl'))).toBe('curl')
+    expect(moveOf(ex('lever seated calf raise', 'leverage machine'))).toBe('seatedcalf')
+    expect(moveOf(ex('dumbbell squat hold calf raise', 'dumbbell'))).toBe('seatedcalf')
+    expect(moveOf(ex('standing calf raise', 'body weight'))).toBe('calf')
+    expect(moveOf(ex('donkey calf raise', 'body weight'))).toBe('calf')
+  })
+  // The hand-read muscle roles say which head or which muscle a lift is for; the finer moves
+  // above are read off the name, so the two are held against each other here. A row on these
+  // lists was read and the name's reading kept on purpose.
+  it('agrees with the muscle roles on which side of each split a lift is', () => {
+    const KEPT = new Set(['4667', '5239', '7177'])
+    const target = e => (ROLES[e.id]?.target || []).join('+')
+    const odd = EXERCISES.filter(e => !KEPT.has(e.id)).filter(e => {
+      const m = moveOf(e), t = target(e)
+      if (m === 'seatedcalf') return !t.includes('soleus')
+      if (m === 'calf') return t.includes('soleus')
+      if (m === 'ohext') return t !== 'triceps-long-head'
+      if (m === 'skull') return t === 'triceps-long-head'
+      if (m === 'hammer') return !t.includes('brachialis')
+      if (m === 'curl' || m === 'stretchcurl') return t.includes('brachialis')
+      if (m === 'ohp') return e.pt && e.pt !== 'push-vertical'
+      if (m === 'press') return e.pt === 'push-vertical'
+      return false
+    })
+    expect(odd.map(e => `${e.id} ${e.n}`)).toEqual([])
+  })
   it('does not take a grip width, a front raise or a pulley for something else', () => {
     expect(moveOf(ex('close grip bench press'))).toBe('press')
     expect(moveOf(ex('dumbbell front raise'))).toBe('front')
@@ -68,6 +114,22 @@ describe('tags', () => {
     const other = EXERCISES.filter(e => moveOf(e) === 'other').length
     expect(other / EXERCISES.length).toBeLessThan(0.15)
     for (const e of EXERCISES) expect(typeof kitOf(e)).toBe('string')
+  })
+  // Every lift the planner could pick has to land somewhere: a movement, a kit and the muscle
+  // roles that say what it trains. What doesn't is on a list someone read: the entries the
+  // catalogue marks "other" by hand, the kit that has no group of its own, and the posture
+  // references unplaced.tsv gives no roles.
+  it('places every lift, or has a reviewed reason not to', () => {
+    const LIFTS = new Set(['strength', 'calisthenics', 'olympic', 'isometric'])
+    const ODD_KIT = new Set(['sandbag', 'macebell', 'tire', 'hammer', 'roller', 'wheel roller'])
+    const table = fs.readFileSync(new URL('../../../scripts/catalogue/roles/unplaced.tsv', import.meta.url), 'utf8')
+    const [head, ...rows] = table.trim().split('\n').map(l => l.split('\t'))
+    const noRoles = new Set(rows.filter(r => !r[head.indexOf('new target')]).map(r => r[0]))
+    const lifts = EXERCISES.filter(e => LIFTS.has(e.cat))
+    expect(lifts.filter(e => moveOf(e) === 'other' && e.mo !== 'other').map(e => e.n)).toEqual([])
+    expect(lifts.filter(e => kitOf(e) === 'other' && !ODD_KIT.has(e.eq)).map(e => `${e.n} (${e.eq})`)).toEqual([])
+    expect(lifts.filter(e => !ROLES[e.id] && !noRoles.has(e.id)).map(e => e.n)).toEqual([])
+    expect(noRoles.size).toBe(7)
   })
 })
 

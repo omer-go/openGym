@@ -39,7 +39,7 @@ const LIFT = new Map(Object.entries(POPULAR).flatMap(([m, lifts]) => lifts.flatM
 // Kinds of training that stand in only for their own kind: a yoga pose, a hold, a jump, a snatch.
 const OWN_KIND = new Set(['yoga', 'stretching', 'isometric', 'cardio', 'mobility', 'rehab', 'olympic', 'pilates', 'combat', 'plyometrics'])
 // Movements that are a compound however the catalogue files them: no isolation lift's equivalent.
-const BIG_MOVES = new Set(['squat', 'lunge', 'hinge', 'legpress', 'press', 'pushup', 'dip', 'pullup', 'pulldown', 'row'])
+const BIG_MOVES = new Set(['squat', 'lunge', 'hinge', 'legpress', 'press', 'ohp', 'pushup', 'dip', 'pullup', 'pulldown', 'row'])
 
 /** Whether `e` could stand in for `from`, by the rules above. */
 export function fitsFor(from, e, rolesOf = muscleRolesOf) {

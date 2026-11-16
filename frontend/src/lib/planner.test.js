@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, planDay, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
+import { plan, planDay, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, familyOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
 import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets } from './goals.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 import { equivalentsOf } from './equivalents.js'
+import { moveOf, kitOf } from './exercise-facets.js'
 
 const ids = new Set(EXDB.map(e => e.id))
 
@@ -364,6 +365,129 @@ describe('planner', () => {
       const abs = d.items.filter(i => i.ex.p.includes('abs'))
       expect(abs.length, `${d.type} ${abs.map(i => i.ex.id)}`).toBeLessThanOrEqual(1)
     }
+  })
+
+  // Taking turns (generate.js passes `last`, each lift's last day): the movement done longest
+  // ago comes first, then a kit other than the one that movement had last time, and no kit
+  // takes more than half the day.
+  describe('taking turns with the movement and the kit', () => {
+    const goals = { chest: 8, back: 8, shoulders: 6, biceps: 6, triceps: 6, abs: 4, quads: 8, hamstrings: 6, calves: 4 }
+    const DAILY = ['chest', 'back', 'quads', 'hamstrings', 'shoulders', 'biceps', 'triceps', 'abs']
+    // Your list: the planner's own lifts and curls of every movement on several kits.
+    const CURLS = ['0294', '0031', '0868', '0447', '0313', '0165', '0897', '0070', '0372', '0318', '0592']
+    const pool = [...PLAN_LIB.map(e => e.id), ...CURLS]
+    const day = o => planDay({ type: 'full', goal: 'growth', level: 'advanced', equipment: 'gym', minutes: 90, goals, daily: DAILY, pool, last: {}, ...o })
+    const row = id => EXDB.find(e => e.id === id)
+    const biceps = d => d.items.find(i => i.slot === 'accessory' && i.ex.p[0] === 'biceps')?.ex
+    it('moves the biceps on from the movement done last time', () => {
+      for (const seed of [1, 2, 3, 4]) {
+        const first = biceps(day({ seed }))
+        expect(first, `seed ${seed}`).toBeTruthy()
+        const next = biceps(day({ seed, last: { [first.id]: '2026-11-10' } }))
+        expect(moveOf(row(next.id)), `seed ${seed}`).not.toBe(moveOf(row(first.id)))
+      }
+    })
+    it('comes back to the movement done longest ago, on another kit than it had', () => {
+      const BY_MOVE = { curl: '0294', hammer: '0313', stretchcurl: '0070' }
+      expect(Object.entries(BY_MOVE).map(([, id]) => moveOf(row(id)))).toEqual(Object.keys(BY_MOVE))
+      for (const seed of [1, 2, 3, 4, 5, 6]) {
+        // The dumbbell curl longest ago: a curl is next, and not on dumbbells.
+        const last = { [BY_MOVE.curl]: '2026-10-01', [BY_MOVE.hammer]: '2026-11-01', [BY_MOVE.stretchcurl]: '2026-11-08' }
+        const next = row(biceps(day({ seed, last })).id)
+        expect(moveOf(next), `seed ${seed}`).toBe('curl')
+        expect(kitOf(next), `seed ${seed}`).not.toBe(kitOf(row(BY_MOVE.curl)))
+      }
+    })
+    it('gives no kit more than half the day while another will do', () => {
+      for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+        const d = day({ seed })
+        const n = {}
+        for (const i of d.items) n[kitOf(row(i.ex.id))] = (n[kitOf(row(i.ex.id))] || 0) + 1
+        expect(Math.max(...Object.values(n)), `seed ${seed} ${JSON.stringify(n)}`).toBeLessThanOrEqual(Math.max(2, Math.ceil(d.items.length / 2)))
+      }
+    })
+    it('picks the kit at random, so the days do not all come out on one', () => {
+      const kits = new Set([1, 2, 3, 4, 5, 6, 7, 8].map(seed => kitOf(row(biceps(day({ seed })).id))))
+      expect(kits.size).toBeGreaterThan(1)
+    })
+    it('leaves a program week as it was: no history, no turns', () => {
+      const o = { template: 'full', goal: 'growth', days: 3, minutes: 60 }
+      expect(plan(o).days.map(d => d.items.map(i => i.ex.id))).toEqual(plan(o).days.map(d => d.items.map(i => i.ex.id)))
+    })
+  })
+
+  // The families of a group that take turns from one workout to the next, with your history:
+  // the shoulders' side, rear, side, press; the chest's upper and mid/lower halves; the abs'
+  // flexion, rotation and bracing; and the small muscles in pairs, calves and traps, then leg
+  // extension and forearms. Each day here is logged before the next is built.
+  describe('taking turns within a group', () => {
+    const goals = { chest: 8, back: 8, shoulders: 6, biceps: 6, triceps: 6, abs: 4, quads: 8, hamstrings: 6, calves: 4, forearms: 2 }
+    const DAILY = ['chest', 'back', 'quads', 'hamstrings', 'shoulders', 'biceps', 'triceps', 'abs']
+    // Your list: the planner's own lifts, a russian twist and a cable pallof press for the abs' rotation.
+    const pool = [...PLAN_LIB.map(e => e.id), '0687', '1202']
+    const day = o => planDay({ type: 'full', goal: 'growth', level: 'advanced', equipment: 'gym', minutes: 90, goals, daily: DAILY, pool, ...o })
+    const PATTERNS = ['squat', 'hpress', 'hinge']
+    const days = (seed, n = 6, o = {}) => {
+      let last = {}
+      const out = []
+      for (let k = 0; k < n; k++) {
+        const d = day({ seed, pattern: PATTERNS[k % 3], last, ...o })
+        out.push(d)
+        for (const i of d.items) last = { ...last, [i.ex.id]: `2026-11-${String(10 + k).padStart(2, '0')}` }
+      }
+      return out
+    }
+    const row = id => EXDB.find(e => e.id === id)
+    const acc = (d, g) => d.items.filter(i => i.slot === 'accessory' && i.ex.p.includes(g))
+
+    it('gives the shoulders side, rear, side, then an overhead press', () => {
+      for (const seed of [1, 2, 3]) {
+        const turns = days(seed, 5).map(d => acc(d, 'shoulders').map(i => familyOf('shoulders', i.ex))[0])
+        expect(turns, `seed ${seed}`).toEqual(['side', 'rear', 'side', 'ohp', 'side'])
+      }
+    })
+    it('alternates the chest press between the upper and the mid and lower chest', () => {
+      for (const seed of [1, 2, 3]) {
+        const press = days(seed, 6).map(d => d.items.find(i => i.slot !== 'accessory' && i.ex.p.includes('chest')))
+        const halves = press.map(i => familyOf('chest', i.ex))
+        for (let k = 2; k < halves.length; k++) expect(halves[k], `seed ${seed} ${halves}`).not.toBe(halves[k - 1])
+      }
+    })
+    it('rotates the abs between flexion, rotation and bracing', () => {
+      for (const seed of [1, 2, 3]) {
+        const fams = days(seed, 6).map(d => acc(d, 'abs').map(i => familyOf('abs', i.ex))[0])
+        expect(new Set(fams.slice(0, 3)).size, `seed ${seed} ${fams}`).toBe(3)
+        expect(fams.slice(3), `seed ${seed}`).toEqual(fams.slice(0, 3))
+      }
+    })
+    it('gives a day with no hinge a leg curl for the hamstrings', () => {
+      let checked = 0
+      for (const seed of [1, 2, 3, 4, 5, 6]) {
+        const d = day({ seed, pattern: 'hpress', last: {} })
+        if (d.items.some(i => i.ex.pat === 'hinge')) continue
+        checked++
+        expect(acc(d, 'hamstrings').map(i => moveOf(row(i.ex.id))), `seed ${seed}`).toEqual(['legcurl'])
+      }
+      expect(checked).toBeGreaterThan(1)
+    })
+    it('takes the small muscles in pairs, a calf raise one workout and a leg extension and a wrist curl the next', () => {
+      for (const seed of [1, 2, 3]) {
+        // A day with room for two more accessories than the level's, as a longer session has.
+        const smalls = days(seed, 4, { moreAcc: 2 }).map(d => d.items.filter(i => i.turn).map(i => moveOf(row(i.ex.id))))
+        expect(smalls[0], `seed ${seed}`).toEqual(['calf'])
+        expect(smalls[2], `seed ${seed}`).toEqual(['seatedcalf'])
+        for (const k of [1, 3]) {
+          expect(smalls[k][0], `seed ${seed}`).toBe('legext')
+          expect(['wrist', 'grip'], `seed ${seed}`).toContain(smalls[k][1])
+        }
+      }
+    })
+    it('leaves the other pair out: no calf raise on a leg extension day', () => {
+      for (const seed of [1, 2, 3]) {
+        const [, second] = days(seed, 2)
+        expect(second.items.filter(i => i.ex.p.includes('calves')), `seed ${seed}`).toEqual([])
+      }
+    })
   })
 
   describe('the daily groups of a full-body day', () => {

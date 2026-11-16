@@ -62,7 +62,11 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   [`roles/moves.tsv`](../scripts/catalogue/roles/moves.tsv), with
   [`scripts/catalogue/apply-fields-table.mjs`](../scripts/catalogue/apply-fields-table.mjs). That
   script also takes `new pattern`, `new unilateral`, `new catalogue target` and
-  `new secondary muscles` columns; an empty cell leaves the field alone and `-` removes it.
+  `new secondary muscles` columns; an empty cell leaves the field alone and `-` removes it. Some
+  moves are told apart where generated workouts take turns between them: `ohp` (overhead press)
+  from `press` (chest press), `ohext` (overhead extension) from `skull` (lying extension),
+  `hammer` and `stretchcurl` (incline or preacher) from `curl`, and `seatedcalf` from `calf`. Set
+  the field when the name says one and the lift does the other ("lying elbow press" is a `skull`).
 - **description**: one or two sentences on what the movement is and what it trains.
 - **instructions**: 4 to 7 short steps, second person ("Brace your core..."). No em dashes.
 - **muscleMap** (optional): a more precise muscle-map drawing with the body map's own muscle names

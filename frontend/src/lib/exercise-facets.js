@@ -27,7 +27,8 @@ export const MOVES = [
   ['mobility', 'Mobility & warm-up', /foam|\broll\b|roll ball|roller|tiger tail|\bpose\b|asana|stretch|mobiliz|warm.?up|nerve|salutation|circl|figure (8|eight)|swirl|meditation|breathing/],
   ['neck', 'Neck', /\bneck\b|cervical|head harness/],
   ['skill', 'Handstand & lever', /front lever|back lever|planche|handstand|headstand|dragon flag|\bflag\b|maltese|skin the cat|wall walk/],
-  ['calf', 'Calf raise', /\bcalf|\bcalves|heel raise|heel drop|\bdonkey raise/],
+  ['seatedcalf', 'Seated calf raise', /(seated|soleus|bent knee|squat hold).*(calf|calves)/],
+  ['calf', 'Standing calf raise', /\bcalf|\bcalves|heel raise|heel drop|\bdonkey raise/],
   ['ankle', 'Ankle & foot', /toe raise|tibialis|dorsi|ankle|\bfoot\b|\bfeet\b|toes|heel walk|toe walk|eversion|inversion|plantar/],
   ['legpress', 'Leg press', /leg press|\bsled press|hack press/],
   ['legext', 'Leg extension', /leg extension|knee extension|sissy/],
@@ -62,8 +63,11 @@ export const MOVES = [
   ['lateral', 'Lateral raise', /lateral raise|side raise|lateral.*raise|lateral bent/],
   ['front', 'Front raise', /front raise|front.*raise|plate raise|full can|empty can/],
   ['pushdown', 'Pushdown', /push.?down|pressdown/],
-  ['skull', 'Triceps extension', /skull|triceps? extension|overhead extension|french press|kick.?back|jm press|tate press|(dumbbell|cable|kettlebell|band|barbell|lever).*\bextension\b/],
+  ['ohext', 'Overhead triceps extension', /overhead.*extension|french press|high pulley.*extension|(seated|standing|kneeling)(?!.*(bent over|horizontal|high cross|tate)).*\bextension\b|(lever|olympic barbell|weighted seated) triceps extension|triceps extension with bed sheet/],
+  ['skull', 'Skull crusher & lying extension', /skull|triceps? extension|overhead extension|french press|kick.?back|jm press|tate press|(dumbbell|cable|kettlebell|band|barbell|lever).*\bextension\b/],
   ['wrist', 'Wrist curl & rotation', /wrist|reverse curl|finger curl|pronation|supination|torsion|\brotate\b/],
+  ['hammer', 'Hammer & reverse curl', /(hammer|revers|cross.?(chest|body)|zottman|pinwheel|\brope\b|neutral).*\bcurl|\bcurl.*(revers|\brope\b)/],
+  ['stretchcurl', 'Incline & preacher curl', /(preacher|scott|bayesian|(?<!prone )incline(?!.*spider)).*\bcurl/],
   ['curl', 'Curl', /\bcurl/],
   ['grip', 'Grip', /gripper|hand grip|grip (squeeze|trainer|strength)|hand squeeze|finger|crimp|handboard|pinch|plate hold|dead hang|\bhang\b|towel hold/],
   ['crunch', 'Crunch & sit-up', /crunch|sit.?up|v.?up|v sit|jack.?knife|toe touch|toes to|tuck.?up|roll.?up|curl.?up|air bike|bicycle|cycl|heel touch|elbow.to.knee|ab tuck|hundred|boat/],
@@ -71,7 +75,8 @@ export const MOVES = [
   ['twist', 'Twist & side bend', /twist|russian|rotation|wood.?chop|chop\b|pallof|windmill|side bend|side bent|oblique|landmine 180|rainbow|wiper/],
   ['rollout', 'Rollout', /roll.?out|roller.?out|ab wheel|wheel roll|walkout|walk.?out|inchworm/],
   ['climber', 'Mountain climber', /mountain climber|climber/],
-  ['press', 'Press', /press|bench|arnold|\bjerk\b/],
+  ['ohp', 'Overhead press', /^(?!.*clean).*(overhead press|military|shoulders? press|arnold|push press|\bjerk\b|\bz press|bradford|pike press)/],
+  ['press', 'Chest press', /^(?!.*clean).*(press|bench)/],
   ['raise', 'Raise', /raise/],
   ['clean', 'Clean & snatch', /clean|snatch/],
 ]
@@ -87,7 +92,7 @@ export function moveOf(ex) {
   if (ex.mo) return ex.mo
   if (LOOSEN.has(ex.cat)) return 'mobility'
   const n = nameOf(ex)
-  for (const [id, , re] of MOVES) if (re.test(n)) return id
+  for (const [id, , re] of MOVES) if (re.test(n)) return id === 'press' && ex.pt === 'push-vertical' ? 'ohp' : id
   return 'other'
 }
 

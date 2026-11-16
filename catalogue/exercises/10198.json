@@ -12,6 +12,7 @@
   "category": "strength",
   "unilateral": true,
   "pattern": "squat",
+  "move": "legpress",
   "description": "A sled leg press done one leg at a time, with a slow lowering phase to build leg strength.",
   "instructions": [
     "Sit in the sled with feet on the platform and release the safety.",
