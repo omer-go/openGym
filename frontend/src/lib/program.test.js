@@ -137,15 +137,16 @@ describe('sizing a day to the goal', () => {
       for (const [g, v] of Object.entries(share)) expect(got[g] || 0, g).toBeGreaterThan(v - 1)
     })
     // The level caps a day's lifts (planner.js LEVELS maxAcc): the week's last day, with the most
-    // left to give, gives it in sets, not in a fourteenth lift.
-    it('a day with more to give takes more sets, its lifts capped by the level', () => {
+    // left to give, gives it in sets, not in a fourteenth lift. At least as many as the first: that
+    // one gives each daily group its lift too (generate.js dailyGroups), more than its share asks.
+    it('a day with more to give takes as many sets or more, its lifts capped by the level', () => {
       const st = state({ program: newProgram('full-3', { weeks: 8, today: '2026-09-07' }) })
       const sets = now => generateWorkout(st, 'full', { count: sizeDay(st, 'full', { now }), now, share: dayShare(st, 'full', now) })
         .reduce((a, p) => a + pickSets(p), 0)
       const mon = at(2026, 9, 14), fri = at(2026, 9, 18)
       expect(sizeDay(st, 'full', { now: mon })).toBeGreaterThanOrEqual(MIN_DAY)
       expect(sizeDay(st, 'full', { now: fri })).toBeLessThanOrEqual(1 + 3 + LEVELS.intermediate.maxAcc)
-      expect(sets(fri)).toBeGreaterThan(sets(mon))
+      expect(sets(fri)).toBeGreaterThanOrEqual(sets(mon))
     })
   })
   it('a program started this week does not catch up on the days before it', () => {

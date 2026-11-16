@@ -37,7 +37,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
-import { DAY_TYPES, EQUIPMENT, planDay, partsFor } from './planner.js'
+import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, partsFor } from './planner.js'
 import { listOf } from './curate.js'
 import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
@@ -384,6 +384,37 @@ function dayGoals(S, type, ticked, share, now, adopted = []) {
   return { goals, parts }
 }
 
+// The sessions back dailyGroups looks for the ones a group went without.
+const DAILY_LOOKBACK = 3
+
+/**
+ * The groups of `ticked` a full-body day gives a lift aimed at each (planner.js DAILY_GROUPS and
+ * fill), in the order it fits them: those whose goal this week (goals.js weeklyTargetOf) isn't
+ * reached yet, counted as Stats counts it: the sets, and the share of them from lifts aimed at
+ * the group (planner.js DIRECT_MIN), which the presses don't give the triceps. A group the last
+ * sessions went without a lift aimed at comes first, the most sessions running first: a day too
+ * short for all of them left it out, so the next one starts with it. Then by PRIORITY.
+ */
+export function dailyGroups(S, ticked, now = Date.now()) {
+  const done = weeklyDone(S, now), direct = {}
+  for (const w of strengthWorkouts(windowWorkouts(S, now))) {
+    for (const e of w?.entries || []) for (const g of planLift(e?.id)?.p || []) direct[g] = (direct[g] || 0) + workSets(e)
+  }
+  const recent = recentSessionIds(S, now, DAILY_LOOKBACK)
+  const missed = g => {
+    const at = recent.findIndex(ids => ids.some(id => planLift(id)?.p.includes(g)))
+    return at < 0 ? recent.length : at
+  }
+  const owed = g => {
+    const goal = weeklyTargetOf(S, g)
+    return goal > 0 && ((done[g] || 0) < goal || (direct[g] || 0) < Math.ceil(DIRECT_MIN[g] * goal))
+  }
+  return DAILY_GROUPS.filter(g => ticked.includes(g) && owed(g))
+    .map(g => ({ g, missed: missed(g) }))
+    .sort((a, b) => b.missed - a.missed || PRIORITY[a.g] - PRIORITY[b.g])
+    .map(x => x.g)
+}
+
 // How far a timed day's goals are raised to fill its minutes, and how close to them is full.
 const FILL_STEPS = [1, 1.25, 1.5, 2, 2.5, 3, 4]
 const FILL_SLACK = 5
@@ -443,8 +474,11 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const [near = [], ...earlier] = recentSessionIds(S, now)
   const base = dayGoals(S, type, ticked, share, now, adopted)
   const fixed = [...adopted, ...ticked.filter(g => weeklyTargetOf(S, g) <= 0 && focusOf(S, g) === 'none')]
+  // A full-body day trains each big group, the arms, the shoulders and the abs with a lift of
+  // their own until the week has their goal (dailyGroups).
+  const daily = type === 'full' ? dailyGroups(S, ticked, now) : []
   const build = k => planDay({
-    type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S),
+    type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S), daily,
     ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2) }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone, genSets } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone, genSets, dailyGroups } from './generate.js'
 import { goalTypeOf } from './goals.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
@@ -616,6 +616,62 @@ describe('lifts taking turns', () => {
   })
 })
 
+describe('dailyGroups', () => {
+  const DAILY = ['chest', 'back', 'quads', 'hamstrings', 'shoulders', 'biceps', 'triceps', 'abs']
+  const byGroup = over => ({ goals: { byGroup: { ...Object.fromEntries(DAILY.map(g => [g, 20])), ...over } } })
+
+  it('drops a group once the week has its goal, and one with no goal', () => {
+    const st = state({ ...byGroup({ chest: 4, abs: 0 }), workouts: [session('2026-09-14', [BENCH], sets(10))] })
+    const got = dailyGroups(st, DAILY, NOW)
+    expect(got).not.toContain('chest')
+    expect(got).not.toContain('abs')
+    expect(got).toContain('back')
+  })
+  it('keeps the triceps when only the presses reached their total, until enough of it is direct', () => {
+    const st = over => state({ ...byGroup({ triceps: 4 }), workouts: [session('2026-09-14', [BENCH], sets(12)), ...over] })
+    expect(dailyGroups(st([]), DAILY, NOW)).toContain('triceps')
+    expect(dailyGroups(st([session('2026-09-13', [PUSHDOWN], sets(2))]), DAILY, NOW)).not.toContain('triceps')
+  })
+  it('leaves out what the day does not train', () => {
+    expect(dailyGroups(state(byGroup()), ['chest', 'back'], NOW)).toEqual(['chest', 'back'])
+  })
+  it('puts first the groups the last sessions went without, the longest first', () => {
+    const st = state({ ...byGroup(), workouts: [session('2026-09-10', [PUSHDOWN, CURL]), session('2026-09-12', [CURL, SQUAT]), session('2026-09-14', [BENCH, SQUAT])] })
+    const got = dailyGroups(st, DAILY, NOW)
+    // Three sessions without: back, hamstrings, shoulders, abs, in priority order; then the triceps
+    // (two), the biceps (one), and the chest and quads, trained last time.
+    expect(got).toEqual(['back', 'hamstrings', 'shoulders', 'abs', 'triceps', 'biceps', 'chest', 'quads'])
+  })
+  it('a 75-minute full-body day trains all eight, the triceps too when the presses alone reach their total', () => {
+    const st = state({ ...byGroup({ triceps: 4 }), workouts: [session('2026-09-14', [BENCH], sets(12))] })
+    for (const shift of [0, 1, 2]) {
+      const picks = generateWorkout(st, 'full', { ...genDefaults('full'), minutes: 75, now: NOW, shift })
+      for (const g of DAILY) expect(picks.some(p => planLift(p.id)?.p.includes(g)), `shift ${shift} ${g}`).toBe(true)
+    }
+  })
+  it('a seven-lift day with no history leaves out the abs, and the next one starts with them', () => {
+    const has = (picks, g) => picks.some(p => planLift(p.id)?.p.includes(g))
+    const first = generateWorkout(state(), 'full', { now: NOW })
+    expect(has(first, 'abs')).toBe(false)
+    const st = state({ workouts: [{ ...session('2026-09-14', []), entries: first.map(p => ({ id: p.id, target: { reps: 8 }, sets: sets(3) })) }] })
+    expect(dailyGroups(st, DAILY, NOW)[0]).toBe('abs')
+    expect(has(generateWorkout(st, 'full', { now: NOW }), 'abs')).toBe(true)
+  })
+  it('a day sized by a count too short for all eight leaves out the ones latest in the order', () => {
+    // Only the chest was trained last time, so it comes last; then the abs, then the triceps.
+    const st = state({ ...byGroup(), workouts: [session('2026-09-14', [BENCH], sets(3))] })
+    const order = dailyGroups(st, DAILY, NOW)
+    expect(order.slice(-3)).toEqual(['triceps', 'abs', 'chest'])
+    for (const shift of [0, 1, 2]) {
+      const picks = generateWorkout(st, 'full', { now: NOW, shift })
+      const has = g => picks.some(p => planLift(p.id)?.p.includes(g))
+      const kept = order.filter(has), left = order.filter(g => !has(g))
+      // The chest has the push slot, so it stays; past that, nothing left out comes before one kept.
+      for (const g of left) expect(kept.filter(k => k !== 'chest').every(k => order.indexOf(k) < order.indexOf(g)), `shift ${shift}: ${left}`).toBe(true)
+    }
+  })
+})
+
 describe('a timed one-tap day', () => {
   it('keeps the sets it was fitted with, fewer than a slot has too, so it does not run over', () => {
     const setup = { ...genDefaults('full'), minutes: 45 }
@@ -639,8 +695,9 @@ describe('the abs of a one-tap day take turns', () => {
     entries: [{ id: BENCH, target: { reps: 8 }, sets: [row()] },
       ...ids.map(id => ({ id, sg: 'g1', target: { reps: 15, sgCombo: true, sgKind: 'strength' }, sets: [row({ w: 0, r: 15 })] }))] })
 
+  // Eight lifts: seven leave out one of the eight daily groups (dailyGroups), with no history the abs.
   it('as a combo of body-weight exercises, one card of rounds that count as strength work', () => {
-    const picks = generateWorkout(state(), 'full', { now: NOW })
+    const picks = generateWorkout(state(), 'full', { now: NOW, count: 8 })
     const abs = absOf(picks)
     expect(abs).toHaveLength(4)
     expect(new Set(abs.map(p => p.id)).size).toBe(abs.length)
@@ -661,7 +718,7 @@ describe('the abs of a one-tap day take turns', () => {
     expect(abs.every(p => p.combo?.rounds === 1)).toBe(true)
   })
   it('the same combo for the same day, another one on a shuffle', () => {
-    const ids = s => absOf(generateWorkout(state(), 'full', { now: NOW, shift: s })).map(p => p.id).join()
+    const ids = s => absOf(generateWorkout(state(), 'full', { now: NOW, shift: s, count: 8 })).map(p => p.id).join()
     expect(ids(0)).toBe(ids(0))
     expect(new Set([0, 1, 2, 3].map(ids)).size).toBeGreaterThan(1)
   })

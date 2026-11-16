@@ -366,6 +366,45 @@ describe('planner', () => {
     }
   })
 
+  describe('the daily groups of a full-body day', () => {
+    const DAILY = ['chest', 'back', 'quads', 'hamstrings', 'shoulders', 'biceps', 'triceps', 'abs']
+    // Presses that reach the triceps' total on their own, and a day long enough for everything.
+    const goals = { chest: 14, back: 16, shoulders: 12, biceps: 12, triceps: 4, abs: 6, quads: 12, hamstrings: 9, calves: 8 }
+    const day = o => planDay({ type: 'full', goal: 'growth', level: 'advanced', equipment: 'gym', minutes: 90, goals, ...o })
+    const aimed = (d, g) => d.items.filter(i => i.ex.p.includes(g))
+
+    it('gives each a lift aimed at it, whatever the day leads with', () => {
+      for (const pattern of ['squat', 'hpress', 'hinge']) for (const seed of [1, 2, 3]) {
+        const d = day({ pattern, seed, daily: DAILY })
+        for (const g of DAILY) expect(aimed(d, g).length, `${pattern} ${seed} ${g}`).toBeGreaterThan(0)
+        expect(d.items.filter(i => i.ex.p.includes('abs')).length).toBe(1)
+      }
+    })
+    it('a group with no goal left still gets its lift when it is daily', () => {
+      const d = day({ pattern: 'hpress', goals: { ...goals, triceps: 0 }, daily: DAILY })
+      expect(aimed(d, 'triceps').length).toBeGreaterThan(0)
+      expect(aimed(day({ pattern: 'hpress', goals: { ...goals, triceps: 0 } }), 'triceps')).toEqual([])
+    })
+    it('keeps them when a count cuts the day, taking from the others', () => {
+      for (const pattern of ['squat', 'hpress', 'hinge']) {
+        const d = day({ pattern, daily: DAILY, count: 8 })
+        expect(d.items.length).toBeLessThanOrEqual(9)
+        for (const g of DAILY) expect(aimed(d, g).length, `${pattern} ${g}`).toBeGreaterThan(0)
+      }
+    })
+    it('a day too short for all of them takes them in the order given, and stays in its time', () => {
+      const order = ['triceps', 'abs', 'biceps', 'shoulders', 'chest', 'back', 'quads', 'hamstrings']
+      const d = day({ pattern: 'squat', minutes: 35, daily: order })
+      const got = order.filter(g => aimed(d, g).length)
+      expect(got.length).toBeLessThan(order.length)
+      // The ones it skipped come after the ones it took, the lead's own group aside.
+      const left = order.filter(g => !got.includes(g))
+      expect(left.every(g => order.indexOf(g) > order.indexOf('triceps'))).toBe(true)
+      expect(aimed(d, 'triceps').length).toBeGreaterThan(0)
+      expect(d.limit).toBe('time')
+    })
+  })
+
   it('takes no third lift of one movement: after two presses a fly, after two rows a pullover', () => {
     for (const { template, days, p } of weeks()) for (const d of p.days) {
       const pats = {}

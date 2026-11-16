@@ -53,6 +53,11 @@ const PLANNED_PARTS = ['Side delts', 'Rear delts', 'Lats', 'Mid back', 'Upper ch
 // (the side delts) goes with its group. The glutes go with the calves and forearms: the squats,
 // lunges and hinges work them hard, what gives way is a hip thrust.
 export const PRIORITY = { chest: 0, back: 0, quads: 0, hamstrings: 0, shoulders: 1, biceps: 1, triceps: 1, abs: 2, glutes: 3, calves: 3, forearms: 3 }
+// The groups a full-body one-tap day gives a lift aimed at each, until the week has reached their
+// goal (generate.js dailyGroups): the presses count toward the triceps, but a week of them with no
+// pushdown is no triceps week. Not the glutes, calves or forearms, which the squats, hinges, rows
+// and curls work anyway, and which a day fits when it has the time.
+export const DAILY_GROUPS = ['chest', 'back', 'quads', 'hamstrings', 'shoulders', 'biceps', 'triceps', 'abs']
 const PATTERN_GROUPS = { squat: ['quads'], hinge: ['hamstrings'], hpress: ['chest'], vpress: ['shoulders'], hpull: ['back'], vpull: ['back'] }
 
 // Rep schemes by goal and slot live in engine.js (SCHEMES), shared with the one-tap workouts.
@@ -512,19 +517,67 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
 }
 
 // Pass 2: accessories for one day.
-function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, daysLeftForPart, week, rand, avail, whole, near, trains }) {
+function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, daysLeftForPart, week, rand, avail, whole, near, trains, daily = [] }) {
   const items = day.items, allowed = PLAN_GROUPS.filter(g => trains(day.type, g))
   const nearby = near(day.k)
   // A heavy hinge as an accessory only on a day with none, next to days with none.
   const backFree = () => !items.some(i => heavyHinge(i.ex)) && ![...nearby].some(id => heavyHinge(liftOf(id) || { id }))
   const today = () => { const c = {}; for (const i of items) add(cfg, c, i.ex, i.sets); return c }
+  const fresh = e => !items.some(i => i.ex.id === e.id) && !repeats(items, e) && (!heavyHinge(e) || backFree())
+  // Among the lifts for group `g`, prefer one that also feeds another group still short (hammer
+  // curls feed forearms) and not one already at its goal.
+  const helps = e => Object.entries(creditOf(e)).filter(([o, c]) => !e.p.includes(o) && c >= 0.25)
+    .reduce((n, [o]) => n + (goals[o] - has(o) > 0 ? 1 : -1), 0)
+  // A group with parts takes the lift aimed at a part short of its share, one the week has no
+  // lift for yet first, so the parts take turns, then the one furthest behind: a lateral raise
+  // one day, a rear-delt fly the next, though the rows have given the rear delts some already.
+  const hadLift = name => [...week.used].some(id => aimsAt({ id }, name))
+  const behind = (g, e) => Math.max(0, ...parts.filter(p => p.g === g && aimsAt(e, p.name) && hasPart(p.name) < p.goal)
+    .map(p => (hadLift(p.name) ? 0 : 1) + 1 - hasPart(p.name) / p.goal))
+  // Not a lift a day next to this one has, before anything else: a pullover two days running
+  // was the one that also helped the triceps both times.
+  const choose = (g, list) => {
+    const cands = far(novel(list, items), nearby)
+    const top = Math.max(...cands.map(e => behind(g, e)))
+    const aimed = cands.filter(e => behind(g, e) === top)
+    const best = Math.max(...aimed.map(helps))
+    return variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k)
+  }
+  const push = it => {
+    items.push(it)
+    week.used.add(it.ex.id)
+    for (const [g, v] of Object.entries(creditOf(it.ex))) week.acc[g] = (week.acc[g] || 0) + v * it.sets
+    for (const g of it.ex.p) week.accDirect[g] = (week.accDirect[g] || 0) + it.sets
+    addParts(week.accParts, it.ex, it.sets)
+  }
   day.limit = null
   day.capped = {}
   const noTime = {}
+  // First a lift aimed at each of the `daily` groups the day has none for, in the order given
+  // (generate.js dailyGroups: the ones the last sessions went without first), whatever the day's
+  // share of their goal: the presses gave the triceps their count and no pushdown. Room comes off
+  // the other lifts' sets, down to their fewest; a group the minutes can't hold even then waits
+  // for the next day, where it comes first.
+  const fewest = i => (i.slot === 'lead' ? Math.min(i.sets, LEAD_MIN) : i.slot === 'accessory' ? Math.min(i.sets, cfg.accMin) : Math.min(i.sets, cfg.slotMin))
+  for (const g of daily) {
+    if (!trains(day.type, g) || items.some(i => i.ex.p.includes(g))) continue
+    const cands = avail.filter(e => accessoryFor(e, g) && e.p.includes(g) && fresh(e))
+    if (!cands.length) continue
+    const ex = choose(g, cands)
+    const gap = Math.max(goals[g] - has(g), Math.ceil(DIRECT_MIN[g] * goals[g]) - hasDirect(g))
+    const it = { ex, sets: Math.max(cfg.accMin, Math.min(cfg.accMax, Math.ceil(gap))), slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', g) }
+    if (minutesOf(cfg, [...items.map(i => ({ ...i, sets: fewest(i) })), { ...it, sets: cfg.accMin }]) > cfg.minutes) { day.limit = 'time'; continue }
+    for (;;) {
+      if (minutesOf(cfg, [...items, it]) <= cfg.minutes) break
+      if (it.sets > cfg.accMin) { it.sets--; continue }
+      const cut = items.filter(i => i.sets > fewest(i)).sort((a, b) => (b.sets - fewest(b)) - (a.sets - fewest(a)) || b.rx.secs - a.rx.secs)[0]
+      cut.sets--
+    }
+    push(it)
+  }
   for (;;) {
     if (items.filter(i => i.slot === 'accessory').length >= cfg.maxAcc) { day.limit = 'accessories'; break }
     const t = today()
-    const fresh = e => !items.some(i => i.ex.id === e.id) && !repeats(items, e) && (!heavyHinge(e) || backFree())
     const scored = allowed.map(g => {
       const left = daysLeftFor(g)
       const dTarget = Math.ceil(DIRECT_MIN[g] * goals[g]), dGap = dTarget - hasDirect(g)
@@ -563,33 +616,13 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     // Paced over the days left, or, for a group that gave way (giveWay), all it still needs at
     // once: one day gets the calf raise, the next the wrist curl, not both a set or two.
     const sets = Math.max(cfg.accMin, Math.min(cfg.accMax, whole.has(pick.g) ? Infinity : Math.round(pick.need), Math.ceil(pick.gap)))
-    // Among the lifts for this group, prefer one that also feeds another group still short (hammer
-    // curls feed forearms) and not one already at its goal.
-    const helps = e => Object.entries(creditOf(e)).filter(([g, c]) => !e.p.includes(g) && c >= 0.25)
-      .reduce((n, [g]) => n + (goals[g] - has(g) > 0 ? 1 : -1), 0)
-    // A group with parts takes the lift aimed at a part short of its share, one the week has no
-    // lift for yet first, so the parts take turns, then the one furthest behind: a lateral raise
-    // one day, a rear-delt fly the next, though the rows have given the rear delts some already.
-    const hadLift = name => [...week.used].some(id => aimsAt({ id }, name))
-    const behind = e => Math.max(0, ...parts.filter(p => p.g === pick.g && aimsAt(e, p.name) && hasPart(p.name) < p.goal)
-      .map(p => (hadLift(p.name) ? 0 : 1) + 1 - hasPart(p.name) / p.goal))
     // A day takes one lift for the shoulders, so it goes to the delt furthest behind its minimum,
     // whichever asked: the side delts would take every day and leave the rear ones none.
-    // Not a lift a day next to this one has, before anything else: a pullover two days running
-    // was the one that also helped the triceps both times.
-    const cands = far(novel(ONE_A_DAY.includes(pick.g) ? [...new Set(scored.filter(s => s.g === pick.g && !s.blocked).flatMap(s => s.cands))] : pick.cands, items), nearby)
-    const top = Math.max(...cands.map(behind))
-    const aimed = cands.filter(e => behind(e) === top)
-    const best = Math.max(...aimed.map(helps))
-    const ex = variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k)
+    const ex = choose(pick.g, ONE_A_DAY.includes(pick.g) ? [...new Set(scored.filter(s => s.g === pick.g && !s.blocked).flatMap(s => s.cands))] : pick.cands)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
     // Too long for what is left of the session: skip this group today and try another.
     if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; noTime[pick.part || pick.g] = true; continue }
-    items.push(it)
-    week.used.add(ex.id)
-    for (const [g, v] of Object.entries(creditOf(ex))) week.acc[g] = (week.acc[g] || 0) + v * sets
-    for (const g of ex.p) week.accDirect[g] = (week.accDirect[g] || 0) + sets
-    addParts(week.accParts, ex, sets)
+    push(it)
   }
 }
 
@@ -649,12 +682,16 @@ function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains,
   }
 }
 
+// Whether `it` is the day's only lift aimed at one of the `daily` groups (fill), which stays
+// though the week has the group's sets without it.
+const soleDaily = (items, it, daily) => it.ex.p.some(g => daily.includes(g) && items.filter(i => i.ex.p.includes(g)).length === 1)
+
 // Pass 4: take off what goes past the goal. A set comes off a lift (an accessory goes, at its
 // fewest, or whole for a group that gave way) while every group it counts for stays at its goal, the lift that spills most first:
 // pulldowns and presses feed the chest and shoulders a little, the slots don't see it coming. The
 // lead comes last, and never below 3 sets: it stays the day's heavy lift, just shorter when the
 // week already has enough of it.
-function trim(cfg, out, goals, parts, whole) {
+function trim(cfg, out, goals, parts, whole, daily = []) {
   const least = it => (it.slot === 'accessory' ? (it.ex.p.some(g => whole.has(g)) ? it.sets : cfg.accMin) : it.slot === 'lead' ? Math.min(cfg.leadSets, LEAD_MIN) : cfg.slotMin)
   const late = it => (it.slot === 'lead' ? 1 : 0)
   const partGoal = Object.fromEntries(parts.map(p => [p.name, p.goal]))
@@ -669,6 +706,7 @@ function trim(cfg, out, goals, parts, whole) {
       const n = it.sets > least(it) ? 1 : it.slot === 'accessory' ? it.sets : 0
       if (!n) continue
       if (n === it.sets && Object.entries(partCreditOf(it.ex)).some(([p, v]) => v >= 1 && partGoal[p] && aimed[p] === 1)) continue
+      if (n === it.sets && soleDaily(d.items, it, daily)) continue
       const c = Object.entries(creditOf(it.ex))
       const keeps = c.every(([g, v]) => (t[g] || 0) - v * n >= goals[g] - 1e-9)
         && it.ex.p.every(g => dr[g] - n >= Math.ceil(DIRECT_MIN[g] * goals[g]))
@@ -879,6 +917,8 @@ function weekOf(cfg, goals, parts, o, after) {
   // Whether a day of type `t` trains group `g`, or the part `name` of it.
   const trains = (t, g, name) => (groups ? groups.has(g) : DAY_TYPES[t].groups.includes(g)) || !!(name && DAY_TYPES[t].parts?.includes(name))
   const week = { used: new Set(o.used || []), patterns: {}, acc: {}, accDirect: {}, accParts: {} }
+  // The groups each day keeps a lift aimed at (fill), a one-tap day's (generate.js dailyGroups).
+  const daily = (o.daily || []).filter(g => PLAN_GROUPS.includes(g))
   const out = [], skel = {}, skelDirect = {}, skelParts = {}, occ = {}
   // The lifts of the days either side of day `k`, the week going round, but `skip`.
   const near = (k, skip) => {
@@ -926,7 +966,7 @@ function weekOf(cfg, goals, parts, o, after) {
   })
   for (const d of out) {
     fill({
-      cfg, day: d, goals, parts, week, rand, avail, whole, near, trains,
+      cfg, day: d, goals, parts, week, rand, avail, whole, near, trains, daily,
       has: g => (skel[g] || 0) + (week.acc[g] || 0),
       hasDirect: g => (skelDirect[g] || 0) + (week.accDirect[g] || 0),
       hasPart: n => (skelParts[n] || 0) + (week.accParts[n] || 0),
@@ -938,17 +978,17 @@ function weekOf(cfg, goals, parts, o, after) {
     })
   }
   topUp({ cfg, out, goals, parts, week, rand, avail, near, trains, whole })
-  trim(cfg, out, goals, parts, whole)
+  trim(cfg, out, goals, parts, whole, daily)
   if (o.balance !== false) balance(cfg, out, goals, parts, whole, near)
   if (after) {
     // Twice: what the first trim takes off makes room for another accessory.
     for (let n = 0; n < 2; n++) {
       topUp({ cfg, out, goals: after.goals, parts: after.parts, week, rand, avail, aimed: true, near, trains, whole })
-      trim(cfg, out, after.goals, after.parts, whole)
+      trim(cfg, out, after.goals, after.parts, whole, daily)
     }
     if (o.balance !== false) balance(cfg, out, after.goals, after.parts, whole, near)
   }
-  if (o.count != null) for (const d of out) fit({ cfg, day: d, count: o.count, goals, week, rand, avail, near, trains })
+  if (o.count != null) for (const d of out) fit({ cfg, day: d, count: o.count, goals, week, rand, avail, near, trains, daily })
   return finish(cfg, out)
 }
 
@@ -985,7 +1025,7 @@ function finish(cfg, out) {
 // A one-tap day of `count` lifts, the number the setup asks for: past it, the accessories of the
 // group furthest past its goal come off first, then the slots; short of it, the group furthest
 // from its goal takes an accessory at its fewest sets, the way topUp adds one.
-function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
+function fit({ cfg, day, count, goals, week, rand, avail, near, trains, daily = [] }) {
   const items = day.items
   const today = () => { const c = {}; for (const i of items) add(cfg, c, i.ex, i.sets); return c }
   // A shorter day keeps a lift for each group before a second for any: of a push day's three, the
@@ -995,7 +1035,12 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
     const twice = g => +(items.filter(i => i.ex.p[0] === g).length > 1)
     const rest = items.filter(i => i.slot !== 'lead'), acc = rest.filter(i => i.slot === 'accessory')
     if (!rest.length) { items.splice(count); break }
-    const from = acc.length ? acc : rest
+    // The lift a `daily` group has (fill) goes last, the group latest in `daily` first: that order
+    // is the one the day owes them in, so what it leaves out leads the next one.
+    const spare = acc.filter(i => !soleDaily(items, i, daily))
+    const rank = i => Math.min(...i.ex.p.filter(g => daily.includes(g)).map(g => daily.indexOf(g)))
+    const last = Math.max(...acc.map(rank))
+    const from = spare.length ? spare : acc.length ? acc.filter(i => rank(i) === last) : rest
     const worse = (a, b) => twice(b.ex.p[0]) - twice(a.ex.p[0]) || past(b.ex.p[0]) - past(a.ex.p[0])
     items.splice(items.indexOf(from.reduce((a, b) => (worse(a, b) > 0 ? b : a))), 1)
   }
@@ -1019,7 +1064,9 @@ function fit({ cfg, day, count, goals, week, rand, avail, near, trains }) {
  * One day of `type`, built the way a week's are, for a one-tap workout (generate.js): `goals`
  * (group -> sets) and `parts` (`[{ g, name, goal }]`) are what the day is to give, the week's
  * share of what is left; `pattern`, the lead's (PATTERN_GROUPS); `count`, how many lifts. The rest
- * of `o` as plan's and weekOf's; `moreAcc`, accessories past the level's. `{ type, items, groups, minutes, sets }`.
+ * of `o` as plan's and weekOf's; `moreAcc`, accessories past the level's; `daily`, the groups the
+ * day gives a lift aimed at each before anything else, in that order, while the minutes hold
+ * them (generate.js dailyGroups). `{ type, items, groups, minutes, sets }`.
  */
 export function planDay(o = {}) {
   const cfg = configOf({ ...o, days: 1, minutes: o.minutes || 999 })
