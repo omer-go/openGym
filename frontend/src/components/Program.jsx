@@ -4,7 +4,7 @@ import { useUI } from '../store/useUI.js'
 import { t, tn, dateLocale, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { DAYS, fmtDate, fmtDateRange, fmtDur, fmtNum, isoOf, todayISO, weekOrder, weekStartOf } from '../lib/format.js'
 import { ADD_GROUPS } from '../lib/add-exercise.js'
-import { genConstraints, genDefaults, generatedEntries, generateWorkout, pickSets, planPool } from '../lib/generate.js'
+import { genConstraints, genSetupOf, generatedEntries, generateWorkout, pickSets, planPool } from '../lib/generate.js'
 import { groupSetsOf, weeklyDone } from '../lib/coverage.js'
 import {
   MAX_GOAL, VOLUMES, VOLUME_NAME, goalEstimate, goalGroups, goalTypeOf,
@@ -67,7 +67,7 @@ export function DayChip({ type, done, next }) {
  * (generate.js genConstraints), at the goal's sets.
  */
 function dayEstimate(S, type, k) {
-  const setup = { ...genDefaults(type), ...(S.genSetup?.[type] || {}) }
+  const setup = genSetupOf(S, type)
   const c = genConstraints(S, setup)
   // The day as it is planned, on its own date (lib/program.js nextDayAt).
   const now = nextDayAt(S, type, k)
@@ -481,7 +481,7 @@ export const endProgram = then => confirmSheet({
   danger: true, onConfirm: () => { update(s => { s.program = null }); then?.() },
 })
 
-const groupsOf = (S, type) => (isPlanProgram(S.program) ? DAY_TYPES[type].groups : ({ ...genDefaults(type), ...(S.genSetup?.[type] || {}) }).groups)
+const groupsOf = (S, type) => (isPlanProgram(S.program) ? DAY_TYPES[type].groups : genSetupOf(S, type).groups)
 const useAhead = (S, days) => {
   useMuscleRoles()
   return useMemo(() => (days > 0 ? planAhead(S, { days }) : []), [S, days, rolesLoaded()])

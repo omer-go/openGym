@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone, genSets, dailyGroups } from './generate.js'
+import { GEN_TYPES, STAPLES, trainingIndex, candidatesFor, isSkill, isOlympic, lastSessionIds, recentSessionIds, generateWorkout, generatedEntries, genDefaults, genCount, genScheme, GEN_SCHEME, withSessionRest, setSessionRest, sessionConfig, leadFor, genGroupsOf, loadsBack, genConstraints, knownLifts, monthShort, lastDone, genSets, dailyGroups, genSetupOf } from './generate.js'
 import { goalTypeOf } from './goals.js'
 import { liftKind } from './coverage.js'
 import { EXIDX, patternOf } from './exercises.js'
@@ -265,6 +265,12 @@ describe('workout setup', () => {
     expect(new Set(picks.map(p => p.id)).size).toBe(9)
     for (const m of ['chest', 'triceps']) expect(picks.filter(p => p.muscle === m).length, m).toBeGreaterThan(1)
     expect(picks.filter(p => p.muscle === 'deltoids')).toHaveLength(1)
+  })
+  it('a long day with few groups ticked has one calf raise at most, not three', () => {
+    for (const type of ['legs', 'full']) for (const opts of [{ count: 9 }, { count: 14 }, { minutes: 90 }]) {
+      const picks = generateWorkout(state(), type, { ...opts, groups: ['calves', 'quads', 'glutes'] })
+      expect(picks.filter(p => planLift(p.id).p.includes('calves')).length, `${type} ${JSON.stringify(opts)}`).toBeLessThanOrEqual(1)
+    }
   })
   it('unticked groups are left out and ticked ones the type lacks are added', () => {
     const picks = generateWorkout(state(), 'full', { count: 7, groups: ['chest', 'back', 'forearms'] })
@@ -751,5 +757,24 @@ describe('the abs of a one-tap day take turns', () => {
       expect(lift, `weighted, shift ${shift}`).toHaveLength(1)
       expect(lift[0].combo).toBeUndefined()
     }
+  })
+})
+
+describe('genSetupOf', () => {
+  const kept = { genSetup: { full: { count: 12, minutes: 90 } } }
+  const program = minutes => ({ program: { days: ['full', 'full', 'full'], plan: { goal: 'growth', days: 3, minutes } } })
+  it('is the kept setup over the defaults', () => {
+    expect(genSetupOf(kept, 'full')).toEqual({ ...genDefaults('full'), count: 12, minutes: 90 })
+    expect(genSetupOf({}, 'push')).toEqual(genDefaults('push'))
+  })
+  it("leaves out the kept length on a day of a program with its own, so the program's holds", () => {
+    const S = { ...kept, ...program(75) }
+    expect(genSetupOf(S, 'full').minutes).toBe(0)
+    expect(genConstraints(S, genSetupOf(S, 'full')).minutes).toBe(75)
+    expect(genSetupOf(S, 'full').count).toBe(12)
+  })
+  it('keeps the length on a day the program has not, or when the program sets none', () => {
+    expect(genSetupOf({ genSetup: { push: { minutes: 60 } }, ...program(75) }, 'push').minutes).toBe(60)
+    expect(genSetupOf({ ...kept, ...program(0) }, 'full').minutes).toBe(90)
   })
 })

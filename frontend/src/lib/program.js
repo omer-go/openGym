@@ -19,7 +19,7 @@
 // lacks this calendar week is shared out over the days forecast in it that train it, and the day
 // takes as many exercises as the planner (planner.js planDay) builds that share with.
 import { ADD_GROUPS } from './add-exercise.js'
-import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genDefaults, genGroupsOf, genSlotCount, generateWorkout, generatedEntries, planPool, trainingIndex } from './generate.js'
+import { GEN_NAME, GEN_TYPES, MAX_GEN_COUNT, TILE_TYPES, genConstraints, genCount, genGroupsOf, genSetupOf, genSlotCount, generateWorkout, generatedEntries, planPool, trainingIndex } from './generate.js'
 import { liftKind, plannedSets, slotMuscleOf, weeklyDone, weeklyLack, weeklyNeed } from './coverage.js'
 import { floorOf, weeklyTargetOf } from './goals.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
@@ -398,7 +398,7 @@ export function planAhead(S, { days = 6, now = Date.now() } = {}) {
  * program from settings or the setup gives (genConstraints).
  */
 export function programDayEntries(S, f, now = Date.now()) {
-  const setup = { ...genDefaults(f.type), ...(S.genSetup?.[f.type] || {}) }
+  const setup = genSetupOf(S, f.type)
   const count = genConstraints(S, setup).minutes ? null : sizeDay(S, f.type, { now, groups: setup.groups, setup })
   const picks = generateWorkout(S, f.type, { ...setup, count, now, share: programShare(S, f.type, now) })
   return generatedEntries(S, picks, setup)

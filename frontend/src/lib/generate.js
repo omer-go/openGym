@@ -186,6 +186,20 @@ export function genConstraints(S, setup = {}) {
   }
 }
 
+/** Whether `type` is a day of a program that sets its own session length (profile.js profileOf). */
+export const programTimes = (S, type) => Array.isArray(S?.program?.days) && S.program.days.includes(type) && profileOf(S).minutes > 0
+
+/**
+ * The setup a `type` day is built from: the one kept from the Start sheet over the defaults. On a
+ * day of a program with its own session length the kept length is left out, so the program's
+ * holds: a 90 picked for a one-tap day before the program, or for one workout of it, made every
+ * planned day 90 minutes when the program said 75.
+ */
+export function genSetupOf(S, type) {
+  const setup = { ...genDefaults(type), ...(S?.genSetup?.[type] || {}) }
+  return programTimes(S, type) ? { ...setup, minutes: 0 } : setup
+}
+
 // Sets and reps for muscle growth (the goal's own with `setup.goal`, genScheme), by the lift's slot in the session (engine.js): the day's first
 // big lift leads at 4 × 6–8, the other big lifts take 3 × 8–12, the lifts for one muscle 3 × 10–15
 // and calves, forearms and abs 2 × 12–20. Used unless the setup turns `byKind` off and sets its

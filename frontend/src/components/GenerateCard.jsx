@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore.js'
 import { t } from '../lib/i18n.js'
 import { fmtDaysAgo, todayISO } from '../lib/format.js'
 import { MUSCLE_NAME } from '../lib/muscles.js'
-import { generateWorkout, GEN_NAME } from '../lib/generate.js'
+import { generateWorkout, genSetupOf, GEN_NAME } from '../lib/generate.js'
 import { glyphOf } from '../lib/glyphs.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { startGenerated } from '../sheets.jsx'
@@ -31,7 +31,7 @@ export const genReason = (muscle, last, today = todayISO()) => t(MUSCLE_NAME[mus
 export default function GenerateCard() {
   const S = useStore(s => s.S)
   useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
-  const firsts = useMemo(() => Object.fromEntries(TILES.map(({ type }) => [type, generateWorkout(S, type, S.genSetup?.[type])[0] || null])),
+  const firsts = useMemo(() => Object.fromEntries(TILES.map(({ type }) => [type, generateWorkout(S, type, genSetupOf(S, type))[0] || null])),
     // The picks only move with what was logged, the equipment in use, the exercises there are and
     // the setup each tile last started with, and the muscle roles once they are in.
     [S.workouts, S.equipFilterOn, S.activeEquipId, S.equipProfiles, S.skipEx, S.customEx, S.genSetup, rolesLoaded()])

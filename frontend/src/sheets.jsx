@@ -57,7 +57,7 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, genDefaults, genConstraints, GEN_NAME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
+import { generateWorkout, generatedEntries, genDefaults, genSetupOf, programTimes, genConstraints, GEN_NAME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
@@ -2703,7 +2703,7 @@ function WorkoutDetail({ w, close }) {
   const kind = workoutKind(w)
   useMuscleRoles()
   const adds = useMemo(() => groupSetsOf([rec]), [rec, rolesLoaded()])
-  const groups = GEN_NAME[kind] ? { ...genDefaults(kind), ...(st.genSetup?.[kind] || {}) }.groups
+  const groups = GEN_NAME[kind] ? genSetupOf(st, kind).groups
     : ADD_GROUPS.filter(g => (adds[g.id] || 0) >= 0.5).map(g => g.id)
   // Tapping an exercise opens its history (Discord 'Improvement ideas'): from one session to the
   // curve it sits on, which is the question a past workout raises most often.
@@ -3081,12 +3081,20 @@ function GenSetup({ type, k, close }) {
   const [forToday, setForToday] = useState(false)
   const at = forToday ? now : planned
   const sized = (base, on = at) => (inProgram && !genConstraints(st, base).minutes ? { ...base, count: sizeDay(st, type, { now: on, groups: base.groups, setup: base }) } : base)
-  const [setup, setSetup] = useState(() => sized({ ...genDefaults(type), ...(st.genSetup?.[type] || {}) }))
+  const [setup, setSetup] = useState(() => sized(genSetupOf(st, type)))
   const pw = inProgram ? programWeek(st) : null
   const [shift, setShift] = useState(0)
   const adjust = v => { setForToday(v); setShift(0); setSetup(x => sized(x, v ? now : planned)) }
   const [showEx, setShowEx] = useState(false)
   const set = patch => setSetup(x => ({ ...x, ...patch }))
+  // A session length is kept when it is picked, not only when the workout starts: closing the
+  // sheet lost it. Except on a day of a program with its own length (generate.js programTimes):
+  // there it is for this workout, and the program's holds for the days after.
+  const keeps = !programTimes(st, type)
+  const setMinutes = m => {
+    setSetup(x => (m ? { ...x, minutes: m } : sized({ ...x, minutes: 0 })))
+    if (keeps) update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: { ...(s.genSetup?.[type] || {}), minutes: m } } })
+  }
   useMuscleRoles()  // the picks rotate a muscle's parts by them (coverage.js)
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, now: at, share: programShare(st, type, at) }),
     [st, type, shift, at, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
@@ -3124,7 +3132,7 @@ function GenSetup({ type, k, close }) {
   const groupTile = g => check(g.id, setup.groups.includes(g.id), <Ava slugs={g.m} body={body} />, t(g.n), () => toggleGroup(g.id))
   const actIcon = id => <span className="ava ax-ico"><Icon name={ACTIVITY_GROUPS.find(a => a.id === id).icon} /></span>
   const start = () => {
-    update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: setup } })
+    update(s => { s.genSetup = { ...(s.genSetup || {}), [type]: keeps ? setup : { ...setup, minutes: s.genSetup?.[type]?.minutes || 0 } } })
     close()
     beginGenerated(type, entries, { shift, setup, ...(at !== now ? { at } : {}), ...(Number.isInteger(k) ? { day: k } : {}) })
   }
@@ -3171,8 +3179,8 @@ function GenSetup({ type, k, close }) {
         <Row icon="clock" iconTint="var(--acc)" title={t('Session length')} accessory="chevron"
           value={timed ? t('{0} min', c.minutes) : t('Off')}
           onClick={() => menuSheet({ title: t('Session length'), subtitle: t('The workout takes as many exercises as fit in it, at your own pace.'), items: [
-            { label: programMinutes ? t('Program ({0} min)', programMinutes) : t('Off'), on: !(setup.minutes > 0), onClick: () => setSetup(x => sized({ ...x, minutes: 0 })) },
-            ...[30, 45, 60, 75, 90, 120].map(m => ({ label: t('{0} min', m), on: setup.minutes === m, onClick: () => set({ minutes: m }) })),
+            { label: programMinutes ? t('Program ({0} min)', programMinutes) : t('Off'), on: !(setup.minutes > 0), onClick: () => setMinutes(0) },
+            ...[30, 45, 60, 75, 90, 120].map(m => ({ label: t('{0} min', m), on: setup.minutes === m, onClick: () => setMinutes(m) })),
           ] })} />
       </div>
       <div className="row cfgrow" style={{ marginBottom: 12 }}>
