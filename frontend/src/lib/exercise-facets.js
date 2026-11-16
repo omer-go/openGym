@@ -14,6 +14,8 @@ export const KITS = [
   { id: 'machine', n: 'Machine', eq: ['leverage machine', 'smith machine', 'sled machine', 'assisted'] },
   { id: 'body', n: 'Body weight', eq: ['body weight', 'weighted', 'suspension trainer'] },
   { id: 'band', n: 'Band', eq: ['band', 'resistance band'] },
+  { id: 'plate', n: 'Plate', eq: ['weight plate'] },
+  { id: 'ball', n: 'Ball', eq: ['medicine ball', 'stability ball', 'bosu ball'] },
   { id: 'other', n: 'Other' },
 ]
 const KIT_OF = Object.fromEntries(KITS.flatMap(k => (k.eq || []).map(e => [e, k.id])))
@@ -79,7 +81,10 @@ export const moveName = id => MOVE[id] || 'Other'
 const nameOf = ex => (ex.n || '').toLowerCase()
 // Mobility, yoga, pilates and rehab work is filed by its category before its name says otherwise.
 const LOOSEN = new Set(['mobility', 'yoga', 'pilates', 'rehab'])
+// A movement the catalogue sets by hand ("mo", from its "move" field) wins: it is there for the
+// entries whose names say too little for the rules above.
 export function moveOf(ex) {
+  if (ex.mo) return ex.mo
   if (LOOSEN.has(ex.cat)) return 'mobility'
   const n = nameOf(ex)
   for (const [id, , re] of MOVES) if (re.test(n)) return id

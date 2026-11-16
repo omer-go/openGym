@@ -22,7 +22,10 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "calves"
+      "soleus"
+    ],
+    "synergists": [
+      "gastrocnemius"
     ]
   }
 }

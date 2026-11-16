@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { kitOf, moveOf, angleOf, isTail, rareWords, optionsOf, narrow, KIT_FACET, MOVE_FACET, ANGLE_FACET, FEW } from './exercise-facets.js'
+import { MOVES, kitOf, moveOf, angleOf, isTail, rareWords, optionsOf, narrow, KIT_FACET, MOVE_FACET, ANGLE_FACET, FEW } from './exercise-facets.js'
 import { CATALOGUE as EXERCISES } from './exercises.js'
+import { MOVES as CATALOGUE_MOVES } from '../../../scripts/catalogue/validate.mjs'
 
 const ex = (n, eq = 'barbell', more = {}) => ({ id: n, n, eq, ...more })
 
@@ -10,7 +11,11 @@ describe('tags', () => {
     expect(kitOf(ex('a', 'smith machine'))).toBe('machine')
     expect(kitOf(ex('a', 'rope'))).toBe('cable')
     expect(kitOf(ex('a', 'weighted'))).toBe('body')
-    expect(kitOf(ex('a', 'stability ball'))).toBe('other')
+    expect(kitOf(ex('a', 'weight plate'))).toBe('plate')
+    expect(kitOf(ex('a', 'stability ball'))).toBe('ball')
+    expect(kitOf(ex('a', 'medicine ball'))).toBe('ball')
+    expect(kitOf(ex('a', 'bosu ball'))).toBe('ball')
+    expect(kitOf(ex('a', 'sandbag'))).toBe('other')
   })
   it('reads the movement off the name, the first rule that matches winning', () => {
     expect(moveOf(ex('barbell bench press'))).toBe('press')
@@ -24,6 +29,17 @@ describe('tags', () => {
     expect(moveOf(ex('dead hang'))).toBe('grip')
     expect(moveOf(ex('anything at all', 'body weight', { cat: 'yoga' }))).toBe('mobility')
     expect(moveOf(ex('zzz'))).toBe('other')
+  })
+  it('takes the movement the catalogue sets by hand before reading the name', () => {
+    expect(moveOf(ex('prone hamstring', 'body weight', { mo: 'legcurl' }))).toBe('legcurl')
+    expect(moveOf(ex('dumbbell lateral raise', 'dumbbell', { mo: 'other' }))).toBe('other')
+    expect(moveOf(ex('anything at all', 'body weight', { cat: 'yoga', mo: 'plank' }))).toBe('plank')
+  })
+  it('lets the catalogue set only the movements the app knows', () => {
+    expect(CATALOGUE_MOVES).toEqual([...MOVES.map(([id]) => id), 'other'])
+    const set = EXERCISES.filter(e => e.mo)
+    expect(set.length).toBeGreaterThan(100)
+    for (const e of set) expect(CATALOGUE_MOVES).toContain(e.mo)
   })
   it('does not take a grip width, a front raise or a pulley for something else', () => {
     expect(moveOf(ex('close grip bench press'))).toBe('press')

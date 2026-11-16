@@ -55,6 +55,12 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   against pulls and squats against hinges. Seeded from the muscle-role templates and the names
   ([`scripts/catalogue/seed-pattern.mjs`](../scripts/catalogue/seed-pattern.mjs)); a stretch, a
   pose or cardio has none. Correct a wrong one by hand and the seeder leaves it alone.
+- **move** (optional): the movement in finer words than the pattern, one of `MOVES` in
+  `validate.mjs` (`lateral`, `legcurl`, `twist`...). The app reads it off the name and only needs this
+  field where the name says too little ("thor lift", "prone hamstring"); `other` marks an entry that
+  was read and fits none. Set from a table read by hand,
+  [`roles/moves.tsv`](../scripts/catalogue/roles/moves.tsv), with
+  [`scripts/catalogue/apply-moves-table.mjs`](../scripts/catalogue/apply-moves-table.mjs).
 - **description**: one or two sentences on what the movement is and what it trains.
 - **instructions**: 4 to 7 short steps, second person ("Brace your core..."). No em dashes.
 - **muscleMap** (optional): a more precise muscle-map drawing with the body map's own muscle names
@@ -73,7 +79,10 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   [`roles/biceps-heads.tsv`](../scripts/catalogue/roles/biceps-heads.tsv). A curl with the arm behind
   the body, a drag or a close grip targets `biceps-long-head`; one with the arm in front, on a pad
   or overhead, or a wide grip, `biceps-short-head`; a standard curl with the elbows at the sides
-  stays `biceps`, both heads evenly.
+  stays `biceps`, both heads evenly. The calf raises were split the same way in
+  [`roles/calves.tsv`](../scripts/catalogue/roles/calves.tsv): a straight knee (standing, donkey, leg
+  press) targets `gastrocnemius`, a bent knee (seated, or from a held squat) `soleus`, and one that
+  doesn't say stays `calves`.
 
   ```json
   "muscleRoles": {

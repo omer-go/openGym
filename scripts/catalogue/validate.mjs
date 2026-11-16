@@ -19,6 +19,9 @@ export const TARGETS = list('abs, pectorals, biceps, glutes, delts, triceps, upp
 export const SECONDARY = list('shoulders, deltoids, rear deltoids, rotator cuff, chest, upper chest, triceps, biceps, brachialis, forearms, wrists, wrist flexors, wrist extensors, grip muscles, back, upper back, lats, latissimus dorsi, rhomboids, trapezius, traps, lower back, core, abdominals, obliques, lower abs, hip flexors, glutes, quadriceps, hamstrings, adductors, inner thighs, groin, calves, soleus, shins, ankles, ankle stabilizers, feet, hands, sternocleidomastoid')
 export const CATEGORIES = list('strength, stretching, mobility, plyometrics, cardio, olympic, calisthenics, pilates, yoga, combat, isometric, rehab')
 export const PATTERNS = list('squat, hinge, lunge, push-horizontal, push-vertical, pull-horizontal, pull-vertical, carry, core, isolation')
+// The movement, for an entry whose name doesn't say it: the ids of MOVES in the app's
+// exercise-facets.js, plus "other" for one that was read and fits none.
+export const MOVES = list('mobility, neck, skill, calf, ankle, legpress, legext, legcurl, thrust, kickback, abduct, adduct, hinge, lunge, squat, jump, legraise, strike, throw, carry, pullup, pulldown, facepull, upright, rear, rotation, ytw, row, shrug, backext, pullover, pushup, dip, crossover, fly, lateral, front, pushdown, skull, wrist, curl, grip, crunch, plank, twist, rollout, climber, press, raise, clean, other')
 export const MUSCLES = list('trapezius, deltoids, chest, upper-back, serratus, biceps, triceps, forearm, abs, obliques, lower-back, gluteal, quadriceps, hamstring, adductors, hip-flexors, calves, tibialis')
 // Single muscles for "muscleRoles", finer than the body map: which muscle moves the weight, which
 // help, which hold a joint still. Data only for now, the app does not read it yet.
@@ -28,11 +31,11 @@ export const ROLE_MUSCLES = list(`
   pec-major-clavicular, pec-major-sternal, lats, coracobrachialis,
   biceps, biceps-long-head, biceps-short-head, brachialis, brachioradialis, triceps, triceps-long-head, wrist-flexors, wrist-extensors,
   rectus-abdominis, obliques, transverse-abdominis, erector-spinae, quadratus-lumborum,
-  glute-max, glute-med, hip-flexors, adductors, adductor-magnus, hamstrings, quads, calves, tibialis-anterior,
+  glute-max, glute-med, hip-flexors, adductors, adductor-magnus, hamstrings, quads, calves, gastrocnemius, soleus, tibialis-anterior,
   sternocleidomastoid, neck-extensors`)
 export const ROLES = list('target, synergists, dynamicStabilizers, stabilizers, antagonistStabilizers')
 export const LANGS = list('ar, bn, de, es, fr, hi, hu, it, ko, pl, pt, pt-BR, ru, th, tr, uk, zh, zh-TW')
-const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'unilateral', 'pattern', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
+const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'unilateral', 'pattern', 'move', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
 const I18N_KEYS = ['name', 'description', 'instructions']
 
 export function validateCatalogue(dir) {
@@ -59,6 +62,7 @@ export function validateCatalogue(dir) {
     if (e.category != null && !CATEGORIES.includes(e.category)) say(file, `"category" must be one of: ${CATEGORIES.join(', ')}`)
     if (e.unilateral != null && typeof e.unilateral !== 'boolean') say(file, '"unilateral" must be true or false')
     if (e.pattern != null && !PATTERNS.includes(e.pattern)) say(file, `"pattern" must be one of: ${PATTERNS.join(', ')}`)
+    if (e.move != null && !MOVES.includes(e.move)) say(file, `"move" must be one of: ${MOVES.join(', ')}`)
     if (typeof e.description !== 'string') say(file, '"description" must be text (may be empty)')
     if (!Array.isArray(e.instructions) || e.instructions.some(s => !isText(s))) say(file, '"instructions" must be a list of steps (text)')
     if (e.textSource !== 'exercisedb') {

@@ -24,9 +24,10 @@
   "textSource": "opengym",
   "muscleRoles": {
     "target": [
-      "calves"
+      "gastrocnemius"
     ],
     "synergists": [
+      "soleus",
       "glute-max",
       "quads"
     ],

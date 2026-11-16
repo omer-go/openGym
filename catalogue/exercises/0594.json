@@ -29,7 +29,10 @@
   "textSource": "exercisedb",
   "muscleRoles": {
     "target": [
-      "calves"
+      "soleus"
+    ],
+    "synergists": [
+      "gastrocnemius"
     ]
   }
 }

@@ -11,6 +11,7 @@
   "category": "strength",
   "unilateral": true,
   "pattern": "isolation",
+  "move": "lateral",
   "description": "Lying on your side, you raise a dumbbell with one hand. It works the shoulder through a different angle with the body supported.",
   "instructions": [
     "Lie on your side with your legs extended and your head supported by your arm.",

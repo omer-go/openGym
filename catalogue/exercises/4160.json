@@ -25,9 +25,10 @@
     "target": [
       "glute-max",
       "quads",
-      "calves"
+      "soleus"
     ],
     "synergists": [
+      "gastrocnemius",
       "adductor-magnus"
     ],
     "dynamicStabilizers": [

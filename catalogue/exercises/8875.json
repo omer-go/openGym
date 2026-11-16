@@ -11,6 +11,7 @@
   "category": "strength",
   "unilateral": true,
   "pattern": "isolation",
+  "move": "legraise",
   "description": "Lying on your back with a cable strapped to one ankle, you pull the knee toward your chest. It builds hip flexor strength.",
   "instructions": [
     "Lie on your back with the ankle strap attached to the low cable and one foot in it.",

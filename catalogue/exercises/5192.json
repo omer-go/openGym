@@ -12,6 +12,7 @@
     "core"
   ],
   "category": "olympic",
+  "move": "clean",
   "description": "A weightlifting combo where a clean flows into a front squat and a push press. It trains power and stamina together.",
   "instructions": [
     "Start with the barbell on the floor and pull it to your shoulders in a clean.",

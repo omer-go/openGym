@@ -1,7 +1,10 @@
 {
  "1000": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -696,7 +699,10 @@
  },
  "1050": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -2304,7 +2310,10 @@
  },
  "1154": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "rectus-abdominis",
@@ -2398,7 +2407,10 @@
  },
  "1164": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -2593,7 +2605,10 @@
  },
  "1178": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -3200,12 +3215,18 @@
  },
  "1216": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1220": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1221": {
@@ -3675,7 +3696,10 @@
  },
  "1253": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1254": {
@@ -5515,7 +5539,10 @@
  },
  "1369": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5523,7 +5550,10 @@
  },
  "1370": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5531,12 +5561,18 @@
  },
  "1371": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1372": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5544,7 +5580,10 @@
  },
  "1373": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5566,7 +5605,10 @@
  },
  "1375": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5574,7 +5616,10 @@
  },
  "1376": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5582,22 +5627,34 @@
  },
  "1379": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1380": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1381": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1382": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "rectus-abdominis",
@@ -5607,22 +5664,34 @@
  },
  "1383": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1384": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1385": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1386": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5630,7 +5699,10 @@
  },
  "1387": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5638,17 +5710,26 @@
  },
  "1391": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1392": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "1393": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5656,7 +5737,10 @@
  },
  "1394": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -5664,7 +5748,10 @@
  },
  "1395": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "1396": {
@@ -5674,7 +5761,10 @@
  },
  "1397": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -6762,7 +6852,10 @@
  },
  "1490": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -6929,7 +7022,10 @@
  },
  "1505": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -12060,7 +12156,10 @@
  },
  "2289": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "2290": {
@@ -12254,7 +12353,10 @@
  },
  "2315": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "2317": {
@@ -12487,12 +12589,18 @@
  },
  "2334": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "2335": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "2336": {
@@ -14305,7 +14413,10 @@
  },
  "2666": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "2671": {
@@ -17150,7 +17261,10 @@
  },
  "2990": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -17379,7 +17493,10 @@
  },
  "3018": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -17725,7 +17842,10 @@
  },
  "3120": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "3121": {
@@ -18763,7 +18883,10 @@
  },
  "3240": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "rectus-abdominis",
@@ -18773,7 +18896,10 @@
  },
  "3241": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "rectus-abdominis",
@@ -20350,7 +20476,10 @@
  },
  "3390": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -21534,7 +21663,10 @@
  },
  "3534": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -23263,12 +23395,18 @@
  },
  "3712": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "3713": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -26663,7 +26801,10 @@
  },
  "3973": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -29396,7 +29537,10 @@
  },
  "4155": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "4156": {
@@ -29451,9 +29595,10 @@
   "target": [
    "glute-max",
    "quads",
-   "calves"
+   "soleus"
   ],
   "synergists": [
+   "gastrocnemius",
    "adductor-magnus"
   ],
   "dynamicStabilizers": [
@@ -31692,7 +31837,10 @@
  },
  "4370": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "4371": {
@@ -33475,9 +33623,10 @@
   "target": [
    "glute-max",
    "quads",
-   "calves"
+   "soleus"
   ],
   "synergists": [
+   "gastrocnemius",
    "adductor-magnus"
   ],
   "dynamicStabilizers": [
@@ -35404,7 +35553,10 @@
  },
  "4760": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -35412,7 +35564,10 @@
  },
  "4761": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -35993,7 +36148,10 @@
  },
  "4796": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -37375,7 +37533,10 @@
  },
  "4900": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "4901": {
@@ -38504,7 +38665,10 @@
  },
  "5003": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -38616,7 +38780,10 @@
  },
  "5009": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -39065,7 +39232,10 @@
  },
  "5052": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -41696,12 +41866,18 @@
  },
  "5483": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "5484": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "5496": {
@@ -42761,7 +42937,10 @@
  },
  "5698": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -42781,7 +42960,10 @@
  },
  "5700": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -43408,7 +43590,10 @@
  },
  "5854": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -43690,9 +43875,10 @@
   "target": [
    "glute-max",
    "quads",
-   "calves"
+   "gastrocnemius"
   ],
   "synergists": [
+   "soleus",
    "adductor-magnus"
   ],
   "dynamicStabilizers": [
@@ -47740,7 +47926,10 @@
  },
  "7176": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "7177": {
@@ -48714,9 +48903,10 @@
   "target": [
    "glute-max",
    "quads",
-   "calves"
+   "gastrocnemius"
   ],
   "synergists": [
+   "soleus",
    "adductor-magnus"
   ],
   "dynamicStabilizers": [
@@ -51728,7 +51918,10 @@
  },
  "9310": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -52094,7 +52287,10 @@
  },
  "9409": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -52102,7 +52298,10 @@
  },
  "9410": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -52110,7 +52309,10 @@
  },
  "9411": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -55152,7 +55354,10 @@
  },
  "10548": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -55849,9 +56054,10 @@
  },
  "10751": {
   "target": [
-   "calves"
+   "gastrocnemius"
   ],
   "synergists": [
+   "soleus",
    "glute-max",
    "quads"
   ],
@@ -55875,9 +56081,10 @@
  },
  "10754": {
   "target": [
-   "calves"
+   "gastrocnemius"
   ],
   "synergists": [
+   "soleus",
    "glute-max",
    "quads"
   ],
@@ -55889,9 +56096,10 @@
  },
  "10755": {
   "target": [
-   "calves"
+   "gastrocnemius"
   ],
   "synergists": [
+   "soleus",
    "glute-max",
    "quads"
   ],
@@ -55903,7 +56111,10 @@
  },
  "10756": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -55911,7 +56122,10 @@
  },
  "10757": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -56013,7 +56227,10 @@
  },
  "10819": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -58034,7 +58251,10 @@
  },
  "11650": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "11657": {
@@ -59901,7 +60121,10 @@
  },
  "0088": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "0089": {
@@ -60210,7 +60433,10 @@
  },
  "0108": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -60244,7 +60470,10 @@
  },
  "0111": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -62678,7 +62907,10 @@
  },
  "0284": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -64531,7 +64763,10 @@
  },
  "0400": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "0401": {
@@ -64647,7 +64882,10 @@
  },
  "0409": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -64788,7 +65026,10 @@
  },
  "0417": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -67414,7 +67655,10 @@
  },
  "0594": {
   "target": [
-   "calves"
+   "soleus"
+  ],
+  "synergists": [
+   "gastrocnemius"
   ]
  },
  "0595": {
@@ -67552,7 +67796,10 @@
  },
  "0605": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "0606": {
@@ -69015,7 +69262,10 @@
  },
  "0727": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -69104,7 +69354,10 @@
  },
  "0738": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "0739": {
@@ -69155,7 +69408,10 @@
  },
  "0742": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ]
  },
  "0743": {
@@ -69481,7 +69737,10 @@
  },
  "0763": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -69654,7 +69913,10 @@
  },
  "0773": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -70335,7 +70597,10 @@
  },
  "0833": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"
@@ -71988,7 +72253,10 @@
  },
  "0999": {
   "target": [
-   "calves"
+   "gastrocnemius"
+  ],
+  "synergists": [
+   "soleus"
   ],
   "stabilizers": [
    "erector-spinae"

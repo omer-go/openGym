@@ -34,7 +34,8 @@ export const ROLE_MUSCLE_NAME = {
   'erector-spinae': 'Spinal erectors', 'quadratus-lumborum': 'Quadratus lumborum',
   'glute-max': 'Glutes', 'glute-med': 'Side glutes', 'hip-flexors': 'Hip flexors',
   adductors: 'Adductors', 'adductor-magnus': 'Adductor magnus', hamstrings: 'Hamstrings',
-  quads: 'Quads', calves: 'Calves', 'tibialis-anterior': 'Shins',
+  quads: 'Quads', calves: 'Calves', gastrocnemius: 'Gastrocnemius', soleus: 'Soleus',
+  'tibialis-anterior': 'Shins',
   sternocleidomastoid: 'Front of neck', 'neck-extensors': 'Back of neck',
 }
 
@@ -62,7 +63,7 @@ export function roleChips(r, helpers = 3) {
 
 // The parts of each body-map region (lib/muscles.js MUSCLES) a breakdown splits it into. A row
 // can gather several role muscles: the four rotator-cuff muscles read as one. Regions with a
-// single part (quads, calves…) have no breakdown.
+// single part (quads, hamstrings…) have no breakdown.
 export const REGION_PARTS = {
   deltoids: [['Front delt', ['front-delt']], ['Side delt', ['side-delt']], ['Rear delt', ['rear-delt']],
     ['Rotator cuff', ['supraspinatus', 'infraspinatus', 'teres-minor', 'subscapularis']]],
@@ -77,6 +78,7 @@ export const REGION_PARTS = {
   'lower-back': [['Spinal erectors', ['erector-spinae']], ['Quadratus lumborum', ['quadratus-lumborum']]],
   gluteal: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']]],
   adductors: [['Adductors', ['adductors']], ['Adductor magnus', ['adductor-magnus']]],
+  calves: [['Gastrocnemius', ['gastrocnemius']], ['Soleus', ['soleus']], ['Calves', ['calves']]],
 }
 
 // How much a set counts for a muscle in each role: the target fully, a helper as a secondary
@@ -101,7 +103,7 @@ const REGION_OF = {
   'rectus-abdominis': 'abs', 'transverse-abdominis': 'abs', obliques: 'obliques', 'serratus-anterior': 'serratus',
   'erector-spinae': 'lower-back', 'quadratus-lumborum': 'lower-back',
   'glute-max': 'gluteal', 'glute-med': 'gluteal', adductors: 'adductors', 'adductor-magnus': 'adductors',
-  'hip-flexors': 'hip-flexors', quads: 'quadriceps', hamstrings: 'hamstring', calves: 'calves',
+  'hip-flexors': 'hip-flexors', quads: 'quadriceps', hamstrings: 'hamstring', calves: 'calves', gastrocnemius: 'calves', soleus: 'calves',
   'tibialis-anterior': 'tibialis',
 }
 

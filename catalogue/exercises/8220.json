@@ -12,6 +12,7 @@
   ],
   "category": "calisthenics",
   "pattern": "squat",
+  "move": "squat",
   "description": "A full-depth bodyweight squat. It builds leg strength and works the mobility of hips and ankles.",
   "instructions": [
     "Stand with your feet shoulder-width apart.",
