@@ -493,7 +493,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const daily = type === 'full' ? dailyGroups(S, ticked, now) : []
   const build = k => planDay({
     type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S), daily,
-    ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2) }),
+    ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2), need: base }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
     count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),

@@ -228,7 +228,18 @@ function libraryOf(pool) {
 // The groups whose accessories are lifts for that muscle alone: a curl, a pushdown, a raise. The
 // other groups' may be a compound too, the press or row the week has no slot for.
 const ISO_ONLY = ['biceps', 'triceps', 'shoulders']
-const accessoryFor = (e, g) => !e.leadOnly && (e.kind === 'iso' || !ISO_ONLY.includes(g))
+const accessoryFor = (e, g) => !e.leadOnly && (e.kind === 'iso' || !ISO_ONLY.includes(g)) && (g !== 'shoulders' || deltLift(e))
+// The shoulders' one lift a day is for the side or the rear delts, never one aimed at the front
+// delts the presses already work: a front raise, an around-the-world, a Cuban press (front and
+// side delts and the rotator cuff at once) took the turn the lateral raise should have. And aimed
+// at that delt alone: an upright row, the traps' lift as much as the side delts', won it over the
+// raise for the traps it also fed.
+const DELTS = ['Side delts', 'Rear delts']
+// Before the muscle roles are in (muscle-roles.js) no lift says which delt it is for, and any will do.
+const deltLift = e => {
+  const aims = Object.keys(partCreditOf(e)).filter(n => aimsAt(e, n))
+  return !aims.length || (aims.length === 1 && DELTS.includes(aims[0]))
+}
 // A second lift aimed at the shoulders, a press or a raise, whichever delt: the presses and rows
 // already work them, and the published full-body programs give them one a session or none.
 // And a second one for the abs: a day's abs are one slot, which its turn (abs-combo.js absTurn)
@@ -536,12 +547,22 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
   const hadLift = name => [...week.used].some(id => aimsAt({ id }, name))
   const behind = (g, e) => Math.max(0, ...parts.filter(p => p.g === g && aimsAt(e, p.name) && hasPart(p.name) < p.goal)
     .map(p => (hadLift(p.name) ? 0 : 1) + 1 - hasPart(p.name) / p.goal))
+  // With neither delt further behind, the shoulders' lift goes to the one the week has had fewer
+  // lifts for, the side delts on a tie: the presses and rows give both some, but nothing else
+  // reaches the side delts, and a week of face pulls and reverse flies left them none.
+  const liftsFor = name => [...week.used, ...items.map(i => i.ex.id)].filter(id => aimsAt({ id }, name)).length
+  const turnOf = (g, list) => {
+    if (g !== 'shoulders') return list
+    const d = DELTS.reduce((a, b) => (liftsFor(b) < liftsFor(a) ? b : a))
+    const mine = list.filter(e => aimsAt(e, d))
+    return mine.length ? mine : list
+  }
   // Not a lift a day next to this one has, before anything else: a pullover two days running
   // was the one that also helped the triceps both times.
   const choose = (g, list) => {
     const cands = far(novel(list, items), nearby)
     const top = Math.max(...cands.map(e => behind(g, e)))
-    const aimed = cands.filter(e => behind(g, e) === top)
+    const aimed = turnOf(g, cands.filter(e => behind(g, e) === top))
     const best = Math.max(...aimed.map(helps))
     return variant(cfg, aimed.filter(e => helps(e) === best), week.used, rand, day.k)
   }
@@ -868,15 +889,16 @@ function totalsOf(out) {
 // `yields` is the share of its goal each group that gave way was built for.
 // `slack`: the sets a group may be short and still count as there; a day (planDay) allows one, so
 // its calves don't go for the abs' last half set.
-function giveWay(cfg, goals, parts, o, first, slack = 0) {
+function giveWay(cfg, goals, parts, o, first, slack = 0, need = { goals, parts }) {
   // Sets short of the goal at each PRIORITY, whole sets, a part counted with its group. A part
   // within SHORT of its minimum counts as there: a day holds one lift for the shoulders, so the
-  // delts can't always take their last set, and nothing else gives way for it.
+  // delts can't always take their last set, and nothing else gives way for it. Short of `need`,
+  // what the groups are owed, which a day raised to fill a longer session asks past.
   const tiers = Math.max(...Object.values(PRIORITY)) + 1
   const shortBy = out => {
     const { total, partTotal } = totalsOf(out), v = Array(tiers).fill(0)
-    for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, goals[g] - (total[g] || 0) - slack)
-    for (const p of parts) if ((partTotal[p.name] || 0) < p.goal * SHORT) v[PRIORITY[p.g]] += p.goal - (partTotal[p.name] || 0)
+    for (const g of PLAN_GROUPS) v[PRIORITY[g]] += Math.max(0, (need.goals[g] || 0) - (total[g] || 0) - slack)
+    for (const p of need.parts) if ((partTotal[p.name] || 0) < p.goal * SHORT) v[PRIORITY[p.g]] += p.goal - (partTotal[p.name] || 0)
     return v.map(Math.round)
   }
   const better = (a, b, t) => {
@@ -1078,9 +1100,12 @@ export function planDay(o = {}) {
   const pattern = o.pattern || (o.type === 'full' ? FULL_LEADS(1)[0] : DAY_TYPES[o.type].leads[0])
   const parts = o.parts || [], w = { ...o, sched: [o.type], leads: [pattern], balance: false }
   // A day that can't hold all it owes gives way as a week does (giveWay): the calves and the arms
-  // before the back and the legs.
+  // before the back and the legs. A day raised to fill a longer session (`need`, the goals it was
+  // raised from) gives way only for what the groups are owed: the calf raise the shorter day had
+  // isn't dropped because the abs can't reach twice their goal.
   const first = weekOf(cfg, goals, parts, w)
-  return (o.priority === false ? first : giveWay(cfg, goals, parts, w, first, 1).out)[0]
+  const need = o.need ? { goals: o.need.goals || {}, parts: o.need.parts || [] } : { goals, parts }
+  return (o.priority === false ? first : giveWay(cfg, goals, parts, w, first, 1, need).out)[0]
 }
 
 /** Why the settings `o` can't reach the goal: `[{ g, cause }]` of the groups to blame, empty when they can. */

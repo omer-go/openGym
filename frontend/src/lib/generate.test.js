@@ -6,7 +6,7 @@ import { EXIDX, patternOf } from './exercises.js'
 import { isWarmupRow } from './workout-model.js'
 import { groupOfExercise } from './muscle-colors.js'
 import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
-import { planLift } from './planner.js'
+import { planLift, partCreditOf } from './planner.js'
 
 const row = (patch = {}) => ({ w: 60, r: 8, done: true, ...patch })
 const session = (d, ids, sets = [row()]) => ({ id: 'w' + d + ids.join(), d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets })) })
@@ -776,5 +776,43 @@ describe('genSetupOf', () => {
   it('keeps the length on a day the program has not, or when the program sets none', () => {
     expect(genSetupOf({ genSetup: { push: { minutes: 60 } }, ...program(75) }, 'push').minutes).toBe(60)
     expect(genSetupOf({ ...kept, ...program(0) }, 'full').minutes).toBe(90)
+  })
+})
+
+describe('a longer day', () => {
+  beforeAll(loadMuscleRoles)
+  // A day raised to fill the time asks each group past its goal; the calves used to give way to
+  // the abs falling short of that ask, so 75 minutes had no calf raise where 55 had one.
+  it('trains every group the shorter one does: more time is more work, not other work', () => {
+    const groups = picks => new Set(picks.flatMap(p => planLift(p.id).p))
+    for (const type of ['full', 'legs', 'push']) {
+      const base = groups(generateWorkout(state(), type, { now: NOW }))
+      for (const minutes of [75, 90]) {
+        const long = groups(generateWorkout(state(), type, { now: NOW, minutes }))
+        expect([...base].filter(g => !long.has(g)), `${type} ${minutes} min`).toEqual([])
+      }
+    }
+  })
+  it('a full-body day fills 90 minutes with its calf raise in it', () => {
+    const picks = generateWorkout(state(), 'full', { now: NOW, minutes: 90 })
+    expect(picks.filter(p => planLift(p.id).p.includes('calves'))).toHaveLength(1)
+    expect(picks.length).toBeGreaterThan(generateWorkout(state(), 'full', { now: NOW, minutes: 60 }).length)
+  })
+})
+
+describe('the shoulders\' lift', () => {
+  beforeAll(loadMuscleRoles)
+  const shoulderLifts = picks => picks.filter(p => planLift(p.id)?.p.includes('shoulders'))
+  const aims = id => Object.entries(partCreditOf({ id })).filter(([, v]) => v >= 1).map(([n]) => n)
+  it('is aimed at the side or the rear delts alone: no front raise, Cuban press or upright row', () => {
+    for (const type of ['full', 'push', 'upper', 'pull']) for (const opts of [{}, { count: 10 }, { minutes: 90 }]) {
+      for (const p of shoulderLifts(generateWorkout(state(), type, opts)).filter(p => planLift(p.id).kind === 'iso')) {
+        expect([['Side delts'], ['Rear delts']], `${type} ${EXIDX[p.id].n}`).toContainEqual(aims(p.id))
+      }
+    }
+  })
+  it('goes to the side delts on a day with no history to say otherwise', () => {
+    const lift = shoulderLifts(generateWorkout(state(), 'full', { minutes: 75 })).find(p => planLift(p.id).kind === 'iso')
+    expect(aims(lift.id)).toEqual(['Side delts'])
   })
 })
