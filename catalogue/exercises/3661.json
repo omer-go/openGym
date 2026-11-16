@@ -8,6 +8,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Hold an upright seated posture with no pad.",
   "instructions": [
     "Sit tall with feet flat on the floor.",

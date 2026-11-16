@@ -8,6 +8,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Hold a lying position on your back with a pad as a reference for setup and posture.",
   "instructions": [
     "Place a pad on the floor or bench.",

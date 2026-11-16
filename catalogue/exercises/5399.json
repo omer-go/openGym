@@ -9,6 +9,7 @@
     "lower back"
   ],
   "category": "isometric",
+  "pattern": "core",
   "description": "Holding a stick overhead or in front while you brace your midsection. Builds trunk stability and teaches you to keep the ribs down.",
   "instructions": [
     "Stand tall with your feet hip-width apart and hold a stick in both hands.",
@@ -17,5 +18,18 @@
     "Hold for 20-30 seconds while breathing steadily.",
     "Lower the stick slowly and shake out your arms."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "transverse-abdominis",
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "erector-spinae"
+    ]
+  }
 }

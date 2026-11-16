@@ -9,7 +9,8 @@
     "deltoids"
   ],
   "category": "calisthenics",
-  "move": "other",
+  "pattern": "push-horizontal",
+  "move": "pushup",
   "description": "A bodyweight movement of pushing and pulling against your own resistance. It trains the chest and arms.",
   "instructions": [
     "Start in a push-up position with your hands slightly wider than shoulder-width apart and your body in a straight line.",
@@ -19,5 +20,23 @@
     "Push through your palms to extend your arms and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "coracobrachialis",
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "glute-max"
+    ]
+  }
 }

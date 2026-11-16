@@ -8,6 +8,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Sit with your back against a pad to hold a proper seated posture.",
   "instructions": [
     "Sit on the seat with your back against the pad.",

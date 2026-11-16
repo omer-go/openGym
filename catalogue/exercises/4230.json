@@ -12,6 +12,7 @@
     "rotator cuff"
   ],
   "category": "strength",
+  "unilateral": true,
   "move": "other",
   "description": "A Turkish get-up holding the bell upside down, moving only up to a kneeling position. It builds shoulder stability and core control.",
   "instructions": [
@@ -22,5 +23,27 @@
     "Reverse the steps slowly to lie down.",
     "Keep your eyes on the bell and switch sides after your reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "obliques"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "rectus-abdominis",
+      "hip-flexors",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "lower-trap",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

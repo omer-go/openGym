@@ -5,8 +5,7 @@
   "equipment": "cable",
   "target": "levator scapulae",
   "secondaryMuscles": [
-    "upper back",
-    "trapezius"
+    "sternocleidomastoid"
   ],
   "category": "strength",
   "pattern": "isolation",
@@ -18,5 +17,10 @@
     "Pause, then return slowly in control.",
     "Keep the load light and your shoulders relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "sternocleidomastoid"
+    ]
+  }
 }

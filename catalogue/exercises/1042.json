@@ -3,7 +3,7 @@
   "name": "weighted lying neck extension",
   "bodyPart": "neck",
   "equipment": "weighted",
-  "target": "traps",
+  "target": "levator scapulae",
   "secondaryMuscles": [
     "upper back",
     "trapezius",
@@ -19,5 +19,14 @@
     "Pause briefly, then lower with control.",
     "Keep the load light and the motion smooth."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap",
+      "levator-scapulae"
+    ]
+  }
 }

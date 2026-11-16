@@ -9,6 +9,7 @@
     "shoulders"
   ],
   "category": "calisthenics",
+  "pattern": "push-horizontal",
   "move": "pushup",
   "description": "Small pulses in a wall push-up position. It keeps constant tension on your triceps.",
   "instructions": [
@@ -18,5 +19,18 @@
     "Pulse in short, controlled movements.",
     "Keep your elbows tucked and your core tight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "pec-major-sternal",
+      "front-delt"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ]
+  }
 }

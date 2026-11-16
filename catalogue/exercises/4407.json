@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "strength",
+  "pattern": "isolation",
+  "move": "pushdown",
   "description": "A triceps exercise using a bodyweight or stick-style handle, focused on straightening the elbows against resistance.",
   "instructions": [
     "Set up facing your anchor or support, with your upper arms close to your body.",
@@ -18,5 +20,14 @@
     "Squeeze at the bottom for a moment.",
     "Return slowly to the start."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis"
+    ]
+  }
 }

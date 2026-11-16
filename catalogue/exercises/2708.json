@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "strength",
+  "pattern": "pull-horizontal",
+  "move": "row",
   "description": "A grip and pull contest with a stick, building grip strength and total body tension.",
   "instructions": [
     "Sit facing a partner with feet against theirs and both hands on a stick.",
@@ -18,5 +20,25 @@
     "Resist your partner while keeping your back straight.",
     "Keep the effort steady and control the end of each pull."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "wrist-flexors"
+    ],
+    "synergists": [
+      "biceps",
+      "brachialis",
+      "middle-trap",
+      "rhomboids",
+      "erector-spinae",
+      "hamstrings",
+      "glute-max"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "rear-delt",
+      "quads"
+    ]
+  }
 }

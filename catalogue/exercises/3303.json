@@ -18,5 +18,25 @@
     "Slowly lower your legs back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "lats",
+      "side-delt"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "triceps",
+      "front-delt",
+      "rectus-abdominis",
+      "teres-major"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "glute-med",
+      "transverse-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

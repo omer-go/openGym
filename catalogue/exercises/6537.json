@@ -19,5 +19,23 @@
     "Drag one hand across the floor as if pulling yourself forward.",
     "Alternate sides and keep your core tight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal"
+    ],
+    "synergists": [
+      "front-delt",
+      "serratus-anterior",
+      "pec-major-clavicular",
+      "triceps",
+      "lats"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "obliques",
+      "glute-max"
+    ]
+  }
 }

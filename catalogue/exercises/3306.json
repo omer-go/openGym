@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "strength",
+  "move": "other",
   "description": "A strongman grip challenge based on the legend of Fingal's fingers. It tests hand and forearm strength.",
   "instructions": [
     "Set up the implement in front of you.",
@@ -20,5 +21,23 @@
     "Hold it steady for a moment.",
     "Lower it under control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "glute-max"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "hamstrings",
+      "quads",
+      "front-delt",
+      "triceps"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

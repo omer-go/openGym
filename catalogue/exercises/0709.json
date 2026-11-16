@@ -9,6 +9,7 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "pattern": "core",
   "move": "twist",
   "description": "Between parallel bars, you lift your body and swing your hips side to side. Works the obliques and core.",
   "instructions": [
@@ -18,5 +19,21 @@
     "Pause for a moment at the top, then slowly lower your legs back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors",
+      "quadratus-lumborum",
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "triceps",
+      "lower-trap",
+      "pec-major-sternal",
+      "front-delt"
+    ]
+  }
 }

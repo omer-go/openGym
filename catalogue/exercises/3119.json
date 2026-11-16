@@ -3,7 +3,7 @@
   "name": "potty squat",
   "bodyPart": "waist",
   "equipment": "body weight",
-  "target": "abs",
+  "target": "quads",
   "secondaryMuscles": [
     "quadriceps",
     "glutes"
@@ -20,5 +20,19 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "3118",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "quads",
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "rectus-abdominis",
+      "calves"
+    ]
+  }
 }

@@ -21,5 +21,23 @@
     "Take a controlled step forward with the bar racked.",
     "Step back, lower the bar and begin the next round."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "hamstrings",
+      "glute-max"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "upper-trap",
+      "quads",
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "wrist-flexors",
+      "front-delt"
+    ]
+  }
 }

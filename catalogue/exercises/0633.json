@@ -20,5 +20,14 @@
     "Return to the start and rest between sets.",
     "Never bounce and keep most weight on your hands at first."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors",
+      "sternocleidomastoid"
+    ],
+    "synergists": [
+      "upper-trap"
+    ]
+  }
 }

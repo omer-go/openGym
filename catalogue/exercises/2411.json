@@ -18,5 +18,14 @@
     "Pause, then return slowly against the cable.",
     "Keep the load light and your shoulders relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap",
+      "levator-scapulae"
+    ]
+  }
 }

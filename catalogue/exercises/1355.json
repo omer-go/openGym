@@ -19,5 +19,18 @@
     "Slowly push against the wall with your palm, activating your lat muscles.",
     "Hold the position for a few seconds, then release and repeat with the other arm."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats"
+    ],
+    "synergists": [
+      "teres-major",
+      "triceps-long-head"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

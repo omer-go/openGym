@@ -19,5 +19,23 @@
     "Maintain a steady pace and keep your core tight throughout the exercise.",
     "Continue for the desired distance or time."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "quads"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "triceps",
+      "hip-flexors",
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "wrist-flexors",
+      "glute-med"
+    ]
+  }
 }

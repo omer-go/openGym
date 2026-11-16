@@ -10,6 +10,8 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "pattern": "core",
+  "move": "twist",
   "description": "A floor move where you sweep one leg under your body from a side-facing support, working your obliques, shoulders and coordination.",
   "instructions": [
     "Start in a high plank, then rotate onto one hand with your chest turned to the side.",
@@ -18,5 +20,21 @@
     "Return the leg to the start with control.",
     "Repeat, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors",
+      "rectus-abdominis",
+      "front-delt"
+    ],
+    "stabilizers": [
+      "triceps",
+      "serratus-anterior",
+      "glute-med",
+      "wrist-flexors"
+    ]
+  }
 }

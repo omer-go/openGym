@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "hinge",
   "description": "Squeeze your glutes while lying down to activate them before heavier lower body work.",
   "instructions": [
     "Lie on your back with knees bent and feet flat on the floor.",
@@ -18,5 +19,16 @@
     "Lower your hips without relaxing completely.",
     "Repeat for 12-15 reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis"
+    ]
+  }
 }

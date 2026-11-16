@@ -9,6 +9,7 @@
     "forearms"
   ],
   "category": "strength",
+  "move": "other",
   "description": "You pass a kettlebell in a figure 8 pattern around and between your legs. It trains the core, hips and grip while keeping you moving.",
   "instructions": [
     "Stand with your feet shoulder-width apart, holding a kettlebell in one hand.",
@@ -20,5 +21,21 @@
     "Repeat for the desired number of repetitions."
   ],
   "femaleVariant": "2535",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "erector-spinae"
+    ],
+    "synergists": [
+      "glute-max",
+      "hamstrings",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "front-delt"
+    ]
+  }
 }

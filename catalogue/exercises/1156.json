@@ -10,6 +10,7 @@
     "shoulders"
   ],
   "category": "calisthenics",
+  "pattern": "core",
   "move": "twist",
   "description": "Lying or planking with the feet in the straps, you swing the legs side to side like a pendulum to train the obliques.",
   "instructions": [
@@ -20,5 +21,21 @@
     "Keep the movement slow and controlled.",
     "Keep your shoulders stable."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "transverse-abdominis",
+      "wrist-flexors"
+    ]
+  }
 }

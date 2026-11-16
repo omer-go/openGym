@@ -20,5 +20,21 @@
     "Press back up to the start.",
     "Keep your body in a straight line."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "pec-major-sternal",
+      "front-delt"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max",
+      "serratus-anterior",
+      "wrist-flexors"
+    ]
+  }
 }

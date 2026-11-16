@@ -9,6 +9,7 @@
     "glutes"
   ],
   "category": "calisthenics",
+  "pattern": "squat",
   "move": "squat",
   "description": "A bodyweight squat variation focused on the front of the thighs. It trains the quads and glutes.",
   "instructions": [
@@ -19,5 +20,19 @@
     "Push through your heels to return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "quads",
+      "glute-max"
+    ],
+    "synergists": [
+      "adductor-magnus"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "rectus-abdominis",
+      "calves"
+    ]
+  }
 }

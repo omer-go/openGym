@@ -9,6 +9,7 @@
     "triceps"
   ],
   "category": "calisthenics",
+  "pattern": "isolation",
   "move": "rear",
   "description": "Lifting your arms behind your back while seated. It strengthens the upper back and rear shoulders.",
   "instructions": [
@@ -19,5 +20,19 @@
     "Lower slowly.",
     "Keep your chest lifted."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rear-delt"
+    ],
+    "synergists": [
+      "triceps-long-head",
+      "lats",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

@@ -3,10 +3,9 @@
   "name": "weighted lying neck flexion",
   "bodyPart": "neck",
   "equipment": "weighted",
-  "target": "traps",
+  "target": "levator scapulae",
   "secondaryMuscles": [
-    "sternocleidomastoid",
-    "upper back"
+    "sternocleidomastoid"
   ],
   "category": "strength",
   "pattern": "isolation",
@@ -18,5 +17,10 @@
     "Pause briefly, then lower with control.",
     "Keep the load light and avoid jerking."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "sternocleidomastoid"
+    ]
+  }
 }

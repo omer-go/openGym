@@ -10,6 +10,8 @@
     "core"
   ],
   "category": "isometric",
+  "pattern": "core",
+  "move": "plank",
   "description": "A bridge hold on straight arms like the top of a push-up. It trains the abs and shoulder stability.",
   "instructions": [
     "Start in a high plank with your hands under your shoulders.",
@@ -19,5 +21,20 @@
     "Hold for 20-30 seconds.",
     "Lower your knees to rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "triceps",
+      "glute-max"
+    ]
+  }
 }

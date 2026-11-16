@@ -10,6 +10,7 @@
     "shins"
   ],
   "category": "strength",
+  "pattern": "isolation",
   "description": "A seated ankle move turning the foot outward against a cable. It strengthens the outer ankle and lower leg.",
   "instructions": [
     "Sit with your leg extended and a cable cuff on your foot.",
@@ -19,5 +20,13 @@
     "Pause, then return slowly.",
     "Finish the reps and switch feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "tibialis-anterior"
+    ]
+  }
 }

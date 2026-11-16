@@ -9,6 +9,9 @@
     "biceps"
   ],
   "category": "strength",
+  "unilateral": true,
+  "pattern": "pull-horizontal",
+  "move": "row",
   "description": "A cable pull that rotates the torso as you pull the handle toward the body. It trains the lats and the core together.",
   "instructions": [
     "Attach a cable handle to a low pulley and stand facing the machine.",
@@ -20,5 +23,23 @@
     "Slowly return to the starting position, keeping tension on the cable.",
     "Repeat for the desired number of repetitions, then switch sides and perform with your right hand."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "obliques"
+    ],
+    "synergists": [
+      "middle-trap",
+      "rhomboids",
+      "rear-delt",
+      "biceps",
+      "brachialis"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "glute-med",
+      "wrist-flexors"
+    ]
+  }
 }

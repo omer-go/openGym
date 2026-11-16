@@ -10,6 +10,8 @@
     "shoulders"
   ],
   "category": "isometric",
+  "pattern": "core",
+  "move": "plank",
   "description": "A plank-style bridge hold supported on the knees. It builds trunk endurance with less load than a full plank.",
   "instructions": [
     "Kneel on a mat and lean forward onto your forearms.",
@@ -19,5 +21,19 @@
     "Hold for 20-30 seconds.",
     "Lower gently and rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "glute-max"
+    ]
+  }
 }

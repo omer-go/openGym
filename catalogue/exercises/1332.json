@@ -3,13 +3,14 @@
   "name": "exercise ball alternating arm ups",
   "bodyPart": "back",
   "equipment": "stability ball",
-  "target": "lats",
+  "target": "delts",
   "secondaryMuscles": [
     "shoulders",
     "core"
   ],
   "category": "strength",
-  "move": "other",
+  "pattern": "isolation",
+  "move": "front",
   "description": "Seated on a stability ball, you raise dumbbells one arm at a time. It trains the shoulders and upper back while your core keeps you balanced.",
   "instructions": [
     "Sit on the stability ball with your feet flat on the ground and your back straight.",
@@ -19,5 +20,22 @@
     "Repeat the movement with the other arm.",
     "Continue alternating arms for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "front-delt"
+    ],
+    "synergists": [
+      "side-delt",
+      "pec-major-clavicular",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "upper-trap",
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae"
+    ]
+  }
 }

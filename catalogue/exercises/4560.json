@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "isolation",
   "move": "legext",
   "description": "A kneeling lean-back that stretches and strengthens the front of the thighs and the core.",
   "instructions": [
@@ -20,5 +21,18 @@
     "Pull yourself back up to the start.",
     "Keep your hips forward."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "glute-max",
+      "transverse-abdominis"
+    ]
+  }
 }

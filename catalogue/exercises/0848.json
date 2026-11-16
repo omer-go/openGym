@@ -20,5 +20,14 @@
     "Repeat slowly for the set.",
     "Keep your back straight and use a light load."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap",
+      "levator-scapulae"
+    ]
+  }
 }

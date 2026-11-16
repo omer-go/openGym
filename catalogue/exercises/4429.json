@@ -18,5 +18,15 @@
     "Pause, then lower under control.",
     "Complete your reps, then switch sides. Use light weight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "sternocleidomastoid"
+    ],
+    "synergists": [
+      "levator-scapulae",
+      "upper-trap",
+      "neck-extensors"
+    ]
+  }
 }

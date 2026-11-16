@@ -9,6 +9,8 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "pattern": "core",
+  "move": "twist",
   "description": "From a crab position you twist and reach one hand to the opposite foot. It works the abs and obliques and gets the shoulders moving.",
   "instructions": [
     "Start by sitting on the ground with your knees bent and feet flat on the floor.",
@@ -17,5 +19,19 @@
     "Return to the starting position and repeat on the other side.",
     "Continue alternating sides for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "triceps",
+      "front-delt",
+      "glute-max"
+    ]
+  }
 }

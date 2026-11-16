@@ -10,6 +10,7 @@
   ],
   "category": "calisthenics",
   "pattern": "push-horizontal",
+  "move": "rear",
   "description": "A floor push-up variation that lifts the upper body with elbows close to your sides. Works the upper back and posture muscles.",
   "instructions": [
     "Start by lying face down on the ground with your legs extended and your hands placed directly under your shoulders.",
@@ -18,5 +19,18 @@
     "Slowly lower your body back down to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "rear-delt",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "lower-trap"
+    ],
+    "stabilizers": [
+      "erector-spinae"
+    ]
+  }
 }

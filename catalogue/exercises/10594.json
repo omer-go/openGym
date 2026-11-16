@@ -10,6 +10,7 @@
     "core"
   ],
   "category": "strength",
+  "unilateral": true,
   "move": "strike",
   "description": "A standing band press that sweeps across the body from the side. It builds chest power and trains the trunk to resist rotation.",
   "instructions": [
@@ -20,5 +21,21 @@
     "Keep your hips square throughout.",
     "Finish all reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "obliques"
+    ],
+    "synergists": [
+      "front-delt",
+      "triceps",
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "glute-med",
+      "rectus-abdominis"
+    ]
+  }
 }

@@ -12,7 +12,8 @@
     "hip flexors"
   ],
   "category": "strength",
-  "move": "lunge",
+  "unilateral": true,
+  "move": "adduct",
   "description": "A standing exercise where one foot slides on a towel to work the hips and thighs while the standing leg balances you.",
   "instructions": [
     "Stand on a smooth floor with one foot on a towel and hold a support if needed.",
@@ -21,5 +22,20 @@
     "Pull it back to the start using your hip and thigh muscles.",
     "Complete your reps, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "adductors",
+      "glute-max"
+    ],
+    "synergists": [
+      "glute-med",
+      "quads",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "obliques",
+      "calves"
+    ]
+  }
 }

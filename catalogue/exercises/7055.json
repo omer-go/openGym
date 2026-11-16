@@ -10,6 +10,7 @@
     "grip muscles"
   ],
   "category": "strength",
+  "pattern": "isolation",
   "description": "A standing twisting move holding a plate that works the forearm rotators. It builds wrist and grip strength.",
   "instructions": [
     "Stand holding a plate at its sides in front of you.",
@@ -18,5 +19,15 @@
     "Move slowly and under control.",
     "Keep your shoulders relaxed."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "wrist-flexors",
+      "wrist-extensors"
+    ],
+    "synergists": [
+      "brachioradialis",
+      "biceps"
+    ]
+  }
 }

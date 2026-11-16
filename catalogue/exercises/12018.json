@@ -11,7 +11,8 @@
     "core"
   ],
   "category": "strength",
-  "move": "other",
+  "pattern": "core",
+  "move": "twist",
   "description": "Passing a kettlebell around your torso in quick circles. It challenges the core, grip and coordination.",
   "instructions": [
     "Stand with your feet hip width apart holding a kettlebell by the handle.",
@@ -20,5 +21,20 @@
     "Keep your core tight and your hips still.",
     "After several reps, reverse the direction."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "wrist-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

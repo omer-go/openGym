@@ -12,6 +12,7 @@
     "quadriceps"
   ],
   "category": "strength",
+  "unilateral": true,
   "move": "other",
   "description": "The first half of a turkish get up, moving from lying to a seated position with the kettlebell overhead. It builds shoulder stability and core strength.",
   "instructions": [
@@ -21,5 +22,26 @@
     "Come up to a tall seated position with your arm still locked overhead.",
     "Reverse the steps slowly to lie back down, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "obliques"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "side-delt",
+      "supraspinatus",
+      "infraspinatus",
+      "teres-minor",
+      "upper-trap",
+      "lower-trap",
+      "triceps",
+      "wrist-flexors"
+    ]
+  }
 }

@@ -3,10 +3,12 @@
   "name": "full maltese",
   "bodyPart": "waist",
   "equipment": "body weight",
-  "target": "abs",
+  "target": "pectorals",
   "secondaryMuscles": [
+    "chest",
     "shoulders",
-    "chest"
+    "biceps",
+    "core"
   ],
   "category": "isometric",
   "description": "An advanced gymnastics hold on rings with the arms out wide and the body straight. It demands huge strength in the chest, shoulders and core.",
@@ -17,5 +19,24 @@
     "Return to the starting position by pushing through your feet and standing back up.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "front-delt"
+    ],
+    "synergists": [
+      "biceps",
+      "serratus-anterior",
+      "lats",
+      "pec-minor"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max",
+      "erector-spinae",
+      "wrist-flexors"
+    ]
+  }
 }

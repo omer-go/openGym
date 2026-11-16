@@ -3,11 +3,10 @@
   "name": "power push aways",
   "bodyPart": "back",
   "equipment": "body weight",
-  "target": "upper back",
+  "target": "pectorals",
   "secondaryMuscles": [
-    "rhomboids",
-    "trapezius",
-    "shoulders",
+    "chest",
+    "triceps",
     "core"
   ],
   "category": "calisthenics",
@@ -21,5 +20,20 @@
     "Keep your core tight.",
     "Reset between reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "pec-major-sternal",
+      "triceps",
+      "front-delt"
+    ],
+    "synergists": [
+      "serratus-anterior"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "transverse-abdominis",
+      "glute-max"
+    ]
+  }
 }

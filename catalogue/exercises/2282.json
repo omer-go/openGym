@@ -19,5 +19,17 @@
     "Return slowly to the start.",
     "Repeat for the planned reps with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap",
+      "levator-scapulae"
+    ],
+    "stabilizers": [
+      "sternocleidomastoid"
+    ]
+  }
 }

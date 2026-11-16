@@ -10,6 +10,8 @@
     "lower abs"
   ],
   "category": "calisthenics",
+  "pattern": "core",
+  "move": "other",
   "description": "Lying face up, you sweep arms and legs out like a snow angel. It trains the abs and keeps your shoulders mobile.",
   "instructions": [
     "Lie on your back with arms by your sides and legs together.",
@@ -19,5 +21,21 @@
     "Repeat at a steady pace.",
     "Keep your abs braced and lower back flat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "side-delt",
+      "lower-trap",
+      "glute-med",
+      "adductors"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "hip-flexors"
+    ]
+  }
 }

@@ -20,5 +20,19 @@
     "Keep your lower back pressed down.",
     "Repeat at a smooth, steady pace."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "hip-flexors",
+      "obliques"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "quads",
+      "glute-med"
+    ]
+  }
 }

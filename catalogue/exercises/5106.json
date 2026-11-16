@@ -9,6 +9,7 @@
     "hip flexors"
   ],
   "category": "strength",
+  "pattern": "core",
   "description": "Lie on your back and tap each toe up toward the ceiling in turn. It targets the lower abs.",
   "instructions": [
     "Lie on your back with both legs raised straight up.",
@@ -17,5 +18,18 @@
     "Alternate legs with control.",
     "Keep your core tight and breathe steadily."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "obliques",
+      "transverse-abdominis",
+      "quads"
+    ]
+  }
 }

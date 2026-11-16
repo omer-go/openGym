@@ -9,7 +9,8 @@
     "core"
   ],
   "category": "calisthenics",
-  "pattern": "core",
+  "pattern": "isolation",
+  "move": "abduct",
   "description": "A side-lying leg lift that goes back on a diagonal. It focuses on the glutes and outer hip.",
   "instructions": [
     "Lie on your side with legs stacked and your bottom arm supporting your head.",
@@ -19,5 +20,17 @@
     "Lower slowly.",
     "Finish the reps, then switch sides."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques",
+      "quadratus-lumborum"
+    ]
+  }
 }

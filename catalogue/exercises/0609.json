@@ -10,6 +10,8 @@
     "forearms"
   ],
   "category": "strength",
+  "pattern": "pull-horizontal",
+  "move": "row",
   "description": "Using a rope anchored high, you lean back and pull your body through a controlled swing. Trains the back, shoulders and core.",
   "instructions": [
     "Attach the rope to a high anchor point.",
@@ -20,5 +22,24 @@
     "Pause for a moment at the peak of the movement, then slowly release the tension and return to the starting position.",
     "Repeat for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "middle-trap",
+      "rhomboids"
+    ],
+    "synergists": [
+      "rear-delt",
+      "biceps",
+      "brachialis",
+      "brachioradialis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "erector-spinae",
+      "glute-max"
+    ]
+  }
 }

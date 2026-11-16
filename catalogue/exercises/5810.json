@@ -10,6 +10,8 @@
     "lower back"
   ],
   "category": "calisthenics",
+  "pattern": "isolation",
+  "move": "kickback",
   "description": "A kneeling glute kick back with the knee bent. It targets the glutes with a controlled squeeze.",
   "instructions": [
     "Get on all fours with hands under shoulders and knees under hips.",
@@ -19,5 +21,19 @@
     "Lower and repeat, then switch legs."
   ],
   "femaleVariant": "0557",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

@@ -11,6 +11,7 @@
   ],
   "category": "calisthenics",
   "pattern": "push-horizontal",
+  "move": "dip",
   "description": "A pushup where your hands are behind you, working the triceps hard.",
   "instructions": [
     "Sit on the floor and place your hands behind you, fingers pointing toward your hips.",
@@ -19,5 +20,19 @@
     "Press back up to straight arms.",
     "Keep your elbows pointing back."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "rectus-abdominis",
+      "glute-max"
+    ]
+  }
 }

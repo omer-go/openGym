@@ -21,5 +21,18 @@
     "Keep your hips level and your core tight.",
     "Hold for 20 to 30 seconds, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "quads",
+      "obliques",
+      "tibialis-anterior"
+    ]
+  }
 }

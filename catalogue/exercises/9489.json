@@ -10,6 +10,7 @@
     "grip muscles"
   ],
   "category": "calisthenics",
+  "pattern": "core",
   "move": "twist",
   "description": "While hanging from a bar, you lean your body to each side to work the obliques and grip.",
   "instructions": [
@@ -19,5 +20,20 @@
     "Return to centre under control.",
     "Lean to the other side and alternate for the planned reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques"
+    ],
+    "synergists": [
+      "quadratus-lumborum",
+      "rectus-abdominis",
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "lats",
+      "wrist-flexors",
+      "teres-major"
+    ]
+  }
 }

@@ -11,6 +11,7 @@
   ],
   "category": "strength",
   "pattern": "core",
+  "move": "twist",
   "description": "A sit up with legs pulled to the side while holding an EZ bar. It works the abs and obliques.",
   "instructions": [
     "Lie on your back holding an EZ bar over your chest.",
@@ -20,5 +21,18 @@
     "Repeat on the other side.",
     "Keep the bar stable."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "transverse-abdominis"
+    ]
+  }
 }

@@ -21,5 +21,18 @@
     "Hold for 20 to 30 seconds.",
     "Switch legs and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "calves"
+    ],
+    "stabilizers": [
+      "quads",
+      "obliques",
+      "tibialis-anterior"
+    ]
+  }
 }

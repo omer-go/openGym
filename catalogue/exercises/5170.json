@@ -9,6 +9,7 @@
     "core"
   ],
   "category": "calisthenics",
+  "pattern": "isolation",
   "move": "kickback",
   "description": "Small pulsing leg lifts from a kneeling position. It gives your glutes a burning, focused workout.",
   "instructions": [
@@ -19,5 +20,19 @@
     "Finish the set, then switch legs."
   ],
   "femaleVariant": "4656",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "glute-med"
+    ]
+  }
 }

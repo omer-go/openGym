@@ -21,5 +21,23 @@
     "Keep each rep crisp with a braced core and a flat back.",
     "Finish all lifts for one round, then lower the bar and rest before repeating."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max",
+      "hamstrings",
+      "quads"
+    ],
+    "synergists": [
+      "erector-spinae",
+      "upper-trap",
+      "front-delt",
+      "triceps"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "wrist-flexors"
+    ]
+  }
 }

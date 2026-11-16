@@ -10,7 +10,7 @@
     "ankles"
   ],
   "category": "strength",
-  "pattern": "core",
+  "pattern": "isolation",
   "description": "A foot exercise where you scrunch a towel on the floor with your toes. It strengthens the muscles of the foot and arch.",
   "instructions": [
     "Stand with one foot flat on a towel laid on a smooth floor.",
@@ -20,5 +20,13 @@
     "Hold on to a support if you need balance.",
     "Do your reps, then switch feet."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "calves"
+    ],
+    "stabilizers": [
+      "tibialis-anterior"
+    ]
+  }
 }

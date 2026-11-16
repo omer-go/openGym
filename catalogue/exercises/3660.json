@@ -9,6 +9,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Hold a face-down position to practice setting up for prone exercises.",
   "instructions": [
     "Lie face down on a mat.",

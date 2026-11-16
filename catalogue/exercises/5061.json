@@ -10,6 +10,7 @@
     "sternocleidomastoid"
   ],
   "category": "isometric",
+  "pattern": "isolation",
   "description": "Hold your head lifted while lying face down. It builds endurance in the neck extensors.",
   "instructions": [
     "Lie face down with your arms by your sides.",
@@ -18,5 +19,13 @@
     "Hold steady while breathing normally.",
     "Hold for 10-20 seconds, then lower slowly."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap"
+    ]
+  }
 }

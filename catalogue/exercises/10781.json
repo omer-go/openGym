@@ -19,5 +19,13 @@
     "Lower slowly.",
     "Use small, controlled reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "neck-extensors"
+    ],
+    "synergists": [
+      "upper-trap"
+    ]
+  }
 }

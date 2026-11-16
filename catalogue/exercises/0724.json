@@ -10,6 +10,7 @@
     "hip flexors"
   ],
   "category": "calisthenics",
+  "pattern": "core",
   "move": "twist",
   "description": "A leg-up hip lift with a rotation. It works the lower abs and obliques.",
   "instructions": [
@@ -20,5 +21,17 @@
     "Repeat to the other side.",
     "Keep legs straight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "rectus-abdominis",
+      "obliques"
+    ],
+    "synergists": [
+      "hip-flexors"
+    ],
+    "stabilizers": [
+      "transverse-abdominis"
+    ]
+  }
 }

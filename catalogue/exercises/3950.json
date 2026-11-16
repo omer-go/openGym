@@ -20,5 +20,21 @@
     "Lift your hips.",
     "Rotate back into the crawl and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "triceps"
+    ],
+    "synergists": [
+      "serratus-anterior",
+      "obliques",
+      "glute-max",
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "wrist-flexors",
+      "transverse-abdominis"
+    ]
+  }
 }

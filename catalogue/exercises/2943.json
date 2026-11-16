@@ -3,7 +3,7 @@
   "name": "resistance band spider crawls",
   "bodyPart": "full body",
   "equipment": "resistance band",
-  "target": "pectorals",
+  "target": "abs",
   "secondaryMuscles": [
     "shoulders",
     "core",
@@ -12,7 +12,8 @@
     "obliques"
   ],
   "category": "calisthenics",
-  "move": "other",
+  "pattern": "core",
+  "move": "climber",
   "description": "A spider crawl performed with a band around your legs. The band adds hip effort to a classic core and shoulder crawl.",
   "instructions": [
     "Place a band around your thighs and start in a push-up position.",
@@ -21,5 +22,23 @@
     "Alternate sides while keeping the band under tension.",
     "Crawl the set distance, then rest."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "hip-flexors"
+    ],
+    "synergists": [
+      "rectus-abdominis",
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "glute-med"
+    ],
+    "stabilizers": [
+      "serratus-anterior",
+      "transverse-abdominis",
+      "wrist-flexors"
+    ]
+  }
 }

@@ -3,7 +3,7 @@
   "name": "resistance band plank march",
   "bodyPart": "upper legs",
   "equipment": "band",
-  "target": "quads",
+  "target": "abs",
   "secondaryMuscles": [
     "core",
     "hip flexors",
@@ -21,5 +21,22 @@
     "Alternate for the planned time or reps."
   ],
   "femaleVariant": "2557",
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "transverse-abdominis",
+      "rectus-abdominis"
+    ],
+    "synergists": [
+      "hip-flexors",
+      "obliques"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "serratus-anterior",
+      "glute-med",
+      "glute-max",
+      "quads"
+    ]
+  }
 }

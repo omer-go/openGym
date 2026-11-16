@@ -11,7 +11,8 @@
     "core"
   ],
   "category": "strength",
-  "move": "other",
+  "pattern": "core",
+  "move": "twist",
   "description": "From a half kneeling stance you press one handle forward and pull another back at the same time. It challenges core stability and coordination.",
   "instructions": [
     "Kneel on one knee between two cable stations, holding a handle in each hand.",
@@ -21,5 +22,24 @@
     "Do not let your torso twist.",
     "Switch your kneeling leg after a set."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "obliques",
+      "transverse-abdominis"
+    ],
+    "synergists": [
+      "front-delt",
+      "pec-major-sternal",
+      "triceps",
+      "lats",
+      "middle-trap",
+      "biceps"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "glute-max",
+      "glute-med"
+    ]
+  }
 }

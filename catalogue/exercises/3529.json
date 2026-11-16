@@ -11,6 +11,8 @@
     "hip flexors"
   ],
   "category": "strength",
+  "pattern": "squat",
+  "move": "squat",
   "description": "A landmine move combining a stand-up with a high knee drive. It trains the legs and core.",
   "instructions": [
     "Hold the end of a landmine barbell at your chest.",
@@ -20,5 +22,24 @@
     "Keep the barbell close to your chest.",
     "Alternate legs each rep."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads",
+      "glute-max"
+    ],
+    "synergists": [
+      "hip-flexors",
+      "adductor-magnus",
+      "rectus-abdominis"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "front-delt",
+      "upper-trap",
+      "wrist-flexors",
+      "obliques",
+      "glute-med"
+    ]
+  }
 }

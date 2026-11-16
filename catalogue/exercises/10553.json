@@ -11,6 +11,7 @@
     "triceps"
   ],
   "category": "strength",
+  "pattern": "core",
   "move": "twist",
   "description": "Swing a resistance band from overhead down in front of you in a chopping motion. It builds powerful chest and core strength.",
   "instructions": [
@@ -20,5 +21,21 @@
     "Brace your core as you finish.",
     "Return slowly and repeat."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "lats",
+      "obliques"
+    ],
+    "synergists": [
+      "pec-major-sternal",
+      "triceps-long-head",
+      "rectus-abdominis",
+      "teres-major"
+    ],
+    "stabilizers": [
+      "transverse-abdominis",
+      "glute-max"
+    ]
+  }
 }

@@ -9,6 +9,7 @@
     "hip flexors"
   ],
   "category": "strength",
+  "pattern": "isolation",
   "description": "Lying hip internal rotation against a band to build control through the hip.",
   "instructions": [
     "Lie on your back with a band around your lower leg anchored to the side.",
@@ -17,5 +18,16 @@
     "Return slowly to the start.",
     "Complete your reps and switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "adductors"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }

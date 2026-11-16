@@ -3,7 +3,7 @@
   "name": "forward and backward crab walk",
   "bodyPart": "full body",
   "equipment": "body weight",
-  "target": "abs",
+  "target": "triceps",
   "secondaryMuscles": [
     "triceps",
     "glutes",
@@ -20,5 +20,21 @@
     "Then walk backward the same way.",
     "Keep your core braced."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps",
+      "glute-max"
+    ],
+    "synergists": [
+      "rear-delt",
+      "front-delt",
+      "hamstrings"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "wrist-flexors",
+      "erector-spinae"
+    ]
+  }
 }

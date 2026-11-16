@@ -19,5 +19,15 @@
     "Return slowly to the centre.",
     "Repeat for the planned reps with control."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "sternocleidomastoid"
+    ],
+    "synergists": [
+      "upper-trap",
+      "levator-scapulae",
+      "neck-extensors"
+    ]
+  }
 }

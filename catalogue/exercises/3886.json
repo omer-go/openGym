@@ -12,7 +12,7 @@
     "glutes"
   ],
   "category": "strength",
-  "pattern": "hinge",
+  "move": "other",
   "description": "A flowing combo of push-up, row, clean and press that works the whole body with a pair of dumbbells.",
   "instructions": [
     "Start in a push-up position with your hands on two dumbbells.",
@@ -22,5 +22,29 @@
     "Lower to the floor and return to the push-up position.",
     "Move smoothly and keep your core tight."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "front-delt",
+      "pec-major-sternal",
+      "lats"
+    ],
+    "synergists": [
+      "triceps",
+      "middle-trap",
+      "rhomboids",
+      "biceps",
+      "glute-max",
+      "quads",
+      "hamstrings",
+      "upper-trap"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "transverse-abdominis",
+      "erector-spinae",
+      "wrist-flexors"
+    ]
+  }
 }

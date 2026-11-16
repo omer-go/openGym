@@ -11,6 +11,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Holding two heavy weights, arms out, for time to build grip and shoulder endurance.",
   "instructions": [
     "Pick up the weights and stand tall.",
@@ -19,5 +20,23 @@
     "Hold the position as long as you can.",
     "Lower under control when done."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "side-delt",
+      "wrist-flexors"
+    ],
+    "synergists": [
+      "supraspinatus",
+      "upper-trap",
+      "front-delt"
+    ],
+    "stabilizers": [
+      "rectus-abdominis",
+      "obliques",
+      "erector-spinae",
+      "lower-trap",
+      "middle-trap"
+    ]
+  }
 }

@@ -9,6 +9,7 @@
     "core"
   ],
   "category": "isometric",
+  "move": "other",
   "description": "Squeezing the glutes and holding without moving, a simple way to activate the hips.",
   "instructions": [
     "Lie on your back or stand with your body relaxed.",
@@ -18,5 +19,10 @@
     "Release fully.",
     "Repeat for several reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ]
+  }
 }

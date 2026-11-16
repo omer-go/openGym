@@ -35,7 +35,7 @@ export const ROLE_MUSCLES = list(`
   sternocleidomastoid, neck-extensors`)
 export const ROLES = list('target, synergists, dynamicStabilizers, stabilizers, antagonistStabilizers')
 export const LANGS = list('ar, bn, de, es, fr, hi, hu, it, ko, pl, pt, pt-BR, ru, th, tr, uk, zh, zh-TW')
-const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'unilateral', 'pattern', 'move', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
+export const KEYS = ['id', 'name', 'bodyPart', 'equipment', 'target', 'secondaryMuscles', 'category', 'unilateral', 'pattern', 'move', 'description', 'instructions', 'muscleMap', 'femaleVariant', 'maleVariant', 'variantOf', 'textSource', 'muscleRoles']
 const I18N_KEYS = ['name', 'description', 'instructions']
 
 export function validateCatalogue(dir) {

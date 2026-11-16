@@ -60,7 +60,9 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   field where the name says too little ("thor lift", "prone hamstring"); `other` marks an entry that
   was read and fits none. Set from a table read by hand,
   [`roles/moves.tsv`](../scripts/catalogue/roles/moves.tsv), with
-  [`scripts/catalogue/apply-moves-table.mjs`](../scripts/catalogue/apply-moves-table.mjs).
+  [`scripts/catalogue/apply-fields-table.mjs`](../scripts/catalogue/apply-fields-table.mjs). That
+  script also takes `new pattern`, `new unilateral`, `new catalogue target` and
+  `new secondary muscles` columns; an empty cell leaves the field alone and `-` removes it.
 - **description**: one or two sentences on what the movement is and what it trains.
 - **instructions**: 4 to 7 short steps, second person ("Brace your core..."). No em dashes.
 - **muscleMap** (optional): a more precise muscle-map drawing with the body map's own muscle names
@@ -82,7 +84,11 @@ Open `exercises/<id>.json` (the browse pages link straight to it) and press the 
   stays `biceps`, both heads evenly. The calf raises were split the same way in
   [`roles/calves.tsv`](../scripts/catalogue/roles/calves.tsv): a straight knee (standing, donkey, leg
   press) targets `gastrocnemius`, a bent knee (seated, or from a held squat) `soleus`, and one that
-  doesn't say stays `calves`.
+  doesn't say stays `calves`. The strength, calisthenics, isometric and Olympic entries the
+  templates couldn't place were read in
+  [`roles/unplaced.tsv`](../scripts/catalogue/roles/unplaced.tsv), which also has a
+  `new stabilizers` column; a row with no target there (a posture reference) was read and given
+  no roles.
 
   ```json
   "muscleRoles": {

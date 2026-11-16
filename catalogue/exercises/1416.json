@@ -11,6 +11,8 @@
   ],
   "category": "strength",
   "unilateral": true,
+  "pattern": "isolation",
+  "move": "kickback",
   "description": "Lie face down over a stability ball with one leg lifted and rotate it slightly. It strengthens the glutes and hips while your core balances.",
   "instructions": [
     "Lie face down on the stability ball with your hips resting on the ball and your legs extended straight behind you.",
@@ -22,5 +24,19 @@
     "Repeat the rotation with the other leg.",
     "Continue alternating legs for the desired number of repetitions."
   ],
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings",
+      "glute-med"
+    ],
+    "stabilizers": [
+      "erector-spinae",
+      "rectus-abdominis",
+      "obliques"
+    ]
+  }
 }

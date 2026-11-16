@@ -8,6 +8,7 @@
     "quadriceps"
   ],
   "category": "isometric",
+  "move": "legext",
   "description": "Seated or lying with your leg straight, you tighten the thigh muscle and hold, an easy way to activate the quads.",
   "instructions": [
     "Sit or lie with one leg straight in front.",
@@ -17,5 +18,10 @@
     "Relax fully.",
     "Repeat, then switch legs."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "quads"
+    ]
+  }
 }

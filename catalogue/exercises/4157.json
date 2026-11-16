@@ -9,6 +9,7 @@
     "shoulders"
   ],
   "category": "strength",
+  "pattern": "isolation",
   "description": "A seated triceps move where the dumbbells go from the chest outward in front and back. It hits the triceps from a unique angle.",
   "instructions": [
     "Sit upright holding dumbbells above your chest, palms facing your feet.",
@@ -18,5 +19,14 @@
     "Return to the start in a controlled path.",
     "Keep your back straight and avoid arching."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "triceps"
+    ],
+    "stabilizers": [
+      "front-delt",
+      "wrist-flexors"
+    ]
+  }
 }

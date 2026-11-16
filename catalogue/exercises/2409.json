@@ -5,8 +5,7 @@
   "equipment": "weighted",
   "target": "levator scapulae",
   "secondaryMuscles": [
-    "upper back",
-    "trapezius"
+    "sternocleidomastoid"
   ],
   "category": "strength",
   "pattern": "isolation",
@@ -18,5 +17,10 @@
     "Pause briefly at the top.",
     "Lower under control and keep the weight light with smooth reps."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "sternocleidomastoid"
+    ]
+  }
 }

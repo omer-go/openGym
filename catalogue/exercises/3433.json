@@ -10,6 +10,8 @@
     "calves"
   ],
   "category": "calisthenics",
+  "pattern": "core",
+  "move": "backext",
   "description": "A face-down flutter kick, lifting the chest and legs off the floor and kicking in a swimming motion. It trains the glutes and lower back.",
   "instructions": [
     "Lie face down on a mat with your arms extended overhead.",
@@ -19,5 +21,19 @@
     "Lower your chest and legs back down to the starting position."
   ],
   "femaleVariant": "3434",
-  "textSource": "exercisedb"
+  "textSource": "exercisedb",
+  "muscleRoles": {
+    "target": [
+      "erector-spinae",
+      "glute-max"
+    ],
+    "synergists": [
+      "hamstrings",
+      "lower-trap",
+      "rear-delt"
+    ],
+    "stabilizers": [
+      "quadratus-lumborum"
+    ]
+  }
 }

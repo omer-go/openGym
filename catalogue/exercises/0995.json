@@ -3,11 +3,13 @@
   "name": "band seated hip external rotation",
   "bodyPart": "upper legs",
   "equipment": "band",
-  "target": "glutes",
+  "target": "abductors",
   "secondaryMuscles": [
     "core"
   ],
   "category": "strength",
+  "pattern": "isolation",
+  "move": "abduct",
   "description": "A seated hip rotation with a band for resistance, working the glutes and deep hip rotators.",
   "instructions": [
     "Sit on a bench or chair with a band looped around your knees or thighs.",
@@ -17,5 +19,16 @@
     "Bring your knees back together slowly.",
     "Keep your torso still and avoid leaning."
   ],
-  "textSource": "opengym"
+  "textSource": "opengym",
+  "muscleRoles": {
+    "target": [
+      "glute-med"
+    ],
+    "synergists": [
+      "glute-max"
+    ],
+    "stabilizers": [
+      "obliques"
+    ]
+  }
 }
