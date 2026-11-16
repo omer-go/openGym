@@ -17,6 +17,7 @@ import { candidatesFor } from './generate.js'
 import { sameMuscleFirst, roleLikeness } from './similar-exercises.js'
 import { muscleRolesOf } from './muscle-roles.js'
 import { activityOf, activityGroup, isStretch } from './activities.js'
+import { swapAbsExercise } from './abs-combo.js'
 
 // The slot's own exercise and the alternatives it rotates through.
 export const SWAP_CYCLE = 8
@@ -54,10 +55,20 @@ export function swapCycle(S, fromId, rolesOf = muscleRolesOf) {
  * where its cycle began (null once back there), or null when nothing similar is left. Exercises
  * already elsewhere in the workout are skipped.
  */
-export function nextSwap(S, index) {
+export function nextSwap(S, index, { random = Math.random } = {}) {
   const entries = S?.active?.entries || []
   const entry = entries[index]
   if (!entry) return null
+  // A member of an abs combo swaps the way the combo builder's ⇄ does (lib/abs-combo.js): another
+  // exercise of the same style on the gear the combo already uses, so a floor combo stays on the
+  // floor rather than turning to the next dumbbell twist.
+  const combo = entry.sg && entry.target?.sgCombo === true ? entries.filter(e => e.sg === entry.sg) : null
+  if (combo && combo.every(e => primaryMuscleOf(EXIDX[e.id])?.slug === 'abs')) {
+    const ids = combo.map(e => e.id)
+    const at = ids.indexOf(entry.id)
+    const id = swapAbsExercise(S, ids, at, { random })[at]
+    if (id !== entry.id && !entries.some(e => e.id === id)) return { id, swapOf: null }
+  }
   const origin = entry.swapOf || entry.id
   const cycle = swapCycle(S, origin)
   const taken = new Set(entries.filter((_, i) => i !== index).map(e => e.id))

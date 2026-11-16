@@ -2372,8 +2372,12 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cb-head+.cb-row{border-top:0}
 .cb-row+.cb-row{border-top:var(--hair) solid var(--sep-op)}
 .cb-row .thumb,.cb-row .thumb.mg{width:36px;height:36px;outline:2px solid var(--acc);outline-offset:-2px}
+.cb-row .thumb.mg{outline-color:var(--mc)}
 .cb-row.done .thumb{opacity:.6}
 .cb-row.skip{opacity:.5}
+.cb-nm{grid-column:2;min-width:0;display:flex;align-items:center;gap:2px}
+.cb-nm .cb-name{flex:1}
+.cb-swap{flex:none;width:30px;height:30px;color:var(--label-2)}
 .cb-name{grid-column:2;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;font-size:15px;font-weight:600;text-align:start;text-transform:capitalize;line-height:1.2;overflow-wrap:break-word;hyphens:auto}
 .cb-wide{grid-column:3/-1;display:flex;align-items:center;justify-content:flex-end;gap:6px}
 .cb-f{display:inline-flex;justify-content:center;gap:2px;height:36px;padding:0 4px;min-width:0;border-radius:9px;

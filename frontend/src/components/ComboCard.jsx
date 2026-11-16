@@ -11,7 +11,7 @@ import { ownedWeightsFor, stepOwned } from '../lib/dumbbells.js'
 import { effortColor } from '../lib/effort.js'
 import { fmtNum } from '../lib/format.js'
 import { t, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
-import { effortPickerSheet, menuSheet } from '../sheets.jsx'
+import { effortPickerSheet, menuSheet, exerciseDetailSheet } from '../sheets.jsx'
 import { Thumb } from './Media.jsx'
 import Icon from './Icon.jsx'
 import { Button, Check, NumberField, Stepper } from './ui.jsx'
@@ -20,8 +20,8 @@ import { Button, Check, NumberField, Stepper } from './ui.jsx'
 // and the round's numbers per exercise, ticked down the list with no rest between them, then the
 // rest between rounds in the card and the next round's rows in their place. The round chips
 // open a finished round to look at or fix. Every edit goes through the same wiring an exercise
-// block uses (`propsFor`), so the sets it writes are a superset's sets. An exercise's photo and
-// name open what you can do to it in the combo: swap it, or take it out. Add exercise under the
+// block uses (`propsFor`), so the sets it writes are a superset's sets. An exercise's photo opens
+// how it is done; its name what you can do to it in the combo: swap it, or take it out. Add exercise under the
 // list puts one more in, in every round.
 export default function ComboCard({ entries, unit, meta, propsFor, onShowAll, onUnpair, onRemove, onAdd, inert = false }) {
   const S = useStore(s => s.S)
@@ -45,6 +45,7 @@ export default function ComboCard({ entries, unit, meta, propsFor, onShowAll, on
   const exerciseMenu = (idx, ex) => {
     const p = propsFor(idx)
     menuSheet({ title: exerciseNameFor(ex), titleClass: exerciseNameClass(ex), sections: [{ items: [
+      { icon: 'info', label: t('How to do it'), onClick: () => exerciseDetailSheet(ex) },
       { icon: 'swap', label: t('Swap exercise'), sub: t('The next similar exercise'), onClick: p.onQuickSwap, disabled: p.busy },
       { icon: 'magnifier', label: t('Choose exercise'), onClick: p.onSwap, disabled: p.busy },
       { icon: 'trash', label: t('Remove from combo'), onClick: p.onRemoveExercise, danger: true, disabled: p.busy },
@@ -122,12 +123,19 @@ export default function ComboCard({ entries, unit, meta, propsFor, onShowAll, on
     const mode = modeOf(cfg)
     const timed = mode === 'time'
     const watch = usesStopwatch(cfg)
-    // The photo, the name (wrapping when it is long) and the numbers in the card's columns.
+    // The photo, the name (wrapping when it is long) and the numbers in the card's columns. The
+    // photo opens how the exercise is done, its animation and steps; the name opens what you can
+    // do to it in the combo. The swap beside the name is an exercise block's one-tap swap, kept in
+    // the combo (lib/combo.js asComboSwap).
     const Tap = inert ? 'span' : 'button'
     const open = inert ? undefined : () => exerciseMenu(idx, ex)
     const name = <>
-      <Tap className="cb-pic" onClick={open}><Thumb ex={ex} /></Tap>
-      <Tap className="cb-name" onClick={open}>{exerciseNameFor(ex)}</Tap>
+      <Tap className="cb-pic" aria-label={inert ? undefined : t('How to do it')} onClick={inert ? undefined : () => exerciseDetailSheet(ex)}><Thumb ex={ex} /></Tap>
+      <span className="cb-nm">
+        <Tap className="cb-name" onClick={open}>{exerciseNameFor(ex)}</Tap>
+        {!inert && p.onQuickSwap && <button className="iconbtn cb-swap" aria-label={t('Swap for a similar exercise')}
+          title={t('Swap for a similar exercise')} disabled={p.busy} onClick={p.onQuickSwap}><Icon name="swap" /></button>}
+      </span>
     </>
     // A member planned for fewer rounds than the others sits this one out.
     if (!span) return <div key={idx} className="cb-row skip">{name}<span className="cb-wide dim small">{t('Not this round')}</span></div>

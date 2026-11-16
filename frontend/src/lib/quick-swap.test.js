@@ -4,6 +4,7 @@ import { STAPLES } from './generate.js'
 import { EXIDX } from './exercises.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { loadMuscleRoles, muscleRolesOf } from './muscle-roles.js'
+import { absGearOf, absStyleOf } from './abs-combo.js'
 
 const session = (d, ids) => ({ id: 'w' + d, d, name: 'x', entries: ids.map(id => ({ id, target: { reps: 8 }, sets: [{ w: 60, r: 8, done: true }] })) })
 const state = (over = {}) => ({ unit: 'kg', workouts: [], exWeights: {}, routines: [], ...over })
@@ -72,6 +73,26 @@ describe('nextSwap', () => {
     const cycle = swapCycle(state(), BENCH)
     const S = state({ active: active(BENCH, SQUAT, cycle[1]) })
     expect(nextSwap(S, 0).id).toBe(cycle[2])
+  })
+  it('swaps an abs combo member as the combo builder does: same style, the gear the combo uses', () => {
+    // Four floor exercises, one of each style, in a combo after a bench press.
+    const combo = ['0622', '0736', '0687', '0872']
+    const member = id => ({ id, sg: 'sgabs0', target: { sets: 1, sgCombo: true } })
+    const S = state({ active: active(BENCH, ...combo.map(member)) })
+    for (let k = 0; k < 20; k++) {
+      const seed = k / 20
+      for (const [j, id] of combo.entries()) {
+        const next = nextSwap(S, j + 1, { random: () => seed })
+        expect(next.swapOf).toBeNull()
+        expect([BENCH, ...combo]).not.toContain(next.id)
+        expect(absGearOf(EXIDX[next.id])).toBe('floor')
+        expect(absStyleOf(EXIDX[next.id])).toBe(absStyleOf(EXIDX[id]))
+      }
+    }
+  })
+  it('an abs exercise outside a combo still steps down its cycle', () => {
+    const S = state({ active: active('0622') })
+    expect(nextSwap(S, 0)).toEqual({ id: swapCycle(S, '0622')[1], swapOf: '0622' })
   })
   it('null when there is no such entry', () => {
     expect(nextSwap(state({ active: active(BENCH) }), 3)).toBeNull()
