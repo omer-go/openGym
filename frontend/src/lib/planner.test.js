@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, planDay, canLead, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, familyOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
+import { plan, planDay, canLead, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, familyOf, familyLog, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
 import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
 import { weeklyTargets, PARTS, partTierOf } from './goals.js'
@@ -282,6 +282,47 @@ describe('planner', () => {
     expect(new Set(aimed)).toEqual(new Set(['side', 'rear']))
   })
 
+  it('takes a pull-up over the week\'s one pulldown again, a beginner the pulldown', () => {
+    // A list with one loaded vertical pull and no row: the day's pull is a pulldown or a pull-up.
+    const pool = [...PLAN_LIB.filter(e => e.pat !== 'vpull' && e.pat !== 'hpull').map(e => e.id), '0579', '0652', '1326']
+    const pullOf = o => planDay({ type: 'full', pattern: 'squat', goal: 'growth', level: 'intermediate', equipment: 'gym', minutes: 75, pool, goals: { back: 10, chest: 8, quads: 8, hamstrings: 8 }, ...o }).items.find(i => i.slot === 'pull')?.ex.id
+    expect(pullOf({})).toBe('0579')
+    expect(['0652', '1326']).toContain(pullOf({ used: ['0579'] }))
+    expect(['0652', '1326']).toContain(pullOf({ near: ['0579'] }))
+    expect(pullOf({ used: ['0579'], level: 'beginner' })).toBe('0579')
+  })
+  it('every full-body day has a squat or a hinge, and a Nordic curl is a leg curl, not one', () => {
+    for (const [level, days, minutes, byGroup] of [['advanced', 3, 75, { calves: 8, hamstrings: 14 }], ['intermediate', 3, 60, {}], ['advanced', 4, 75, {}], ['intermediate', 2, 45, {}]]) {
+      const p = plan({ template: 'full', goal: 'growth', level, equipment: 'gym', days, minutes, byGroup })
+      p.days.forEach((d, k) => {
+        const legs = d.items.filter(i => (i.slot === 'lead' || i.slot === 'lower') && ['squat', 'hinge'].includes(i.ex.pat))
+        expect(legs.length, `${level} ${days}d ${minutes}m day ${k + 1}`).toBeGreaterThan(0)
+      })
+    }
+    expect(planLift('7746')).toMatchObject({ pat: 'iso', kind: 'iso', p: ['hamstrings'] })
+  })
+
+  it('a short week gives the side delts a raise, not a third curl or row, and the chest and legs keep theirs', () => {
+    // Each owes its own sets: the side delts' few lost to the biceps' many, and two upper days
+    // had a curl, a triceps lift and three back lifts but no raise.
+    const side = p => p.days.some(d => d.items.some(i => partCreditOf(i.ex)['Side delts'] >= 1))
+    for (const [template, days, minutes] of [['ul', 2, 60], ['ul', 2, 75], ['ul', 1, 75], ['full', 2, 75], ['ppl', 3, 60]]) {
+      const p = plan({ template, goal: 'growth', level: 'intermediate', equipment: 'gym', days, minutes })
+      expect(side(p), `${template} ${days}d ${minutes}m`).toBe(true)
+    }
+    const p = plan({ template: 'ul', goal: 'growth', level: 'intermediate', equipment: 'gym', days: 2, minutes: 60 })
+    for (const g of ['chest', 'quads', 'hamstrings']) expect(p.total[g] / p.goals[g], g).toBeGreaterThanOrEqual(0.8)
+  })
+
+  it('more minutes never cost the legs: a calf raise the week cut to none takes no slot from the squats', () => {
+    // A part of a group that gave way to none (the gastrocnemius, the calves at 0) asked for its
+    // lift all the same, and 75 minutes of push / pull / legs built fewer leg sets than 60.
+    for (const [template, days] of [['ppl', 3], ['ppl', 4], ['ppl', 5], ['ul', 2]]) {
+      const [a, b] = [60, 75].map(minutes => plan({ template, goal: 'growth', level: 'intermediate', days, minutes }))
+      for (const g of ['quads', 'hamstrings']) expect(b.total[g], `${template} ${days}d ${g}`).toBeGreaterThanOrEqual(a.total[g] - 1e-9)
+    }
+  })
+
   it('only the bottom tier gives way to none; the rest keep half their goal', () => {
     for (const template of ['full', 'ul', 'ppl']) for (const days of [2, 3, 4]) for (const minutes of [45, 60, 75]) {
       const p = plan({ template, goal: 'growth', days, minutes })
@@ -481,10 +522,12 @@ describe('planner', () => {
     const PATTERNS = ['squat', 'hpress', 'hinge']
     const days = (seed, n = 6, o = {}) => {
       let last = {}
-      const out = []
+      const out = [], sessions = []
       for (let k = 0; k < n; k++) {
-        const d = day({ seed, pattern: PATTERNS[k % 3], last, ...o })
+        const log = { shoulders: familyLog(sessions, 'shoulders'), back: familyLog(sessions, 'back') }
+        const d = day({ seed, pattern: PATTERNS[k % 3], last, log, ...o })
         out.push(d)
+        sessions.push(d.items.map(i => i.ex.id))
         for (const i of d.items) last = { ...last, [i.ex.id]: `2026-11-${String(10 + k).padStart(2, '0')}` }
       }
       return out
@@ -492,10 +535,20 @@ describe('planner', () => {
     const row = id => EXDB.find(e => e.id === id)
     const acc = (d, g) => d.items.filter(i => i.slot === 'accessory' && i.ex.p.includes(g))
 
-    it('gives the shoulders side, rear, side, then an overhead press', () => {
+    it('gives the shoulders each delt as often as its share: side four turns in ten, rear and front three', () => {
       for (const seed of [1, 2, 3]) {
-        const turns = days(seed, 5).map(d => acc(d, 'shoulders').map(i => familyOf('shoulders', i.ex))[0])
-        expect(turns, `seed ${seed}`).toEqual(['side', 'rear', 'side', 'ohp', 'side'])
+        const turns = days(seed, 10).map(d => acc(d, 'shoulders').map(i => familyOf('shoulders', i.ex))[0])
+        expect(turns, `seed ${seed}`).toEqual(['side', 'rear', 'ohp', 'side', 'rear', 'ohp', 'side', 'rear', 'side', 'ohp'])
+      }
+    })
+    it('gives the back a row and a pulldown in turn, and the other one of the two after a lead of one', () => {
+      for (const seed of [1, 2, 3]) {
+        const fams = days(seed, 6).map(d => d.items.filter(i => i.ex.p.includes('back')).map(i => familyOf('back', i.ex)).filter(Boolean))
+        for (let k = 1; k < fams.length; k++) {
+          // A day with one back lift takes the half the day before did not; one with two has both.
+          if (fams[k].length === 1 && fams[k - 1].length === 1) expect(fams[k][0], `seed ${seed} ${JSON.stringify(fams)}`).not.toBe(fams[k - 1][0])
+          if (fams[k].length === 2) expect(new Set(fams[k]).size, `seed ${seed}`).toBe(2)
+        }
       }
     })
     it('alternates the chest press between the upper and the mid and lower chest', () => {

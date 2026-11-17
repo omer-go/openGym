@@ -37,7 +37,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
-import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, canLead, partsFor, familyOf, familyDays } from './planner.js'
+import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, canLead, partsFor, familyOf, familyDays, familyLog } from './planner.js'
 import { listOf } from './curate.js'
 import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
@@ -357,6 +357,14 @@ export function monthShort(S, groups, now = Date.now()) {
   return Object.fromEntries(groups.map(g => [g, weeks ? (sums[g] || 0) / weeks : 0]))
 }
 
+// The shoulders' and the back's families of your past workouts, oldest first (planner.js
+// familyLog), for their turns to come round as often as their parts' shares ask.
+function familyLogs(S, now) {
+  const today = isoOf(new Date(now))
+  const sessions = strengthWorkouts(S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d < today)
+    .sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : 0)).map(w => (w.entries || []).filter(workSets).map(e => e.id))
+  return { shoulders: familyLog(sessions, 'shoulders'), back: familyLog(sessions, 'back') }
+}
 /** Lift id -> the ISO day it was last done: what the lifts of a slot take turns by (planner.js variant). */
 export const lastDone = index => Object.fromEntries(Object.entries(index.exercises).map(([id, e]) => [id, e.d]))
 
@@ -502,6 +510,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
     count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
     minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), rests: restRangeOf(S), warmups: warmupSets, equipment: c.equipment, known: knownLifts(S, now, index), last: turns ? lastDone(index) : null,
+    log: turns ? familyLogs(S, now) : null,
     goal: c.goal, level: c.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
   const day = c.minutes ? fillMinutes(build, c.minutes) : build(1)
