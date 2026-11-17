@@ -86,13 +86,20 @@ export const moveName = id => MOVE[id] || 'Other'
 const nameOf = ex => (ex.n || '').toLowerCase()
 // Mobility, yoga, pilates and rehab work is filed by its category before its name says otherwise.
 const LOOSEN = new Set(['mobility', 'yoga', 'pilates', 'rehab'])
+// A squat, a lunge, a hinge, a press or a pull is never a grip or a foot drill: its "grip" or
+// "feet" says how it is done (a reverse-grip squeeze bench press, a feet-flat bench press, a split
+// squat with the front foot raised, a hang clean). Filed as one, a bench press was the forearms'
+// turn of the day and a movement you had never done.
+const COMPOUND = new Set(['squat', 'lunge', 'hinge', 'push-horizontal', 'push-vertical', 'pull-horizontal', 'pull-vertical'])
+const DRILL = new Set(['grip', 'ankle'])
 // A movement the catalogue sets by hand ("mo", from its "move" field) wins: it is there for the
 // entries whose names say too little for the rules above.
 export function moveOf(ex) {
   if (ex.mo) return ex.mo
   if (LOOSEN.has(ex.cat)) return 'mobility'
   const n = nameOf(ex)
-  for (const [id, , re] of MOVES) if (re.test(n)) return id === 'press' && ex.pt === 'push-vertical' ? 'ohp' : id
+  const compound = COMPOUND.has(ex.pt)
+  for (const [id, , re] of MOVES) if (!(compound && DRILL.has(id)) && re.test(n)) return id === 'press' && ex.pt === 'push-vertical' ? 'ohp' : id
   return 'other'
 }
 

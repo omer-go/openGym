@@ -32,6 +32,15 @@ describe('tags', () => {
     expect(moveOf(ex('anything at all', 'body weight', { cat: 'yoga' }))).toBe('mobility')
     expect(moveOf(ex('zzz'))).toBe('other')
   })
+  it('files a compound lift by what it is, not by the grip or the feet its name gives', () => {
+    expect(moveOf(ex('dumbbell reverse grip squeeze bench press', 'dumbbell', { pt: 'push-horizontal' }))).toBe('press')
+    expect(moveOf(ex('barbell feet flat bench press', 'barbell', { pt: 'push-horizontal' }))).toBe('press')
+    expect(moveOf(ex('dumbbell split squat front foot elevated', 'dumbbell', { pt: 'lunge' }))).toBe('lunge')
+    expect(moveOf(ex('barbell hang clean', 'barbell', { pt: 'hinge' }))).toBe('clean')
+    // An isolation lift or one with no pattern still reads its name as before.
+    expect(moveOf(ex('dead hang', 'body weight', { pt: 'isolation' }))).toBe('grip')
+    expect(moveOf(ex('dumbbell toe raise', 'dumbbell'))).toBe('ankle')
+  })
   it('takes the movement the catalogue sets by hand before reading the name', () => {
     expect(moveOf(ex('prone hamstring', 'body weight', { mo: 'legcurl' }))).toBe('legcurl')
     expect(moveOf(ex('dumbbell lateral raise', 'dumbbell', { mo: 'other' }))).toBe('other')
