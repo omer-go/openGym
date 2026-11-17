@@ -28,7 +28,8 @@ import { musclesOf, weeklyPlanRoutines } from './muscles.js'
 import { primaryMuscleOf } from './strength-exercises.js'
 import { hasCompletedWork, isWarmupRow } from './workout-model.js'
 import { fatigueOf } from './recovery.js'
-import { partTargetOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { partTargetOf, partTierOf, weeklyTargetOf, windowWorkouts } from './goals.js'
+import { moveOf } from './exercise-facets.js'
 import { workoutAt } from './history.js'
 import { variantOf } from './variant.js'
 import { muscleRolesOf, roleWeights, rolesLoaded, ROLE_WEIGHT } from './muscle-roles.js'
@@ -209,23 +210,46 @@ export function weeklyDone(S, now = Date.now()) {
   return groupSetsOf(windowWorkouts(S, now))
 }
 
-// The parts of a group lifters train on purpose, each with a share of its goal (goals.js): a
-// shoulder week of presses is a front-delt week, the side and rear delts only helped. English
-// names, also the i18n keys; each part is the role muscles (muscle-roles.js) that make it up.
+// The parts of a group lifters train on purpose, each with a tier and a share of its goal
+// (goals.js PARTS): a shoulder week of presses is a front-delt week, the side and rear delts only
+// helped. English names, also the i18n keys; each part is the role muscles (muscle-roles.js) that
+// make it up, and for the quads and hamstrings, whose roles have no heads, the move (exercise-
+// facets.js) that aims at it as well: only a leg extension is for the rectus femoris.
 export const GROUP_PARTS = {
   chest: [['Upper chest', ['pec-major-clavicular']], ['Mid and lower chest', ['pec-major-sternal']]],
   shoulders: [['Front delts', ['front-delt']], ['Side delts', ['side-delt']], ['Rear delts', ['rear-delt']]],
-  back: [['Lats', ['lats']], ['Mid back', ['rhomboids', 'middle-trap']], ['Upper traps', ['upper-trap']]],
+  back: [['Lats', ['lats']], ['Mid back', ['rhomboids', 'middle-trap']], ['Upper traps', ['upper-trap']], ['Lower back', ['erector-spinae', 'quadratus-lumborum']]],
   glutes: [['Glutes', ['glute-max']], ['Side glutes', ['glute-med']], ['Inner thighs', ['adductors', 'adductor-magnus']]],
+  abs: [['Rectus abdominis', ['rectus-abdominis']], ['Obliques', ['obliques']]],
+  biceps: [['Biceps brachii', ['biceps', 'biceps-long-head', 'biceps-short-head']], ['Brachialis', ['brachialis']]],
+  triceps: [['Triceps long head', ['triceps-long-head']]],
+  quads: [['Rectus femoris', ['quads'], 'legext']],
+  hamstrings: [['Knee flexion', ['hamstrings'], 'legcurl']],
+  calves: [['Gastrocnemius', ['gastrocnemius']], ['Soleus', ['soleus']]],
 }
+// The groups whose parts the Stats screen shows in place of the muscle's regions: the triceps'
+// one part, the long head, is no picture of the triceps.
+export const SHOWN_PARTS = ['chest', 'shoulders', 'back', 'glutes']
 /** The weekly minimum of a part of `group` (GROUP_PARTS): goals.js partTargetOf. */
 export const partGoalOf = (S, group, part) => partTargetOf(S, group, part)
-// Toward a part's minimum, a set that only helped it counts half what it counts for the group
-// (0.2, not 0.4): a week of presses and rows is no shoulder week, and the side and rear delts
-// get a lift of their own, the front delts an overhead press now and then.
+// Toward a tier-1 part's minimum, a set that only helped it counts half what it counts for the
+// group (0.2, not 0.4): a week of presses and rows is no shoulder week, and the delts get a lift
+// of their own. A tier-2 part (goals.js PARTS) takes it in full: the rows and curls are the
+// brachialis' week.
 export const HELPED_PART = 0.5
+/** What a set that only helped part `name` of `group` counts toward it, per ROLE_WEIGHT's 0.4. */
+export const helpedPartOf = (group, name) => (partTierOf(group, name) >= 2 ? 1 : HELPED_PART)
 /** The sets a part's `{ targeted, helped }` (partSplitOf) give toward its minimum. */
-export const partSets = ({ targeted = 0, helped = 0 } = {}) => targeted + helped * HELPED_PART
+export const partSets = ({ targeted = 0, helped = 0 } = {}, group, name) => targeted + helped * (group ? helpedPartOf(group, name) : HELPED_PART)
+/**
+ * How a lift with muscle roles `r` and move `move` works a part's `muscles` (GROUP_PARTS):
+ * 'target', 'synergists' or null. A part with a move of its own is only ever targeted, by it.
+ */
+export const partRoleOf = (r, move, muscles, partMove) => {
+  const has = role => muscles.some(m => (r?.[role] || []).includes(m))
+  if (partMove) return move === partMove && has('target') ? 'target' : null
+  return has('target') ? 'target' : has('synergists') ? 'synergists' : null
+}
 
 /**
  * Group id -> part name -> { targeted, helped }: the completed work sets of the logged workouts
@@ -240,9 +264,10 @@ export function partSplitOf(workouts, rolesOf = muscleRolesOf, keep = null) {
       const r = rolesOf(entry?.id)
       const n = r && (keep ? (entry?.sets || []).filter(s => hasCompletedWork(s) && !isWarmupRow(s) && keep(s)).length : workSets(entry))
       if (!n) continue
-      for (const [g, parts] of Object.entries(GROUP_PARTS)) for (const [name, muscles] of parts) {
-        const has = role => muscles.some(m => (r[role] || []).includes(m))
-        const k = has('target') ? 'targeted' : has('synergists') ? 'helped' : null
+      const move = EXIDX[entry.id] ? moveOf(EXIDX[entry.id]) : null
+      for (const [g, parts] of Object.entries(GROUP_PARTS)) for (const [name, muscles, partMove] of parts) {
+        const role = partRoleOf(r, move, muscles, partMove)
+        const k = role === 'target' ? 'targeted' : role ? 'helped' : null
         if (!k) continue
         const at = (out[g] ||= {})[name] ||= { targeted: 0, helped: 0 }
         at[k] += k === 'targeted' ? n : n * ROLE_WEIGHT.synergists
@@ -261,16 +286,16 @@ export function partsShort(S, groups, now = Date.now()) {
   if (!rolesLoaded()) return {}
   const split = partSplitOf(windowWorkouts(S, now))
   // Ties (a new week, every part at nothing) go to the part the last two weeks gave least: the
-  // side and rear delts before the front ones every bench press helped.
+  // a delt no lift has aimed at before the one every bench press helped.
   const from = isoOf(new Date(now - 13 * 864e5)), to = isoOf(new Date(now))
   const past = partSplitOf((S?.workouts || []).filter(w => typeof w?.d === 'string' && w.d >= from && w.d <= to))
-  const pastOf = (g, name) => partSets(past[g]?.[name])
+  const pastOf = (g, name) => partSets(past[g]?.[name], g, name)
   const out = {}
   for (const g of groups) {
     const rows = (GROUP_PARTS[g] || []).map(([name, muscles]) => {
       const { targeted = 0, helped = 0 } = split[g]?.[name] || {}
       const goal = partGoalOf(S, g, name)
-      return { name, muscles, sets: partSets({ targeted, helped }), goal, targeted, helped, past: pastOf(g, name) }
+      return { name, muscles, sets: partSets({ targeted, helped }, g, name), goal, targeted, helped, past: pastOf(g, name) }
     }).filter(p => p.goal > 0 && p.sets < p.goal).sort((a, b) => a.sets - b.sets || a.past - b.past)
     if (rows.length) out[g] = rows
   }

@@ -32,7 +32,7 @@ export const VOLUME_NAME = { '-2': 'Light', '-1': 'Lower', 0: 'Standard', 1: 'Hi
 // volume), strength programs (3-6 heavy sets a lift a week, the rest from what helps it) and
 // maintenance (Spiering 2021: about a third of the volume holds what you built). Endurance is
 // the muscle column at lighter loads, more for the calves and abs that do the work longest.
-// The shoulders are a group like the arms: the three delts share its goal (PART_SHARES).
+// The shoulders are a group like the arms: the three delts share its goal (PARTS).
 export const GOAL_SETS = {
   strength: {
     chest: [6, 12, 9], back: [8, 14, 10], shoulders: [4, 10, 6], biceps: [4, 8, 6], triceps: [4, 10, 6],
@@ -51,18 +51,29 @@ export const GOAL_SETS = {
     forearms: [0, 8, 4], abs: [8, 16, 10], quads: [8, 14, 10], hamstrings: [6, 12, 8], glutes: [4, 10, 6], calves: [8, 14, 10],
   },
 }
-// How a group's goal splits between its parts (coverage.js GROUP_PARTS), whatever the goal: the
-// shares of one goal, not sets on top of it. The presses give the front delts most of theirs and
-// the rows the upper traps', so their share is small and the planner gives them no lift of their
-// own (planner.js PLANNED_PARTS); the side and rear delts, the lats and mid back, and the two
-// heads of the chest each get one.
-export const PART_SHARES = {
-  shoulders: { 'Front delts': 0.2, 'Side delts': 0.45, 'Rear delts': 0.35 },
-  back: { Lats: 0.45, 'Mid back': 0.4, 'Upper traps': 0.15 },
-  chest: { 'Upper chest': 0.35, 'Mid and lower chest': 0.65 },
+// Each group's parts (coverage.js GROUP_PARTS), each with a tier and its share of the group's
+// goal: the shares of one goal, not sets on top of it, whatever the goal. Tier 1 parts get a lift
+// of their own when the compounds leave them short (planner.js partsFor). Tier 2 parts are asked
+// for after them and the groups, and a lift that helps one counts toward it as it does toward
+// its group, not half that (coverage.js partSets): the presses give the front delts theirs, the
+// rows the upper traps', the curls the brachialis', so these get a lift only when nothing does.
+// Tier 3 parts are counted and shown, never planned. The quads and hamstrings have no heads in
+// the muscle roles, so their part is a move: a leg extension for the rectus femoris, a leg curl
+// for the hamstrings' knee flexion, which a hinge doesn't train.
+export const PARTS = {
+  shoulders: { 'Side delts': [1, 0.4], 'Front delts': [1, 0.3], 'Rear delts': [1, 0.3] },
+  chest: { 'Mid and lower chest': [1, 0.65], 'Upper chest': [1, 0.35] },
+  back: { Lats: [1, 0.45], 'Mid back': [1, 0.4], 'Upper traps': [2, 0.15], 'Lower back': [3, 0] },
+  abs: { 'Rectus abdominis': [1, 0.65], Obliques: [2, 0.35] },
+  biceps: { 'Biceps brachii': [1, 0.75], Brachialis: [2, 0.25] },
+  triceps: { 'Triceps long head': [1, 0.4] },
+  quads: { 'Rectus femoris': [2, 0.2] },
+  hamstrings: { 'Knee flexion': [1, 0.4] },
+  calves: { Gastrocnemius: [1, 0.6], Soleus: [2, 0.4] },
+  glutes: { Glutes: [3, 0.3], 'Side glutes': [3, 0.3], 'Inner thighs': [3, 0.3] },
 }
-// A part with no share of its own (the glutes'): its share of the group's goal.
-export const PART_SHARE = 0.3
+/** A part's tier (PARTS), 3 for one it doesn't list. */
+export const partTierOf = (group, part) => PARTS[group]?.[part]?.[0] ?? 3
 
 // A set of a compound credits more than one group (a squat: quads and glutes, a little of the
 // rest), so a week reaches every group's goal in fewer sets than the goals add up to.
@@ -125,10 +136,10 @@ export function weeklyTargetOf(S, group) {
 
 /**
  * The weekly minimum of a part of `group` (coverage.js GROUP_PARTS): its share of the group's
- * goal (PART_SHARES), PART_SHARE when it has none. Not rounded, so the shares add up to the goal.
+ * goal (PARTS), none for a part it doesn't list. Not rounded, so the shares add up to the goal.
  */
 export function partTargetOf(S, group, part) {
-  return weeklyTargetOf(S, group) * (PART_SHARES[group]?.[part] ?? PART_SHARE)
+  return weeklyTargetOf(S, group) * (PARTS[group]?.[part]?.[1] ?? 0)
 }
 
 /** Group id -> weekly target, for `groups` (every group by default). */

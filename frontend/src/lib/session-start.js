@@ -30,11 +30,12 @@ export const startsFromLast = st => st?.startFrom === 'last'
  * `noProg` builds the routine's own numbers with no prescription, as an excluded routine does.
  * `typed` is a weight set by hand in a running session (the exercise's settings sheet): the
  * prescription keeps its say on reps and sets, but the open rows go to the weight you chose.
+ * `start`: a generated day's lift, which opens at a light weight when nothing like it is logged.
  */
-export function buildPlannedEntry(stored, cfg0, routine, { noProg = false, typed = null } = {}) {
+export function buildPlannedEntry(stored, cfg0, routine, { noProg = false, typed = null, start = false } = {}) {
   // A lift never logged opens at a weight read off a similar one you have (lib/infer-weight.js):
   // a dumbbell bench from your barbell bench. A weight the routine sets is its own.
-  const { cfg, guess } = typed != null ? { cfg: cfg0, guess: null } : withInferredWeight(stored, cfg0)
+  const { cfg, guess } = typed != null ? { cfg: cfg0, guess: null } : withInferredWeight(stored, cfg0, { start })
   // What a dumbbell weight means for this exercise today (lib/dumbbells.js): the history it
   // progresses from is read in that meaning, so a switch from "40 total" to per bell opens at
   // 20, not at 40 a hand. Only a switch between the two explicit meanings converts anything.
@@ -45,7 +46,7 @@ export function buildPlannedEntry(stored, cfg0, routine, { noProg = false, typed
   // Without it the prescription read the weight off history again and dropped the one just set.
   const plan = typed != null && prescribed.kind !== 'off' && modeOf(cfg) === 'reps'
     ? { ...prescribed, kind: 'hold', weight: typed, why: ['Your weight for today, set by you.'] }
-    : guess && prescribed.kind === 'first' ? { ...prescribed, why: [guess.reach === 2 ? 'Never logged, so this is a guess from your {0}, a different lift for the same muscles ({1} {2} est. max here), started well under it.' : guess.reach === 1 ? 'Never logged, so this is a guess from your {0}, a close variant ({1} {2} est. max here), started a bit under it.' : 'Never logged, so this starts from your {0} ({1} {2} est. max), a little lighter.', EXIDX[guess.from]?.n || guess.from, guess.est, st.unit || 'kg'] }
+    : guess && prescribed.kind === 'first' ? { ...prescribed, why: [guess.reach === 3 ? 'Never logged, and nothing like it either, so this is a light weight to start from. Change it after the first set if it is too easy.' : guess.reach === 2 ? 'Never logged, so this is a guess from your {0}, a different lift for the same muscles ({1} {2} est. max here), started well under it.' : guess.reach === 1 ? 'Never logged, so this is a guess from your {0}, a close variant ({1} {2} est. max here), started a bit under it.' : 'Never logged, so this starts from your {0} ({1} {2} est. max), a little lighter.', EXIDX[guess.from]?.n || guess.from, guess.est, st.unit || 'kg'] }
       : prescribed
   // The warm-up ramp and the prescription snap to the exercise's own increment (1.25 kg
   // plates exist), not the unit default; a timed exercise's `inc` is seconds, so it keeps the

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { plan, planDay, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, familyOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
+import { plan, planDay, canLead, blocker, fixFor, configOf, prescribe, scheduleOf, planLift, creditOf, partCreditOf, familyOf, PLAN_LIB, PLAN_GROUPS, EQUIPMENT, DAY_TYPES, DIRECT_MIN, PRIORITY } from './planner.js'
 import { EXDB } from './exercises-data.js'
 import { plannedSets, loadsBack } from './coverage.js'
-import { weeklyTargets } from './goals.js'
+import { weeklyTargets, PARTS, partTierOf } from './goals.js'
 import { loadMuscleRoles } from './muscle-roles.js'
 import { equivalentsOf } from './equivalents.js'
 import { moveOf, kitOf } from './exercise-facets.js'
@@ -173,7 +173,7 @@ describe('planner', () => {
     const o = { template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 60, focus: { glutes: 'normal', forearms: 'normal', abs: 'normal' } }
     // To the whole set, as giveWay counts: a deadlift's share of a set for the quads is no set.
     const atGoal = (p, t) => PLAN_GROUPS.filter(g => PRIORITY[g] <= t).every(g => p.total[g] >= p.goals[g] - 0.5)
-      && p.parts.filter(pt => PRIORITY[pt.g] <= t).every(pt => pt.total >= pt.goal - 0.5)
+      && p.parts.filter(pt => PRIORITY[pt.g] <= t && pt.tier === 1).every(pt => pt.total >= pt.goal - 0.5)
     // Built without priorities the week leaves a bigger group short, here the back.
     expect(atGoal(plan({ ...o, priority: false }), 0)).toBe(false)
     const p = plan(o)
@@ -229,16 +229,45 @@ describe('planner', () => {
         const aimed = p.days.flatMap(d => d.items).filter(i => partCreditOf(i.ex)[name] >= 1)
         expect(aimed.length, `${days}d ${name}`).toBeGreaterThan(0)
       }
-      // The front delts and upper traps aren't planned for: the presses and carries see to them.
-      expect(p.parts.map(pt => pt.name).sort()).toEqual(['Lats', 'Mid and lower chest', 'Mid back', 'Rear delts', 'Side delts', 'Upper chest'])
+      // Every tier-1 and tier-2 part is planned, tier 1 first; a tier-3 one (the lower back) is
+      // only tracked.
+      const want = Object.entries(PARTS).flatMap(([g, parts]) => Object.entries(parts).filter(([, [t, share]]) => t <= 2 && share > 0).map(([name]) => name))
+      expect(p.parts.map(pt => pt.name).sort()).toEqual([...want].sort())
+      expect(p.parts.map(pt => pt.tier)).toEqual([...p.parts.map(pt => pt.tier)].sort((a, b) => a - b))
+      expect(p.parts.map(pt => pt.name)).not.toContain('Lower back')
+    }
+  })
+
+  it('leaves a tier-2 part to the compounds that already work it: no brachialis lift beside the curls and rows', () => {
+    for (const days of [3, 4]) {
+      const p = plan({ template: 'full', goal: 'growth', days, minutes: 75 })
+      const pt = p.parts.find(x => x.name === 'Brachialis')
+      expect(pt.tier).toBe(2)
+      expect(pt.total, `${days}d`).toBeGreaterThanOrEqual(pt.goal)
+    }
+  })
+
+  it('plans the front delts like the side and rear: a press counts a fifth of a set, a front raise is a shoulder lift', () => {
+    expect(partTierOf('shoulders', 'Front delts')).toBe(1)
+    const press = PLAN_LIB.find(e => e.p.includes('chest') && (partCreditOf(e)['Front delts'] || 0) > 0)
+    expect(partCreditOf(press)['Front delts']).toBeCloseTo(0.2)
+    const raise = { id: '0041' } // barbell front raise
+    expect(Object.entries(partCreditOf(raise)).filter(([, v]) => v >= 1).map(([n]) => n)).toEqual(['Front delts'])
+    expect(familyOf('shoulders', raise)).toBe('ohp')
+    for (const days of [3, 4]) {
+      const pt = plan({ template: 'full', goal: 'growth', days, minutes: 75 }).parts.find(x => x.name === 'Front delts')
+      expect(pt.total, `${days}d`).toBeGreaterThanOrEqual(pt.goal * 0.85)
     }
   })
 
   it('gives every part of a group a lift aimed at it, on a day that trains it: the rear delts\' fly on a pull day', () => {
-    for (const { template, days, p } of weeks()) for (const pt of p.parts) {
+    for (const { template, days, p } of weeks()) for (const pt of p.parts.filter(x => x.tier === 1 && p.yields[x.g] !== 0)) {
       // Its group's own lifts: a pullover, a back lift, counts for the chest wherever it lands.
       const on = p.days.filter(d => d.items.some(i => i.ex.p.includes(pt.g) && partCreditOf(i.ex)[pt.name] >= 1))
-      expect(on.length, `${template} ${days}d ${pt.name}`).toBeGreaterThan(0)
+      // Unless the compounds alone bring it within 85% of its goal, the planner's "met": the
+      // front delts from the presses.
+      if (!on.length) expect(pt.total, `${template} ${days}d ${pt.name}`).toBeGreaterThanOrEqual(pt.goal * 0.85 - 1e-9)
+      else expect(on.length).toBeGreaterThan(0)
       for (const d of on) expect(DAY_TYPES[d.type].groups.includes(pt.g) || !!DAY_TYPES[d.type].parts?.includes(pt.name), `${template} ${d.type} ${pt.name}`).toBe(true)
     }
     const ppl = plan({ template: 'ppl', goal: 'growth', days: 3, minutes: 75 })
@@ -413,6 +442,29 @@ describe('planner', () => {
     it('leaves a program week as it was: no history, no turns', () => {
       const o = { template: 'full', goal: 'growth', days: 3, minutes: 60 }
       expect(plan(o).days.map(d => d.items.map(i => i.ex.id))).toEqual(plan(o).days.map(d => d.items.map(i => i.ex.id)))
+    })
+  })
+
+  // A day's main lifts are the ones a lifter would call main lifts: a renegade row is mostly a
+  // plank, a reverse curl mostly a forearm lift, an assisted dip is for a beginner, and a cable
+  // press doesn't lead a day however often you log it.
+  describe('weak main lifts', () => {
+    const goals = { chest: 8, back: 8, shoulders: 6, biceps: 6, triceps: 6, abs: 4, quads: 8, hamstrings: 6, calves: 4 }
+    const WEAK = ['2980', '2364', '1608'] // renegade row, assisted kneeling dip, cable reverse curl
+    const pool = [...PLAN_LIB.map(e => e.id), ...WEAK]
+    it('lets a free weight, a Smith machine, a plate-loaded machine or a pulldown lead, not a cable press', () => {
+      for (const id of ['0025', '0043', '0770', '2330']) expect(canLead(id), id).toBe(true)
+      for (const id of ['0151', ...WEAK]) expect(canLead(id), id).toBe(false) // 0151: a cable bench press
+    })
+    it('picks no weak lift while a better one of its slot is on your list', () => {
+      for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) for (const shift of [0, 1, 2]) {
+        const d = planDay({ type: 'full', goal: 'growth', level: 'advanced', equipment: 'gym', minutes: 90, goals, pool, seed, shift })
+        expect(d.items.map(i => i.ex.id).filter(id => WEAK.includes(id)), `seed ${seed} shift ${shift}`).toEqual([])
+      }
+    })
+    it('still gives a beginner an assisted lift when it is the only one of its slot', () => {
+      const d = planDay({ type: 'full', goal: 'growth', level: 'beginner', equipment: 'gym', minutes: 90, goals, pool: ['2364', '0043', '0027'], seed: 1 })
+      expect(d.items.map(i => i.ex.id)).toContain('2364')
     })
   })
 

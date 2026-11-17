@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { SCHEMES, slotOf, slotScheme, sessionSlots, leadPattern, restRangeOf, REST_DEFAULT, rangedRest, rangedScheme } from './engine.js'
+import { SCHEMES, slotOf, slotScheme, sessionSlots, leadPattern, restRangeOf, REST_DEFAULT, REST_GOAL, rangedRest, rangedScheme } from './engine.js'
 
 
 describe('slots', () => {
@@ -69,6 +69,15 @@ describe('the rests you keep to', () => {
     expect(restRangeOf({ restAll: true, restSec: 90 })).toBe(null)
     expect(restRangeOf({ restSec: 90 })).toEqual(R)
     expect(restRangeOf({ restAll: true, restSec: 90, restRange: { min: 20, max: 60 } })).toEqual(R)
+  })
+  it('keeps to your goal’s range until you choose one, a heavy goal resting longer', () => {
+    expect(restRangeOf({ goals: { type: 'strength' } })).toEqual({ min: 60, max: 180 })
+    expect(restRangeOf({ goals: { type: 'growth' } })).toEqual({ min: 45, max: 120 })
+    expect(restRangeOf({ goals: { type: 'endurance' } })).toEqual(R)
+    expect(restRangeOf({ goals: { type: 'growth' } }, 'strength')).toEqual(REST_GOAL.strength)
+    expect(restRangeOf({ goals: { type: 'growth' }, restRange: { min: 30, max: 40 } })).toEqual({ min: 30, max: 40 })
+    // a growth lead lift rests two minutes, not the one the old range cut it to
+    expect(rangedRest(SCHEMES.growth.lead.rest, REST_GOAL.growth, 'growth')).toBe(120)
   })
   it('the lead rests the longest, calves the shortest, the rest between', () => {
     expect(['lead', 'main', 'acc', 'small'].map(k => rangedRest(SCHEMES.growth[k].rest, R, 'growth'))).toEqual([60, 40, 30, 20])

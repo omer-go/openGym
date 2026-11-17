@@ -152,7 +152,7 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 <main>
 
 <h1>Workout generation</h1>
-<p class="sub">The source of truth for how openGym decides what you lift: the four taxonomies, the goals and constraints, and the workflows that turn them into a workout. Update it with every change to the code it describes. Last checked against <code>feat/one-tap-workouts</code> @ <code>de81987a3</code>, 16 Nov 2026. Every known problem is listed in <a href="#issues">§15's issue table</a> with where it is tracked.</p>
+<p class="sub">The source of truth for how openGym decides what you lift: the four taxonomies, the goals and constraints, and the workflows that turn them into a workout. Update it with every change to the code it describes. Last checked against <code>feat/one-tap-workouts</code> @ <code>7cb6194b6</code> and the uncommitted rest and time fixes, 16 Nov 2026. Every known problem is listed in <a href="#issues">§15's issue table</a> with where it is tracked.</p>
 
 <nav class="toc">
 <b>Contents</b>
@@ -210,10 +210,10 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 <tr><td>Equipment</td><td>gym ⊃ db ⊃ bw</td><td>setup.equipment (no UI) → <code>plan.equipment</code> → gym; plus the active equipment profile</td><td>Library lifts need a kit the level allows; your list is filtered by <code>suggestable</code>.</td></tr>
 <tr><td>Level</td><td>beginner, intermediate, advanced</td><td><code>plan.level</code> only, default intermediate</td><td>RIR offset (+1 / 0 / −1) and accessories a day (3 / 5 / 6).</td></tr>
 <tr><td>Rotation</td><td>session, block</td><td><code>S.rotation</code>, default session</td><td>session: each slot takes the lift you did least recently. block: keep lifts for a 28-day block.</td></tr>
-<tr><td>Rest range</td><td>default 20–60 s</td><td><code>restRangeOf(S)</code></td><td>Clamps rests into your range; also used for time estimates.</td></tr>
+<tr><td>Rest range</td><td>your goal's until you choose one: strength 60–180 s, growth and maintain 45–120 s, endurance 20–60 s (<code>REST_GOAL</code>)</td><td><code>restRangeOf(S)</code></td><td>Keeps rests inside your range; also used for time estimates. Off with a rest timer of your own for every lift.</td></tr>
 <tr><td>Skipped lifts</td><td>ids</td><td><code>S.skipEx</code></td><td>Kept out, unless a pattern or group would otherwise have nothing.</td></tr>
 </table></div>
-<div class="gap"><b>Gap: rest too short for the goal</b>The rest range defaults to 20–60 s, and every scheme's rest is clamped into it. A growth lead asks for 180 s and a main lift for 120 s (§7), but both get at most 60 s; the example's one-tap setup rests 20 s. That is short for growth or strength, and it also makes the time estimate (§14) plan more lifts into the minutes than a properly rested day fits. Issue R in §15.</div>
+<div class="card"><p><b>Rest.</b> Until you choose a range, rests keep to your goal's (<code>REST_GOAL</code> in <code>engine.js</code>): a growth lead rests 120 s, not the 60 s the old 20–60 s default cut it to. A rest set in the one-tap setup, or a rest timer of your own for every lift, is the accessories' rest, and the heavier slots rest as much longer as the goal's own rests say (<code>ownRest</code>): a 20 s setup rests a growth lead 40 s. Issue R, fixed.</p></div>
 
 <h3>Weekly sets per group (<code>GOAL_SETS</code>: min, max, default)</h3>
 <div class="scroll"><table>
@@ -249,7 +249,7 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 <tr><td>Back</td><td class="n">0</td><td class="n">✓</td><td class="n">0</td><td></td><td></td><td class="n">4</td><td>hpull, vpull (one vpull a day)</td></tr>
 <tr><td>Quads</td><td class="n">0</td><td class="n">✓</td><td class="n">0</td><td></td><td></td><td class="n">4</td><td>squat</td></tr>
 <tr><td>Hamstrings</td><td class="n">0</td><td class="n">✓</td><td class="n">0</td><td></td><td></td><td class="n">4</td><td>hinge</td></tr>
-<tr><td>Shoulders</td><td class="n">1</td><td class="n">✓</td><td class="n">40%</td><td class="n">✓</td><td class="n">✓ (side or rear delt)</td><td class="n">3</td><td>vpress</td></tr>
+<tr><td>Shoulders</td><td class="n">1</td><td class="n">✓</td><td class="n">40%</td><td class="n">✓</td><td class="n">✓ (one delt: side, rear or front)</td><td class="n">3</td><td>vpress</td></tr>
 <tr><td>Biceps</td><td class="n">1</td><td class="n">✓</td><td class="n">50%</td><td></td><td class="n">✓</td><td class="n">3</td><td>—</td></tr>
 <tr><td>Triceps</td><td class="n">1</td><td class="n">✓</td><td class="n">50%</td><td></td><td class="n">✓</td><td class="n">3</td><td>—</td></tr>
 <tr><td>Abs</td><td class="n">2</td><td class="n">✓</td><td class="n">0</td><td class="n">✓</td><td></td><td class="n">2</td><td>—</td></tr>
@@ -272,45 +272,66 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 
 <!-- ============================================================ -->
 <h2 id="t2">4. Taxonomy 2: muscles within a group</h2>
-<p>Three layers exist today, and only one of them steers the planner.</p>
+<p>Three layers, and the third steers the planner.</p>
 <div class="grid2">
   <div class="card"><h4>Catalogue muscles <span class="pill">18</span></h4><p>The coarse muscle on each exercise row. <code>ADD_GROUPS</code> (add-exercise.js) maps them to the 11 groups. Used to tick groups, by one-tap slots, and in the Add exercise browser.</p></div>
   <div class="card"><h4>Role muscles <span class="pill">46</span></h4><p>Each lift's target, synergist and stabiliser muscles (<code>loadMuscleRoles</code>). Used for set credit and for recovery: a target gives 1 to its group and 1 to its part, a synergist 0.4 to its group and 0.2 to its part, a stabiliser nothing.</p></div>
-  <div class="card"><h4>Planned parts <span class="pill used">6, used by the planner</span></h4><p><code>PLANNED_PARTS</code>: Side delts, Rear delts, Lats, Mid back, Upper chest, Mid and lower chest. Each has its own weekly goal = group target × share.</p></div>
+  <div class="card"><h4>Tiered parts <span class="pill used">used by the planner</span></h4><p><code>PARTS</code> (goals.js): each group's parts with a tier and a share. A part's weekly goal = group target × share. Tier 1 and 2 parts are planned, tier 3 only counted.</p></div>
 </div>
+
+<table style="margin-top:12px">
+<tr><th>Group</th><th>Tier 1 (asked for first)</th><th>Tier 2 (asked for after every group and tier-1 part)</th><th>Tier 3 (counted only)</th></tr>
+<tr><td>Shoulders</td><td>Side delts 40%, Front delts 30%, Rear delts 30%</td><td></td><td></td></tr>
+<tr><td>Chest</td><td>Mid and lower chest 65%, Upper chest 35%</td><td></td><td></td></tr>
+<tr><td>Back</td><td>Lats 45%, Mid back 40%</td><td>Upper traps 15%</td><td>Lower back</td></tr>
+<tr><td>Abs</td><td>Rectus abdominis 65%</td><td>Obliques 35%</td><td></td></tr>
+<tr><td>Biceps</td><td>Biceps brachii 75%</td><td>Brachialis 25%</td><td></td></tr>
+<tr><td>Triceps</td><td>Long head 40%</td><td></td><td></td></tr>
+<tr><td>Quads</td><td></td><td>Rectus femoris 20% (a leg extension)</td><td></td></tr>
+<tr><td>Hamstrings</td><td>Knee flexion 40% (a leg curl)</td><td></td><td></td></tr>
+<tr><td>Calves</td><td>Gastrocnemius 60%</td><td>Soleus 40%</td><td></td></tr>
+<tr><td>Glutes</td><td></td><td></td><td>Glutes, Side glutes, Inner thighs, 30% each</td></tr>
+</table>
+<p>The doc's example tiers, with two changes. The front delts are tier 1 like the side and rear: a press only helps them, so it counts 0.2 of a set toward them, not the 0.4 a tier-2 part takes. Three tiers were added where the doc gave none: the quads' rectus femoris at tier 2 (squats and presses train it), the hamstrings' knee flexion at tier 1 (a hinge doesn't), the calves' gastrocnemius 1 and soleus 2. A tier-2 part gets no lift of its own when none fits, counts with the lowest tier when the week gives way, and a lift that only helps it counts the full 0.4 toward it, so rows and curls meet the brachialis.</p>
 
 <div class="tree" style="margin-top:12px">
   <div class="grp t0"><h4>Chest <span>tier 0</span></h4>
     <div class="row"><b>Planned parts</b>
-      <div class="bar"><span style="width:35%;background:var(--t0)">Upper 35%</span><span style="width:65%;background:var(--t1)">Mid/lower 65%</span></div></div>
+      <div class="bar"><span style="width:35%;background:var(--t0)">Upper 35%</span><span style="width:65%;background:var(--t1)">Mid/lower 65%</span></div>
+      <span class="legend">Both tier 1.</span></div>
     <div class="row"><b>Role muscles</b>pec sternal, pec clavicular, pec minor</div>
     <div class="row"><b>Catalogue</b>chest</div></div>
   <div class="grp t0"><h4>Back <span>tier 0</span></h4>
     <div class="row"><b>Planned parts</b>
       <div class="bar"><span style="width:45%;background:var(--t0)">Lats 45%</span><span style="width:40%;background:var(--t1)">Mid 40%</span><span style="width:15%;background:var(--t3)">Tr</span></div>
-      <span class="legend">Upper traps 15% is a share but not a planned part.</span></div>
+      <span class="legend">Lats and mid back tier 1, upper traps tier 2, lower back tier 3 (counted only).</span></div>
     <div class="row"><b>Role muscles</b>lats, rhomboids, middle/upper/lower trap, erector spinae, quadratus lumborum</div>
     <div class="row"><b>Catalogue</b>upper-back, lower-back, trapezius</div></div>
   <div class="grp t1"><h4>Shoulders <span>tier 1</span></h4>
     <div class="row"><b>Planned parts</b>
-      <div class="bar"><span style="width:20%;background:var(--warn)">Fr</span><span style="width:45%;background:var(--t0)">Side 45%</span><span style="width:35%;background:var(--t1)">Rear 35%</span></div>
-      <span class="legend">Front delts 20% is a share but not planned: presses cover it.</span></div>
+      <div class="bar"><span style="width:30%;background:var(--warn)">Front 30%</span><span style="width:40%;background:var(--t0)">Side 40%</span><span style="width:30%;background:var(--t1)">Rear 30%</span></div>
+      <span class="legend">All three tier 1. A press gives the front delts 0.2 a set; in a week with three or four pressing days that is often enough.</span></div>
     <div class="row"><b>Role muscles</b>front, side and rear delt; infraspinatus, subscapularis, supraspinatus</div>
     <div class="row"><b>Catalogue</b>deltoids</div></div>
   <div class="grp t0"><h4>Quads <span>tier 0</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:20%;background:var(--t2)">RF</span></div>
+      <span class="legend">Rectus femoris 20%, tier 2: a leg extension. The rest comes from squats and presses.</span></div>
     <div class="row"><b>Role muscles</b>quadriceps</div><div class="row"><b>Catalogue</b>quadriceps</div></div>
   <div class="grp t0"><h4>Hamstrings <span>tier 0</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:40%;background:var(--t1)">Knee flexion 40%</span></div>
+      <span class="legend">Tier 1, a leg curl: a hinge doesn't train it.</span></div>
     <div class="row"><b>Role muscles</b>hamstrings</div><div class="row"><b>Catalogue</b>hamstring</div></div>
   <div class="grp t1"><h4>Biceps <span>tier 1</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:75%;background:var(--t1)">Brachii 75%</span><span style="width:25%;background:var(--t2)">Br</span></div>
+      <span class="legend">Biceps brachii tier 1, brachialis 25% tier 2.</span></div>
     <div class="row"><b>Role muscles</b>biceps (both heads), biceps long head, biceps short head, brachialis</div><div class="row"><b>Catalogue</b>biceps</div></div>
   <div class="grp t1"><h4>Triceps <span>tier 1</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:40%;background:var(--t1)">Long head 40%</span></div>
+      <span class="legend">Tier 1.</span></div>
     <div class="row"><b>Role muscles</b>triceps, triceps long head</div><div class="row"><b>Catalogue</b>triceps</div></div>
   <div class="grp t2"><h4>Abs <span>tier 2</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:65%;background:var(--t1)">Rectus 65%</span><span style="width:35%;background:var(--t2)">Obliques 35%</span></div>
+      <span class="legend">Rectus tier 1, obliques tier 2.</span></div>
     <div class="row"><b>Role muscles</b>rectus abdominis, obliques, transverse abdominis, serratus</div>
     <div class="row"><b>Catalogue</b>abs, obliques, serratus</div></div>
   <div class="grp t3"><h4>Glutes <span>tier 3</span></h4>
@@ -318,7 +339,8 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
     <div class="row"><b>Role muscles</b>glute max, glute med, adductors, adductor magnus, hip flexors</div>
     <div class="row"><b>Catalogue</b>gluteal, adductors, hip-flexors</div></div>
   <div class="grp t3"><h4>Calves <span>tier 3</span></h4>
-    <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
+    <div class="row"><b>Planned parts</b><div class="bar"><span style="width:60%;background:var(--t1)">Gastroc. 60%</span><span style="width:40%;background:var(--t2)">Soleus 40%</span></div>
+      <span class="legend">Gastrocnemius tier 1 (standing), soleus tier 2 (seated).</span></div>
     <div class="row"><b>Role muscles</b>gastrocnemius, soleus, calves (both), tibialis</div><div class="row"><b>Catalogue</b>calves, tibialis</div></div>
   <div class="grp t3"><h4>Forearms <span>tier 3</span></h4>
     <div class="row"><b>Planned parts</b><span class="pill unused">none</span></div>
@@ -327,9 +349,9 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 </div>
 
 <h3>How a part is credited</h3>
-<p>A lift credits a part 1 when the part's muscle is its target, 0.2 when it is a synergist. The group gets 1 and 0.4: a synergist counts twice as much toward its group as toward its part, because a group's goal is met by many parts at once. A lift <em>aims at</em> a part when that credit is at least 1. When a group falls behind, <code>choose</code> prefers a lift aimed at its most-short part (<code>behind</code>). The shoulders' accessory is always a side- or rear-delt isolation lift, whichever delt has had fewer lifts this week (<code>deltLift</code>, <code>turnOf</code>).</p>
+<p>A lift credits a part 1 when the part's muscle is its target, 0.2 when it is a synergist. The group gets 1 and 0.4: a synergist counts twice as much toward its group as toward its part, because a group's goal is met by many parts at once. A lift <em>aims at</em> a part when that credit is at least 1. When a group falls behind, <code>choose</code> prefers a lift aimed at its most-short part (<code>behind</code>). The shoulders' accessory is a lift aimed at one delt (a lateral raise, a rear fly, a front raise), whichever has had fewer lifts this week (<code>deltLift</code>, <code>turnOf</code>).</p>
 
-<div class="gap"><b>Gap</b>Parts have shares but no tiers, and only three groups have planned parts. Front delts, traps, the abs' obliques, biceps' brachialis, triceps' long head, the glutes' medius and the calves' tibialis are never asked for on purpose. Stage 1 below adds a tiered part list for every group.</div>
+<div class="gap"><b>Closed by stage 1</b>Every group now has a tiered part list (table above). Still not asked for: the glutes' medius and the calves' tibialis (tier 3 or unlisted).</div>
 
 <h3>What the data labels today</h3>
 <p>How many lifts target each muscle, over the 4,217 catalogue rows that have muscle roles (<code>exercise-roles.json</code>).</p>
@@ -418,7 +440,7 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
   <div class="arrow"></div>
   <div class="step out"><div class="k">9 · Entries</div><h5><code>generatedEntries</code></h5><p>Sets, rep range, rest in your range, warm-up rows, weight from your history.</p></div>
 </div>
-<div class="gap"><b>Gap: never-logged lifts show 0 lb</b>A lift you have never logged can come out with no weight. The forecast at <code>8a31a86d0</code> showed 0 lb for a front pulldown, an incline fly, a face pull and a barbell shrug. Stage 4 seeds a first weight from an equivalent you have logged; until then the inferred start weight should at least never be 0 for a loaded lift. Issue W in §15.</div>
+<div class="card"><p><b>A first weight.</b> A lift you have never logged takes its weight from an equivalent you have (<code>inferWeight</code>). With nothing like it either, a generated day starts it light rather than at 0 (<code>startWeight</code> in <code>infer-weight.js</code>): the empty bar, the lightest dumbbell or kettlebell you own of 4 kg / 10 lb, or a stack of 10 kg / 20 lb, and says so. A routine's own lifts keep their 0 until you set one. Issue W, fixed.</p></div>
 
 <!-- ============================================================ -->
 <h2 id="program">9. Workflow: program day</h2>
@@ -464,7 +486,7 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
 
 <h3>Caps (<code>ADV</code>, <code>LEVELS</code>)</h3>
 <p>Accessories a day: 3 / 5 / 6 by level. Sets of one group in a session: 10. Direct lifts for a group a day: 2 (1 for one-a-day groups). Seconds a rep: 3. Warm-up: 5 min flat. Between lifts: 30 s.</p>
-<div class="gap"><b>Gap: groups overshoot their goal, and abs fall short</b>In the forecast at <code>8a31a86d0</code> (an example lifter's data, three program days), most groups landed 10–25% over their weekly goal and shoulders at 19.6 of 12, nearly all from presses and rows crediting them as a synergist. Trim can only cut sets that are the group's own, and cutting a press to trim shoulders would short the chest. Abs were the one group under goal, at 10.8 of 12. Not re-measured since <code>de81987a3</code>. Issue V in §15; stage 1's part tiers should help, since a part already covered by compounds won't ask for a lift of its own.</div>
+<div class="gap"><b>Gap: the time goes to the arms, not the big groups</b>Re-measured after the rest and time fixes (the same example lifter, three 75-minute full days): the overshoot is gone except the shoulders (about 15 of 12, from presses crediting them), and the tier-0 groups now fall short instead: chest about 12 of 14, back 13 of 16, hamstrings 11 of 14, with calves at 2 of 8 and abs 10 of 12. Each full day keeps a lift of its own for the shoulders, both arms and the abs (<code>dailyGroups</code>), some at 4 sets, while a main lift stops at <code>slotSets</code> and a second chest or back lift doesn't fit the minutes. Issue V in §15: stage 1's part tiers, and letting a tier-0 group take time from a daily accessory.<br><b>After stage 1:</b> a week built at once (<code>plan</code>) now reaches the back's goal (16.6 of 16 in a three 60-minute day test). Forecasting the example lifter day by day (<code>planDay</code>) still shows chest about 12 of 14, back 13 of 16, hamstrings 11 of 14: the one-day generator's day shares and accessory slots go to the daily small lifts first. Still open.</div>
 
 <!-- ============================================================ -->
 <h2 id="giveway">11. Workflow: give way</h2>
@@ -488,12 +510,7 @@ details summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
   <div class="card"><h4>Which pattern</h4><p>Non-full days cycle their patterns: push = hpress, vpress; pull = vpull, hpull; legs/lower = squat, hinge; upper = all four. A full day alternates a lower lead (squat, hinge) with an upper lead that moves on each 28-day block. A pattern whose muscle was trained yesterday is skipped.</p></div>
   <div class="card"><h4>Which lift</h4><p>Candidates: logged compound lifts (stalest first), then starred, then staples. Rotation <b>session</b>: least recently done wins. Rotation <b>block</b>: the most used in the last 56 days, held for the block. The lead must be in your pool.</p></div>
 </div>
-<div class="gap"><b>Gap: weak main lifts</b>Nothing ties a main slot to how hard a lift is, or to your level. The forecast at <code>8a31a86d0</code> had:
-<ul><li>a cable low chest press first on Friday (check why <code>NO_LEAD</code> let a cable lift lead),</li>
-<li>a renegade row as the main back lift,</li>
-<li>an assisted kneeling dip as the chest lift for an advanced lifter,</li>
-<li>a reverse curl, mostly a forearm lift (<code>moveOf</code> files it under wrist), as the biceps lift.</li></ul>
-Lead and main slots need a loadable compound that suits the level, and an accessory for a group must target that group, not only its neighbour. Issue L in §15.</div>
+<div class="card"><p><b>Weak main lifts.</b> A lift leads or fills a main slot only if it can carry the load (<code>canLead</code> in <code>planner.js</code>): a compound that isn't marked weak or assisted and is a barbell, dumbbell or kettlebell lift, a Smith or leverage machine, or a cable pulldown. A renegade row and a reverse curl (a wrist move filed under biceps) are weak; an assisted lift is weak for anyone past beginner. <code>leadFor</code> picks among your logged lifts the same way, so a cable press no longer leads a day. Issue L, fixed.</p></div>
 
 <!-- ============================================================ -->
 <h2 id="variety">13. Variety rules</h2>
@@ -512,17 +529,17 @@ Lead and main slots need a loadable compound that suits the level, and an access
 <!-- ============================================================ -->
 <h2 id="time">14. How time is estimated</h2>
 <div class="card">
-<p><b>A set</b> = average reps × 3 s (× 2 if per side) + rest. With a rest range, capped at your measured pace + 30 s; else your pace replaces it when known.</p>
+<p><b>A set</b> = average reps × 3 s (× 2 if per side) + rest. In the app's count, a one-sided lift's reps are both sides' already, and only a set split into left and right rows doubles. With a rest range, capped at your measured pace + 30 s; else your pace replaces it when known.</p>
 <p><b>Your pace</b> (<code>pace.js</code>): active time ÷ sets in a workout (gaps over 10 min ignored, at least 8 sets); the median of the last 10 workouts, once there are 3.</p>
-<p><b>A workout</b> = 5 min warm-up + the sum of its sets. The planner uses this to trim and fill; the sheet and the forecast show the same sum (<code>minutesFor</code>) from the built entries.</p>
+<p><b>A workout</b> = 5 min warm-up + the sum of its sets, each warm-up set timed as a set of its lift (the planner gets the one-tap setup's count as <code>warmups</code>). A combo's members share its one rest a round and walk nowhere between them. A run and stretches are left out of the minutes, as the planner leaves them out of the time it fills. The planner uses this to trim and fill; the sheet and the forecast show the same sum (<code>minutesFor</code>) from the built entries.</p>
 </div>
-<div class="gap"><b>Known inaccuracies</b>Warm-up sets aren't timed one by one, only the flat 5 min. The abs combo's 4 members are each timed at their own rest, not the combo's shared 60 s, and the planner timed one abs lift before the combo replaced it. Cardio and stretches count toward the minutes. The planner's own estimate runs about a minute under what the app then shows for the built day, so <code>program.test.js</code>'s length tolerance was loosened by a minute in <code>de81987a3</code> rather than fixed. Issue T in §15.</div>
+<div class="gap"><b>Still approximate</b>Over 240 one-tap days (4 types, 30–90 min, with and without a warm-up set, 6 shuffles) the app's figure lands within about 3 minutes of the length asked, now under as often as over; it ran up to 16 over when a one-arm lift's reps were doubled twice. The planner still times an abs slot as one lift before the combo replaces it, and a set at the middle of its rep range where the rows ask for the top. Timing at the top made days 2–5 minutes short, so it stays at the middle. <code>program.test.js</code> holds the day to 2 minutes over again.</div>
 
 <!-- ============================================================ -->
 <h2 id="gaps">15. Gaps and planned changes</h2>
 <p>The four taxonomies as agreed, and the order to build them. Stage 0 comes first because stages 1–3 can only rotate on what the data labels.</p>
 <div class="stage"><div class="num">0</div><div><h4>Label the data</h4><p>Make the movement and equipment labels good enough to plan on, with a test over every row:</p><p><b>Done.</b> The calf heads, a <code>move</code> field for the 127 rows the names couldn't place (§4, §5), the Plate and Ball kits (§6), the roles of the 125 unplaced rows, and the coarse moves split.</p><ul><li><s>Split the coarse moves</s>: done. <code>ohp</code> (overhead press) apart from <code>press</code> (chest press), and a press filed under <code>push-vertical</code> is an overhead press whatever its name; <code>hammer</code> (hammer and reverse curl) and <code>stretchcurl</code> (incline and preacher) apart from <code>curl</code>; <code>ohext</code> (overhead extension) apart from <code>skull</code> (lying extension and kickback); <code>seatedcalf</code> apart from <code>calf</code> (standing). 30 rows whose names read wrong are set in <code>roles/moves.tsv</code>.</li><li>Place the 108 strength rows with no move, the 19 vague raises, and the 306 rows with no kit.</li><li><s>Give the strength rows with no muscle roles their roles, or list them.</s> Done: 118 given roles, 7 posture references listed.</li><li><s>A test runs <code>moveOf</code> / <code>kitOf</code> / roles over the whole catalogue</s>: done, in <code>exercise-facets.test.js</code>. It also checks each split against the muscle roles (an overhead extension targets the long head, a seated calf raise the soleus).</li></ul></div></div>
-<div class="stage"><div class="num">1</div><div><h4>A tiered part list for every group</h4><p>Each group lists its muscles with a tier and a share, e.g. shoulders: side 1, rear 1, front 2; chest: mid/lower 1, upper 1; back: lats 1, mid back 1, traps 2, lower back 3; abs: rectus 1, obliques 2; biceps: biceps 1, brachialis 2; triceps: long head 1. The planner asks for tier-1 parts before tier-2 ones, the way groups give way today, and counts what compounds already gave a part before giving it a lift of its own. Where the labels have no heads (quads, hamstrings; §4), a part is defined by its move: leg extension for the rectus femoris, hinge vs leg curl. The calves have theirs in the roles now (gastrocnemius, soleus). Replaces <code>PLANNED_PARTS</code> / <code>PART_SHARES</code>.</p><p><b>Built so far: the turns decided in §16</b> (<code>familyOf</code>, <code>dueFamily</code>, <code>smallTurn</code> in planner.js, tested in planner.test.js under "taking turns within a group"). They need your history, so a first workout plans as before. Shoulders go side, rear, side, overhead press; the press counts as the day's shoulder lift on its turn. The chest's lead press and push slot take the half done longest ago (upper, or mid and lower), and a fly on the same day stays in that half, so the next workout takes the other. The abs go flexion, rotation, bracing. A day whose lifts have no hinge gets a leg curl for the hamstrings. A full day takes one small-muscle pair, calves and traps or leg extension and forearms, at their fewest sets and within the level's accessory count; calves alternate standing and seated through the move rotation. <b>Still open:</b> tiers and shares for every group's parts, and counting what compounds gave a part before giving it a lift.</p></div></div>
+<div class="stage"><div class="num">1</div><div><h4>A tiered part list for every group</h4><p>Each group lists its muscles with a tier and a share, e.g. shoulders: side 1, rear 1, front 2; chest: mid/lower 1, upper 1; back: lats 1, mid back 1, traps 2, lower back 3; abs: rectus 1, obliques 2; biceps: biceps 1, brachialis 2; triceps: long head 1. The planner asks for tier-1 parts before tier-2 ones, the way groups give way today, and counts what compounds already gave a part before giving it a lift of its own. Where the labels have no heads (quads, hamstrings; §4), a part is defined by its move: leg extension for the rectus femoris, hinge vs leg curl. The calves have theirs in the roles now (gastrocnemius, soleus). Replaces <code>PLANNED_PARTS</code> / <code>PART_SHARES</code>.</p><p><b>Built so far: the turns decided in §16</b> (<code>familyOf</code>, <code>dueFamily</code>, <code>smallTurn</code> in planner.js, tested in planner.test.js under "taking turns within a group"). They need your history, so a first workout plans as before. Shoulders go side, rear, side, overhead press; the press counts as the day's shoulder lift on its turn. The chest's lead press and push slot take the half done longest ago (upper, or mid and lower), and a fly on the same day stays in that half, so the next workout takes the other. The abs go flexion, rotation, bracing. A day whose lifts have no hinge gets a leg curl for the hamstrings. A full day takes one small-muscle pair, calves and traps or leg extension and forearms, at their fewest sets and within the level's accessory count; calves alternate standing and seated through the move rotation. </p><p><b>Done: the tiers.</b> <code>PARTS</code> in goals.js gives every group's parts a tier and a share (§4). The planner asks for a group's goal, then its tier-1 parts, then tier-2 ones; a tier-1 part whose group already has its sets waits behind the groups still short, so a leg curl doesn't go in before the quads have theirs. A part's credit from the compounds counts first, so a lift of its own goes in only for what is left. The quads and hamstrings' parts are moves. Replaces <code>PLANNED_PARTS</code> / <code>PART_SHARES</code>.</p><p><b>Done: tier 0 takes time (issue V).</b> When the next set of a tier-0 group doesn't fit the minutes, top up takes a set from an accessory of a lower group already at its goal (a daily lateral raise's fourth set, say) and gives it to the chest or back. A running program's lifts never give sets to another. Daily accessories for abs and lower start at their fewest sets.</p></div></div>
 <div class="stage"><div class="num">2</div><div><h4>Movement rotation within a part</h4><p>Use the 50 <code>MOVES</code> already in exercise-facets.js: a part's week mixes its moves (press and fly for chest; pulldown and pullover for lats), picking the move done least recently.</p><p><b>Done.</b> With your history, <code>variant</code> ranks a slot's lifts by the day their move was last done, then the day the lift was, one never done first, so a rear-delt fly follows a face pull and every lift on your list comes round.</p></div></div>
 <div class="stage"><div class="num">3</div><div><h4>Equipment rotation within a movement</h4><p>Within a move, rotate the kit (barbell, dumbbell, machine, cable, kettlebell…), only from your own list and equipment profile.</p><p><b>Done.</b> Of the lifts of the move that won, one on a kit other than last time's, at random, and no kit takes more than half the day's lifts. A kit with only one lift on your list keeps it.</p></div></div>
 <div class="stage"><div class="num">4</div><div><h4>Personal ratios and a trend per movement</h4><p>Learn your own ratios between equivalent lifts (e.g. trap-bar vs barbell deadlift) once each has been logged; seed a first weight from an equivalent; track progress per movement rather than per exact lift. A strength goal keeps its main lifts fixed. A lift's first session isn't a true baseline: part of the second session's jump is learning the lift, so the trend shouldn't read it as strength gained.</p></div></div>
@@ -531,15 +548,15 @@ Lead and main slots need a loadable compound that suits the level, and an access
 <p>Every problem found so far, whether in the taxonomies or in the workouts the planner built. Strike a row through when it ships, with the commit.</p>
 <div class="scroll"><table>
 <tr><th>#</th><th>Issue</th><th>Where</th><th>Fixed by</th></tr>
-<tr><td>P</td><td>Parts have no tiers; only 6 parts in 3 groups are planned; front delts and traps are never checked</td><td><a href="#t2">§4</a></td><td>Stage 1: the turns built; tiers still open</td></tr>
+<tr><td>P</td><td>Parts have no tiers; only 6 parts in 3 groups are planned; front delts and traps are never checked</td><td><a href="#t2">§4</a></td><td>Done (stage 1)</td></tr>
 <tr><td>D</td><td>Data: coarse moves, <s>108 rows with no move and 19 vague raises</s>, <s>306 with no kit</s> (Plate and Ball kits), <s>125 with no roles</s>, <s>no calf heads</s>, no heads for quads and hamstrings (a part is read by its move there instead). <s>Coarse moves</s>: split</td><td><a href="#t2">§4</a>, <a href="#t3">§5</a>, <a href="#t4">§6</a></td><td>Stage 0, done</td></tr>
 <tr><td>M</td><td><s>No movement rotation within a part (presses all week)</s></td><td><a href="#t3">§5</a></td><td>Stage 2, done</td></tr>
 <tr><td>E</td><td><s>No equipment rotation within a movement</s></td><td><a href="#t4">§6</a></td><td>Stage 3, done</td></tr>
-<tr><td>L</td><td>Weak main lifts: cable press leading, renegade row, assisted dip for an advanced lifter, reverse curl for biceps</td><td><a href="#lead">§12</a></td><td>Its own fix, before or with stage 1</td></tr>
-<tr><td>W</td><td>Never-logged lifts show 0 lb</td><td><a href="#oneTap">§8</a></td><td>A start-weight fix now; stage 4 seeds from equivalents</td></tr>
-<tr><td>R</td><td>Rest clamped to 20–60 s, short for growth and strength</td><td><a href="#inputs">§2</a></td><td>Its own fix (a setting default, or a goal-aware range)</td></tr>
-<tr><td>V</td><td>Groups 10–25% over goal from compound credit; abs under goal</td><td><a href="#week">§10</a></td><td>Partly stage 1; re-measure after</td></tr>
-<tr><td>T</td><td>Time estimate: flat warm-up, combo rest unread, cardio and stretches counted, planner a minute under the app</td><td><a href="#time">§14</a></td><td>Its own fix</td></tr>
+<tr><td><s>L</s></td><td><s>Weak main lifts: cable press leading, renegade row, assisted dip for an advanced lifter, reverse curl for biceps</s></td><td><a href="#lead">§12</a></td><td><s>this change (<code>canLead</code>)</s></td></tr>
+<tr><td><s>W</s></td><td><s>Never-logged lifts show 0 lb</s></td><td><a href="#oneTap">§8</a></td><td><s>this change (<code>startWeight</code>)</s></td></tr>
+<tr><td><s>R</s></td><td><s>Rest clamped to 20–60 s, short for growth and strength</s></td><td><a href="#inputs">§2</a></td><td><s>this change (<code>REST_GOAL</code>)</s></td></tr>
+<tr><td>V</td><td>Re-measured: shoulders over goal from compound credit; chest, back, hamstrings, calves and abs under it on a full day, the time going to daily arm and shoulder lifts</td><td><a href="#week">§10</a></td><td>Partly done: tier 0 takes sets from a daily accessory (stage 1). A one-day build still leaves the big groups short; see §10.</td></tr>
+<tr><td><s>T</s></td><td><s>Time estimate: flat warm-up, combo rest unread, cardio and stretches counted, planner a minute under the app</s></td><td><a href="#time">§14</a></td><td><s>this change; within about 3 min</s></td></tr>
 <tr><td>B</td><td>A first session isn't a true baseline</td><td><a href="#gaps">§15</a></td><td>Stage 4</td></tr>
 <tr><td><s>C</s></td><td><s>Up to 5 calf raises a day</s></td><td>—</td><td><s><code>8a31a86d0</code></s></td></tr>
 <tr><td><s>O</s></td><td><s>One-tap minutes overrode the program's length</s></td><td>—</td><td><s><code>8a31a86d0</code></s></td></tr>
@@ -559,7 +576,7 @@ Lead and main slots need a loadable compound that suits the level, and an access
 <p>The table below predates these. Stages 1–3 build them in (§15); the kit rule is stage 3's.</p>
 <div class="scroll"><table>
 <tr><th>Slot</th><th>Rule</th></tr>
-<tr><td>Shoulders</td><td>Rotates side → rear → side → overhead press, so the front delts get a press of their own every fourth workout.</td></tr>
+<tr><td>Shoulders</td><td>Rotates side → rear → side → front (an overhead press or a front raise), so the front delts get a lift of their own every fourth workout.</td></tr>
 <tr><td>Small muscles</td><td>Calves, traps, leg extension (rectus femoris) and forearms form one tier. Each workout takes two, one lower and one upper: calves + traps, then leg extension + forearms, so each comes every second workout. Calves alternate standing (gastrocnemius) and seated (soleus) raises.</td></tr>
 <tr><td>Abs</td><td>Rotates flexion (rectus), rotation and anti-rotation (obliques), and bracing (transverse).</td></tr>
 <tr><td>Chest</td><td>No fixed share: the chest work alternates mid/lower and upper chest from workout to workout, carried across weeks so a 3-day week doesn't always favour one.</td></tr>
@@ -680,10 +697,10 @@ That makes 104 sets a week where the target meets the same goals with 90, about 
 <h2 id="files">17. File map</h2>
 <div class="scroll"><table>
 <tr><th>File (frontend/src/lib)</th><th>Holds</th></tr>
-<tr><td><code>planner.js</code></td><td>PLAN_GROUPS, PRIORITY, DIRECT_MIN, DAILY_GROUPS, ONE_A_DAY, ISO_ONLY, PLANNED_PARTS, DAY_TYPES, PLAN_TEMPLATES, LEVELS, EQUIPMENT, ADV, PLAN_LIB; plan, weekOf, planDay, giveWay, choose, variant, prescribe, minutesOf</td></tr>
+<tr><td><code>planner.js</code></td><td>PLAN_GROUPS, PRIORITY, DIRECT_MIN, DAILY_GROUPS, ONE_A_DAY, ISO_ONLY, partsFor, DAY_TYPES, PLAN_TEMPLATES, LEVELS, EQUIPMENT, ADV, PLAN_LIB; plan, weekOf, planDay, giveWay, choose, variant, prescribe, minutesOf</td></tr>
 <tr><td><code>generate.js</code></td><td>GEN_TYPES, genDefaults, genConstraints, planPool, leadFor, dayGoals, dailyGroups, scaleGoals, fillMinutes, generateWorkout, genConfig, generatedEntries</td></tr>
 <tr><td><code>program.js</code></td><td>PROGRAM_TEMPLATES, newPlanProgram, programRounds, programForecast, dayShare, adoptedShare, sizeDay, programDayEntries, planAhead, minutesFor</td></tr>
-<tr><td><code>goals.js</code></td><td>GOAL_SETS, VOLUMES, FOCUS, FLOORS, PART_SHARES, weeklyTargetOf, partTargetOf, goalWindow, goalEstimate</td></tr>
+<tr><td><code>goals.js</code></td><td>GOAL_SETS, VOLUMES, FOCUS, FLOORS, PARTS, partTierOf, weeklyTargetOf, partTargetOf, goalWindow, goalEstimate</td></tr>
 <tr><td><code>engine.js</code></td><td>SCHEMES, SLOT_SETS, slotScheme, leadPattern, BLOCK_DAYS, restRangeOf</td></tr>
 <tr><td><code>coverage.js</code></td><td>GROUP_PARTS, groupSetsOf, weeklyLack</td></tr>
 <tr><td><code>add-exercise.js</code></td><td>ADD_GROUPS (catalogue muscles → groups)</td></tr>

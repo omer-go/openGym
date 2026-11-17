@@ -37,7 +37,7 @@ import { weightIncrement, defaultIncrement } from './progression.js'
 import { dropGrid } from './plates.js'
 import { isoOf, startOfWeek, weekStartOf } from './format.js'
 import { slotOf, slotScheme, sessionSlots, leadPattern, roomOf, ownRest, rangedRest, restRangeOf, BLOCK_DAYS } from './engine.js'
-import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, partsFor, familyOf, familyDays } from './planner.js'
+import { DAILY_GROUPS, DAY_TYPES, DIRECT_MIN, EQUIPMENT, PRIORITY, planDay, planLift, canLead, partsFor, familyOf, familyDays } from './planner.js'
 import { listOf } from './curate.js'
 import { daysOf, focusOf, goalTypeOf, goalWindow, volumeOf, weeklyTargetOf, windowWorkouts } from './goals.js'
 import { setPaceOf } from './pace.js'
@@ -294,7 +294,7 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
     }
   }
   const slugs = ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m)
-  const ids = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound')
+  const ids = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound' && canLead(id))
   for (let k = 0; k < n; k++) {
     const pattern = leadPattern(type, done + k, n, block)
     // Not on a muscle trained yesterday or today: a bench press the day after one waits its turn.
@@ -397,7 +397,7 @@ function dayGoals(S, type, ticked, share, now, adopted = []) {
     .filter(p => ticked.includes(p.g) || DAY_TYPES[type].parts?.includes(p.name))
     .map(p => {
       const of = lack(p.g) ? (goals[p.g] ?? lack(p.g) / daysFor(p.g)) / lack(p.g) : 0
-      return { ...p, goal: Math.max(0, p.goal - partSets(split[p.g]?.[p.name])) * of }
+      return { ...p, goal: Math.max(0, p.goal - partSets(split[p.g]?.[p.name], p.g, p.name)) * of }
     })
   return { goals, parts }
 }
@@ -478,7 +478,7 @@ function fillMinutes(build, minutes) {
  * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`;
  * on a timed day one it gives fewer has them as a negative `extra`.
  */
-export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment } = {}) {
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment, warmupSets = 0 } = {}) {
   if (!GEN_TYPES[type]) return []
   const c = genConstraints(S, { minutes, equipment })
   const index = trainingIndex(S)
@@ -501,7 +501,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
     count: count === null || c.minutes ? null : Math.max(0, Math.min(MAX_GEN_COUNT, count ?? genCount(type))),
-    minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), rests: restRangeOf(S), equipment: c.equipment, known: knownLifts(S, now, index), last: turns ? lastDone(index) : null,
+    minutes: c.minutes || undefined, pace: setPaceOf(S?.workouts), rests: restRangeOf(S), warmups: warmupSets, equipment: c.equipment, known: knownLifts(S, now, index), last: turns ? lastDone(index) : null,
     goal: c.goal, level: c.level, seed: dayNo(isoOf(new Date(now))) * 7 + shift, shift,
   })
   const day = c.minutes ? fillMinutes(build, c.minutes) : build(1)
@@ -578,7 +578,8 @@ export function genConfig(S, id, setup, slot, extra = 0) {
   }
   // A rest timer you set yourself (S.restAll) is the accessories' rest, and the heavier lifts rest
   // as much longer than it as the goal's own rests say (engine.js ownRest).
-  if (setup.restSec > 0) cfg.restSec = Math.round(setup.restSec)
+  // The one-tap setup's rest is the same kind of timer: a lead lift rests longer than it.
+  if (setup.restSec > 0) cfg.restSec = want.rest > 0 ? ownRest(want.rest, setup.restSec, goal) : Math.round(setup.restSec)
   // A rest range (S.restRange) comes before both: the goal's rests, each inside it (engine.js rangedRest).
   else if (want.rest > 0) {
     const range = restRangeOf(S)
@@ -654,9 +655,10 @@ function generatedEntry(S, { id, muscle, last, kind, slot, extra }, setup) {
   const gen = kind ? { k: kind } : { m: muscle, d: last, ...(slot ? { slot } : {}), ...(planned && extra > 0 ? { more: extra } : {}) }
   // A lift of the setup moves on from its own last sessions the way a routine's does
   // (session-start.js buildPlannedEntry): more reps in the range, then more weight at its bottom.
-  if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null), gen }
-  // A lift never logged opens at a weight read off a similar one (lib/infer-weight.js).
-  const { cfg } = withInferredWeight(S, freestyleConfig(S, { id, ...defaultConfig(id) }))
+  if (planned) return { id, ...buildPlannedEntry(S, { ...genConfig(S, id, setup, slot, extra), id }, null, { start: true }), gen }
+  // A lift never logged opens at a weight read off a similar one (lib/infer-weight.js), or a light
+  // one when nothing like it is logged.
+  const { cfg } = withInferredWeight(S, freestyleConfig(S, { id, ...defaultConfig(id) }), { start: true })
   const full = { ...cfg, id }
   const step = modeOf(full) === 'reps' ? (ownedWeightsFor(S, full) || weightIncrement(full, S.unit)) : defaultIncrement(id, S.unit)
   const sets = applyIntensifierPlan(buildSets(historyAs(S, id, dbLoadFor(S, full)), full, { step, preferLast: true }), full, dropGrid(S, full))

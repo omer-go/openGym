@@ -29,7 +29,8 @@ import { DAY_TYPES, plan as planWeek, setsMinutes } from './planner.js'
 import { restRangeOf } from './engine.js'
 import { isPerSide } from './history.js'
 import { setPaceOf } from './pace.js'
-import { EXIDX } from './exercises.js'
+import { EXIDX, isCardio } from './exercises.js'
+import { isStretch } from './activities.js'
 import { suggestable } from './skipped.js'
 
 export const PROGRAM_TEMPLATES = [
@@ -341,25 +342,36 @@ export function programLayout(S, weekStart, now = Date.now()) {
 }
 
 /**
- * The minutes the work sets of `entries` take, as the generator times the day it builds
- * (planner.js setsMinutes): each set its reps and its rest, the lift's own or your default, kept
- * within your rest range, and at your own pace a set (pace.js) where that is quicker or no range
- * is set. Rows with no reps (a held or timed set) count the lift's target reps, else ten. A
- * one-sided set's left and right rows are one set.
+ * The minutes `entries` take, as the generator times the day it builds (planner.js setsMinutes):
+ * each set its reps and its rest, the lift's own or your default, kept within your rest range, and
+ * at your own pace a set (pace.js) where that is quicker or no range is set. Rows with no reps (a
+ * held or timed set) count the lift's target reps, else ten. A one-sided set's left and right rows
+ * are one set. Warm-up sets count too, at the warm-up rest the lift asks for, else its own. A
+ * combo runs back to back in one spot: its members share the combo's one rest a round, not a rest
+ * each, and take no walk between them. A run and stretches are left out, as the generator leaves
+ * them out of the time it fills.
  */
 export function minutesFor(S, entries, pace = setPaceOf(S?.workouts)) {
   const rests = restRangeOf(S)
   const sets = []
+  // How many members each combo has, so a round's rest is split between them.
+  const members = {}
+  for (const e of entries || []) if (e?.sg && e.target?.sgCombo) members[e.sg] = (members[e.sg] || 0) + 1
   for (const e of entries || []) {
-    const rest = e.target?.restSec > 0 ? e.target.restSec : S?.restSec > 0 ? S.restSec : 90
-    const perSide = isPerSide(e.target) || isPerSide(e)
+    const ex = EXIDX[e?.id]
+    if (ex && (isCardio(ex) || isStretch(ex))) continue
+    const own = e.target?.restSec > 0 ? e.target.restSec : S?.restSec > 0 ? S.restSec : 90
+    const rest = members[e.sg] ? (e.target.sgRest > 0 ? e.target.sgRest : own) / members[e.sg] : own
+    const warmRest = e.target?.warmupRestSec > 0 ? e.target.warmupRestSec : rest
     const rows = e.sets || []
     // A one-sided set is two rows, the left and then the right: the pair is one set, timed for both
     // sides (perSide), not two. Counted row by row, a side plank in the abs combo took four times
-    // its minutes.
+    // its minutes. A one-sided lift's row that isn't split is already both sides' reps (history.js
+    // isPerSide): doubled again, a one-arm row of 24 timed as 48 and a day read 15 minutes long.
     rows.forEach((x, i) => {
-      if (isWarmupRow(x) || (x.side === 'R' && rows[i - 1]?.side === 'L')) return
-      sets.push({ reps: x.r || e.target?.reps || 10, rest, perSide })
+      if (x.side === 'R' && rows[i - 1]?.side === 'L') return
+      const perSide = x.side === 'L' && rows[i + 1]?.side === 'R'
+      sets.push({ reps: x.r || e.target?.reps || 10, rest: isWarmupRow(x) ? warmRest : rest, perSide, still: !!members[e.sg] })
     })
   }
   return setsMinutes(sets, { pace, rests })

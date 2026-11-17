@@ -29,7 +29,7 @@ import { anchorsByWorkout, resolveSetRir } from '../lib/recovery.js'
 import { Button, Segmented, SelectRow } from '../components/ui.jsx'
 import CoverageStrip, { shown } from '../components/CoverageStrip.jsx'
 import { weeklyTargets } from '../lib/goals.js'
-import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit, partSplitOf, partGoalOf, partSets, HELPED_PART, GROUP_PARTS } from '../lib/coverage.js'
+import { groupSplitPerWeek, groupSetsOfWeeklyPlan, splitTotals, roundSplit, partSplitOf, partGoalOf, partSets, helpedPartOf, GROUP_PARTS, SHOWN_PARTS } from '../lib/coverage.js'
 import { ADD_GROUPS, groupOfMuscle } from '../lib/add-exercise.js'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { isWarmupRow } from '../lib/workout-model.js'
@@ -183,12 +183,12 @@ function MuscleBalance({ S }) {
   // The group's main region split into its parts. It counts in full in its group, so the parts
   // speak to the same sets.
   const main = group?.m[0]
-  const parts = main && !GROUP_PARTS[group.id] ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null).filter(x => !isCardio(x.id)), main) : null
+  const parts = main && !SHOWN_PARTS.includes(group.id) ? regionBreakdown(doneSetItems(inWin, on ? isHardSet : null).filter(x => !isCardio(x.id)), main) : null
   // A group with parts of its own to train (chest, shoulders, back, glutes) shows each against its
   // weekly minimum instead (lib/coverage.js partGoalOf): a set aimed at the part counts in full,
   // one that only helped it at 0.2 (partSets), so a week of rows reads as rear delts helped, not
-  // trained.
-  const own = group && GROUP_PARTS[group.id] && (() => {
+  // trained; at 0.4 for a part the compounds see to (the front delts, the upper traps).
+  const own = group && SHOWN_PARTS.includes(group.id) && (() => {
     const got = partSplitOf(inWin, undefined, on ? isHardSet : null)[group.id] || {}
     const goals = Object.fromEntries(GROUP_PARTS[group.id].map(([name]) => [name, partGoalOf(S, group.id, name)]))
     // To the tenth: a share of its group's goal can be 4.5 sets, which rounded reads as 5.
@@ -197,8 +197,8 @@ function MuscleBalance({ S }) {
     return <div className="mparts" data-group-parts={group.id}>
       {GROUP_PARTS[group.id].map(([name]) => {
         const { targeted = 0 } = got[name] || {}
-        const sets = partSets(got[name])
-        const helped = (got[name]?.helped || 0) * HELPED_PART
+        const sets = partSets(got[name], group.id, name)
+        const helped = (got[name]?.helped || 0) * helpedPartOf(group.id, name)
         // A part with no minimum (the front delts while maintaining) reads full once trained at all
         const goal = goals[name]
         const pct = goal ? Math.min(100, Math.round(sets / goal * 100)) : sets > 0 ? 100 : 0
@@ -214,7 +214,7 @@ function MuscleBalance({ S }) {
             : targeted > 0 ? t('{0} aimed at it', tenth(targeted)) : t('{0} from helping in other lifts, none aimed at it', tenth(helped))}</div>}
         </div>
       })}
-      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part has a weekly minimum of its own. A lift aimed at it counts in full, one that only helps it 0.2.')}</div>
+      <div className="muted small" style={{ marginTop: 6 }}>{t('Each part has a weekly minimum of its own. A lift aimed at it counts in full, one that only helps it 0.2, or 0.4 for a part the presses and rows see to.')}</div>
     </div>
   })()
   // Bars only: the parts are counted per exercise (a target 1, a helper 0.4) and overlap, so

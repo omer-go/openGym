@@ -492,15 +492,35 @@ describe('minutesFor', () => {
     expect(minutesFor(state(), [lift(20, 6)], null)).toBeLessThan(minutesFor(state(), [lift(60, 6)], null))
   })
 
-  it('leaves warm-up rows out, and doubles the reps of a lift done a side at a time', () => {
+  it('times warm-up rows as sets, and a one-sided lift by both sides', () => {
     const warm = { ...lift(30), sets: [{ w: 20, r: 10, warmup: true }, ...lift(30).sets] }
-    expect(minutesFor(state(), [warm], null)).toBe(minutesFor(state(), [lift(30)], null))
-    expect(minutesFor(state(), [lift(30, 6, 10, { side: true })], null)).toBeGreaterThan(minutesFor(state(), [lift(30, 6)], null))
+    const more = { ...lift(30), sets: [...lift(30).sets, lift(30).sets[0]] }
+    expect(minutesFor(state(), [warm], null)).toBe(minutesFor(state(), [more], null))
+    expect(minutesFor(state(), [warm], null)).toBeGreaterThan(minutesFor(state(), [lift(30)], null))
+    // a warm-up rest of its own is shorter than the lift's
+    const ramp = { ...lift(180), sets: [1, 2, 3, 4].map(() => ({ w: 20, r: 5, warmup: true })).concat(lift(180).sets) }
+    const quick = { ...ramp, target: { ...ramp.target, warmupRestSec: 30 } }
+    expect(minutesFor(state({ restRange: false }), [quick], null)).toBeLessThan(minutesFor(state({ restRange: false }), [ramp], null))
+    // a one-sided lift's reps are both sides' already; split into left and right rows they're one side's
+    expect(minutesFor(state(), [lift(30, 6, 20, { side: true })], null)).toBe(minutesFor(state(), [lift(30, 6, 20)], null))
+    const split = { ...lift(30, 0, 10, { side: true }), sets: Array.from({ length: 6 }, () => [{ w: 60, r: 10, side: 'L' }, { w: 60, r: 10, side: 'R' }]).flat() }
+    expect(minutesFor(state(), [split], null)).toBe(minutesFor(state(), [lift(30, 6, 20)], null))
   })
 
   it('takes your own pace where it is quicker, and only your pace with no rest range', () => {
     expect(minutesFor(state(), [lift(60, 10)], 45)).toBe(Math.round(5 + 10 * 45 / 60))
     expect(minutesFor(state({ restRange: false }), [lift(20, 10)], 200)).toBe(Math.round(5 + 10 * 200 / 60))
+  })
+
+  it('a combo shares one rest a round, and a run and stretches are left out', () => {
+    const member = (id, sg) => ({ ...lift(60, 1), id, sg, target: { ...lift(60, 1).target, sgCombo: true, sgRest: 60 } })
+    const combo = ['0001', '0002', '0003', '0006'].map(id => member(id, 'sgabs'))
+    const apart = ['0001', '0002', '0003', '0006'].map(id => ({ ...lift(60, 1), id }))
+    const S = state({ restRange: false })
+    expect(minutesFor(S, combo, null)).toBeLessThan(minutesFor(S, apart, null))
+    const cardio = Object.values(EXIDX).find(e => e.bp === 'cardio').id
+    const stretch = Object.values(EXIDX).find(e => e.cat === 'stretching').id
+    expect(minutesFor(S, [lift(60), { ...lift(60), id: cardio }, { ...lift(60), id: stretch }], null)).toBe(minutesFor(S, [lift(60)], null))
   })
 
   it('a lift with no rest of its own rests your default', () => {
@@ -511,9 +531,7 @@ describe('minutesFor', () => {
     for (const minutes of [30, 45, 60]) {
       const st = state(), setup = { ...genDefaults('full'), minutes }
       const entries = generatedEntries(st, generateWorkout(st, 'full', setup), setup)
-      // The planner counts a little under what the app says (an abs combo, the moves between lifts),
-      // so a day it fills to the minute reads up to three over.
-      expect(minutesFor(st, entries)).toBeLessThanOrEqual(minutes + 3)
+      expect(minutesFor(st, entries)).toBeLessThanOrEqual(minutes + 2)
       expect(minutesFor(st, entries)).toBeGreaterThanOrEqual(minutes - 15)
     }
   })

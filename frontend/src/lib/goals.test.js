@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DEFAULT_GOAL, GOAL_SETS, VOLUMES, MAX_GOAL, PART_SHARE, PART_SHARES, daysOf, defaultTargetFor, goalEstimate, goalGroups,
+  DEFAULT_GOAL, GOAL_SETS, VOLUMES, MAX_GOAL, PARTS, partTierOf, daysOf, defaultTargetFor, goalEstimate, goalGroups,
   floorOf, focusOf, FOCUS_DEFAULT, goalTypeOf, goalWindow, partTargetOf, sessionMinutes, volumeOf, weeklyTargetOf, weeklyTargets, windowWorkouts,
 } from './goals.js'
 import { GROUP_PARTS } from './coverage.js'
@@ -61,27 +61,36 @@ describe('the weekly goal', () => {
     expect(weeklyTargetOf(state({ goals: { weeklySets: 6, type: 'strength' } }), 'chest')).toBe(9)
   })
   it('the parts share their group\'s goal, whatever it is', () => {
-    for (const [g, shares] of Object.entries(PART_SHARES)) {
-      expect(Object.keys(shares).sort(), g).toEqual(GROUP_PARTS[g].map(([name]) => name).sort())
+    for (const [g, parts] of Object.entries(PARTS)) {
+      // Every part named has its muscles or its move in coverage.js.
+      const known = GROUP_PARTS[g].map(([name]) => name)
+      for (const name of Object.keys(parts)) expect(known, `${g} ${name}`).toContain(name)
+      for (const [name, [tier]] of Object.entries(parts)) expect(partTierOf(g, name), `${g} ${name}`).toBe(tier)
+      // A group whose labels have its every head shares out its whole goal; one with a part named
+      // by its move (the quads' leg extension) or the glutes' tracked thirds don't.
+      if (Object.keys(parts).length < known.length || g === 'glutes' || ['quads', 'hamstrings', 'triceps'].includes(g)) continue
       for (const goal of [10, 12, 20]) {
         const st = state({ goals: { byGroup: { [g]: goal } } })
-        const sum = Object.keys(shares).reduce((n, name) => n + partTargetOf(st, g, name), 0)
+        const sum = Object.keys(parts).reduce((n, name) => n + partTargetOf(st, g, name), 0)
         expect(sum, `${g} ${goal}`).toBeCloseTo(goal, 5)
       }
       for (const type of Object.keys(GOAL_SETS)) {
         const st = state({ goals: { type } })
-        const sum = Object.keys(shares).reduce((n, name) => n + partTargetOf(st, g, name), 0)
+        const sum = Object.keys(parts).reduce((n, name) => n + partTargetOf(st, g, name), 0)
         expect(sum, `${g} ${type}`).toBeCloseTo(weeklyTargetOf(st, g), 5)
       }
     }
     const st = state()
-    expect(partTargetOf(st, 'shoulders', 'Side delts')).toBeCloseTo(5.4)
-    expect(partTargetOf(st, 'shoulders', 'Rear delts')).toBeCloseTo(4.2)
-    expect(partTargetOf(st, 'shoulders', 'Front delts')).toBeCloseTo(2.4)
+    expect(partTargetOf(st, 'shoulders', 'Side delts')).toBeCloseTo(4.8)
+    expect(partTargetOf(st, 'shoulders', 'Rear delts')).toBeCloseTo(3.6)
+    expect(partTargetOf(st, 'shoulders', 'Front delts')).toBeCloseTo(3.6)
     expect(partTargetOf(st, 'chest', 'Upper chest')).toBeCloseTo(4.9)
-    expect(partTargetOf(state({ goals: { byGroup: { shoulders: 20 } } }), 'shoulders', 'Side delts')).toBeCloseTo(9)
-    // the glutes' parts have no share of their own: PART_SHARE of the group
-    expect(partTargetOf(state({ goals: { focus: { glutes: 'normal' } } }), 'glutes', 'Side glutes')).toBeCloseTo(8 * PART_SHARE)
+    expect(partTargetOf(state({ goals: { byGroup: { shoulders: 20 } } }), 'shoulders', 'Side delts')).toBeCloseTo(8)
+    expect(partTargetOf(st, 'quads', 'Rectus femoris')).toBeCloseTo(12 * 0.2)
+    // A part not in the list has no goal and is only tracked.
+    expect(partTargetOf(st, 'back', 'Nothing')).toBe(0)
+    expect(partTierOf('back', 'Nothing')).toBe(3)
+    expect(partTargetOf(state({ goals: { focus: { glutes: 'normal' } } }), 'glutes', 'Side glutes')).toBeCloseTo(8 * 0.3)
   })
   it('a group set on its own keeps its number, 0 included', () => {
     const st = state({ goals: { byGroup: { biceps: 8, calves: 0, chest: 99 } } })

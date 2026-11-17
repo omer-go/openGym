@@ -41,3 +41,21 @@ describe('sameMuscleFirst with muscle roles', () => {
       .toEqual(['y', 'cable', 'press', 'fly', 'nope', 'row'])
   })
 })
+
+describe('a head of a muscle', () => {
+  const HEADS = {
+    curl: { target: ['biceps'] }, incline: { target: ['biceps-long-head'] }, preacher: { target: ['biceps-short-head'] },
+    standing: { target: ['gastrocnemius'] }, seated: { target: ['soleus'] }, hammer: { target: ['brachialis'] },
+  }
+  const of = id => HEADS[id] || null
+  const like = (a, b) => roleLikeness({ id: a }, { id: b }, of).target
+  it('shares the muscle it is a head of, and two heads of one muscle share it', () => {
+    expect(like('incline', 'curl')).toBe(1)
+    expect(like('incline', 'preacher')).toBe(1)
+    expect(like('seated', 'standing')).toBe(1)
+  })
+  it('is no other muscle', () => {
+    expect(like('incline', 'hammer')).toBe(0)
+    expect(like('curl', 'curl')).toBe(2)
+  })
+})

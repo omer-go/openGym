@@ -148,7 +148,8 @@ describe('generateWorkout', () => {
     }
   })
   it('the day still leads with its press, but not the one from the last session', () => {
-    const st = state({ workouts: [session('2026-09-14', [BENCH], sets(5))] })
+    // Two days ago: the day after, the chest would rest and an overhead press lead.
+    const st = state({ workouts: [session('2026-09-13', [BENCH], sets(5))] })
     const picks = generateWorkout(st, 'push', { count: 2, now: NOW })
     expect(picks[0]).toMatchObject({ slot: 'lead', muscle: 'chest' })
     expect(picks.map(p => p.id)).not.toContain(BENCH)
@@ -340,9 +341,10 @@ describe('sets and reps by the lift’s slot', () => {
   it('turned off, every lift takes the setup’s own sets and reps', () => {
     expect(genScheme(SQUAT, { byKind: false, sets: 5, reps: 5 }, 'lead')).toEqual({ sets: 5, lo: 5, hi: 5, rest: 0 })
   })
-  it('a setup’s own rest wins over the slot’s', () => {
-    const [e] = generatedEntries(state(), [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], { ...genDefaults('full'), restSec: 20 })
-    expect(e.target.restSec).toBe(20)
+  it('a setup’s own rest is the accessories’, a lead resting as much longer as the goal says', () => {
+    const picks = [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }, { id: CURL, muscle: 'biceps', last: null, slot: 'acc' }]
+    // Growth rests a lead 180 s and an accessory 90 s, so a 20 s setup rests the lead 40 s.
+    expect(generatedEntries(state(), picks, { ...genDefaults('full'), restSec: 20 }).map(e => e.target.restSec)).toEqual([40, 20])
   })
   it('rests at a rest timer you set yourself, a heavier slot as much longer as the goal rests it', () => {
     const own = { ...state(), restSec: 20, restAll: true }
@@ -350,8 +352,9 @@ describe('sets and reps by the lift’s slot', () => {
     // Growth rests a lead 180 s and an accessory 90 s: twice as long.
     expect(generatedEntries(own, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([40, 20])
     expect(generatedEntries({ ...own, restAll: false, restRange: false }, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([180, 90])
-    // with neither, rests keep to 20 to 60 seconds
+    // with neither, rests keep to 20 to 60 seconds, or to the goal's range once one is set
     expect(generatedEntries({ ...own, restAll: false }, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([60, 30])
+    expect(generatedEntries({ ...own, restAll: false, goals: { type: 'growth' } }, picks, genDefaults('full')).map(e => e.target.restSec)).toEqual([120, 65])
   })
   it('a session leads with its first big lift, once', () => {
     const picks = generateWorkout(state(), 'full', { count: 7 })
@@ -574,7 +577,7 @@ describe('the profile a day is built from', () => {
   })
   it('a rest set for the session still wins over the range', () => {
     const [e] = generatedEntries(state(MINE), [{ id: SQUAT, muscle: 'quadriceps', last: null, slot: 'lead' }], { ...genDefaults('full'), restSec: 90 })
-    expect(e.target.restSec).toBe(90)
+    expect(e.target.restSec).toBe(180)
   })
   it('shorter rests fit more work in the same minutes', () => {
     const n = st => generateWorkout(st, 'full', { now: NOW, minutes: 45 }).length

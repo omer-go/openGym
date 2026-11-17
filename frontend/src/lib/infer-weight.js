@@ -137,12 +137,39 @@ function recentMax(S, id, formula, as) {
   return { top, at: (last && workoutAt(last)) || 0 }
 }
 
+// A light first weight when nothing like the lift is logged: one bell or a stack's first plates,
+// in the profile's unit. A bar starts empty.
+const START = { kg: { bell: 4, stack: 10 }, lb: { bell: 10, stack: 20 } }
+
+/**
+ * A first weight for a loaded lift with nothing like it logged (inferWeight found none), so a
+ * one-tap day never opens a loaded lift at 0: the empty bar, the lightest bell you own at or
+ * over START's, or a stack's first plates. `{ w, from: null, est: null, reach: 3 }`, null for a
+ * lift that has a weight of its own, was logged before, or carries no load.
+ */
+export function startWeight(S, cfg) {
+  const ex = EXIDX[cfg?.id]
+  if (!S || !ex || modeOf(cfg) !== 'reps' || cfg.bodyweight || isBodyweightEq(cfg.id)) return null
+  if (!kitOf(ex) || hasOwnWeight(S, cfg.id)) return null
+  // Logged before, though at no weight: that was your choice, and its history goes on from it.
+  if ((S.workouts || []).some(w => w?.entries?.some(e => e.id === cfg.id))) return null
+  const unit = S.unit === 'lb' ? 'lb' : 'kg'
+  const bar = barWeightFor(S, cfg.id)
+  const inc = weightIncrement(cfg, S.unit)
+  const want = KIT[ex.eq] && typeof KIT[ex.eq] === 'object' ? START[unit].bell : START[unit].stack
+  const owned = BELL_EQ.has(ex.eq) ? ownedWeightsFor(S, cfg) : null
+  const w = bar > 0 ? bar : owned ? (owned.find(v => v >= want) ?? owned[owned.length - 1]) : Math.max(inc, Math.round(want / inc) * inc)
+  return w > 0 ? { w, from: null, est: null, reach: 3 } : null
+}
+
 /**
  * `cfg` with a first weight read off a similar lift (inferWeight) when it has none of its own
- * and sets none: `{ cfg, guess }`, `guess` null and `cfg` as it was otherwise.
+ * and sets none: `{ cfg, guess }`, `guess` null and `cfg` as it was otherwise. With `start` (a
+ * generated day, which no one has set a weight in) a light one to start from (startWeight) when
+ * nothing similar is logged; a routine's 0 is its own.
  */
-export function withInferredWeight(S, cfg) {
+export function withInferredWeight(S, cfg, { start = false } = {}) {
   if (!cfg || cfg.weight > 0) return { cfg, guess: null }
-  const guess = inferWeight(S, cfg)
+  const guess = inferWeight(S, cfg) || (start ? startWeight(S, cfg) : null)
   return guess ? { cfg: { ...cfg, weight: guess.w }, guess } : { cfg, guess: null }
 }

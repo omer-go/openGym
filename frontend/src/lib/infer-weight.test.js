@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { inferWeight, withInferredWeight, NEW_LIFT, REACH } from './infer-weight.js'
+import { inferWeight, withInferredWeight, startWeight, NEW_LIFT, REACH } from './infer-weight.js'
 import { buildPlannedEntry } from './session-start.js'
 import { generatedEntries } from './generate.js'
 import { estimate1RM, formulaOf } from './onerm.js'
@@ -138,5 +138,31 @@ describe('a lift never logged opens at the estimate', () => {
     const [planned] = generatedEntries(S, [{ id: DB_BENCH, muscle: 'chest', last: null, slot: 'main' }], { type: 'push', goal: 'growth' })
     expect(work(planned.sets)[0].w).toBeGreaterThan(0)
     expect(work(planned.sets)[0].w).toBeLessThanOrEqual(w * 1.5)
+  })
+})
+
+// Nothing like the lift logged: a one-tap day still opens a loaded lift at a weight, a light one.
+describe('a light weight to start from', () => {
+  const SHRUG = '0095', DB_SHRUG = '0406', CABLE_SHRUG = '0220'
+  it('starts a bar empty, a bell light and a stack at its first plates, in your unit', () => {
+    expect(startWeight(state({ unit: 'kg' }), { id: SHRUG, reps: 12, mode: 'reps' }).w).toBe(20)
+    expect(startWeight(state({ unit: 'lb' }), { id: SHRUG, reps: 12, mode: 'reps' }).w).toBe(45)
+    expect(startWeight(state({ unit: 'lb' }), { id: DB_SHRUG, reps: 12, mode: 'reps' }).w).toBe(10)
+    expect(startWeight(state({ unit: 'kg' }), { id: CABLE_SHRUG, reps: 12, mode: 'reps' }).w).toBe(10)
+  })
+  it('is only the fallback: a similar lift logged comes first, and a weight of its own wins', () => {
+    const S = state({ workouts: [session('2026-10-01', BENCH, 80, 5)] })
+    expect(withInferredWeight(S, { id: DB_BENCH, reps: 10, mode: 'reps' }, { start: true }).guess.reach).toBeLessThan(3)
+    expect(withInferredWeight(state(), { id: SHRUG, reps: 12, mode: 'reps' }, { start: true }).guess.reach).toBe(3)
+    // A routine's lift isn't given one: its 0 is the routine's own.
+    expect(withInferredWeight(state(), { id: SHRUG, reps: 12, mode: 'reps' }).guess).toBe(null)
+    expect(startWeight(state({ workouts: [session('2026-10-01', SHRUG, 60, 12)] }), { id: SHRUG, reps: 12, mode: 'reps' })).toBe(null)
+  })
+  it('gives a bodyweight lift none', () => {
+    expect(startWeight(state(), { id: PUSHUP, reps: 12, mode: 'reps' })).toBe(null)
+  })
+  it('says why on a generated day\'s entry', () => {
+    const e = buildPlannedEntry(state(), { id: SHRUG, reps: 12, sets: 3, mode: 'reps' }, null, { start: true })
+    expect(e.plan.why[0]).toMatch(/nothing like it/)
   })
 })

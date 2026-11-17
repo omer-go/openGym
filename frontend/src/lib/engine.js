@@ -64,19 +64,30 @@ export function ownRest(rest, mine, goal = ENGINE_GOAL) {
 
 /** The longest and shortest rest a range may ask for, in seconds. */
 export const REST_RANGE = { min: 5, max: 600 }
-/** The range rests are kept in until you choose one, in seconds. */
+/** The range rests are kept in until you choose one, in seconds, when no goal says otherwise. */
 export const REST_DEFAULT = { min: 20, max: 60 }
 /**
- * The rests every lift stays within (`S.restRange`, seconds): `{ min, max }`, REST_DEFAULT when
- * none is chosen, or null when each goal rests as long as it says: the range switched off
- * (`false`), or never chosen by someone who set their own rest timer for every lift (S.restAll).
+ * The range each goal's rests are kept in until you choose one. A heavy goal needs the minutes
+ * between sets its lead lift is planned with (SCHEMES); only endurance keeps the short default.
  */
-export function restRangeOf(S) {
+export const REST_GOAL = {
+  strength: { min: 60, max: 180 },
+  growth: { min: 45, max: 120 },
+  maintain: { min: 45, max: 120 },
+  endurance: REST_DEFAULT,
+}
+/**
+ * The rests every lift stays within (`S.restRange`, seconds): `{ min, max }`, the goal's range
+ * (REST_GOAL, the goal given or yours in S.goals) when none is chosen, or null when each goal
+ * rests as long as it says: the range switched off (`false`), or never chosen by someone who set
+ * their own rest timer for every lift (S.restAll).
+ */
+export function restRangeOf(S, goal = S?.goals?.type) {
   const r = S?.restRange
   if (r === false) return null
   const min = Math.round(Number(r?.min)), max = Math.round(Number(r?.max))
   if (min >= REST_RANGE.min && max >= min && max <= REST_RANGE.max) return { min, max }
-  return S?.restAll && S.restSec > 0 ? null : { ...REST_DEFAULT }
+  return S?.restAll && S.restSec > 0 ? null : { ...(REST_GOAL[goal] || REST_DEFAULT) }
 }
 
 /**
