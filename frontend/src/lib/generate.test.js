@@ -685,8 +685,10 @@ describe('a timed one-tap day', () => {
     expect(picks.some(p => p.extra < 0)).toBe(true)
     for (const p of picks) expect(genSets(p.id, setup, p.slot, p.extra)).toBeGreaterThanOrEqual(1)
     const entries = generatedEntries(state(), picks, setup)
-    // An abs combo's members take its rounds: the sets the abs were fitted with.
-    for (const [i, p] of picks.entries()) expect(entries[i].sets.length).toBe(p.combo ? p.combo.rounds : genSets(p.id, setup, p.slot, p.extra))
+    // An abs combo's members take its rounds: the sets the abs were fitted with. A one-sided set
+    // (a side plank) is a left and a right row.
+    const setsOf = rows => rows.filter((x, i) => !(x.side === 'R' && rows[i - 1]?.side === 'L')).length
+    for (const [i, p] of picks.entries()) expect(setsOf(entries[i].sets)).toBe(p.combo ? p.combo.rounds : genSets(p.id, setup, p.slot, p.extra))
   })
 
   it('a day sized by a count still gives each lift at least its slot\'s sets', () => {

@@ -344,7 +344,8 @@ export function programLayout(S, weekStart, now = Date.now()) {
  * The minutes the work sets of `entries` take, as the generator times the day it builds
  * (planner.js setsMinutes): each set its reps and its rest, the lift's own or your default, kept
  * within your rest range, and at your own pace a set (pace.js) where that is quicker or no range
- * is set. Rows with no reps (a held or timed set) count the lift's target reps, else ten.
+ * is set. Rows with no reps (a held or timed set) count the lift's target reps, else ten. A
+ * one-sided set's left and right rows are one set.
  */
 export function minutesFor(S, entries, pace = setPaceOf(S?.workouts)) {
   const rests = restRangeOf(S)
@@ -352,7 +353,14 @@ export function minutesFor(S, entries, pace = setPaceOf(S?.workouts)) {
   for (const e of entries || []) {
     const rest = e.target?.restSec > 0 ? e.target.restSec : S?.restSec > 0 ? S.restSec : 90
     const perSide = isPerSide(e.target) || isPerSide(e)
-    for (const x of e.sets || []) if (!isWarmupRow(x)) sets.push({ reps: x.r || e.target?.reps || 10, rest, perSide })
+    const rows = e.sets || []
+    // A one-sided set is two rows, the left and then the right: the pair is one set, timed for both
+    // sides (perSide), not two. Counted row by row, a side plank in the abs combo took four times
+    // its minutes.
+    rows.forEach((x, i) => {
+      if (isWarmupRow(x) || (x.side === 'R' && rows[i - 1]?.side === 'L')) return
+      sets.push({ reps: x.r || e.target?.reps || 10, rest, perSide })
+    })
   }
   return setsMinutes(sets, { pace, rests })
 }
