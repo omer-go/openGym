@@ -23,9 +23,14 @@ describe('your pace a set', () => {
     expect(workoutPace(session('2026-10-29', 20, 90, { breakAfter: 5, breakSec: 900 }))).toBe(85)
   })
 
-  it('gives the time of the warm-ups to the work sets, which are what the planner counts', () => {
-    // 3 warm-ups and 10 work sets a minute apart: 12 minutes over 9 gaps between work sets.
-    expect(workoutPace(session('2026-10-29', 10, 60, { warmups: 3 }))).toBe(80)
+  it('counts the warm-ups as sets, as the planner times them', () => {
+    // 3 warm-ups and 10 work sets a minute apart: 12 minutes over 12 gaps. Given to the 10 work
+    // sets alone (80 s), the planner's warm-ups, timed as sets of their own, took their time twice.
+    expect(workoutPace(session('2026-10-29', 10, 60, { warmups: 3 }))).toBe(60)
+  })
+
+  it('still wants enough work sets, however many warm-ups there are', () => {
+    expect(workoutPace(session('2026-10-29', 5, 60, { warmups: 6 }))).toBe(null)
   })
 
   it('reads a per-side set by its sides, and skips sets never ticked', () => {

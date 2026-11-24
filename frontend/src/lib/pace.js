@@ -1,6 +1,9 @@
-// How long a work set takes you, rest and moving between lifts included, read off the times the
-// sets were ticked (`set.at`, or each side's). The planner's minutes use it in place of the rest a
-// slot prescribes (planner.js minutesOf), so a day's length is the one you'd actually train.
+// How long a set takes you, rest and moving between lifts included, read off the times the sets
+// were ticked (`set.at`, or each side's). The planner's minutes use it in place of the rest a slot
+// prescribes (planner.js minutesOf), so a day's length is the one you'd actually train. A warm-up
+// set is a set here too: the planner and program.js minutesFor time each warm-up as a set at this
+// pace, so a pace over the work sets alone counted the warm-ups' time twice, and a day planned
+// short of what fits.
 import { isWarmupRow } from './workout-model.js'
 
 const IDLE = 10 * 60e3 // a gap longer than this is a break, not a set's rest
@@ -11,14 +14,15 @@ const LAST = 10        // the sessions it reads, latest first
 const stampsOf = set => [set?.at, set?.sides?.L?.at, set?.sides?.R?.at]
   .map(Number).filter(n => Number.isFinite(n) && n > 0)
 
-/** Seconds a work set takes in workout `w`, or null when it has too few ticked sets to say. */
+/** Seconds a set takes in workout `w`, warm-ups included, or null when it has too few ticked work sets to say. */
 export function workoutPace(w) {
   const stamps = [], seen = new Set()
-  let work = 0
+  let sets = 0, work = 0
   for (const e of w?.entries || []) for (const s of e?.sets || []) {
     const at = stampsOf(s)
     if (!at.length) continue
     for (const a of at) if (!seen.has(a)) { seen.add(a); stamps.push(a) }
+    sets++
     if (!isWarmupRow(s)) work++
   }
   if (work < MIN_SETS) return null
@@ -26,11 +30,11 @@ export function workoutPace(w) {
   let active = 0
   for (let i = 1; i < stamps.length; i++) if (stamps[i] - stamps[i - 1] <= IDLE) active += stamps[i] - stamps[i - 1]
   // The time from the first set to the last spans one set fewer than were done.
-  return active > 0 ? Math.round(active / 1000 / (work - 1)) : null
+  return active > 0 ? Math.round(active / 1000 / (sets - 1)) : null
 }
 
 /**
- * Your seconds a work set, rest included: the median of your last workouts' paces, or null
+ * Your seconds a set, rest included: the median of your last workouts' paces, or null
  * until there are enough of them to go by.
  */
 export function setPaceOf(workouts) {
