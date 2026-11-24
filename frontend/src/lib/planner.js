@@ -283,6 +283,8 @@ const TOOLS = /\b(ez barbell|ez bar|trap bar|barbell|dumbbell|kettlebell|cable|l
 const moveOf = e => EXIDX[e.id]?.n.replace(TOOLS, '').replace(/\bstanding\b/g, '').replace(/\s+/g, ' ').trim()
 // And one pull from overhead: a chin-up after the pull-up is the same lift on another grip.
 const ONE_MOVE = ['vpull']
+// The most sets a full-body day's squat, hinge, press and pull take (skeleton `top`).
+const FULL_MAIN = 4
 const repeats = (items, e) => ONE_A_DAY.some(g => e.p.includes(g) && items.some(i => i.ex.p.includes(g)))
   || ONE_MOVE.includes(e.pat) && items.some(i => i.ex.pat === e.pat)
   || items.some(i => i.slot === 'accessory' && moveOf(i.ex) === moveOf(e))
@@ -617,6 +619,12 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
     }
     return variant(cfg, pool, week.used, rand, k, items)
   }
+  // A full-body day's other big lifts may take as many sets as its lead, up to FULL_MAIN (`top`),
+  // when the week's share asks for them: capped at three, a day's only press was a 3-set lift
+  // while the chest's goal wanted four or five a day. Taken by need, not by default: four sets
+  // each whatever the goal gave the legs theirs early, and the last day of the week went without
+  // its squat. The skeleton's trim below takes them back to the goal's fewest on a short day.
+  const top = type === 'full' ? Math.max(cfg.slotSets, Math.min(FULL_MAIN, cfg.leadSets)) : cfg.slotSets
   const take = (pat, slot, lead = false, always = false) => {
     let sets = cfg.leadSets
     // An overhead press feeds the front delts and little else of the shoulders, and the chest
@@ -632,11 +640,11 @@ function skeleton({ cfg, k, type, goals, parts, has, hasPart, week, rand, avail,
       const need = goals[g0] - now(g0) - coming
       if (need < 1 && !always) return
       const left = sched.filter((t, j) => j >= k && trains(t, g0)).length
-      sets = Math.min(cfg.slotSets, Math.max(cfg.slotMin, Math.ceil(need / left)))
+      sets = Math.min(top, Math.max(cfg.slotMin, Math.ceil(need / left)))
     }
     const ex = pickOf(pat, lead)
     if (!ex) return
-    items.push({ ex, sets, slot, rx: prescribe(cfg, ex, slot, ex.p[0]) })
+    items.push({ ex, sets, slot, rx: prescribe(cfg, ex, slot, ex.p[0]), ...(!lead && top > cfg.slotSets ? { top } : {}) })
     week.used.add(ex.id)
   }
   const other = { squat: 'hinge', hinge: 'squat', hpress: 'vpress', vpress: 'hpress', vpull: 'hpull', hpull: 'vpull' }
@@ -776,12 +784,22 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
   // the other lifts' sets, down to their fewest; a group the minutes can't hold even then waits
   // for the next day, where it comes first.
   const fewest = i => (i.slot === 'lead' ? Math.min(i.sets, LEAD_MIN) : i.slot === 'accessory' ? Math.min(i.sets, cfg.accMin) : Math.min(i.sets, cfg.slotMin))
+  // The chest's press is a lift aimed at it, but a day of presses alone never had a fly: while
+  // the day's share wants more than the press gives, the chest takes its fly here too, in the
+  // press's half (inTurn), on the kit the day has least of: the cables are the only kit some of
+  // the lifts still to come have (a pushdown, a kneeling crunch).
   for (const g of daily) {
-    if (!trains(day.type, g) || items.some(i => i.ex.p.includes(g))) continue
-    const cands = avail.filter(e => forG(e, g) && e.p.includes(g) && fresh(e))
+    const pressed = g === 'chest' && items.some(i => i.slot !== 'accessory' && i.ex.p.includes(g))
+    if (!trains(day.type, g) || items.some(i => i.ex.p.includes(g) && (!pressed || i.slot === 'accessory'))) continue
+    const gap = Math.max(goals[g] - has(g), Math.ceil(DIRECT_MIN[g] * goals[g]) - hasDirect(g))
+    if (pressed && gap < cfg.accMin) continue
+    let cands = avail.filter(e => forG(e, g) && e.p.includes(g) && fresh(e) && (!pressed || e.kind === 'iso'))
+    if (pressed) {
+      const had = kitCount(items), least = Math.min(...cands.map(e => had[liftKit(e)] || 0))
+      cands = cands.filter(e => (had[liftKit(e)] || 0) === least)
+    }
     if (!cands.length) continue
     const ex = choose(g, cands)
-    const gap = Math.max(goals[g] - has(g), Math.ceil(DIRECT_MIN[g] * goals[g]) - hasDirect(g))
     // A group below the top two PRIORITY tiers starts at its fewest sets: the time it would take
     // up front goes to the chest, back and legs first, and topUp grows it later if the week has room.
     const sets = PRIORITY[g] >= 2 ? cfg.accMin : Math.max(cfg.accMin, Math.min(cfg.accMax, Math.ceil(gap)))
@@ -864,8 +882,18 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
     // whichever asked: the side delts would take every day and leave the rear ones none.
     const ex = choose(pick.g, ONE_A_DAY.includes(pick.g) ? [...new Set(scored.filter(s => s.g === pick.g && !s.blocked).flatMap(s => s.cands))] : pick.cands)
     const it = { ex, sets, slot: 'accessory', rx: prescribe(cfg, ex, 'accessory', pick.g) }
-    // Too long for what is left of the session: skip this group today and try another.
-    if (minutesOf(cfg, [...items, it]) > cfg.minutes) { day.limit = 'time'; noTime[pick.part || pick.g] = true; continue }
+    // Too long for what is left of the session: a top-tier group's lift first takes the sets a
+    // full-body day's big lifts have past the goal's (skeleton `top`), the longest sets first: a
+    // fourth set of rows and of deadlifts cost the chest its dips. Else skip this group today and
+    // try another.
+    const over = () => minutesOf(cfg, [...items, it]) > cfg.minutes
+    if (over() && PRIORITY[pick.g] === 0) {
+      const spare = items.filter(i => i.top && i.sets > cfg.slotSets).sort((a, b) => b.rx.secs - a.rx.secs)
+      const was = spare.map(i => i.sets)
+      for (const i of spare) { if (!over()) break; i.sets = cfg.slotSets }
+      if (over()) spare.forEach((i, j) => { i.sets = was[j] })
+    }
+    if (over()) { day.limit = 'time'; noTime[pick.part || pick.g] = true; continue }
     push(it)
   }
 }
@@ -877,7 +905,7 @@ function fill({ cfg, day, goals, parts, has, hasDirect, hasPart, daysLeftFor, da
 // short of its minimum the same way, on a lift aimed at it. `aimed`: only on lifts aimed at the
 // group, so the time a group that gave way (giveWay) gets back doesn't go on a leg curl for the calves.
 function topUp({ cfg, out, goals, parts, week, rand, avail, aimed, near, trains, whole = new Set(), keep = false }) {
-  const most = it => (it.slot === 'accessory' ? cfg.accMax : it.slot === 'lead' ? cfg.leadSets : cfg.slotSets)
+  const most = it => (it.slot === 'accessory' ? cfg.accMax : it.slot === 'lead' ? cfg.leadSets : it.top || cfg.slotSets)
   const needs = [
     ...PLAN_GROUPS.map(g => ({ key: g, g, goal: goals[g], credit: e => creditOf(e)[g] || 0, least: 0.4, aimed: e => e.p.includes(g), on: t => trains(t, g) })),
     ...parts.map(p => ({ key: p.name, g: p.g, tier: p.tier, goal: p.goal, credit: e => partCreditOf(e)[p.name] || 0, least: 1, aimed: e => aimsAt(e, p.name), on: t => trains(t, p.g, p.name) })),
@@ -988,7 +1016,7 @@ function balance(cfg, out, goals, parts, whole, near) {
   const direct = () => { const t = {}; for (const d of out) for (const i of d.items) for (const g of i.ex.p) t[g] = (t[g] || 0) + i.sets; return t }
   const spread = () => { const m = out.map(mins), avg = m.reduce((a, b) => a + b, 0) / m.length; return m.reduce((a, x) => a + (x - avg) ** 2, 0) }
   const setsOn = (d, g) => { const c = {}; for (const i of d.items) add(cfg, c, i.ex, i.sets); return c[g] || 0 }
-  const range = it => (it.slot === 'accessory' ? [cfg.accMin, cfg.accMax] : it.slot === 'lead' ? [cfg.leadSets, cfg.leadSets] : [cfg.slotMin, cfg.slotSets])
+  const range = it => (it.slot === 'accessory' ? [cfg.accMin, cfg.accMax] : it.slot === 'lead' ? [cfg.leadSets, cfg.leadSets] : [cfg.slotMin, it.top || cfg.slotSets])
   // A move may not push a group that was at goal below it, or below its share from its own lifts.
   const safe = (t0, d0, p0) => {
     const t = totals(), dr = direct(), pt = partTotals()

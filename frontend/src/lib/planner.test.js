@@ -208,6 +208,24 @@ describe('planner', () => {
     for (const [g, v] of Object.entries(goals)) if (v - (d[g] || 0) > 2) expect(PRIORITY[g], g).toBeGreaterThanOrEqual(1)
   })
 
+  it('a full-body day gives its big lifts a fourth set when the week asks for it, and gives it back for a second chest lift', () => {
+    const goals = { chest: 7, back: 9, shoulders: 6, biceps: 6, triceps: 5, abs: 7, quads: 6, hamstrings: 8, calves: 4 }
+    const o = { type: 'full', goal: 'growth', equipment: 'gym', level: 'advanced', goals }
+    const mains = d => d.items.filter(i => i.slot !== 'lead' && i.slot !== 'accessory')
+    // Time to spare: the hinge, the press and the row each take four, as the lead does.
+    const long = planDay({ ...o, minutes: 120 })
+    expect(mains(long).map(i => i.sets)).toEqual([4, 4, 4])
+    // Not on an upper day, nor past the goal's own sets for another goal.
+    expect(planDay({ ...o, type: 'upper', minutes: 120 }).items.filter(i => i.slot !== 'lead' && i.slot !== 'accessory').every(i => i.sets <= 3)).toBe(true)
+    expect(mains(planDay({ ...o, goal: 'maintain', minutes: 120 })).every(i => i.sets <= 3)).toBe(true)
+    // Within a set or so of nothing to do, a slot keeps the goal's three.
+    expect(mains(planDay({ ...o, minutes: 120, goals: { ...goals, hamstrings: 2 } })).find(i => i.slot === 'lower')?.sets ?? 3).toBe(3)
+    // 75 minutes: the chest's dips come before the fourth sets of the rows and the deadlifts.
+    const d = planDay({ ...o, minutes: 75 })
+    expect(d.items.filter(i => i.ex.p.includes('chest')).length).toBe(2)
+    expect(d.minutes).toBeLessThanOrEqual(75)
+  })
+
   it('gives the bottom tier away first when the time is far too short, though the squats and hinges still train the glutes', () => {
     const p = plan({ template: 'full', goal: 'growth', equipment: 'gym', days: 3, minutes: 45 })
     for (const g of ['glutes', 'calves', 'forearms']) expect(p.yields[g] ?? 1, g).toBeLessThan(1)
@@ -577,8 +595,9 @@ describe('planner', () => {
     })
     it('takes the small muscles in pairs, a calf raise one workout and a leg extension and a wrist curl the next', () => {
       for (const seed of [1, 2, 3]) {
-        // A day with room for two more accessories than the level's, as a longer session has.
-        const smalls = days(seed, 4, { moreAcc: 2 }).map(d => d.items.filter(i => i.turn).map(i => moveOf(row(i.ex.id))))
+        // A day with room for two more accessories than the level's, as a longer session has, and
+        // the minutes for them past the big lifts' fourth sets.
+        const smalls = days(seed, 4, { moreAcc: 2, minutes: 105 }).map(d => d.items.filter(i => i.turn).map(i => moveOf(row(i.ex.id))))
         expect(smalls[0], `seed ${seed}`).toEqual(['calf'])
         expect(smalls[2], `seed ${seed}`).toEqual(['seatedcalf'])
         for (const k of [1, 3]) {
@@ -607,6 +626,17 @@ describe('planner', () => {
         const d = day({ pattern, seed, daily: DAILY })
         for (const g of DAILY) expect(aimed(d, g).length, `${pattern} ${seed} ${g}`).toBeGreaterThan(0)
         expect(d.items.filter(i => i.ex.p.includes('abs')).length).toBe(1)
+      }
+    })
+    // A day of presses alone never had a fly: the press was the chest's lift and the fill's
+    // turns went to the others before it.
+    it('gives the chest a fly beside its press while the press leaves it short, and none once it is not', () => {
+      const flies = d => d.items.filter(i => i.slot === 'accessory' && i.ex.p.includes('chest'))
+      for (const pattern of ['squat', 'hpress', 'hinge']) for (const seed of [1, 2, 3]) {
+        const d = day({ pattern, seed, daily: DAILY })
+        expect(d.items.filter(i => i.slot !== 'accessory' && i.ex.p.includes('chest')).length, `${pattern} ${seed}`).toBe(1)
+        expect(flies(d).map(i => i.ex.kind), `${pattern} ${seed}`).toEqual(['iso'])
+        expect(flies(day({ pattern, seed, daily: DAILY, goals: { ...goals, chest: 4 } })), `${pattern} ${seed}`).toEqual([])
       }
     })
     it('a group with no goal left still gets its lift when it is daily', () => {
