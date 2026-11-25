@@ -46,7 +46,7 @@ import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 import { withInferredWeight } from './infer-weight.js'
-import { outgrownIds } from './outgrown.js'
+import { evidenceOf, outgrown, outgrownIds } from './outgrown.js'
 import { absTurn, absDayCombo, weightedAbs, ABS_DAY_COMBO, ABS_DAY_ROUNDS, ABS_DAY_NAME, ABS_DAY_REST } from './abs-combo.js'
 import { asComboMember } from './combo.js'
 
@@ -274,7 +274,7 @@ const LEAD_HISTORY = 2 * BLOCK_DAYS
  * movement for a muscle trained yesterday or today, or one you have no lift for, passes the
  * lead to the next day's. `{ id, pattern }`, or null when no candidate fits.
  */
-export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex(S)) {
+export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex(S), light = true) {
   const today = isoOf(new Date(now))
   const p = S?.program
   const inProgram = !!p?.startedAt && Array.isArray(p.days) && p.days.includes(type) && p.startedAt <= today
@@ -296,8 +296,9 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
   }
   const slugs = ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m)
   const can = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound' && canLead(id))
-  // Not a dumbbell lift your heaviest bell is too light for (outgrown.js), the day's heaviest lift least of all.
-  const gone = new Set(outgrownIds(S, can, { now }))
+  // Not a dumbbell lift your heaviest bell is too light for (outgrown.js), the day's heaviest lift
+  // least of all. `light` false builds the day without that rule (leftOut).
+  const gone = new Set(light ? outgrownIds(S, can, { now }) : [])
   const ids = can.filter(id => !gone.has(id))
   for (let k = 0; k < n; k++) {
     const pattern = leadPattern(type, done + k, n, block)
@@ -488,9 +489,10 @@ function fillMinutes(build, minutes) {
  * adds a run and `stretch` two stretches after the lifts, as { id, kind: 'cardio' | 'stretch' }.
  * `now` dates the week. A program day passes its `share` (program.js dayShare). With the setup's
  * `byKind`, a lift the planner gives more sets than its slot's (genScheme) has the rest as `extra`;
- * on a timed day one it gives fewer has them as a negative `extra`.
+ * on a timed day one it gives fewer has them as a negative `extra`. `light` false keeps the
+ * dumbbell lifts your heaviest bell is too light for (outgrown.js), for leftOut to compare with.
  */
-export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment, warmupSets = 0 } = {}) {
+export function generateWorkout(S, type, { shift = 0, count, groups, cardio = false, stretch = false, now = Date.now(), share = null, byKind, sets, minutes, equipment, warmupSets = 0, light = true } = {}) {
   if (!GEN_TYPES[type]) return []
   const c = genConstraints(S, { minutes, equipment })
   const index = trainingIndex(S)
@@ -499,7 +501,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   const adopted = Object.keys(share || {}).filter(g => share[g] > 0 && !picked.includes(g) && !genGroupsOf(type).includes(g) && ADD_GROUPS.some(x => x.id === g))
   const ticked = [...picked, ...adopted]
   const pool = planPool(S)
-  const lead = leadFor(S, type, ticked, now, index)
+  const lead = leadFor(S, type, ticked, now, index, light)
   const turns = rotationOf(S) === 'session'
   const [near = [], ...earlier] = recentSessionIds(S, now)
   const base = dayGoals(S, type, ticked, share, now, adopted)
@@ -507,8 +509,9 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   // A full-body day trains each big group, the arms, the shoulders and the abs with a lift of
   // their own until the week has their goal (dailyGroups).
   const daily = type === 'full' ? dailyGroups(S, ticked, now) : []
+  const gone = [...skipIds(S), ...(light ? outgrownIds(S, null, { now, goal: c.goal }) : [])]
   const build = k => planDay({
-    type, groups: ticked, pool, near, used: earlier.flat(), exclude: [...skipIds(S), ...outgrownIds(S, null, { now, goal: c.goal })], daily,
+    type, groups: ticked, pool, near, used: earlier.flat(), exclude: gone, daily,
     ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2), need: base }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.
@@ -536,6 +539,20 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   if (cardio) pickFrom(cardioCandidates(S, index), 1, 'cardio')
   if (stretch) pickFrom(stretchCandidates(S, index, new Set(picks.map(p => p.muscle))), GEN_STRETCHES, 'stretch')
   return picks
+}
+
+/**
+ * The dumbbell lifts day `type` would have had but for your heaviest bell (outgrown.js): what the
+ * same day built without that rule picks and `picks` (generateWorkout's, with the same `opts`)
+ * lacks, as `[{ id, why }]`, `why` outgrown()'s account. So the Start sheet can say what gave up
+ * its place and to which lift's numbers. [] without a dumbbell inventory.
+ */
+export function leftOut(S, type, opts = {}, picks = generateWorkout(S, type, opts)) {
+  const ev = evidenceOf(S, { now: opts.now ?? Date.now(), goal: genConstraints(S, opts).goal })
+  if (!ev) return []
+  const has = new Set(picks.map(p => p.id))
+  return generateWorkout(S, type, { ...opts, light: false }).filter(p => !has.has(p.id))
+    .map(p => ({ id: p.id, why: outgrown(S, p.id, ev) })).filter(x => x.why)
 }
 
 /**

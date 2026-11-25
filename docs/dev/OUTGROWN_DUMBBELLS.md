@@ -161,6 +161,22 @@ With the veto: deadlift 365 × 5 on the bar and the dumbbell deadlift logged at 
 over `0.85 × 105 = 89.25`) is outgrown. The same bar with the dumbbell deadlift at 50 × 12 (own
 70) is kept.
 
+## What you see
+
+The rule says what it did in two places, in the same words:
+
+- **The Start sheet's exercise list.** Under the day's lifts, one line for each dumbbell lift the
+  day would have had: "Left out: Dumbbell Romanian Deadlift. Your heaviest dumbbell (75 lb) is
+  too light for it, going by your Barbell Romanian Deadlift." Tap it for the lift's sheet. The
+  day is built a second time without the rule (`generate.js leftOut`), and the lifts only that
+  one has, which the rule judges outgrown, are the ones named: a lift the day would not have
+  picked anyway is not listed.
+- **The exercise's own sheet** (the library, "How to do it"): "Left out of one-tap workouts."
+  and the same reason.
+
+By rule 1 the reason is your own reps ("you can already do that for 12 reps"), by rule 2 the
+sibling it was read off.
+
 ## Constants
 
 | Name | Value | Meaning |
@@ -179,5 +195,3 @@ over `0.85 × 105 = 89.25`) is outgrown. The same bar with the dumbbell deadlift
   once the dumbbell lift is logged.
 - Target muscles come from the catalogue's single `tg` and its muscle weights, not the lazily
   loaded muscle roles, so the siblings are the same before and after those load.
-- The rule removes; it does not explain itself on screen yet. A dumbbell lift that stopped
-  appearing was excluded by one of the two rules above.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { outgrown, outgrownIds, reachOf, topReps, ratioAt, evidenceOf, MARGIN } from './outgrown.js'
 import { EXIDX } from './exercises.js'
-import { generateWorkout } from './generate.js'
+import { generateWorkout, leftOut } from './generate.js'
 import { planExclude } from './program.js'
 
 const DEADLIFT = '0032', SUMO_DL = '0117', STIFF = '1543', BB_RDL = '0085'
@@ -163,6 +163,20 @@ describe('where it applies', () => {
     expect(picks(state(w, { dumbbells: undefined }))).toContain(DB_RDL)
     expect(judge(state(w), DB_RDL)).toMatchObject({ by: 'sibling', from: BB_RDL, reach: 0 })
     expect(picks(state(w))).not.toContain(DB_RDL)
+  })
+  it('the day says which lift gave up its place, and to whose numbers', () => {
+    const w = [session('2026-11-10', BB_RDL, 405), session('2026-11-10', SQUAT, 365)]
+    const out = [0, 1, 2, 3].flatMap(shift => leftOut(state(w), 'legs', { now: NOW, shift }))
+    expect(out.find(x => x.id === DB_RDL)?.why).toMatchObject({ by: 'sibling', from: BB_RDL, cap: 75 })
+    // only lifts the rule took, and none the day still has
+    expect(out.every(x => x.why && EXIDX[x.id].eq === 'dumbbell')).toBe(true)
+    const kept = generateWorkout(state(w), 'legs', { now: NOW }).map(p => p.id)
+    expect(leftOut(state(w), 'legs', { now: NOW }).some(x => kept.includes(x.id))).toBe(false)
+  })
+  it('nothing is left out without an inventory, or with nothing outgrown', () => {
+    const w = [session('2026-11-10', BB_RDL, 405), session('2026-11-10', SQUAT, 365)]
+    expect(leftOut(state(w, { dumbbells: undefined }), 'legs', { now: NOW })).toEqual([])
+    expect(leftOut(state([session('2026-11-10', BB_RDL, 135)]), 'legs', { now: NOW })).toEqual([])
   })
   it('a sideways squat is not read off a squat', () => {
     expect(judge(state([session(D, SQUAT, 495)]), '4562')).toBe(null)

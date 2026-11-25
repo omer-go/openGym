@@ -57,7 +57,7 @@ import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
 import { saveSessionAsRoutine } from './lib/session-routines.js'
 import { repeatSessionEntries } from './lib/session-repeat.js'
-import { generateWorkout, generatedEntries, genDefaults, genSetupOf, programTimes, genConstraints, GEN_NAME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
+import { generateWorkout, leftOut, generatedEntries, genDefaults, genSetupOf, programTimes, genConstraints, GEN_NAME, MAX_GEN_COUNT, sessionConfig } from './lib/generate.js'
 import { ADD_GROUPS } from './lib/add-exercise.js'
 import { plannedSets, groupSetsOf } from './lib/coverage.js'
 import { KIND_COLOR, workoutKind } from './lib/workout-kind.js'
@@ -73,6 +73,7 @@ import { useSheetKeyboard, useRevealActiveChip, tappable } from './lib/use-sheet
 import { useAutoMore } from './lib/use-auto-more.js'
 import { isFav, toggleFav, sortFavouritesFirst, sortYoursFirst } from './lib/favourites.js'
 import { isSkipped, skipIds, toggleSkip } from './lib/skipped.js'
+import { outgrown } from './lib/outgrown.js'
 import { buildSessionEntries, buildPlannedEntry, builtOutOfProgression } from './lib/session-start.js'
 import { finishCompare, finishCardio } from './lib/finish-compare.js'
 import { workoutFit, fitFileName } from './lib/fit-export.js'
@@ -1029,6 +1030,12 @@ function SkippedList() {
 }
 export const skippedListSheet = () => ui().openSheet(() => <SkippedList />)
 
+// Why a dumbbell lift gave up its place in one-tap days (lib/outgrown.js): the heaviest bell, and
+// whose numbers said so.
+const outgrownWhy = (st, o) => (o.by === 'own'
+  ? t('Your heaviest dumbbell ({0} {1}) is too light for it: you can already do that for {2} reps.', fmtNum(o.cap), st.unit, o.reps)
+  : t('Your heaviest dumbbell ({0} {1}) is too light for it, going by your {2}.', fmtNum(o.cap), st.unit, exerciseNameText(exOr(o.from))))
+
 function ExerciseDetail({ ex, close }) {
   useLang() // the description and steps arrive in their own chunk the first time a sheet asks
   const st = useStore(s => s.S)
@@ -1036,6 +1043,7 @@ function ExerciseDetail({ ex, close }) {
   const best = bestWeightFor(st, ex.id, currentDbLoad(st, ex.id))
   const fav = isFav(st, ex.id)
   const skipped = isSkipped(st, ex.id)
+  const light = useMemo(() => outgrown(st, ex.id), [st, ex.id])
   const flipFav = () => {
     let on = false
     update(s => { on = toggleFav(s, ex.id) })
@@ -1054,6 +1062,7 @@ function ExerciseDetail({ ex, close }) {
       {detailTags(ex).map(tg => <span key={tg.key} className={'tag' + (tg.acc ? ' acc' : '')}>{tg.icon && <Icon name={tg.icon} />}{tg.label}</span>)}
     </div>
     {descFor(ex) && <div className="exnote">{descFor(ex)}</div>}
+    {light && <div className="small row" style={{ marginBottom: 6, gap: 5, alignItems: 'flex-start' }}><Icon name="dumbbell" style={{ fontSize: 14, color: 'var(--orange)', marginTop: 2 }} /><span>{t('Left out of one-tap workouts.')} {outgrownWhy(st, light)}</span></div>}
     {best > 0 && <div className="small row" style={{ marginBottom: 6, gap: 5 }}><Icon name="trophy" style={{ fontSize: 14, color: 'var(--yellow)' }} />{t('Best:')} <b className="accent" style={{ whiteSpace: 'nowrap' }}>{fmtNum(best)} {st.unit}</b>{last ? ` · ${t('last')} ${fmtDate(last.d)}: ${last.sets.map(s => setLabel(ex.id, s, last.target, speedUnitOf(st))).join(', ')}` : ''}</div>}
     <Button variant="primary" icon="plus" style={{ margin: '10px 0 4px' }} onClick={() => addToRoutineSheet(ex)}>{t('Add to my plan')}</Button>
     {last && <Button icon="history" style={{ marginTop: 4 }} onClick={() => exerciseHistorySheet(ex.id)}>{t('History')}</Button>}
@@ -3099,6 +3108,8 @@ function GenSetup({ type, k, close }) {
   const picks = useMemo(() => generateWorkout(st, type, { ...setup, shift, now: at, share: programShare(st, type, at) }),
     [st, type, shift, at, setup.count, setup.minutes, setup.groups, setup.cardio, setup.stretch, setup.byKind, setup.sets, rolesLoaded()])
   const entries = useMemo(() => generatedEntries(st, picks, setup), [st, picks, setup])
+  // The dumbbell lifts the day would have had but for your heaviest bell, once the list is open.
+  const gone = useMemo(() => (showEx ? leftOut(st, type, { ...setup, shift, now: at, share: programShare(st, type, at) }, picks) : []), [st, type, picks, showEx])
   // The list's cards: one per exercise, a combo's exercises sharing one between them.
   const slots = useMemo(() => comboSlots(entries).map(s => s.map(i => ({ e: entries[i], i, pick: picks[i] }))), [entries, picks])
   const exRow = ({ e, pick }) => {
@@ -3234,6 +3245,9 @@ function GenSetup({ type, k, close }) {
             return <ComboSlot key={slot[0].e.sg} members={slot.map(s => s.e)} muscle={t(MUSCLE_NAME[slot[0].pick.muscle])}
               row={(_, j) => exRow(slot[j])} />
           })}</div>
+          {gone.map(g => <button key={g.id} type="button" className="gs-gone" onClick={() => exerciseDetailSheet(exOr(g.id))}>
+            <b>{t('Left out: {0}.', exerciseNameText(exOr(g.id)))}</b> {outgrownWhy(st, g.why)}
+          </button>)}
         </>}
       </> : <div className="muted small">{t('Tick at least one muscle group.')}</div>}
     </div>
