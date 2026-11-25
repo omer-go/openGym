@@ -30,7 +30,7 @@ import { barWeightFor } from './bar.js'
 
 // What a kit lets you lift against a barbell, by the catalogue's equipment. A bell's is one bell
 // in a two-handed lift (`bell`) or in a one-arm one (`one`).
-const KIT = {
+export const KIT = {
   barbell: 1, 'olympic barbell': 1, 'ez barbell': 1, 'trap bar': 1.1, 'smith machine': 1.1,
   dumbbell: { bell: 0.4, one: 0.45 }, kettlebell: { bell: 0.35, one: 0.4 },
 }
@@ -41,20 +41,20 @@ const OWN_SCALE = new Set(['cable', 'leverage machine', 'sled machine'])
 export const REACH = [0.9, 0.75, 0.65]
 export const NEW_LIFT = REACH[0]
 // Reps left in the tank at the estimate.
-const RIR = 2
+export const RIR = 2
 // The last sessions a source's best is read from, so a year-old peak is not today's.
-const RECENT = 5
+export const RECENT = 5
 
 // The words a name says its kit with, and the ones that only say the same lift twice ("barbell
 // full squat" is the "smith squat").
 const KIT_WORDS = /\b(barbell|olympic|ez|trap bar|smith( machine)?|dumbbells?|kettlebells?|cable|lever|machine|sled)\b/g
 const FILLER = /\b(full|biceps|chest|standing)\b/g
-const coreOf = name => String(name || '').toLowerCase().replace(KIT_WORDS, ' ').replace(FILLER, ' ').replace(/\s+/g, ' ').trim()
+export const coreOf = name => String(name || '').toLowerCase().replace(KIT_WORDS, ' ').replace(FILLER, ' ').replace(/\s+/g, ' ').trim()
 
 const kitOf = ex => (OWN_SCALE.has(ex?.eq) ? ex.eq : KIT[ex?.eq] != null ? ex.eq : null)
 
 /** How a load on exercise `ex` (in the meaning `as`, dumbbells.js) compares with a barbell's. */
-function toBar(load, ex, as, cfg) {
+export function toBar(load, ex, as, cfg) {
   const k = KIT[ex.eq]
   // A stack or a machine reads only its own kind (OWN_SCALE): the load as it is.
   if (k == null) return load
@@ -64,7 +64,7 @@ function toBar(load, ex, as, cfg) {
   const bell = as === 'total' && n === 2 ? load / 2 : load
   return bell / (n === 2 ? k.bell : k.one)
 }
-function fromBar(load, ex, as, cfg) {
+export function fromBar(load, ex, as, cfg) {
   const k = KIT[ex.eq]
   if (k == null) return load
   if (typeof k === 'number') return load * k

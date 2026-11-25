@@ -46,6 +46,7 @@ import { buildPlannedEntry } from './session-start.js'
 import { withMeaning, historyAs, dbLoadFor, ownedWeightsFor } from './dumbbells.js'
 import { isConditioning, strengthWorkouts } from './conditioning.js'
 import { withInferredWeight } from './infer-weight.js'
+import { outgrownIds } from './outgrown.js'
 import { absTurn, absDayCombo, weightedAbs, ABS_DAY_COMBO, ABS_DAY_ROUNDS, ABS_DAY_NAME, ABS_DAY_REST } from './abs-combo.js'
 import { asComboMember } from './combo.js'
 
@@ -294,7 +295,10 @@ export function leadFor(S, type, groups, now = Date.now(), index = trainingIndex
     }
   }
   const slugs = ADD_GROUPS.filter(g => groups.includes(g.id)).flatMap(g => g.m)
-  const ids = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound' && canLead(id))
+  const can = [...new Set(slugs.flatMap(slug => candidatesFor(S, slug, index)))].filter(id => liftKind(id) === 'compound' && canLead(id))
+  // Not a dumbbell lift your heaviest bell is too light for (outgrown.js), the day's heaviest lift least of all.
+  const gone = new Set(outgrownIds(S, can, { now }))
+  const ids = can.filter(id => !gone.has(id))
   for (let k = 0; k < n; k++) {
     const pattern = leadPattern(type, done + k, n, block)
     // Not on a muscle trained yesterday or today: a bench press the day after one waits its turn.
@@ -504,7 +508,7 @@ export function generateWorkout(S, type, { shift = 0, count, groups, cardio = fa
   // their own until the week has their goal (dailyGroups).
   const daily = type === 'full' ? dailyGroups(S, ticked, now) : []
   const build = k => planDay({
-    type, groups: ticked, pool, near, used: earlier.flat(), exclude: skipIds(S), daily,
+    type, groups: ticked, pool, near, used: earlier.flat(), exclude: [...skipIds(S), ...outgrownIds(S, null, { now, goal: c.goal })], daily,
     ...(k === 1 ? base : { ...scaleGoals(base, ticked, k, fixed), moreAcc: Math.ceil((k - 1) * 2), need: base }),
     pattern: PATS[lead?.pattern || leadPattern(type, 0, 1)], lead: lead && pool.includes(lead.id) ? lead.id : null,
     // A session length sizes the day by its time, at your own pace a set (pace.js), not by a count.

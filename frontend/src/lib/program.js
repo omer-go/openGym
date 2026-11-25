@@ -31,6 +31,7 @@ import { isPerSide } from './history.js'
 import { setPaceOf } from './pace.js'
 import { EXIDX, isCardio } from './exercises.js'
 import { isStretch } from './activities.js'
+import { outgrownIds } from './outgrown.js'
 import { suggestable } from './skipped.js'
 
 export const PROGRAM_TEMPLATES = [
@@ -115,8 +116,11 @@ export function weekChanges(before, after) {
   return { days, gone, groups }
 }
 
-/** The exercise ids a plan should not pick for `S`: skipped, or the kit isn't there. */
-export const planExclude = S => Object.values(EXIDX).filter(ex => !suggestable(S, ex)).map(ex => ex.id)
+/**
+ * The exercise ids a plan should not pick for `S`: skipped, the kit isn't there, or a dumbbell
+ * lift your heaviest bell is too light for (outgrown.js).
+ */
+export const planExclude = (S, now = Date.now()) => [...new Set([...Object.values(EXIDX).filter(ex => !suggestable(S, ex)).map(ex => ex.id), ...outgrownIds(S, null, { now })])]
 
 /** Is `p` a program built from the program page's settings, with its week of lifts? */
 export const isPlanProgram = p => !!p?.plan && Array.isArray(p.week) && Array.isArray(p.days)

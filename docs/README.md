@@ -47,6 +47,7 @@ Design notes for specific features, kept next to the code they describe:
 | [Set types](dev/SET_TYPES.md) | Drop sets and rest-pause: the set-row model and how totals are counted |
 | [Workout views](dev/LIST_VIEW.md) | The cards, list and compact layouts of the workout screen |
 | [Combine routines](dev/COMBINE_ROUTINES.md) | Spec for running more than one routine in a session |
+| [Outgrown dumbbells](dev/OUTGROWN_DUMBBELLS.md) | When the planner stops picking a dumbbell lift your heaviest bell is too light for: the rules, the arithmetic and worked examples |
 | [Workout generation](dev/WORKOUT_GENERATION.html) | How one-tap days and programs pick their lifts, the known gaps, and a target template that rotates each group's parts, movements and kit |
 
 ## Still stuck?
